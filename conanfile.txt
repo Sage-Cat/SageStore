@@ -1,7 +1,8 @@
 [requires]
-nlohmann_json/3.9.1
-boost/1.76.0
-sqlite3/3.35.5
+nlohmann_json/[*]
+boost/[*]
+sqlite3/[*]
 
 [generators]
-cmake
+CMakeDeps
+CMakeToolchain
