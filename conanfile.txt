@@ -1,7 +1,7 @@
 [requires]
-nlohmann_json/[*]
-boost/[*]
-sqlite3/[*]
+nlohmann_json/3.11.2
+boost/1.83.0
+sqlite3/3.43.1
 
 [generators]
 CMakeDeps
