@@ -1,0 +1,61 @@
+@startuml
+!define RECTANGLE class
+
+package "Client" {
+    RECTANGLE "User Interface (UI)" as UI1 {
+        + Sales View
+        + Inventory View
+        + HR View
+    }
+
+    RECTANGLE "Application Logic" as AppLogic1 {
+        + Sales Module
+        + Inventory Module
+        + HR Module
+    }
+
+    RECTANGLE "Communication Layer" as Comm1 {
+        + HTTP API Calls
+        + Data Serialization
+    }
+    
+    UI1 --> AppLogic1
+    AppLogic1 --> Comm1
+    UI1 <-left- AppLogic1
+    AppLogic1 <-left- Comm1
+}
+
+package "Server" {
+    RECTANGLE "API Endpoints" as API2 {
+        + /sales
+        + /inventory
+        + /hr
+    }
+
+    RECTANGLE "Business Logic" as BusinessLogic2 {
+        + Sales Management
+        + Inventory Tracking
+        + HR Management
+    }
+
+    RECTANGLE "Data Access Layer" as DAL2 {
+        + SalesRepository
+        + InventoryRepository
+        + HRRepository
+    }
+
+    RECTANGLE "Database" as DB2 {
+        + SQLite
+    }
+
+    API2 --> BusinessLogic2
+    BusinessLogic2 --> DAL2
+    DAL2 --> DB2
+    API2 <-left- BusinessLogic2
+    BusinessLogic2 <-left- DAL2
+    DAL2 <-left- DB2
+}
+
+Comm1 --> API2
+Comm1 <-down- API2
+@enduml

@@ -1,0 +1,113 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define entity(x) class x << (E,#D5E1DD) >>
+
+entity("Roles") {
+  + RoleID : int
+  --
+  RoleName : string
+  Permissions : string
+}
+
+entity("Users") {
+  + UserID : int
+  --
+  Username : string
+  PasswordHash : string
+  Email : string
+  LastLogin : datetime
+  RoleID : int
+}
+
+entity("UserLogs") {
+  + LogID : int
+  --
+  UserID : int
+  Action : string
+  Timestamp : datetime
+}
+
+entity("Customers") {
+  + CustomerID : int
+  --
+  Name : string
+  Contact : string
+  Email : string
+}
+
+entity("Cars") {
+  + CarID : int
+  --
+  CustomerID : int
+  Model : string
+  LicensePlate : string
+}
+
+entity("Sellers") {
+  + SellerID : int
+  --
+  Name : string
+  Contact : string
+}
+
+entity("ProductTypes") {
+  + TypeID : int
+  --
+  TypeName : string
+  Category : string
+}
+
+entity("Storage") {
+  + ProductID : int
+  --
+  TypeID : int
+  StockQuantity : int
+  Price : float
+}
+
+entity("Orders") {
+  + OrderID : int
+  --
+  UserID : int
+  CustomerID : int
+  SellerID : int
+  Date : datetime
+}
+
+entity("OrderDetails") {
+  + OrderDetailID : int
+  --
+  OrderID : int
+  ProductID : int
+  Quantity : int
+}
+
+entity("Analytics") {
+  + AnalyticsID : int
+  --
+  OrderID : int
+  Revenue : float
+  Timestamp : datetime
+}
+
+entity("InventoryAudit") {
+  + AuditID : int
+  --
+  ProductID : int
+  StockCount : int
+  Discrepancy : int
+  Timestamp : datetime
+}
+
+Roles "1" -- "0..*" Users : has
+Users "1" -- "0..*" UserLogs : has
+Customers "1" -- "0..*" Cars : has
+Orders -- Users : made by
+Orders -- Customers : for
+Orders -- Sellers : sold by
+OrderDetails -- Orders : contains
+OrderDetails -- Storage : for
+Analytics -- Orders : analyzes
+InventoryAudit -- Storage : audits
+ProductTypes "1" -- "0..*" Storage : has type
+@enduml
