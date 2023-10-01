@@ -38,15 +38,16 @@ AutoCenter Inventory and Sales Management System is a comprehensive platform des
 
 ### Tech Stack
 
-- **Programming Language**: C++17
-- **GUI Framework**: Qt5
-- **Backend Libraries**: Boost
-- **Database**: SQLite
-- **JSON Library**: nlohmann/json
-- **Testing Framework**: GTest
-- **Logging Library**: spdlog
-- **Dependency Management**: Conan
-- **Others**: More as per requirements.
+| Component             | Technology    |
+| --------------------- | ------------- |
+| Programming Language  | C++17         |
+| GUI Framework         | Qt5           |
+| Backend Libraries     | Boost         |
+| Database              | SQLite        |
+| JSON Library          | nlohmann/json |
+| Testing Framework     | GTest         |
+| Logging Library       | spdlog        |
+| Dependency Management | Conan         |
 
 ---
 
