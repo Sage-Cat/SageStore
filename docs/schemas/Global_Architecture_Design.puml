@@ -6,12 +6,16 @@ package "Client" {
         + Sales View
         + Inventory View
         + HR View
+        + Analytics View
+        + Customer Management View
     }
 
     RECTANGLE "Application Logic" as AppLogic1 {
         + Sales Module
         + Inventory Module
         + HR Module
+        + Analytics Module
+        + Customer Management Module
     }
 
     RECTANGLE "Communication Layer" as Comm1 {
@@ -30,18 +34,27 @@ package "Server" {
         + /sales
         + /inventory
         + /hr
+        + /analytics
+        + /customers
+        + /auth
     }
 
     RECTANGLE "Business Logic" as BusinessLogic2 {
         + Sales Management
         + Inventory Tracking
         + HR Management
+        + Analytics
+        + Customer Management
+        + Authentication & Authorization
     }
 
     RECTANGLE "Data Access Layer" as DAL2 {
         + SalesRepository
         + InventoryRepository
         + HRRepository
+        + AnalyticsRepository
+        + CustomerRepository
+        + AuthRepository
     }
 
     RECTANGLE "Database" as DB2 {

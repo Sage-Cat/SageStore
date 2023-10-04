@@ -5,17 +5,14 @@
 entity("Roles") {
   + RoleID : int
   --
-  RoleName : string
-  Permissions : string
+  Name : string
 }
 
 entity("Users") {
   + UserID : int
   --
   Username : string
-  PasswordHash : string
-  Email : string
-  LastLogin : datetime
+  Password : string
   RoleID : int
 }
 
@@ -27,51 +24,75 @@ entity("UserLogs") {
   Timestamp : datetime
 }
 
-entity("Customers") {
-  + CustomerID : int
+entity("Contacts") {
+  + ContactID : int
+  --
+  Name : string
+  Type : string
+  Email : string
+  Phone : string
+}
+
+entity("ContactCars") {
+  + CarID : int
+  --
+  ContactID : int
+  LicensePlate : string
+  Model : string
+}
+
+entity("EmployeeRecords") {
+  + EmployeeID : int
+  --
+  Name : string
+}
+
+entity("Suppliers") {
+  + SupplierID : int
   --
   Name : string
   Contact : string
   Email : string
 }
 
-entity("Cars") {
-  + CarID : int
-  --
-  CustomerID : int
-  Model : string
-  LicensePlate : string
-}
-
-entity("Sellers") {
-  + SellerID : int
-  --
-  Name : string
-  Contact : string
-}
-
-entity("ProductTypes") {
+entity("ProductType") {
   + TypeID : int
   --
-  TypeName : string
-  Category : string
+  CatalogueCode : string
+  Barcode : string
+  UKT_ZED : string
+  Unit : string
+  IsImported : bool
+  SupplierID : int
 }
 
-entity("Storage") {
+entity("Products") {
   + ProductID : int
   --
-  TypeID : int
-  StockQuantity : int
-  Price : float
+  Name : string
+  Description : string
+  Category : string
+  ProductTypeID : int
+  EmployeeRecordID: int
+}
+
+entity("Inventory") {
+  + InventoryID : int
+  --
+  ProductID : int
+  UserID : int
+  QuantityAvailable : int
 }
 
 entity("Orders") {
   + OrderID : int
   --
+  Date : datetime
   UserID : int
   CustomerID : int
-  SellerID : int
-  Date : datetime
+  Status : string
+  Type : string
+  OrderDetailID : int
 }
 
 entity("OrderDetails") {
@@ -80,34 +101,33 @@ entity("OrderDetails") {
   OrderID : int
   ProductID : int
   Quantity : int
+  Price : float
 }
 
-entity("Analytics") {
-  + AnalyticsID : int
+entity("PurchaseOrders") {
+  + PurchaseOrderID : int
   --
-  OrderID : int
-  Revenue : float
-  Timestamp : datetime
-}
-
-entity("InventoryAudit") {
-  + AuditID : int
-  --
-  ProductID : int
-  StockCount : int
-  Discrepancy : int
-  Timestamp : datetime
+  Date : datetime
+  UserID : int
+  SupplierID : int
+  OrderDetailID : int
+  Status : string
 }
 
 Roles "1" -- "0..*" Users : has
 Users "1" -- "0..*" UserLogs : has
-Customers "1" -- "0..*" Cars : has
-Orders -- Users : made by
-Orders -- Customers : for
-Orders -- Sellers : sold by
-OrderDetails -- Orders : contains
-OrderDetails -- Storage : for
-Analytics -- Orders : analyzes
-InventoryAudit -- Storage : audits
-ProductTypes "1" -- "0..*" Storage : has type
+Users "1" -- "0..*" Orders : placed
+Users "1" -- "0..*" PurchaseOrders : placed
+Users "1" -- "0..*" Inventory : manages
+EmployeeRecords "1" -- "0..*" Orders : involved_in
+EmployeeRecords "1" -- "0..*" Products : has
+Contacts "1" -- "0..*" ContactCars : has
+Contacts "1" -- "0..*" Orders : involved_in
+Contacts "1" -- "0..*" PurchaseOrders : involved_in
+Suppliers "1" -- "0..*" ProductType : supplies
+ProductType "1" -- "0..*" Products : categorizes
+Products "1" -- "0..*" Inventory : stored_in
+Products "1" -- "0..*" OrderDetails : involved_in
+Orders "1" -- "0..*" OrderDetails : consists_of
+PurchaseOrders "1" -- "0..*" OrderDetails : consists_of
 @enduml
