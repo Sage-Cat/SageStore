@@ -31,12 +31,12 @@ CREATE TABLE Contacts (
   Phone VARCHAR(20)
 );
 
--- Create ContactCars table
-CREATE TABLE ContactCars (
-  CarID INT PRIMARY KEY AUTO_INCREMENT,
+-- Create ContactDetails table
+CREATE TABLE ContactDetails (
+  ContactDetailsID INT PRIMARY KEY AUTO_INCREMENT,
   ContactID INT,
-  LicensePlate VARCHAR(20),
-  Model VARCHAR(50),
+  name VARCHAR(20),
+  value VARCHAR(50),
   FOREIGN KEY (ContactID) REFERENCES Contacts(ContactID)
 );
 

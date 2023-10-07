@@ -33,12 +33,12 @@ entity("Contacts") {
   Phone : string
 }
 
-entity("ContactCars") {
-  + CarID : int
+entity("ContactDetails") {
+  + ContactDetailsID : int
   --
   ContactID : int
-  LicensePlate : string
-  Model : string
+  name : string
+  value : string
 }
 
 entity("EmployeeRecords") {
@@ -121,7 +121,7 @@ Users "1" -- "0..*" PurchaseOrders : placed
 Users "1" -- "0..*" Inventory : manages
 EmployeeRecords "1" -- "0..*" Orders : involved_in
 EmployeeRecords "1" -- "0..*" Products : has
-Contacts "1" -- "0..*" ContactCars : has
+Contacts "1" -- "0..*" ContactDetails : has
 Contacts "1" -- "0..*" Orders : involved_in
 Contacts "1" -- "0..*" PurchaseOrders : involved_in
 Suppliers "1" -- "0..*" ProductType : supplies
