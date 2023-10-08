@@ -1,4 +1,4 @@
-# AutoCenter Inventory and Sales Management System
+# SageStore - ERP System for Small-to-Medium Enterprises
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](LINK_TO_BUILD)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -8,9 +8,14 @@
 
 ## Table of Contents
 
-- [About the Project](#about-the-project)
+- [Introduction](#introduction)
+  - [Project Overview](#project-overview)
+  - [Objectives](#objectives)
   - [Features](#features)
+- [Technologies Used](#technologies-used)
   - [Tech Stack](#tech-stack)
+- [Architecture Schema](#database-schema)
+- [Database Schema](#database-schema)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -22,9 +27,19 @@
 
 ---
 
-## About the Project
+## Introduction
 
-AutoCenter Inventory and Sales Management System is a comprehensive platform designed to automate the tasks of sales, inventory, HR, and analytics in an auto center.
+### Project Overview
+
+The project aims to build an ERP system to manage core business processes for SMEs, including inventory, sales, purchase, HR, and accounting. It will be a client-server desktop application developed using C++20 and Qt 6.5.
+
+### Objectives
+
+- Efficient Sales Management
+- Inventory Control
+- Scalable Analytics
+- User-Friendly UI
+- Data Integrity
 
 ### Features
 
@@ -36,18 +51,26 @@ AutoCenter Inventory and Sales Management System is a comprehensive platform des
 - API Support for future scalability.
 - Multi-language support.
 
+## Technologies Used
+
 ### Tech Stack
 
-| Component             | Technology    |
-| --------------------- | ------------- |
-| Programming Language  | C++17         |
-| GUI Framework         | Qt5           |
-| Backend Libraries     | Boost         |
-| Database              | SQLite        |
-| JSON Library          | nlohmann/json |
-| Testing Framework     | GTest         |
-| Logging Library       | spdlog        |
-| Dependency Management | Conan         |
+| Layer        | Technology   |
+| ------------ | ------------ |
+| Frontend     | Qt 6.5       |
+| Backend      | C++20        |
+| Database     | SQLite       |
+| Build Tool   | CMake, Conan |
+| Version Ctrl | Git          |
+| CI/CD        | Jenkins      |
+
+## Architecture Schema
+
+Will be soon
+
+## Database Schema
+
+Will be soon
 
 ---
 
@@ -61,24 +84,43 @@ AutoCenter Inventory and Sales Management System is a comprehensive platform des
 
 ### Installation
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/Sage-Cat/SageStore
+1. Clone the repo
+
    ```
-2. Navigate to the project directory and install dependencies using Conan
-   ```bash
-   conan install .
-   ```
-3. Run the initialization scripts
-   ```bash
-   sqlite3 database.sl3 < ./scripts/create_db.sql
+   git clone https://github.com/Sage-Cat/SageStore.git
    ```
 
----
+2. Create and go to build folder
+
+   ```
+   mkdir build
+   cd build
+   ```
+
+3. Install prerequisites
+
+   ```
+   conan install ..
+   ```
+
+4. Run CMake
+
+   ```
+   cmake -G "MinGW Makefiles" .. # or your different generator
+   ```
+
+5. Build the project
+
+   ```
+   cmake --build .
+   ```
+
+6. Run the application
+   will
 
 ## Usage
 
-Provide instructions on how to use the application, or link to a separate `USAGE.md` document.
+Usage instructions will be provided at a later stage or link to a separate `USAGE.md` document.
 
 ---
 
@@ -96,7 +138,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## Contact
 
-Volodymyr Pavlenko - sagecatbox@gmail.com
+sagecatbox@gmail.com
 
 Project Link: [https://github.com/Sage-Cat/SageStore](https://github.com/Sage-Cat/SageStore)
 
@@ -106,5 +148,3 @@ Project Link: [https://github.com/Sage-Cat/SageStore](https://github.com/Sage-Ca
 
 - Open-source libraries: nlohmann_json, Boost, SQLite3
 - Generated with PlantUML
-
----
