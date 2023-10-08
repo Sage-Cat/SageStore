@@ -2,8 +2,8 @@
 
 !define RECTANGLE class
 
-package "Client-Side" {
-  RECTANGLE AppController {
+package "Client" {
+  RECTANGLE SageStoreClient {
     +initialize(): void
     +run(): void
   }
@@ -63,9 +63,9 @@ package "Client-Side" {
   }
 
   ' Relationships
-  AppController -down-> UIManager
-  AppController -down-> ApplicationLogic
-  AppController -down-> CommunicationLayer
+  SageStoreClient -down-> UIManager
+  SageStoreClient -down-> ApplicationLogic
+  SageStoreClient -down-> CommunicationLayer
   UIManager -down-> UiComponent
 
   ' Logic to Modules
