@@ -1,18 +1,26 @@
-# This file is your customized `.gitlab-ci.yml` file for your project.
-# Make sure you save this as `.gitlab-ci.yml` at the root of your Git repository.
+# Updated .gitlab-ci.yml for C++ projects with both server and client binaries
 
-# Using an official GCC image based on Debian. You can specify versions like gcc:9.3
-image: gcc:9.3
+image: gcc:latest
 
 variables:
-  # Define your variables here, for example:
-  OUTPUT_BINARY: "myproject_binary"
+  CLIENT_BINARY: "SageStoreClient"
+  SERVER_BINARY: "SageStoreServer"
 
-# Define the build stage
+before_script:
+  - apt-get update -qq
+  - apt-get install -y -qq software-properties-common
+  - wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
+  - apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+  - apt-get update -qq
+  - apt-get install -y -qq cmake
+
+stages:
+  - build
+  - test
+  - deploy
+
 build:
   stage: build
-  before_script:
-    - apt update && apt -y install cmake make
   script:
     - mkdir build
     - cd build
@@ -20,21 +28,18 @@ build:
     - make
   artifacts:
     paths:
-      - build/${OUTPUT_BINARY}
+      - build
 
-# Define the test stage
 test:
   stage: test
   script:
-    - chmod +x runtests.sh
-    - ./runtests.sh
+    - echo "There are no tests!"
 
-# Define the deploy stage
+
 deploy:
   stage: deploy
   script:
-    - chmod +x deploy.sh
-    - ./deploy.sh
-  environment: production
+    - echo "There is no deployment script"
+  environment:
+    name: SageStore
 
-# You can include more stages like 'lint', 'review', etc.
