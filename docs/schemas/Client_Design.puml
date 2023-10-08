@@ -1,0 +1,103 @@
+@startuml
+
+!define RECTANGLE class
+
+package "Client-Side" {
+  RECTANGLE AppController {
+    +initialize(): void
+    +run(): void
+  }
+
+  package "UI" #White {
+    RECTANGLE UIManager {
+      +initUI(): void
+      +updateUI(): void
+    }
+
+    RECTANGLE UiComponent <<interface>> {
+      +render(): void
+    }
+
+    package "Views" {
+      RECTANGLE SalesView
+      RECTANGLE InventoryView
+      RECTANGLE HRView
+      RECTANGLE CustomerManagementView
+      RECTANGLE SupplierManagementView
+      RECTANGLE AnalyticsView
+    }
+  } 
+
+  package "ApplicationLogic" #White {
+    RECTANGLE ModuleInterface <<interface>> {
+      +init(): void
+    }
+
+    package "Modules" {
+      RECTANGLE SalesModule
+      RECTANGLE InventoryModule
+      RECTANGLE HRModule
+      RECTANGLE CustomerManagementModule
+      RECTANGLE SupplierManagementModule
+      RECTANGLE AnalyticsModule
+      RECTANGLE PrintingModule
+    }
+
+    RECTANGLE ApplicationLogic {
+      +in(): void
+    }
+  }
+
+  package "Communication" #White {
+    RECTANGLE CommunicationLayer {
+      +sendRequest(): void
+      +receiveResponse(): void
+    }
+
+    RECTANGLE DataSerialization <<interface>> {
+      +serialize(): void
+      +deserialize(): void
+    }
+
+    RECTANGLE JsonSerialization
+  }
+
+  ' Relationships
+  AppController -down-> UIManager
+  AppController -down-> ApplicationLogic
+  AppController -down-> CommunicationLayer
+  UIManager -down-> UiComponent
+
+  ' Logic to Modules
+  ApplicationLogic -down-> ModuleInterface
+
+  ' Communication
+  CommunicationLayer -down-> DataSerialization
+
+  ' Inheritance
+  UiComponent <|-- SalesView
+  UiComponent <|-- InventoryView
+  UiComponent <|-- HRView
+  UiComponent <|-- CustomerManagementView
+  UiComponent <|-- SupplierManagementView
+  UiComponent <|-- AnalyticsView
+
+  ModuleInterface <|-- SalesModule
+  ModuleInterface <|-- InventoryModule
+  ModuleInterface <|-- HRModule
+  ModuleInterface <|-- CustomerManagementModule
+  ModuleInterface <|-- SupplierManagementModule
+  ModuleInterface <|-- AnalyticsModule
+  ModuleInterface <|-- PrintingModule
+
+  DataSerialization <|-- JsonSerialization
+
+  note "SIGNAL-SLOT approach to prevent coupling" as N1
+  ApplicationLogic .. N1
+  UIManager .. N1
+
+  ' Hidden relationships to influence layout
+  "UI" -[hidden]-> "ApplicationLogic"
+  "ApplicationLogic" -[hidden]-> "Communication"
+
+@enduml
