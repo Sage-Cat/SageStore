@@ -1,0 +1,40 @@
+# This file is your customized `.gitlab-ci.yml` file for your project.
+# Make sure you save this as `.gitlab-ci.yml` at the root of your Git repository.
+
+# Using an official GCC image based on Debian. You can specify versions like gcc:9.3
+image: gcc:9.3
+
+variables:
+  # Define your variables here, for example:
+  OUTPUT_BINARY: "myproject_binary"
+
+# Define the build stage
+build:
+  stage: build
+  before_script:
+    - apt update && apt -y install cmake make
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+  artifacts:
+    paths:
+      - build/${OUTPUT_BINARY}
+
+# Define the test stage
+test:
+  stage: test
+  script:
+    - chmod +x runtests.sh
+    - ./runtests.sh
+
+# Define the deploy stage
+deploy:
+  stage: deploy
+  script:
+    - chmod +x deploy.sh
+    - ./deploy.sh
+  environment: production
+
+# You can include more stages like 'lint', 'review', etc.
