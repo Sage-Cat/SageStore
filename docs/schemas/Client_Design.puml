@@ -44,7 +44,7 @@ package "Client" {
     }
 
     RECTANGLE ApplicationLogic {
-      +in(): void
+      +init(): void
     }
   }
 

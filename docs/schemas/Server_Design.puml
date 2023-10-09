@@ -37,11 +37,19 @@ IMediator <|-- AnalyticsMediator
 
 ' API Endpoints
 package "API Endpoints" {
+  RECTANGLE APIFacade {
+    +route(requestType, requestData): void
+  }
   RECTANGLE Endpoints {
     +RESTful APIs
     +RPC Endpoints
   }
+
+  APIFacade -- Endpoints
 }
+
+' Relationships for API Endpoints
+SageStoreServer -up-> APIFacade : uses
 
 ' Business Logic
 package "Business Logic" {
@@ -100,9 +108,6 @@ CustomerManagementModule -[hidden]- HRModule
 UserManagementModule -[hidden]- CustomerManagementModule
 SupplierManagementModule -[hidden]- UserManagementModule
 AnalyticsModule -[hidden]- SupplierManagementModule
-
-' Relationships for API Endpoints
-SageStoreServer -up-> Endpoints : uses
 
 ' Relationships for Main Application Service
 SageStoreServer -down-> BusinessLogic : uses
