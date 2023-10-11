@@ -1,30 +1,28 @@
-# Updated .gitlab-ci.yml for C++ projects with both server and client binaries
+# .gitlab-ci.yml for C++ SageStore project
+# This configuration is currently set up to build only the server.
+# Client build is skipped for now.
 
 image: gcc:latest
 
 variables:
-  CLIENT_BINARY: "SageStoreClient"
   SERVER_BINARY: "SageStoreServer"
 
 before_script:
-  - apt-get update -qq
-  - apt-get install -y -qq software-properties-common
-  - wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
-  - apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+  # Setting up dependencies for server build
   - apt-get update -qq
   - apt-get install -y -qq cmake
 
 stages:
-  - build
+  - build_server # Stage for building only the server
   - test
   - deploy
 
-build:
-  stage: build
+build_server: # Job for building only the server
+  stage: build_server
   script:
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake ../Server # Specify the Server directory to build only the server part
     - make
   artifacts:
     paths:
@@ -35,11 +33,9 @@ test:
   script:
     - echo "There are no tests!"
 
-
 deploy:
   stage: deploy
   script:
     - echo "There is no deployment script"
   environment:
     name: SageStore
-
