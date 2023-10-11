@@ -106,7 +106,7 @@ Will be soon
 4. Run CMake
 
    ```
-   cmake -G "MinGW Makefiles" .. # or your different generator
+   cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:\Qt\6.5.3\mingw_64" .. # or your different generator and Qt path
    ```
 
 5. Build the project
