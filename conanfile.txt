@@ -1,8 +1,0 @@
-[requires]
-nlohmann_json/[*]
-boost/[*]
-sqlite3/[*]
-
-[generators]
-CMakeDeps
-CMakeToolchain
