@@ -10,23 +10,22 @@ ApplicationWindow {
     width: 1200
     height: 800
     title: "SageStore"
-
     flags: Qt.Window
-    visibility: Window.Maximized
+    visibility: "Maximized"
 
-    // Dark theme
     property color darkPrimaryColor: "#121212"
     property color darkSecondaryColor: "#1F1F1F"
     property color darkTextColor: "#FFFFFF"
-    // Light theme
+
     property color lightPrimaryColor: "#FFFFFF"
     property color lightSecondaryColor: "#F1F1F1"
     property color lightTextColor: "#000000"
 
     ColumnLayout {
         anchors.fill: parent
-
-        MainMenu {
+        
+        MainMenu {  
+            Layout.fillWidth: true
         }
 
         StackView {
@@ -43,7 +42,7 @@ ApplicationWindow {
             color: mainWindow.color
         }
     }
-
+    
     Connections {
         target: uiManager
         function onThemeChanged(theme) {

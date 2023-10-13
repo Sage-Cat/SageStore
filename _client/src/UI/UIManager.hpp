@@ -2,6 +2,8 @@
 
 #include <QObject>
 #include <QQmlApplicationEngine>
+#include <QFont>
+
 #include <memory>
 
 /**
@@ -61,6 +63,8 @@ public:
      */
     void setTheme(Theme theme);
 
+    QFont defaultFont() const;
+
 signals:
     /**
      * @brief Notify when a UI event occurs.
@@ -119,5 +123,5 @@ private:
 
 private:
     Theme m_theme;
-    std::unique_ptr<QQmlApplicationEngine> m_engine;
+    QQmlApplicationEngine m_engine;
 };

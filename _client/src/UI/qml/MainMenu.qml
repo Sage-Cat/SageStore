@@ -1,116 +1,61 @@
-import QtQuick.Controls
+import QtQuick.Controls 2.15
 
 MenuBar {
+    id: mainMenuBar
+
+    // File Menu
     Menu {
         title: "File"
-        MenuItem { 
-            text: "Settings"
-        }
+        MenuItem { text: "Settings" }
         MenuItem {
             text: "Exit"
             onTriggered: Qt.quit()
         }
     }
+
+    // Purchasing Module Menu
     Menu {
-        title: "Purchasing Module"
-        MenuItem {
-            text: "Add Purchase"
-        }
-        MenuItem {
-            text: "Edit Purchase"
-        }
-        MenuItem {
-            text: "Delete Purchase"
-        }
+        title: "Purchasing"
+        MenuItem { text: "Purchase Orders" }
+        MenuItem { text: "Supplier Management" }
+        MenuItem { text: "Goods Receipts" }
     }
+
+    // Sales Module Menu
     Menu {
-        title: "Sales Module"
-        MenuItem {
-            text: "Add Sale"
-        }
-        MenuItem {
-            text: "Edit Sale"
-        }
-        MenuItem {
-            text: "Delete Sale"
-        }
-        MenuItem {
-            text: "Audit Trail"
-        }
+        title: "Sales"
+        MenuItem { text: "Sales Orders" }
+        MenuItem { text: "Customer Management" }
+        MenuItem { text: "Invoicing" }
     }
+
+    // Inventory Module Menu
     Menu {
-        title: "Inventory Module"
-        MenuItem {
-            text: "Add Item"
-        }
-        MenuItem {
-            text: "Edit Item"
-        }
-        MenuItem {
-            text: "Delete Item"
-        }
+        title: "Inventory"
+        MenuItem { text: "Product Management" }
+        MenuItem { text: "Supplier's Pricelist Upload" }
+        MenuItem { text: "Stock Tracking" }
     }
+
+    // Analytics Module Menu
     Menu {
-        title: "Analytics Module"
-        MenuItem {
-            text: "Gross Revenue"
-        }
-        MenuItem {
-            text: "Employee Actions Log"
-        }
+        title: "Analytics"
+        MenuItem { text: "Sales Analytics" }
+        MenuItem { text: "Inventory Analytics" }
     }
+
+    // Users Module Menu
     Menu {
-        title: "User Management"
-        MenuItem {
-            text: "Add User"
-        }
-        MenuItem {
-            text: "Edit User"
-        }
-        MenuItem {
-            text: "Delete User"
-        }
+        title: "Users"
+        MenuItem { text: "User Roles" }
+        MenuItem { text: "User Logs" }
     }
+
+    // Management Module Menu
     Menu {
-        title: "HR Management"
-        MenuItem {
-            text: "Add Employee"
-        }
-        MenuItem {
-            text: "Edit Employee"
-        }
-        MenuItem {
-            text: "Delete Employee"
-        }
-    }
-    Menu {
-        title: "Customer Management"
-        MenuItem {
-            text: "Add Customer"
-        }
-        MenuItem {
-            text: "Edit Customer"
-        }
-        MenuItem {
-            text: "Delete Customer"
-        }
-    }
-    Menu {
-        title: "Printing"
-        MenuItem {
-            text: "Print Forms"
-        }
-        MenuItem {
-            text: "Print Labels"
-        }
-    }
-    Menu {
-        title: "Help"
-        MenuItem {
-            text: "About"
-        }
-        MenuItem {
-            text: "Contact Us"
-        }
+        title: "Management"
+        MenuItem { text: "Employees" }
+        MenuItem { text: "Customers" }
+        MenuItem { text: "Suppliers" }
     }
 }

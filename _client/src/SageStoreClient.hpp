@@ -30,10 +30,6 @@ public:
 
     void init();
 
-signals:
-    void started();
-    void finished();
-
 private:
     QApplication &m_app;
 
@@ -42,5 +38,5 @@ private:
      *
      * This member is responsible for managing the user interface of the client.
      */
-    std::unique_ptr<UIManager> m_uiManager;
+    UIManager m_uiManager;
 };

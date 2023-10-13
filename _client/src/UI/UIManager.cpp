@@ -9,19 +9,21 @@
 #include "UI/QmlTypeRegistrar.hpp"
 
 UIManager::UIManager(QObject *parent) noexcept
-    : QObject(parent),
-      m_engine(std::make_unique<QQmlApplicationEngine>())
+    : QObject(parent)
 {
     SPDLOG_TRACE("UIManager::UIManager");
 
     QmlTypeRegistrar::registerTypes();
 
-    connect(m_engine.get(), &QQmlApplicationEngine::objectCreated,
+    connect(&m_engine, &QQmlApplicationEngine::objectCreated,
             this, [this](QObject *obj, const QUrl &objUrl)
             { if (!obj) SPDLOG_CRITICAL("Failed to load QML from URL: {}", objUrl.toString().toStdString()); });
 }
 
-UIManager::~UIManager() = default;
+UIManager::~UIManager()
+{
+    SPDLOG_TRACE("UIManager::~UIManager");
+}
 
 void UIManager::init()
 {
@@ -58,6 +60,14 @@ UIManager::Theme UIManager::theme() const
     return m_theme;
 }
 
+QFont UIManager::defaultFont() const
+{
+    // TODO: move it to beter location
+    QFont defaultFont("Helvetica");
+    defaultFont.setPixelSize(18);
+    return defaultFont;
+}
+
 void UIManager::initTheme()
 {
     SPDLOG_TRACE("UIManager::initTheme");
@@ -68,11 +78,11 @@ void UIManager::initMainWindow()
 {
     SPDLOG_TRACE("UIManager::initMainWindow");
 
-    if (m_engine && m_engine->rootContext())
+    if (m_engine.rootContext())
     {
-        m_engine->rootContext()->setContextProperty("uiManager", this);
-        m_engine->load(QUrl(QStringLiteral("qrc:/main.qml")));
-        if (m_engine->rootObjects().isEmpty())
+        m_engine.rootContext()->setContextProperty("uiManager", this);
+        m_engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        if (m_engine.rootObjects().isEmpty())
             SPDLOG_CRITICAL("UIManager::initMainWindow Failed to load main window");
     }
     else
