@@ -94,19 +94,18 @@ Will be soon
 
    ```
    mkdir build
-   cd build
    ```
 
 3. Install prerequisites
 
    ```
-   conan install ..
+   conan install . --output-folder=build --build=missing -s build_type=Debug
    ```
 
 4. Run CMake
 
    ```
-   cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:\Qt\6.5.3\mingw_64" .. # or your different generator and Qt path
+   cmake .. --preset conan-debug
    ```
 
 5. Build the project
@@ -116,7 +115,7 @@ Will be soon
    ```
 
 6. Run the application
-   will
+   Will be soon
 
 ## Usage
 

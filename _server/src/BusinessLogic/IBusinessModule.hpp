@@ -1,3 +1,11 @@
+#pragma once
+
+/**
+ * @interface IBusinessModule
+ * @brief Interface for business modules.
+ *
+ * This interface defines the basic functionalities that any business module should implement.
+ */
 class IBusinessModule
 {
 public:
