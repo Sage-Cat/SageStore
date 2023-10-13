@@ -1,10 +1,5 @@
-/**
- * @file SageStoreClient.hpp
- * @brief Header file for the SageStoreClient class.
- */
-
-#ifndef SAGESTORECLIENT_HPP
-#define SAGESTORECLIENT_HPP
+#pragma once
+#include <QApplication>
 
 #include <memory>
 #include "UI/UIManager.hpp"
@@ -15,15 +10,16 @@
  *
  * This class is responsible for initializing and running the Sage Store Client.
  */
-class SageStoreClient
+class SageStoreClient : public QObject
 {
+    Q_OBJECT
 public:
     /**
      * @brief Default constructor for SageStoreClient.
      *
      * Initializes the SageStoreClient object.
      */
-    SageStoreClient();
+    SageStoreClient(QApplication &app);
 
     /**
      * @brief Destructor for SageStoreClient.
@@ -32,14 +28,15 @@ public:
      */
     ~SageStoreClient();
 
-    /**
-     * @brief Runs the Sage Store Client.
-     *
-     * This function initializes and runs the UI manager, and handles the main logic for the client.
-     */
-    void run();
+    void init();
+
+signals:
+    void started();
+    void finished();
 
 private:
+    QApplication &m_app;
+
     /**
      * @brief Unique pointer to the UIManager object.
      *
@@ -47,5 +44,3 @@ private:
      */
     std::unique_ptr<UIManager> m_uiManager;
 };
-
-#endif // SAGESTORECLIENT_HPP

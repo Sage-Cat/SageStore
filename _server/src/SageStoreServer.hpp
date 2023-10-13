@@ -1,10 +1,4 @@
-/**
- * @file SageStoreServer.hpp
- * @brief Header file for the SageStoreServer class.
- */
-
-#ifndef SAGESTORESERVER_HPP
-#define SAGESTORESERVER_HPP
+#pragma once
 
 /**
  * @class SageStoreServer
@@ -35,5 +29,3 @@ public:
 private:
     // Private members can be added here
 };
-
-#endif // SAGESTORESERVER_HPP

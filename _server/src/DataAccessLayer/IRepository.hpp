@@ -1,10 +1,4 @@
-/**
- * @file IRepository.hpp
- * @brief Header file for the IRepository interface.
- */
-
-#ifndef IREPOSITORY_HPP
-#define IREPOSITORY_HPP
+#pragma once
 
 /**
  * @interface IRepository
@@ -49,5 +43,3 @@ public:
      */
     virtual void query() = 0;
 };
-
-#endif // IREPOSITORY_HPP

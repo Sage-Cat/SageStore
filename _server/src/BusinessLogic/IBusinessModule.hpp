@@ -1,10 +1,4 @@
-/**
- * @file IBusinessModule.hpp
- * @brief Header file for the IBusinessModule interface.
- */
-
-#ifndef IBUSINESSMODULE_HPP
-#define IBUSINESSMODULE_HPP
+#pragma once
 
 /**
  * @interface IBusinessModule
@@ -27,5 +21,3 @@ public:
      */
     virtual void init() = 0;
 };
-
-#endif // IBUSINESSMODULE_HPP

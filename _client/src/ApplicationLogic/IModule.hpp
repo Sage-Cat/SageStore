@@ -1,10 +1,4 @@
-/**
- * @file IModule.hpp
- * @brief Header file for the IModule interface.
- */
-
-#ifndef IMODULE_HPP
-#define IMODULE_HPP
+#pragma once
 
 /**
  * @interface IModule
@@ -29,5 +23,3 @@ public:
      */
     virtual void init() = 0;
 };
-
-#endif // IMODULE_HPP

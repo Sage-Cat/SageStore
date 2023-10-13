@@ -1,19 +1,19 @@
 #include "SageStoreClient.hpp"
 
-SageStoreClient::SageStoreClient()
-    : m_uiManager(std::make_unique<UIManager>())
+#include "statements.hpp"
+
+SageStoreClient::SageStoreClient(QApplication &app) : m_app(app), m_uiManager(std::make_unique<UIManager>())
 {
+    SPDLOG_TRACE("SageStoreClient::SageStoreClient");
 }
 
 SageStoreClient::~SageStoreClient()
 {
-    // Destructor will automatically clean up m_uiManager due to unique_ptr
+    SPDLOG_TRACE("SageStoreClient::~SageStoreClient");
 }
 
-void SageStoreClient::run()
+void SageStoreClient::init()
 {
-    // Initialize and run UIManager here
+    SPDLOG_TRACE("SageStoreClient::init");
     m_uiManager->init();
-
-    // Your other logic here
 }

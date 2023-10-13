@@ -1,10 +1,4 @@
-/**
- * @file UiComponent.hpp
- * @brief Header file for the UiComponent interface.
- */
-
-#ifndef UICOMPONENT_HPP
-#define UICOMPONENT_HPP
+#pragma once
 
 /**
  * @interface UiComponent
@@ -29,5 +23,3 @@ public:
      */
     virtual void render() = 0;
 };
-
-#endif // UICOMPONENT_HPP

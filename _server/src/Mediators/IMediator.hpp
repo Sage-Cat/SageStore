@@ -1,10 +1,4 @@
-/**
- * @file IMediator.hpp
- * @brief Header file for the IMediator interface.
- */
-
-#ifndef IMEDIATOR_HPP
-#define IMEDIATOR_HPP
+#pragma once
 
 /**
  * @interface IMediator
@@ -29,5 +23,3 @@ public:
      */
     virtual void mediate() = 0;
 };
-
-#endif // IMEDIATOR_HPP

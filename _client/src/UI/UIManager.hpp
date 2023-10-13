@@ -1,10 +1,4 @@
-/**
- * @file UIManager.hpp
- * @brief Header file for the UIManager class.
- */
-
-#ifndef UIMANAGER_HPP
-#define UIMANAGER_HPP
+#pragma once
 
 #include <QObject>
 #include <QQmlApplicationEngine>
@@ -12,71 +6,118 @@
 
 /**
  * @class UIManager
- * @brief Class responsible for managing the UI.
+ * @brief Manages UI components.
  *
- * This class handles the initialization and management of the UI components.
- * It also provides signals and slots for UI events and errors.
+ * Initializes and manages UI components. Provides signals and slots for UI interaction.
  */
 class UIManager : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Theme theme READ theme WRITE setTheme NOTIFY themeChanged)
 
 public:
     /**
-     * @brief Constructor for UIManager.
-     *
-     * @param parent Pointer to the parent QObject.
+     * @brief Enum that identifies themes set
      */
-    explicit UIManager(QObject *parent = nullptr);
+    enum class Theme : int
+    {
+        Dark = 0,
+        Light
+    };
+    Q_ENUM(Theme)
 
     /**
-     * @brief Destructor for UIManager.
+     * @brief Construct a new UIManager object.
+     *
+     * @param parent Parent QObject.
      */
-    ~UIManager() override;
+    explicit UIManager(QObject *parent = nullptr) noexcept;
 
     /**
-     * @brief Initializes the UIManager.
+     * @brief Destroy the UIManager object.
      *
-     * This function initializes the UI modules and dialogues.
+     */
+    ~UIManager() noexcept override;
+
+    /**
+     * @brief Initialize UI components.
+     *
      */
     void init();
 
+    /**
+     * @brief Gets the  current Theme
+     *
+     * @returns theme The value of enum Theme.
+     * @see Theme
+     */
+    Theme theme() const;
+
+    /**
+     * @brief Set the Theme for the application.
+     *
+     * @param theme The value of enum Theme.
+     * @see Theme
+     */
+    void setTheme(Theme theme);
+
 signals:
     /**
-     * @brief Signal emitted when a UI event occurs.
+     * @brief Notify when a UI event occurs.
      *
-     * @param eventCode The code representing the UI event.
+     * @param eventCode The UI event code.
      */
     void uiEventOccurred(int eventCode);
 
     /**
-     * @brief Signal emitted when an error occurs.
+     * @brief Notify when a UI error occurs.
      *
-     * @param errorMessage The error message to be displayed.
+     * @param errorMessage The error message.
      */
-    void errorOccurred(const QString &errorMessage);
+    void errorOccurred(QString errorMessage);
+
+    /**
+     * @brief Notify QML about theme change.
+     *
+     * @param newTheme int value that represents Theme.
+     * @see Theme
+     */
+    void themeChanged(Theme newTheme);
 
 public slots:
     /**
-     * @brief Slot to handle module events.
+     * @brief Handle module events.
      *
-     * @param eventCode The code representing the module event.
+     * @param eventCode The module event code.
      */
     void onModuleEvent(int eventCode);
 
 private:
     /**
-     * @brief Initializes the UI modules.
+     * @brief Initialize the theme.
+     *
+     */
+    void initTheme();
+
+    /**
+     * @brief Initialize the main window.
+     *
+     */
+    void initMainWindow();
+
+    /**
+     * @brief Initialize UI modules.
+     *
      */
     void initModules();
 
     /**
-     * @brief Initializes the UI dialogues.
+     * @brief Initialize UI dialogues.
+     *
      */
     void initDialogues();
 
 private:
-    std::unique_ptr<QQmlApplicationEngine> m_engine; ///< Unique pointer to the QQmlApplicationEngine.
+    Theme m_theme;
+    std::unique_ptr<QQmlApplicationEngine> m_engine;
 };
-
-#endif // UIMANAGER_HPP

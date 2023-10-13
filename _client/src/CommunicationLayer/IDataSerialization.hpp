@@ -1,10 +1,4 @@
-/**
- * @file IDataSerialization.hpp
- * @brief Header file for the IDataSerialization interface.
- */
-
-#ifndef IDATASERIALIZATION_HPP
-#define IDATASERIALIZATION_HPP
+#pragma once
 
 #include <QString>
 
@@ -40,5 +34,3 @@ public:
      */
     virtual void deserialize(const QString &data) = 0;
 };
-
-#endif // IDATASERIALIZATION_HPP
