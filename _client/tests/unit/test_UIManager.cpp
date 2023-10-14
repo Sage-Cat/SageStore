@@ -5,7 +5,7 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include "UI/UIManager.hpp"
+#include "UI/UiManager.hpp"
 #include "Logging.hpp"
 
 class UIManagerTest : public ::testing::Test
@@ -23,30 +23,30 @@ protected:
 TEST_F(UIManagerTest, ConstructorDoesNotThrow)
 {
     SPDLOG_TRACE("Running test case: ConstructorDoesNotThrow");
-    EXPECT_NO_THROW(UIManager manager;);
+    EXPECT_NO_THROW(UiManager manager;);
 }
 
 TEST_F(UIManagerTest, SetsThemeDoesNotThrow)
 {
     SPDLOG_TRACE("Running test case: SetsThemeDoesNotThrow");
-    UIManager manager;
-    EXPECT_NO_THROW(manager.setTheme(UIManager::Theme::Light););
+    UiManager manager;
+    EXPECT_NO_THROW(manager.setTheme(UiManager::Theme::Light););
 }
 
 TEST_F(UIManagerTest, SetsThemeCorrectly)
 {
     SPDLOG_TRACE("Running test case: SetsThemeCorrectly");
-    UIManager manager;
-    manager.setTheme(UIManager::Theme::Light);
-    EXPECT_EQ(manager.theme(), UIManager::Theme::Light);
+    UiManager manager;
+    manager.setTheme(UiManager::Theme::Light);
+    EXPECT_EQ(manager.theme(), UiManager::Theme::Light);
 }
 
 TEST_F(UIManagerTest, NoFatalFailureInThemeSetting)
 {
     SPDLOG_TRACE("Running test case: NoFatalFailureInThemeSetting");
-    UIManager manager;
-    EXPECT_NO_FATAL_FAILURE(manager.setTheme(UIManager::Theme::Light));
-    EXPECT_EQ(manager.theme(), UIManager::Theme::Light);
+    UiManager manager;
+    EXPECT_NO_FATAL_FAILURE(manager.setTheme(UiManager::Theme::Light));
+    EXPECT_EQ(manager.theme(), UiManager::Theme::Light);
 }
 
 int main(int argc, char **argv)

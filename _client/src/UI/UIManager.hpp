@@ -5,12 +5,12 @@
 #include <QFont>
 
 /**
- * @class UIManager
+ * @class UiManager
  * @brief Manages UI components.
  *
  * This class is responsible for initializing and managing UI components.
  */
-class UIManager : public QObject
+class UiManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Theme theme READ theme WRITE setTheme NOTIFY themeChanged)
@@ -28,20 +28,20 @@ public:
     Q_ENUM(Theme)
 
     /**
-     * @brief Construct a new UIManager object.
+     * @brief Construct a new UiManager object.
      *
-     * Initializes a UIManager object. Optionally, a parent QObject can be passed.
+     * Initializes a UiManager object. Optionally, a parent QObject can be passed.
      *
      * @param parent Parent QObject (default is nullptr).
      */
-    explicit UIManager(QObject *parent = nullptr) noexcept;
+    explicit UiManager(QObject *parent = nullptr) noexcept;
 
     /**
-     * @brief Destructor.
+     * @brief Destroy the UiManager object.
      *
-     * Destroys the UIManager object and cleans up its resources.
+     * Destroys the UiManager object and cleans up its resources.
      */
-    ~UIManager() noexcept override;
+    ~UiManager() noexcept override;
 
     /**
      * @brief Initialize UI components.

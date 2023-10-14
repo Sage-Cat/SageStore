@@ -1,4 +1,4 @@
-#include "UIManager.hpp"
+#include "UiManager.hpp"
 
 #include <QApplication>
 #include <QQmlContext>
@@ -8,10 +8,10 @@
 #include "Logging.hpp"
 #include "UI/QmlTypeRegistrar.hpp"
 
-UIManager::UIManager(QObject *parent) noexcept
+UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
 {
-    SPDLOG_TRACE("UIManager::UIManager");
+    SPDLOG_TRACE("UiManager::UiManager");
 
     QmlTypeRegistrar::registerTypes();
 
@@ -20,14 +20,14 @@ UIManager::UIManager(QObject *parent) noexcept
             { if (!obj) SPDLOG_CRITICAL("Failed to load QML from URL: {}", objUrl.toString().toStdString()); });
 }
 
-UIManager::~UIManager()
+UiManager::~UiManager()
 {
-    SPDLOG_TRACE("UIManager::~UIManager");
+    SPDLOG_TRACE("UiManager::~UiManager");
 }
 
-void UIManager::init()
+void UiManager::init()
 {
-    SPDLOG_TRACE("UIManager::init");
+    SPDLOG_TRACE("UiManager::init");
 
     initMainWindow();
     initTheme();
@@ -35,10 +35,10 @@ void UIManager::init()
     initDialogues();
 }
 
-void UIManager::setTheme(Theme theme)
+void UiManager::setTheme(Theme theme)
 {
     const auto theme_str = theme == Theme::Dark ? "Dark" : "Light";
-    SPDLOG_TRACE(std::string("UIManager::setTheme") + theme_str);
+    SPDLOG_TRACE(std::string("UiManager::setTheme") + theme_str);
 
     if (m_theme != theme)
     {
@@ -48,13 +48,13 @@ void UIManager::setTheme(Theme theme)
     }
 }
 
-UIManager::Theme UIManager::theme() const
+UiManager::Theme UiManager::theme() const
 {
-    SPDLOG_TRACE("UIManager::theme");
+    SPDLOG_TRACE("UiManager::theme");
     return m_theme;
 }
 
-QFont UIManager::defaultFont() const
+QFont UiManager::defaultFont() const
 {
     // TODO: make possibility to setup
     QFont defaultFont("Helvetica");
@@ -62,35 +62,35 @@ QFont UIManager::defaultFont() const
     return defaultFont;
 }
 
-void UIManager::initTheme()
+void UiManager::initTheme()
 {
-    SPDLOG_TRACE("UIManager::initTheme");
+    SPDLOG_TRACE("UiManager::initTheme");
     setTheme(Theme::Dark);
 }
 
-void UIManager::initMainWindow()
+void UiManager::initMainWindow()
 {
-    SPDLOG_TRACE("UIManager::initMainWindow");
+    SPDLOG_TRACE("UiManager::initMainWindow");
 
     if (m_engine.rootContext())
     {
         m_engine.rootContext()->setContextProperty("uiManager", this);
         m_engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
         if (m_engine.rootObjects().isEmpty())
-            SPDLOG_CRITICAL("UIManager::initMainWindow Failed to load main window");
+            SPDLOG_CRITICAL("UiManager::initMainWindow Failed to load main window");
     }
     else
     {
-        SPDLOG_CRITICAL("UIManager::initMainWindow m_engine is invalid");
+        SPDLOG_CRITICAL("UiManager::initMainWindow m_engine is invalid");
     }
 }
 
-void UIManager::initModules()
+void UiManager::initModules()
 {
-    SPDLOG_TRACE("UIManager::initModules");
+    SPDLOG_TRACE("UiManager::initModules");
 }
 
-void UIManager::initDialogues()
+void UiManager::initDialogues()
 {
-    SPDLOG_TRACE("UIManager::initDialogues");
+    SPDLOG_TRACE("UiManager::initDialogues");
 }

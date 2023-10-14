@@ -14,8 +14,6 @@
   - [Features](#features)
 - [Technologies Used](#technologies-used)
   - [Tech Stack](#tech-stack)
-- [Architecture Schema](#database-schema)
-- [Database Schema](#database-schema)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -39,7 +37,6 @@ The project aims to build an ERP system to manage core business processes for SM
 - Inventory Control
 - Scalable Analytics
 - User-Friendly UI
-- Data Integrity
 
 ### Features
 
@@ -62,15 +59,7 @@ The project aims to build an ERP system to manage core business processes for SM
 | Database     | SQLite       |
 | Build Tool   | CMake, Conan |
 | Version Ctrl | Git          |
-| CI/CD        | Jenkins      |
-
-## Architecture Schema
-
-Will be soon
-
-## Database Schema
-
-Will be soon
+| CI/CD        | Gitlab-ci    |
 
 ---
 
@@ -81,47 +70,59 @@ Will be soon
 - [Conan](https://conan.io/)
 - [SQLite](https://www.sqlite.org/index.html)
 - [CMake](https://cmake.org/)
+- [GTest](http://google.github.io/googletest/)
 
 ### Installation
 
 1. Clone the repo
 
    ```
-   git clone https://github.com/Sage-Cat/SageStore.git
+   git clone git@gitlab.com:sagecat/SageStore.git
    ```
 
-2. Create and go to build folder
+2. Install prerequisites
 
    ```
-   mkdir build
+   conan install . --output-folder=build --build=missing
    ```
 
-3. Install prerequisites
+3. Go to build folder and run cmake with presets
 
    ```
-   conan install . --output-folder=build --build=missing -s build_type=Debug
-   ```
-
-4. Run CMake
-
-   ```
+   cd build
    cmake .. --preset conan-debug
    ```
 
-5. Build the project
+4. Build the project
 
    ```
    cmake --build .
    ```
 
-6. Run the application
-   Will be soon
+5. Run the application
 
-## Usage
+   ```
+   # Windows
+   .\_client\SageStoreClient.exe
 
-Usage instructions will be provided at a later stage or link to a separate `USAGE.md` document.
+   # Linux
+   ./_client/SageStoreClient
+   ```
 
----
+6. Run tests
+
+   ```
+   # Inside build folder
+   ctest
+
+   # More detailed output
+   ctest --verbose
+
+   # Run specific test
+   .\_client\unit\test_SageStoreClient.exe
+   # or
+   ./_client/unit/test_SageStoreClient
+   ```
 
 ## Contributing
 
@@ -145,5 +146,21 @@ Project Link: [https://github.com/Sage-Cat/SageStore](https://github.com/Sage-Ca
 
 ## Acknowledgments
 
-- Open-source libraries: nlohmann_json, Boost, SQLite3
+- Open-source libraries: nlohmann_json, Boost, SQLite3, GTest
 - Generated with PlantUML
+
+---
+
+## Project Team
+
+| Team Member        | Role                     | Primary Responsibilities                    |
+| ------------------ | ------------------------ | ------------------------------------------- |
+| Volodymyr Pavlenko | PM/Tech Lead & Architect | Project planning, architecture design, etc. |
+| Plotskykh Danylo   | Backend developer        |                                             |
+| Max Kozak          | SQL & C++ Developer      |                                             |
+
+---
+
+## Project Objectives, Milestones, Feature Breakdown, User Stories, Tech Stack, Database, Architecture Design
+
+Please refer to the [Project Documentation](docs/Project_Documentation.md) for detailed information.
