@@ -1,18 +1,17 @@
 # Remove main.cpp from MAIN_SOURCES
-list(REMOVE_ITEM MAIN_SOURCES "${CLIENT_SOURCES_DIR}/main.cpp")
+#list(REMOVE_ITEM MAIN_SOURCES "${CLIENT_SOURCES_DIR}/main.cpp")
 
 # Create a static library from the Client source files
-add_library(ClientTestLib STATIC ${ALL_SOURCES})
+add_library(ClientTestLib STATIC ${ALL_CLIENT_SOURCES})
 target_include_directories(ClientTestLib PUBLIC ${CLIENT_SOURCES_DIR})
 target_link_libraries(ClientTestLib Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Quick spdlog::spdlog)
 
-# Find GTest
 find_package(GTest REQUIRED)
 
 # Define test sources
 file(GLOB TEST_SOURCES "*.cpp")
 
-# Create test executables and link them
+# Create test executables
 foreach(testSrc ${TEST_SOURCES})
     get_filename_component(testName ${testSrc} NAME_WE)
     set(testExecutable "${testName}")

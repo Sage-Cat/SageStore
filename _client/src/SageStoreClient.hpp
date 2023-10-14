@@ -26,15 +26,11 @@ public:
 
     /**
      * @brief Deleted copy constructor.
-     *
-     * Copying instances of this class is not allowed.
      */
     SageStoreClient(const SageStoreClient &) = delete;
 
     /**
      * @brief Deleted copy assignment operator.
-     *
-     * Copy assignment for instances of this class is not allowed.
      */
     SageStoreClient &operator=(const SageStoreClient &) = delete;
 
@@ -61,7 +57,7 @@ private:
     QApplication &m_app;
 
     /**
-     * @brief Unique pointer to the UIManager object.
+     * @brief UIManager object initialized on stack.
      *
      * This member is responsible for managing the user interface of the client.
      */

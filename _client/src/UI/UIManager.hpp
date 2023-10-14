@@ -9,12 +9,11 @@
  * @brief Manages UI components.
  *
  * This class is responsible for initializing and managing UI components.
- * It also provides various signals and slots for UI interaction.
  */
 class UIManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Theme theme READ theme WRITE setTheme NOTIFY themeChanged) ///< Property for the current theme.
+    Q_PROPERTY(Theme theme READ theme WRITE setTheme NOTIFY themeChanged)
 
 public:
     /**
@@ -23,8 +22,8 @@ public:
      */
     enum class Theme : int
     {
-        Dark = 0, ///< Dark theme
-        Light     ///< Light theme
+        Dark = 0,
+        Light
     };
     Q_ENUM(Theme)
 
@@ -76,33 +75,11 @@ public:
 
 signals:
     /**
-     * @brief Signal emitted when a UI event occurs.
-     *
-     * @param eventCode The code representing the UI event.
-     */
-    void uiEventOccurred(int eventCode);
-
-    /**
-     * @brief Signal emitted when a UI error occurs.
-     *
-     * @param errorMessage The message describing the error.
-     */
-    void errorOccurred(QString errorMessage);
-
-    /**
      * @brief Signal emitted when the theme changes.
      *
      * @param newTheme New theme as a Theme enum value.
      */
     void themeChanged(Theme newTheme);
-
-public slots:
-    /**
-     * @brief Slot for handling module events.
-     *
-     * @param eventCode Code representing the module event.
-     */
-    void onModuleEvent(int eventCode);
 
 private:
     /**
