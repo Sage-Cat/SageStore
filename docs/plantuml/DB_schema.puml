@@ -33,73 +33,78 @@ entity("Contacts") {
   Phone : string
 }
 
-entity("ContactDetails") {
-  + ContactDetailsID : int
+entity("ContactInfo") {
+  + ContactInfoID : int
   --
   ContactID : int
-  name : string
-  value : string
+  Name : string
+  Value : string
 }
 
-entity("EmployeeRecords") {
+entity("Employees") {
   + EmployeeID : int
   --
   Name : string
+  Number : string
+  Email : string
+  Address : string
 }
 
 entity("Suppliers") {
   + SupplierID : int
   --
   Name : string
-  Contact : string
+  Number : string
   Email : string
+  Address : string
 }
 
 entity("ProductType") {
-  + TypeID : int
+  + ProductTypeID : int
   --
   CatalogueCode : string
   Barcode : string
   UKT_ZED : string
-  Unit : string
-  IsImported : bool
-  SupplierID : int
-}
-
-entity("Products") {
-  + ProductID : int
-  --
   Name : string
   Description : string
   Category : string
+  LastPrice : float
+  Unit : string
+  IsImported : bool
+}
+
+entity("ProductTypeSupplierInfo") {
+  + ProductTypeSupplierInfoID : int
+  --
   ProductTypeID : int
-  EmployeeRecordID: int
+  Code : string
+  SupplierID : int
 }
 
 entity("Inventory") {
   + InventoryID : int
   --
-  ProductID : int
-  UserID : int
+  ProductTypeID : int
   QuantityAvailable : int
+  EmployeeID : int
 }
 
-entity("Orders") {
+entity("SaleOrders") {
   + OrderID : int
   --
   Date : datetime
   UserID : int
-  CustomerID : int
+  ContactID : int
+  EmployeeID : int
   Status : string
-  Type : string
-  OrderDetailID : int
+  OrderInfoID : int
 }
 
-entity("OrderDetails") {
-  + OrderDetailID : int
+entity("OrderInfo") {
+  + OrderInfoID : int
   --
   OrderID : int
-  ProductID : int
+  ProductTypeID : int
   Quantity : int
   Price : float
 }
@@ -110,24 +115,21 @@ entity("PurchaseOrders") {
   Date : datetime
   UserID : int
   SupplierID : int
-  OrderDetailID : int
   Status : string
+  OrderInfoID : int
 }
 
-Roles "1" -- "0..*" Users : has
+Roles "1" -- "0..*" Users : asigned to
 Users "1" -- "0..*" UserLogs : has
-Users "1" -- "0..*" Orders : placed
-Users "1" -- "0..*" PurchaseOrders : placed
-Users "1" -- "0..*" Inventory : manages
-EmployeeRecords "1" -- "0..*" Orders : involved_in
-EmployeeRecords "1" -- "0..*" Products : has
-Contacts "1" -- "0..*" ContactDetails : has
-Contacts "1" -- "0..*" Orders : involved_in
-Contacts "1" -- "0..*" PurchaseOrders : involved_in
+Users "1" -- "0..*" SaleOrders : create
+Users "1" -- "0..*" PurchaseOrders : create
+Employees "1" -- "0..*" Inventory : own
+Contacts "1" -- "0..*" ContactInfo : has
+Contacts "1" -- "0..*" SaleOrders : buy
 Suppliers "1" -- "0..*" ProductType : supplies
-ProductType "1" -- "0..*" Products : categorizes
-Products "1" -- "0..*" Inventory : stored_in
-Products "1" -- "0..*" OrderDetails : involved_in
-Orders "1" -- "0..*" OrderDetails : consists_of
-PurchaseOrders "1" -- "0..*" OrderDetails : consists_of
+ProductType "1" -- "0..*" ProductTypeSupplierInfo : has
+ProductType "1" -- "0..*" Inventory : stored_in
+ProductType "1" -- "0..*" OrderInfo : involved_in
+SaleOrders "1" -- "0..*" OrderInfo : consists_of
+PurchaseOrders "1" -- "0..*" OrderInfo : consists_of
 @enduml

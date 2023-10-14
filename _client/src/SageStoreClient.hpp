@@ -3,7 +3,7 @@
 #include <QApplication>
 
 #include <memory>
-#include "UI/UIManager.hpp"
+#include "UI/UiManager.hpp"
 
 /**
  * @class SageStoreClient
@@ -57,9 +57,9 @@ private:
     QApplication &m_app;
 
     /**
-     * @brief UIManager object initialized on stack.
+     * @brief UiManager object initialized on stack.
      *
      * This member is responsible for managing the user interface of the client.
      */
-    UIManager m_uiManager;
+    UiManager m_uiManager;
 };

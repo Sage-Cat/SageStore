@@ -51,7 +51,7 @@ ApplicationWindow {
     }
 
     function updateTheme(theme) {
-        if (theme === UIManager.Theme.Dark) {
+        if (theme === UiManager.Theme.Dark) {
             mainWindow.color = darkPrimaryColor;
             backgroundRect.color = darkSecondaryColor;
             MainMenu.color = darkPrimaryColor;

@@ -1,0 +1,120 @@
+@startuml
+
+' Main Application Service
+class SageStoreServer {
+  +run(): void
+}
+
+' Mediator Interface
+class Mediator {
+  +mediate()
+}
+
+' API Endpoints
+package "API Endpoints" {
+  class APIFacade {
+    +route(requestType, requestData): void
+  }
+  class Endpoints {
+    +RESTful APIs
+    +RPC Endpoints
+  }
+
+  APIFacade -- Endpoints
+}
+
+' Relationships for API Endpoints
+SageStoreServer -up-> APIFacade : uses
+
+' Business Logic
+package "Business Logic" {
+  class BusinessLogic {
+    +init(): void
+  }
+
+  interface IBusinessModule {
+    +init(): void
+  }
+
+  class "Modules (classes)" {
+    + PurchaseModule
+    --
+    + SaleModule
+    --
+    + InventoryModule
+    --
+    + ManagementModule
+    --
+    + AnalyticsModule
+    --
+    + LogsModule
+    --
+    + UserRolesModule
+  }
+}
+
+' Data Access Layer
+package "Data Access Layer" {
+  class DatabaseManager {
+    +connect(): void
+    +disconnect(): void
+  }
+
+  interface IRepository {
+    +insert(): void
+    +update(): void
+    +delete(): void
+    +query(): void
+  }
+
+  class "Repositories (classes)" {
+    + RolesRepository
+    --
+    + UsersRepository
+    --
+    + UserLogsRepository
+    --
+    + ContactsRepository
+    --
+    + ContactInfoRepository
+    --
+    + EmployeesRepository
+    --
+    + SuppliersRepository
+    --
+    + ProductTypeRepository
+    --
+    + ProductTypeSupplierInfoRepository
+    --
+    + InventoryRepository
+    --
+    + SaleOrdersRepository
+    --
+    + OrderInfoRepository
+    --
+    + PurchaseOrdersRepository
+  }
+}
+
+' Relationships for Main Application Service
+SageStoreServer -down-> BusinessLogic : uses
+SageStoreServer -down-> DatabaseManager : uses
+SageStoreServer -down-> Mediator : uses
+
+' Relationships for Mediators to Packages
+Mediator -down-> IBusinessModule : uses
+Mediator -down-> IRepository : uses
+
+' Relationships for Business Logic
+BusinessLogic -down-> IBusinessModule : uses
+
+' Relationships for Data Access Layer
+DatabaseManager -down-> IRepository : uses
+
+' Repositories
+"Repositories (classes)" -down-|> IRepository : implements
+
+' Business Modules
+"Modules (classes)" -down-|> IBusinessModule : implements
+
+@enduml

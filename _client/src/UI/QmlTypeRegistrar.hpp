@@ -1,6 +1,6 @@
 #pragma once
 
-class UIManager;
+class UiManager;
 
 /**
  * @namespace QmlTypeRegistrar

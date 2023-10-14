@@ -1,0 +1,98 @@
+@startuml
+
+!define class class
+
+package "Client" {
+  class SageStoreClient {
+    +init(): void
+    +run(): void
+  }
+
+  package "UI" #White {
+    class UiManager {
+      +initUI(): void
+      +updateUI(): void
+    }
+
+    class UiComponent <<interface>> {
+      +render(): void
+    }
+
+    class "Views (classes)" {
+      + PurchaseView
+      --
+      + SaleView
+      --
+      + InventoryView
+      --
+      + ManagementView
+      --
+      + AnalyticsView
+      --
+      + LogsView
+      --
+      + UserRolesView
+    }
+  } 
+
+  package "ApplicationLogic" #White {
+    class IModule <<interface>> {
+      +init(): void
+    }
+
+    class "Modules (classes)" {
+      + PurchaseModule
+      --
+      + SaleModule
+      --
+      + InventoryModule
+      --
+      + ManagementModule
+      --
+      + AnalyticsModule
+      --
+      + LogsModule
+      --
+      + UserRolesModule
+    }
+    
+    class ApplicationLogic {
+      +init(): void
+    }
+  }
+
+  package "Communication" #White {
+    class Communication {
+      +sendRequest(): void
+      +receiveResponse(): void
+    }
+
+    class DataSerialization <<interface>> {
+      +serialize(): void
+      +deserialize(): void
+    }
+
+    class JsonSerialization
+  }
+
+  ' Relationships
+  SageStoreClient -down-> UiManager
+  SageStoreClient -down-> ApplicationLogic
+  SageStoreClient -down-> Communication
+  UiManager -down-> UiComponent
+  ApplicationLogic -down-> IModule
+  Communication -down-> DataSerialization
+
+  ' Inheritance
+    
+  "Views (classes)" -|> UiComponent
+
+  IModule <|- "Modules (classes)"
+
+  DataSerialization <|-- JsonSerialization
+
+  note "SIGNAL-SLOT approach to prevent coupling" as N1
+  ApplicationLogic .. N1
+  UiManager .. N1
+
+@enduml
