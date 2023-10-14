@@ -1,0 +1,21 @@
+#pragma once
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+namespace Logging
+{
+    enum class LogLevel
+    {
+        Trace = SPDLOG_LEVEL_TRACE,
+        Debug = SPDLOG_LEVEL_DEBUG,
+        Info = SPDLOG_LEVEL_INFO,
+        Warn = SPDLOG_LEVEL_WARN,
+        Error = SPDLOG_LEVEL_ERROR,
+        Critical = SPDLOG_LEVEL_CRITICAL,
+        Off = SPDLOG_LEVEL_OFF
+    };
+
+    void init(LogLevel level = LogLevel::Trace);
+
+}

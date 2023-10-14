@@ -4,13 +4,11 @@
 #include <QQmlApplicationEngine>
 #include <QFont>
 
-#include <memory>
-
 /**
  * @class UIManager
  * @brief Manages UI components.
  *
- * Initializes and manages UI components. Provides signals and slots for UI interaction.
+ * This class is responsible for initializing and managing UI components.
  */
 class UIManager : public QObject
 {
@@ -19,7 +17,8 @@ class UIManager : public QObject
 
 public:
     /**
-     * @brief Enum that identifies themes set
+     * @enum Theme
+     * @brief Identifies the set themes.
      */
     enum class Theme : int
     {
@@ -31,97 +30,87 @@ public:
     /**
      * @brief Construct a new UIManager object.
      *
-     * @param parent Parent QObject.
+     * Initializes a UIManager object. Optionally, a parent QObject can be passed.
+     *
+     * @param parent Parent QObject (default is nullptr).
      */
     explicit UIManager(QObject *parent = nullptr) noexcept;
 
     /**
-     * @brief Destroy the UIManager object.
+     * @brief Destructor.
      *
+     * Destroys the UIManager object and cleans up its resources.
      */
     ~UIManager() noexcept override;
 
     /**
      * @brief Initialize UI components.
      *
+     * This method is responsible for setting up UI components.
      */
     void init();
 
     /**
-     * @brief Gets the  current Theme
+     * @brief Get the current theme.
      *
-     * @returns theme The value of enum Theme.
-     * @see Theme
+     * @return Current theme as a Theme enum value.
      */
     Theme theme() const;
 
     /**
-     * @brief Set the Theme for the application.
+     * @brief Set the theme.
      *
-     * @param theme The value of enum Theme.
-     * @see Theme
+     * Updates the current theme.
+     *
+     * @param theme New theme as a Theme enum value.
      */
     void setTheme(Theme theme);
 
+    /**
+     * @brief Get the default font.
+     *
+     * @return Default font as a QFont object.
+     */
     QFont defaultFont() const;
 
 signals:
     /**
-     * @brief Notify when a UI event occurs.
+     * @brief Signal emitted when the theme changes.
      *
-     * @param eventCode The UI event code.
-     */
-    void uiEventOccurred(int eventCode);
-
-    /**
-     * @brief Notify when a UI error occurs.
-     *
-     * @param errorMessage The error message.
-     */
-    void errorOccurred(QString errorMessage);
-
-    /**
-     * @brief Notify QML about theme change.
-     *
-     * @param newTheme int value that represents Theme.
-     * @see Theme
+     * @param newTheme New theme as a Theme enum value.
      */
     void themeChanged(Theme newTheme);
-
-public slots:
-    /**
-     * @brief Handle module events.
-     *
-     * @param eventCode The module event code.
-     */
-    void onModuleEvent(int eventCode);
 
 private:
     /**
      * @brief Initialize the theme.
      *
+     * Sets the initial theme based on some criteria or settings.
      */
     void initTheme();
 
     /**
      * @brief Initialize the main window.
      *
+     * Sets up the main application window.
      */
     void initMainWindow();
 
     /**
      * @brief Initialize UI modules.
      *
+     * Sets up various UI modules required by the application.
      */
     void initModules();
 
     /**
      * @brief Initialize UI dialogues.
      *
+     * Sets up any dialogues used in the UI.
      */
     void initDialogues();
 
 private:
-    Theme m_theme;
-    QQmlApplicationEngine m_engine;
+    Theme m_theme;                  ///< Member variable storing the current theme.
+    QQmlApplicationEngine m_engine; ///< QQmlApplicationEngine for running the QML engine.
 };

@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "statements.hpp"
+#include "Logging.hpp"
 #include "UI/QmlTypeRegistrar.hpp"
 
 UIManager::UIManager(QObject *parent) noexcept
@@ -35,12 +35,6 @@ void UIManager::init()
     initDialogues();
 }
 
-void UIManager::onModuleEvent(int eventCode)
-{
-    SPDLOG_TRACE("UIManager::onModuleEvent");
-    emit uiEventOccurred(eventCode);
-}
-
 void UIManager::setTheme(Theme theme)
 {
     const auto theme_str = theme == Theme::Dark ? "Dark" : "Light";
@@ -62,7 +56,7 @@ UIManager::Theme UIManager::theme() const
 
 QFont UIManager::defaultFont() const
 {
-    // TODO: move it to beter location
+    // TODO: make possibility to setup
     QFont defaultFont("Helvetica");
     defaultFont.setPixelSize(18);
     return defaultFont;
