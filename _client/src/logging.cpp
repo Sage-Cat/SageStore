@@ -1,6 +1,6 @@
-#include "logging.hpp"
+#include "Logging.hpp"
 
-namespace logging
+namespace Logging
 {
 
     void init(LogLevel level)

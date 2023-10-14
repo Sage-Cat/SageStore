@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
+
 #include <QApplication>
+
 #include "SageStoreClient.hpp"
-#include "logging.hpp"
+#include "Logging.hpp"
 
 class SageStoreClientTest : public ::testing::Test
 {
@@ -20,21 +22,30 @@ protected:
     QApplication *app;
 };
 
-TEST_F(SageStoreClientTest, ConstructorDoesNotThrow)
+TEST_F(SageStoreClientTest, ConstrNoException)
 {
-    SPDLOG_INFO("Running test case: ConstructorDoesNotThrow");
+    SPDLOG_TRACE("Running test case: ConstrNoException");
     EXPECT_NO_THROW(SageStoreClient client(*app));
 }
 
-TEST_F(SageStoreClientTest, ConstructorNoFatalFailure)
+TEST_F(SageStoreClientTest, ConstrNoFailure)
 {
-    SPDLOG_INFO("Running test case: ConstructorNoFatalFailure");
+    SPDLOG_TRACE("Running test case: ConstructorNoFatalFailure");
     EXPECT_NO_FATAL_FAILURE(SageStoreClient client(*app));
 }
 
-TEST_F(SageStoreClientTest, DestructorCleansUpResources)
+TEST_F(SageStoreClientTest, DestrNoThrow)
 {
-    SPDLOG_INFO("Running test case: DestructorCleansUpResources");
+    SPDLOG_TRACE("Running test case: DestructorCleansUpResources");
+
+    EXPECT_NO_THROW({
+        SageStoreClient client(*app);
+    });
+}
+
+TEST_F(SageStoreClientTest, DestrNoFalilure)
+{
+    SPDLOG_TRACE("Running test case: DestructorCleansUpResources");
 
     EXPECT_NO_FATAL_FAILURE({
         SageStoreClient client(*app);
@@ -43,7 +54,7 @@ TEST_F(SageStoreClientTest, DestructorCleansUpResources)
 
 int main(int argc, char **argv)
 {
-    logging::init();
+    Logging::init();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

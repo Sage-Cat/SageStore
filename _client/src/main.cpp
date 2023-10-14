@@ -1,11 +1,11 @@
 #include "SageStoreClient.hpp"
-#include "logging.hpp"
+#include "Logging.hpp"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    logging::init();
+    Logging::init();
     SPDLOG_INFO("SageStoreClient starting");
 
     SageStoreClient client(app);
