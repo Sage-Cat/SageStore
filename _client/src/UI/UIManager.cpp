@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "statements.hpp"
+#include "logging.hpp"
 #include "UI/QmlTypeRegistrar.hpp"
 
 UIManager::UIManager(QObject *parent) noexcept

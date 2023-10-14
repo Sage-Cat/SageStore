@@ -13,29 +13,18 @@ find_package(Qt6Quick REQUIRED)
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
-# Specify source files
-file(GLOB_RECURSE APPLICATION_LOGIC_SOURCES "src/ApplicationLogic/*.cpp")
-file(GLOB_RECURSE COMMUNICATION_SOURCES "src/Communication/*.cpp")
-file(GLOB_RECURSE UI_SOURCES "src/UI/*.cpp")  
+set(CLIENT_SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(CLIENT_BUILD_DIR "${CMAKE_BINARY_DIR}/_client")
 
-# Specify resource files
-set(RESOURCE_FILES "src/UI/qml/qml.qrc")
+# all source scopes
+file(GLOB_RECURSE APPLICATION_LOGIC_SOURCES "${CLIENT_SOURCES_DIR}/ApplicationLogic/*.cpp")
+file(GLOB_RECURSE COMMUNICATION_SOURCES "${CLIENT_SOURCES_DIR}/Communication/*.cpp")
+file(GLOB_RECURSE UI_SOURCES "${CLIENT_SOURCES_DIR}/UI/*.cpp")
+file(GLOB_RECURSE MAIN_SOURCES "${CLIENT_SOURCES_DIR}/*.cpp")
 
-set(CLIENT_SOURCES
-    src/main.cpp
-    src/SageStoreClient.cpp
-    ${APPLICATION_LOGIC_SOURCES}
-    ${COMMUNICATION_SOURCES}
-    ${UI_SOURCES}
-)
+# all the sources
+set(ALL_SOURCES ${APPLICATION_LOGIC_SOURCES} ${COMMUNICATION_SOURCES} ${UI_SOURCES} ${MAIN_SOURCES})
 
-# Create client executable
-add_executable(SageStoreClient ${CLIENT_SOURCES} ${RESOURCE_FILES})
-
-# Include directories
-target_include_directories(SageStoreClient PUBLIC ${CMAKE_SOURCE_DIR}/_client/src)
-
-# Link libraries
-target_link_libraries(SageStoreClient Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Quick spdlog::spdlog)
-
-
+# Adding main code and tests
+add_subdirectory(src)
+add_subdirectory(tests)
