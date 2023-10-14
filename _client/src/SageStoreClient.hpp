@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QApplication>
 
 #include <memory>
@@ -17,9 +18,25 @@ public:
     /**
      * @brief Default constructor for SageStoreClient.
      *
-     * Initializes the SageStoreClient object.
+     * Initializes the SageStoreClient object with a reference to a QApplication object
+     *
+     * @param app A reference to the QApplication object responsible for the application lifecycle.
      */
     SageStoreClient(QApplication &app);
+
+    /**
+     * @brief Deleted copy constructor.
+     *
+     * Copying instances of this class is not allowed.
+     */
+    SageStoreClient(const SageStoreClient &) = delete;
+
+    /**
+     * @brief Deleted copy assignment operator.
+     *
+     * Copy assignment for instances of this class is not allowed.
+     */
+    SageStoreClient &operator=(const SageStoreClient &) = delete;
 
     /**
      * @brief Destructor for SageStoreClient.
@@ -28,9 +45,19 @@ public:
      */
     ~SageStoreClient();
 
+    /**
+     * @brief Initialize the SageStore client.
+     *
+     * This function performs all necessary initialization tasks for the client.
+     */
     void init();
 
 private:
+    /**
+     * @brief Reference to the QApplication object.
+     *
+     * Holds a reference to the QApplication object to manage application-wide settings.
+     */
     QApplication &m_app;
 
     /**
