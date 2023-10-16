@@ -24,5 +24,5 @@ SageStoreClient::~SageStoreClient()
 void SageStoreClient::init()
 {
     SPDLOG_TRACE("SageStoreClient::init");
-    m_uiManager.init();
+    m_uiManager.initUi();
 }

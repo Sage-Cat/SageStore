@@ -6,7 +6,9 @@
 #include <string>
 
 #include "Logging.hpp"
-#include "UI/QmlTypeRegistrar.hpp"
+#include "QmlTypeRegistrar.hpp"
+
+#include "Views\PurchaseView.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -25,7 +27,7 @@ UiManager::~UiManager()
     SPDLOG_TRACE("UiManager::~UiManager");
 }
 
-void UiManager::init()
+void UiManager::initUi()
 {
     SPDLOG_TRACE("UiManager::init");
 
@@ -75,7 +77,7 @@ void UiManager::initMainWindow()
     if (m_engine.rootContext())
     {
         m_engine.rootContext()->setContextProperty("uiManager", this);
-        m_engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        m_engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
         if (m_engine.rootObjects().isEmpty())
             SPDLOG_CRITICAL("UiManager::initMainWindow Failed to load main window");
     }
@@ -88,9 +90,54 @@ void UiManager::initMainWindow()
 void UiManager::initModules()
 {
     SPDLOG_TRACE("UiManager::initModules");
+
+    // Purchase View
+    m_purchaseView = new PurchaseView(&m_engine);
+    m_purchaseView->render();
+    connect(this, &UiManager::pushToStackRequested, this, &UiManager::showPurchaseOrdersView);
 }
 
 void UiManager::initDialogues()
 {
     SPDLOG_TRACE("UiManager::initDialogues");
+}
+
+bool UiManager::addToStack(QQmlComponent *component)
+{
+    QObject *newViewInstance = component->create();
+    if (!newViewInstance)
+    {
+        SPDLOG_ERROR("Failed to create instance from component");
+        return false;
+    }
+
+    QQmlEngine::setObjectOwnership(newViewInstance, QQmlEngine::JavaScriptOwnership);
+
+    QQuickItem *item = qobject_cast<QQuickItem *>(newViewInstance);
+    if (!item)
+    {
+        SPDLOG_ERROR("Failed to cast created component instance to QQuickItem");
+        return false;
+    }
+
+    emit pushToStackRequested(item);
+    return true; // assuming the emit was successful. You can add more logic to confirm if needed.
+}
+
+void UiManager::showPurchaseOrdersView()
+{
+    if (!m_purchaseView)
+    {
+        SPDLOG_CRITICAL("m_purchaseView is nullptr. PurchaseView not initialized.");
+        return;
+    }
+
+    if (addToStack(m_purchaseView->component()))
+    {
+        SPDLOG_INFO("PurchaseView rendered successfully");
+    }
+    else
+    {
+        SPDLOG_ERROR("Failed to add PurchaseView to TabView");
+    }
 }

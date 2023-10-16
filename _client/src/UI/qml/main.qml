@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 
 import com.sage 1.0
 
+import "Components"
+
 ApplicationWindow {
     id: mainWindow
     visible: true
@@ -28,11 +30,24 @@ ApplicationWindow {
             Layout.fillWidth: true
         }
 
-        StackView {
-            id: stackView
+        StackView  {
+            id: stackView 
+            objectName: "stackView"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            initialItem: Item {}
+            initialItem: mainView
+        }
+
+        Component {
+            id: mainView
+
+            Row {
+                spacing: 10
+                Text {
+                    text: "DEFAULT STACK VIEW ITEM"
+                    color: uiManager.theme === UiManager.Theme.Dark ? darkTextColor : lightTextColor
+                }
+            }
         }
         
         Rectangle {
@@ -50,17 +65,25 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+    target: uiManager
+        function onPushToStackRequested(itemToPush) {
+            stackView.push(itemToPush);
+        }
+    }
+
+
     function updateTheme(theme) {
         if (theme === UiManager.Theme.Dark) {
             mainWindow.color = darkPrimaryColor;
             backgroundRect.color = darkSecondaryColor;
             MainMenu.color = darkPrimaryColor;
-            // mainMenuBar.text.color = darkTextColor; 
+            // _mainMenuBar.text.color = darkTextColor; 
         } else {
             mainWindow.color = lightPrimaryColor;
             backgroundRect.color = lightSecondaryColor;
             MainMenu.color = lightPrimaryColor;
-            // mainMenuBar.text.color = lightTextColor; 
+            // _mainMenuBar.text.color = lightTextColor; 
         }
     }
 }

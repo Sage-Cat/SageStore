@@ -2,7 +2,10 @@
 
 #include <QObject>
 #include <QQmlApplicationEngine>
+#include <QQuickItem>
 #include <QFont>
+
+class PurchaseView;
 
 /**
  * @class UiManager
@@ -48,7 +51,7 @@ public:
      *
      * This method is responsible for setting up UI components.
      */
-    void init();
+    void initUi();
 
     /**
      * @brief Get the current theme.
@@ -74,12 +77,21 @@ public:
     QFont defaultFont() const;
 
 signals:
+    // ---- TO UI ----
     /**
      * @brief Signal emitted when the theme changes.
      *
      * @param newTheme New theme as a Theme enum value.
      */
     void themeChanged(Theme newTheme);
+
+    /**
+     * @brief request to push purchase view in stack
+     *
+     */
+    void pushToStackRequested(QQuickItem *item);
+
+    // ---- FROM UI ----
 
 private:
     /**
@@ -110,7 +122,29 @@ private:
      */
     void initDialogues();
 
+    /**
+     * @brief Pushes a QML item onto the main stack view.
+     *
+     *
+     * @param item The QObject derived item (e.g., a QML Component)
+     *             to be pushed onto the StackView.
+     *
+     * @return bool if tab is added successfully
+     */
+    bool addToStack(QQmlComponent *component);
+
+    /**
+     * @brief Adds a new tab to the main window for the PurchaseView.
+     *
+     * @note This function requires that the QML `StackView` named "StackView" supports
+     * the addition of new tabs programmatically (e.g., has an "addTab" method or equivalent).
+     */
+    Q_INVOKABLE void showPurchaseOrdersView();
+
 private:
     Theme m_theme;                  ///< Member variable storing the current theme.
     QQmlApplicationEngine m_engine; ///< QQmlApplicationEngine for running the QML engine.
+
+    // Views
+    PurchaseView *m_purchaseView; ///< Pointer to the purchase view.
 };
