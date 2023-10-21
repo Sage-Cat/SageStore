@@ -1,7 +1,14 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>Main.qml</file>
-    <file>PurchaseOrdersView.qml</file>
+
+
+    <!-- Style -->
+    <file>qmldir</file>
+    <file>Style.qml</file>
+
+    <!-- Views -->
+    <file>Views/PurchaseOrdersView.qml</file>
 
     <!-- Components -->
     <file>Components/BaseView.qml</file>

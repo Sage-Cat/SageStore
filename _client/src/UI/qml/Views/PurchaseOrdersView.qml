@@ -1,5 +1,5 @@
 import QtQuick.Controls 2.15
-import "Components"
+import "../Components"
 
 BaseView {
     id: purchaseOrdersView  // Change the ID to match the reference below
@@ -13,11 +13,13 @@ BaseView {
         onClicked: {
             // Implement upload logic here
         }
+        color: Style.currentTheme.secondaryColor
     }
 
     Label {
         parent: purchaseOrdersView.additionalUnderTableSpaceAlias  // Set the parent first
         anchors.centerIn: parent  // Now, anchor it to its parent
         text: "Additional Purchase Info"
+        color: Style.currentTheme.textColor
     }
 }

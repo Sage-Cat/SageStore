@@ -12,7 +12,6 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "transparent"
         
         TableView {
             id: dataTable
@@ -34,12 +33,21 @@ Item {
                 onClicked: {
                     // Implement add logic here
                 }
+                color: Style.currentTheme.secondaryColor
             }
             Button {
                 text: "Delete"
                 onClicked: {
                     // Implement delete logic here
                 }
+                color: Style.currentTheme.secondaryColor
+            }
+            Button {
+                text: "Edit"
+                onClicked: {
+                    // Implement edit logic here
+                }
+                color: Style.currentTheme.secondaryColor
             }
             
             Item {
@@ -57,7 +65,6 @@ Item {
             anchors.bottom: statusBar.top
             anchors.left: parent.left
             anchors.right: parent.right
-            color: "transparent"
             // This space can be used for additional module-specific Views, like text boxes.
         }
 
@@ -67,12 +74,13 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 30
-            color: "#EEE"
 
             Label {
                 anchors.centerIn: parent
                 text: "Status: Ready"
+                color: Style.currentTheme.textColor
             }
         }
+        color: Style.currentTheme.secondaryColor
     }
 }

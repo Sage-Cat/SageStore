@@ -10,6 +10,7 @@ MenuBar {
         MenuItem {
             text: "Exit"
             onTriggered: Qt.quit()
+            color: Style.currentTheme.textColor
         }
     }
 
@@ -18,7 +19,10 @@ MenuBar {
         title: "Purchasing"
         MenuItem {
             text: "Purchase Orders"
-            onTriggered: uiManager.requestPurchaseOrdersTab()
+            onTriggered: {
+                stackView.pop();
+                stackView.push(purchaseOrdersComponent);
+            }
         }
         MenuItem { text: "Supplier Management" }
         MenuItem { text: "Goods Receipts" }

@@ -3,12 +3,10 @@
 #include <QApplication>
 #include <QQmlContext>
 
-#include <string>
-
 #include "Logging.hpp"
-#include "QmlTypeRegistrar.hpp"
+#include "Ui/QmlTypeRegistrar.hpp"
 
-#include "Views\PurchaseView.hpp"
+#include "ViewModels/PurchaseOrdersViewModel.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -91,53 +89,11 @@ void UiManager::initModules()
 {
     SPDLOG_TRACE("UiManager::initModules");
 
-    // Purchase View
-    m_purchaseView = new PurchaseView(&m_engine);
-    m_purchaseView->render();
-    connect(this, &UiManager::pushToStackRequested, this, &UiManager::showPurchaseOrdersView);
+    // PurchaseOrdersViewModel
+    m_purchaseOrdersViewModel = new PurchaseOrdersViewModel(this);
 }
 
 void UiManager::initDialogues()
 {
     SPDLOG_TRACE("UiManager::initDialogues");
-}
-
-bool UiManager::addToStack(QQmlComponent *component)
-{
-    QObject *newViewInstance = component->create();
-    if (!newViewInstance)
-    {
-        SPDLOG_ERROR("Failed to create instance from component");
-        return false;
-    }
-
-    QQmlEngine::setObjectOwnership(newViewInstance, QQmlEngine::JavaScriptOwnership);
-
-    QQuickItem *item = qobject_cast<QQuickItem *>(newViewInstance);
-    if (!item)
-    {
-        SPDLOG_ERROR("Failed to cast created component instance to QQuickItem");
-        return false;
-    }
-
-    emit pushToStackRequested(item);
-    return true; // assuming the emit was successful. You can add more logic to confirm if needed.
-}
-
-void UiManager::showPurchaseOrdersView()
-{
-    if (!m_purchaseView)
-    {
-        SPDLOG_CRITICAL("m_purchaseView is nullptr. PurchaseView not initialized.");
-        return;
-    }
-
-    if (addToStack(m_purchaseView->component()))
-    {
-        SPDLOG_INFO("PurchaseView rendered successfully");
-    }
-    else
-    {
-        SPDLOG_ERROR("Failed to add PurchaseView to TabView");
-    }
 }

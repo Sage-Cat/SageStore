@@ -28,13 +28,13 @@ set(COMMUNICATION_SOURCES
 )
 
 set(UI_SOURCES
-    ${CLIENT_SOURCES_DIR}/UI/QmlTypeRegistrar.cpp
-    ${CLIENT_SOURCES_DIR}/UI/UiManager.cpp
-    ${CLIENT_SOURCES_DIR}/UI/Views/PurchaseView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/QmlTypeRegistrar.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
 )
 
 set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/logging.cpp
+    ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
     ${CLIENT_SOURCES_DIR}/main.cpp
 )
