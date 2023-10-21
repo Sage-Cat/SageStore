@@ -200,7 +200,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 **Views:**
 
-- PurchaseView: Responsible for a specific user interface element related to purchase (receipt invoices).
+- PurchaseOrdersViewModel: Responsible for a specific user interface element related to purchase (receipt invoices).
 - SaleView: Responsible for a specific user interface element related to sales.
 - InventoryView: Responsible for a specific user interface element related to inventory.
 - ManagementView: Responsible for specific Frontend functionalities related to managing users/contacts/employees/suppliers.

@@ -1,23 +1,23 @@
 #pragma once
 
 /**
- * @interface IModule
- * @brief Interface for modules.
+ * @interface IModel
+ * @brief Interface for models.
  *
- * This interface defines the basic functionalities that any module should provide.
+ * This interface defines the basic functionalities that any model should provide.
  */
-class IModule
+class IModel
 {
 public:
     /**
-     * @brief Virtual destructor for IModule.
+     * @brief Virtual destructor for IModel.
      *
      * Ensures proper cleanup for derived classes.
      */
-    virtual ~IModule() = default;
+    virtual ~IModel() = default;
 
     /**
-     * @brief Initializes the module.
+     * @brief Initializes the model.
      *
      * This pure virtual function should be implemented by derived classes to handle their initialization logic.
      */

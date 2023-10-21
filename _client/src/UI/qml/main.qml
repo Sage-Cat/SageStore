@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import com.sage 1.0
 
 import "Components"
+import "Views"
 
 ApplicationWindow {
     id: mainWindow
@@ -15,14 +16,6 @@ ApplicationWindow {
     flags: Qt.Window
     visibility: "Maximized"
 
-    property color darkPrimaryColor: "#121212"
-    property color darkSecondaryColor: "#1F1F1F"
-    property color darkTextColor: "#FFFFFF"
-
-    property color lightPrimaryColor: "#FFFFFF"
-    property color lightSecondaryColor: "#F1F1F1"
-    property color lightTextColor: "#000000"
-
     ColumnLayout {
         anchors.fill: parent
         
@@ -30,23 +23,22 @@ ApplicationWindow {
             Layout.fillWidth: true
         }
 
-        StackView  {
-            id: stackView 
-            objectName: "stackView"
-            Layout.fillWidth: true
+        StackView {
+            id: stackView
+            initialItem: purchaseOrdersComponent  // Set your purchaseOrdersComponent as the initial item
+            Layout.fillWidth: true  // Make sure this is set
             Layout.fillHeight: true
-            initialItem: mainView
+
+            Component.onCompleted: {
+                stackView.push(purchaseOrdersView)
+                stackView.push(supplierManagementView)
+            }
         }
 
+        // PurchaseOrdersView
         Component {
-            id: mainView
-
-            Row {
-                spacing: 10
-                Text {
-                    text: "DEFAULT STACK VIEW ITEM"
-                    color: uiManager.theme === UiManager.Theme.Dark ? darkTextColor : lightTextColor
-                }
+            id: purchaseOrdersComponent
+            PurchaseOrdersView {  // This would be the root item in your PurchaseOrdersView.qml
             }
         }
         
@@ -54,7 +46,7 @@ ApplicationWindow {
             id: backgroundRect
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: mainWindow.color
+            color: Style.currentTheme.secondaryColor
         }
     }
     
@@ -66,24 +58,17 @@ ApplicationWindow {
     }
 
     Connections {
-    target: uiManager
-        function onPushToStackRequested(itemToPush) {
-            stackView.push(itemToPush);
+        target: uiManager
+        function onThemeChanged(theme) {
+            updateTheme(uiManager.theme);
         }
     }
 
-
     function updateTheme(theme) {
         if (theme === UiManager.Theme.Dark) {
-            mainWindow.color = darkPrimaryColor;
-            backgroundRect.color = darkSecondaryColor;
-            MainMenu.color = darkPrimaryColor;
-            // _mainMenuBar.text.color = darkTextColor; 
+            Style.currentTheme = Style.darkTheme;
         } else {
-            mainWindow.color = lightPrimaryColor;
-            backgroundRect.color = lightSecondaryColor;
-            MainMenu.color = lightPrimaryColor;
-            // _mainMenuBar.text.color = lightTextColor; 
+            Style.currentTheme = Style.lightTheme;
         }
     }
 }
