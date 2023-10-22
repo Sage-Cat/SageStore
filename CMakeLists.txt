@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(SageStore)
 
 enable_testing()
+option(BUILD_TESTING "Build the testing tree." ON)
 
 # Recursively include sub-projects
 add_subdirectory(_client)

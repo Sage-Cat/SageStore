@@ -2,6 +2,8 @@
 
 #include <QApplication>
 
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+
 #include "SageStoreClient.hpp"
 #include "Logging.hpp"
 
@@ -22,34 +24,10 @@ protected:
     QApplication *app;
 };
 
-TEST_F(SageStoreClientTest, ConstrNoException)
+TEST_F(SageStoreClientTest, LifetimeNoThrow)
 {
-    SPDLOG_TRACE("Running test case: ConstrNoException");
-    EXPECT_NO_THROW(SageStoreClient client(*app));
-}
-
-TEST_F(SageStoreClientTest, ConstrNoFailure)
-{
-    SPDLOG_TRACE("Running test case: ConstructorNoFatalFailure");
-    EXPECT_NO_FATAL_FAILURE(SageStoreClient client(*app));
-}
-
-TEST_F(SageStoreClientTest, DestrNoThrow)
-{
-    SPDLOG_TRACE("Running test case: DestructorCleansUpResources");
-
-    EXPECT_NO_THROW({
-        SageStoreClient client(*app);
-    });
-}
-
-TEST_F(SageStoreClientTest, DestrNoFalilure)
-{
-    SPDLOG_TRACE("Running test case: DestructorCleansUpResources");
-
-    EXPECT_NO_FATAL_FAILURE({
-        SageStoreClient client(*app);
-    });
+    SPDLOG_TRACE("Running test case: LifetimeNoThrow");
+    EXPECT_NO_THROW({ SageStoreClient client(*app); });
 }
 
 int main(int argc, char **argv)
