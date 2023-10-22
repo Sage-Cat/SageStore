@@ -2,7 +2,6 @@
 <qresource>
     <file>Main.qml</file>
 
-
     <!-- Style -->
     <file>qmldir</file>
     <file>Style.qml</file>
