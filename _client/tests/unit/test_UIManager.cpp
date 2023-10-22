@@ -5,7 +5,7 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include "..\..\src\UiManager.hpp"
+#include "UiManager.hpp"
 #include "Logging.hpp"
 
 class UIManagerTest : public ::testing::Test
