@@ -21,39 +21,25 @@ ApplicationWindow {
         
         MainMenu {  
             Layout.fillWidth: true
+            Layout.preferredHeight: 50  // Just an example; adjust based on your needs
         }
 
         StackView {
             id: stackView
-            initialItem: purchaseOrdersComponent  // Set your purchaseOrdersComponent as the initial item
-            Layout.fillWidth: true  // Make sure this is set
+            // initialItem: purchaseOrdersComponent 
+            Layout.fillWidth: true
             Layout.fillHeight: true
 
             Component.onCompleted: {
-                stackView.push(purchaseOrdersView)
-                stackView.push(supplierManagementView)
+                stackView.push(purchaseOrdersComponent) // push initial item
             }
-        }
 
-        // PurchaseOrdersView
-        Component {
-            id: purchaseOrdersComponent
-            PurchaseOrdersView {  // This would be the root item in your PurchaseOrdersView.qml
+            // PurchaseOrdersView
+            Component {
+                id: purchaseOrdersComponent
+                PurchaseOrdersView {  
+                }
             }
-        }
-        
-        Rectangle {
-            id: backgroundRect
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: Style.currentTheme.secondaryColor
-        }
-    }
-    
-    Connections {
-        target: uiManager
-        function onThemeChanged(theme) {
-            updateTheme(uiManager.theme);
         }
     }
 

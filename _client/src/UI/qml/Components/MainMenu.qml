@@ -1,5 +1,7 @@
 import QtQuick.Controls 2.15
 
+import "qrc:/"
+
 MenuBar {
     id: mainMenu
 
@@ -10,7 +12,6 @@ MenuBar {
         MenuItem {
             text: "Exit"
             onTriggered: Qt.quit()
-            color: Style.currentTheme.textColor
         }
     }
 
@@ -20,7 +21,7 @@ MenuBar {
         MenuItem {
             text: "Purchase Orders"
             onTriggered: {
-                stackView.pop();
+                stackView.clear();
                 stackView.push(purchaseOrdersComponent);
             }
         }
