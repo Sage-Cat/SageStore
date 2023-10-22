@@ -4,6 +4,9 @@ import QtQuick.Layouts 1.15
 
 import com.sage 1.0
 
+import "Components"
+import "Views"
+
 ApplicationWindow {
     id: mainWindow
     visible: true
@@ -13,36 +16,33 @@ ApplicationWindow {
     flags: Qt.Window
     visibility: "Maximized"
 
-    property color darkPrimaryColor: "#121212"
-    property color darkSecondaryColor: "#1F1F1F"
-    property color darkTextColor: "#FFFFFF"
-
-    property color lightPrimaryColor: "#FFFFFF"
-    property color lightSecondaryColor: "#F1F1F1"
-    property color lightTextColor: "#000000"
-
     ColumnLayout {
         anchors.fill: parent
         
         MainMenu {  
             Layout.fillWidth: true
+            Layout.preferredHeight: 50  // Just an example; adjust based on your needs
         }
 
         StackView {
             id: stackView
+            // initialItem: purchaseOrdersComponent 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            initialItem: Item {}
-        }
-        
-        Rectangle {
-            id: backgroundRect
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: mainWindow.color
+
+            Component.onCompleted: {
+                stackView.push(purchaseOrdersComponent) // push initial item
+            }
+
+            // PurchaseOrdersView
+            Component {
+                id: purchaseOrdersComponent
+                PurchaseOrdersView {  
+                }
+            }
         }
     }
-    
+
     Connections {
         target: uiManager
         function onThemeChanged(theme) {
@@ -52,15 +52,9 @@ ApplicationWindow {
 
     function updateTheme(theme) {
         if (theme === UiManager.Theme.Dark) {
-            mainWindow.color = darkPrimaryColor;
-            backgroundRect.color = darkSecondaryColor;
-            MainMenu.color = darkPrimaryColor;
-            // mainMenuBar.text.color = darkTextColor; 
+            Style.currentTheme = Style.darkTheme;
         } else {
-            mainWindow.color = lightPrimaryColor;
-            backgroundRect.color = lightSecondaryColor;
-            MainMenu.color = lightPrimaryColor;
-            // mainMenuBar.text.color = lightTextColor; 
+            Style.currentTheme = Style.lightTheme;
         }
     }
 }

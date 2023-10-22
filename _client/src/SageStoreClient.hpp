@@ -3,7 +3,7 @@
 #include <QApplication>
 
 #include <memory>
-#include "UI/UiManager.hpp"
+#include "UiManager.hpp"
 
 /**
  * @class SageStoreClient

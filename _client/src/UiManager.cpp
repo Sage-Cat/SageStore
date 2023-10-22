@@ -3,10 +3,10 @@
 #include <QApplication>
 #include <QQmlContext>
 
-#include <string>
-
 #include "Logging.hpp"
-#include "UI/QmlTypeRegistrar.hpp"
+#include "Ui/QmlTypeRegistrar.hpp"
+
+#include "ViewModels/PurchaseOrdersViewModel.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -25,7 +25,7 @@ UiManager::~UiManager()
     SPDLOG_TRACE("UiManager::~UiManager");
 }
 
-void UiManager::init()
+void UiManager::initUi()
 {
     SPDLOG_TRACE("UiManager::init");
 
@@ -75,7 +75,7 @@ void UiManager::initMainWindow()
     if (m_engine.rootContext())
     {
         m_engine.rootContext()->setContextProperty("uiManager", this);
-        m_engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        m_engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
         if (m_engine.rootObjects().isEmpty())
             SPDLOG_CRITICAL("UiManager::initMainWindow Failed to load main window");
     }
@@ -88,6 +88,9 @@ void UiManager::initMainWindow()
 void UiManager::initModules()
 {
     SPDLOG_TRACE("UiManager::initModules");
+
+    // PurchaseOrdersViewModel
+    m_purchaseOrdersViewModel = new PurchaseOrdersViewModel(this);
 }
 
 void UiManager::initDialogues()

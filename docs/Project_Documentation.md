@@ -82,6 +82,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 | -------------- | ------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | **Purchase**   | Barcodes                 | Create PDF for 2.5\*4                             | Auto-generating for new ProductType. Creating label for custom size. Allow direct printing |
 |                | Incoming invoices        | Create/View (Register received goods)             | Attach to Purchase Order                                                                   |
+|                | Upload invoices          | Upload CSV file                                   | Upload XML, XLSX etc. Custom functions                                                     |
 | **Sale**       | Sale invoices            | Create/View Sale invoices                         | Edit/Delete, Search/Filter                                                                 |
 |                | Export invoices          | Generate HTML/PDF for many types of docs          | Allow direct Print, export to XML for Medoc etc.                                           |
 | **Inventory**  | Product Types            | Add/View Product types                            | Edit/Delete, Search/Filter                                                                 |
@@ -199,7 +200,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 **Views:**
 
-- PurchaseView: Responsible for a specific user interface element related to purchase (receipt invoices).
+- PurchaseOrdersViewModel: Responsible for a specific user interface element related to purchase (receipt invoices).
 - SaleView: Responsible for a specific user interface element related to sales.
 - InventoryView: Responsible for a specific user interface element related to inventory.
 - ManagementView: Responsible for specific Frontend functionalities related to managing users/contacts/employees/suppliers.

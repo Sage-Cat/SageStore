@@ -67,6 +67,7 @@ The project aims to build an ERP system to manage core business processes for SM
 
 ### Prerequisites
 
+- [Qt 6.5](https://wiki.qt.io/Qt_6.5_Release)
 - [Conan](https://conan.io/)
 - [SQLite](https://www.sqlite.org/index.html)
 - [CMake](https://cmake.org/)

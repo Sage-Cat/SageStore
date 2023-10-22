@@ -1,6 +1,16 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>main.qml</file>
-    <file>MainMenu.qml</file>
+    <file>Main.qml</file>
+
+    <!-- Style -->
+    <file>qmldir</file>
+    <file>Style.qml</file>
+
+    <!-- Views -->
+    <file>Views/PurchaseOrdersView.qml</file>
+
+    <!-- Components -->
+    <file>Components/BaseView.qml</file>
+    <file>Components/MainMenu.qml</file>
 </qresource>
 </RCC>

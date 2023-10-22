@@ -1,7 +1,9 @@
 import QtQuick.Controls 2.15
 
+import "qrc:/"
+
 MenuBar {
-    id: mainMenuBar
+    id: mainMenu
 
     // File Menu
     Menu {
@@ -16,7 +18,13 @@ MenuBar {
     // Purchasing Module Menu
     Menu {
         title: "Purchasing"
-        MenuItem { text: "Purchase Orders" }
+        MenuItem {
+            text: "Purchase Orders"
+            onTriggered: {
+                stackView.clear();
+                stackView.push(purchaseOrdersComponent);
+            }
+        }
         MenuItem { text: "Supplier Management" }
         MenuItem { text: "Goods Receipts" }
     }

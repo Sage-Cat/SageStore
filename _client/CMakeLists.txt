@@ -12,18 +12,40 @@ find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
 find_package(Qt6Quick REQUIRED)
+find_package(Qt6 COMPONENTS QuickControls2 REQUIRED)
+
 
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
-# all src scopes
-file(GLOB_RECURSE APPLICATION_LOGIC_SOURCES "${CLIENT_SOURCES_DIR}/ApplicationLogic/*.cpp")
-file(GLOB_RECURSE COMMUNICATION_SOURCES "${CLIENT_SOURCES_DIR}/Communication/*.cpp")
-file(GLOB_RECURSE UI_SOURCES "${CLIENT_SOURCES_DIR}/UI/*.cpp")
-file(GLOB_RECURSE MAIN_SOURCES "${CLIENT_SOURCES_DIR}/*.cpp")
+# Define source files
+set(APPLICATION_LOGIC_SOURCES
+    # Empty for now
+)
 
-# all the sources
-set(ALL_CLIENT_SOURCES ${APPLICATION_LOGIC_SOURCES} ${COMMUNICATION_SOURCES} ${UI_SOURCES} ${MAIN_SOURCES})
+set(COMMUNICATION_SOURCES
+    # Empty for now
+)
+
+set(UI_SOURCES
+    ${CLIENT_SOURCES_DIR}/Ui/QmlTypeRegistrar.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
+)
+
+set(MAIN_SOURCES
+    ${CLIENT_SOURCES_DIR}/logging.cpp
+    ${CLIENT_SOURCES_DIR}/UiManager.cpp
+    ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
+    ${CLIENT_SOURCES_DIR}/main.cpp
+)
+
+# All sources
+set(ALL_CLIENT_SOURCES
+    ${APPLICATION_LOGIC_SOURCES}
+    ${COMMUNICATION_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
 
 # Adding main code and tests
 add_subdirectory(src)

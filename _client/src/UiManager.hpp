@@ -2,7 +2,12 @@
 
 #include <QObject>
 #include <QQmlApplicationEngine>
+#include <QQuickItem>
 #include <QFont>
+#include <QString>
+#include <QMap>
+
+class PurchaseOrdersViewModel;
 
 /**
  * @class UiManager
@@ -48,7 +53,7 @@ public:
      *
      * This method is responsible for setting up UI components.
      */
-    void init();
+    void initUi();
 
     /**
      * @brief Get the current theme.
@@ -74,12 +79,21 @@ public:
     QFont defaultFont() const;
 
 signals:
+    // ---- TO UI ----
     /**
      * @brief Signal emitted when the theme changes.
      *
      * @param newTheme New theme as a Theme enum value.
      */
     void themeChanged(Theme newTheme);
+
+    /**
+     * @brief request to push purchase view in stack
+     *
+     */
+    void pushToStackRequested(QQuickItem *item);
+
+    // ---- FROM UI ----
 
 private:
     /**
@@ -113,4 +127,6 @@ private:
 private:
     Theme m_theme;                  ///< Member variable storing the current theme.
     QQmlApplicationEngine m_engine; ///< QQmlApplicationEngine for running the QML engine.
+
+    PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
 };

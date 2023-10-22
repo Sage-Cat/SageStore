@@ -1,6 +1,3 @@
-# Remove main.cpp from MAIN_SOURCES
-#list(REMOVE_ITEM MAIN_SOURCES "${CLIENT_SOURCES_DIR}/main.cpp")
-
 # Create a static library from the Client source files
 add_library(ClientTestLib STATIC ${ALL_CLIENT_SOURCES})
 target_include_directories(ClientTestLib PUBLIC ${CLIENT_SOURCES_DIR})
