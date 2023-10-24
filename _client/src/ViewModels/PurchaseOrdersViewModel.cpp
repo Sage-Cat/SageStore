@@ -5,7 +5,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickItem>
 
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 PurchaseOrdersViewModel::PurchaseOrdersViewModel(QObject *parent)
     : QObject(parent)

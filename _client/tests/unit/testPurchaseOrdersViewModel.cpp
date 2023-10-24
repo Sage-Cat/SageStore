@@ -6,7 +6,7 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 class PurchaseOrdersViewModelTest : public ::testing::Test
 {
@@ -28,7 +28,7 @@ TEST_F(PurchaseOrdersViewModelTest, LifetimeNoThrow)
 
 int main(int argc, char **argv)
 {
-    Logging::init();
+    SpdlogWrapper::init();
     QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
