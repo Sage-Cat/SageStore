@@ -1,5 +1,5 @@
 # Specify resource files
-set(RESOURCE_FILES "UI/qml/qml.qrc")
+set(RESOURCE_FILES "Ui/qml/qml.qrc")
 
 # Create client executable
 add_executable(SageStoreClient ${ALL_CLIENT_SOURCES} ${RESOURCE_FILES})

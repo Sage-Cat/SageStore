@@ -1,7 +1,7 @@
 #include "QmlTypeRegistrar.hpp"
 #include "UiManager.hpp"
 
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 namespace QmlTypeRegistrar
 {

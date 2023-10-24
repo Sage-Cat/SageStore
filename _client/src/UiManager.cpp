@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QQmlContext>
 
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 #include "Ui/QmlTypeRegistrar.hpp"
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"

@@ -1,6 +1,6 @@
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
-namespace Logging
+namespace SpdlogWrapper
 {
 
     void init(LogLevel level)

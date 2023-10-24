@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace Logging
+namespace SpdlogWrapper
 {
     enum class LogLevel
     {

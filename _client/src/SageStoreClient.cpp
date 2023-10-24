@@ -2,7 +2,7 @@
 
 #include <QFont>
 
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
 {

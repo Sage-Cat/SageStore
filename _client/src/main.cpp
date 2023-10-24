@@ -1,11 +1,11 @@
 #include "SageStoreClient.hpp"
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    Logging::init();
+    SpdlogWrapper::init();
     SPDLOG_INFO("SageStoreClient starting");
 
     SageStoreClient client(app);
