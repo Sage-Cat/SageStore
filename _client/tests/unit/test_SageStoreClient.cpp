@@ -5,7 +5,7 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include "SageStoreClient.hpp"
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 class SageStoreClientTest : public ::testing::Test
 {
@@ -32,7 +32,7 @@ TEST_F(SageStoreClientTest, LifetimeNoThrow)
 
 int main(int argc, char **argv)
 {
-    Logging::init();
+    SpdlogWrapper::init();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

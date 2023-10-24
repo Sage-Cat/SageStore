@@ -6,7 +6,7 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include "UiManager.hpp"
-#include "Logging.hpp"
+#include "SpdlogWrapper.hpp"
 
 class UIManagerTest : public ::testing::Test
 {
@@ -51,7 +51,7 @@ TEST_F(UIManagerTest, NoFatalFailureInThemeSetting)
 
 int main(int argc, char **argv)
 {
-    Logging::init();
+    SpdlogWrapper::init();
     QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
