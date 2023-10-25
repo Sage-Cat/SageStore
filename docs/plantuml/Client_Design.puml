@@ -14,60 +14,38 @@ package "Client" {
       +updateUI(): void
     }
 
-    class UiComponent <<interface>> {
+    class IViewModel <<interface>> {
       +render(): void
     }
 
-    class "Views (classes)" {
-      + PurchaseOrdersViewModel
-      --
-      + SaleView
-      --
-      + InventoryView
-      --
-      + ManagementView
-      --
-      + AnalyticsView
-      --
-      + LogsView
-      --
-      + UserRolesView
-    }
+    ' Limited ViewModel Inheritance
+    IViewModel <|-- PurchaseViewModel
+    IViewModel <|-- SaleViewModel
+    IViewModel <|-- InventoryViewModel
+
+    note "More ViewModels" as N2
   } 
 
-  package "ApplicationLogic" #White {
-    class IModule <<interface>> {
+  package "Models" #White {
+    class IModel <<interface>> {
       +init(): void
-    }
+    } 
 
-    class "Modules (classes)" {
-      + PurchaseModule
-      --
-      + SaleModule
-      --
-      + InventoryModule
-      --
-      + ManagementModule
-      --
-      + AnalyticsModule
-      --
-      + LogsModule
-      --
-      + UserRolesModule
-    }
-    
-    class ApplicationLogic {
-      +init(): void
-    }
+    ' Limited Model Inheritance
+    IModel <|-- PurchaseModel
+    IModel <|-- SaleModel
+    IModel <|-- InventoryModel
+
+    note "More Models" as N3
   }
 
-  package "Communication" #White {
-    class Communication {
+  package "Network" #White {
+    class NetworkService {
       +sendRequest(): void
       +receiveResponse(): void
     }
 
-    class DataSerialization <<interface>> {
+    class IDataSerialization <<interface>> {
       +serialize(): void
       +deserialize(): void
     }
@@ -77,22 +55,22 @@ package "Client" {
 
   ' Relationships
   SageStoreClient -down-> UiManager
-  SageStoreClient -down-> ApplicationLogic
-  SageStoreClient -down-> Communication
-  UiManager -down-> UiComponent
-  ApplicationLogic -down-> IModule
-  Communication -down-> DataSerialization
+  SageStoreClient -down-> IModel
+  SageStoreClient -down-> NetworkService
+  NetworkService -down-> IDataSerialization
+  UiManager -down-> IViewModel
 
   ' Inheritance
-    
-  "Views (classes)" -|> UiComponent
+  IDataSerialization <|-- JsonSerialization
 
-  IModule <|- "Modules (classes)"
-
-  DataSerialization <|-- JsonSerialization
-
-  note "SIGNAL-SLOT approach to prevent coupling" as N1
-  ApplicationLogic .. N1
+  note "SIGNAL-SLOT approach" as N1
+  IModel .. N1
   UiManager .. N1
+
+  SaleViewModel . N2
+  N2 . PurchaseViewModel
+
+  SaleModel . N3
+  N3 . PurchaseModel
 
 @enduml

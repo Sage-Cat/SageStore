@@ -59,10 +59,26 @@ entity("Suppliers") {
   Address : string
 }
 
+entity("SupplierInfo") {
+  + SupplierInfoID : int
+  --
+  SupplierID : int
+  Code : string
+  Notes : string
+}
+
+entity("ProductInfo") {
+  + ProductrInfoID : int
+  --
+  ProductTypeID : int
+  Name : string
+  Value : string
+}
+
 entity("ProductType") {
   + ProductTypeID : int
   --
-  CatalogueCode : string
+  Code : string
   Barcode : string
   UKT_ZED : string
   Name : string
@@ -76,9 +92,9 @@ entity("ProductType") {
 entity("ProductTypeSupplierInfo") {
   + ProductTypeSupplierInfoID : int
   --
-  ProductTypeID : int
-  Code : string
   SupplierID : int
+  ProductTypeID : int
+  ProductCode : string
 }
 
 entity("Inventory") {
@@ -126,7 +142,9 @@ Users "1" -- "0..*" PurchaseOrders : create
 Employees "1" -- "0..*" Inventory : own
 Contacts "1" -- "0..*" ContactInfo : has
 Contacts "1" -- "0..*" SaleOrders : buy
-Suppliers "1" -- "0..*" ProductType : supplies
+ProductType "1" -- "0..*" ProductInfo
+ProductType "1" -- "0..*" SupplierInfo
+Suppliers "1" -- "0..*" SupplierInfo
 ProductType "1" -- "0..*" ProductTypeSupplierInfo : has
 ProductType "1" -- "0..*" Inventory : stored_in
 ProductType "1" -- "0..*" OrderInfo : involved_in

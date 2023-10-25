@@ -4,9 +4,9 @@ project(SageStoreServer)
 find_package(spdlog REQUIRED)
 
 # Specify source files
-file(GLOB_RECURSE API_ENDPOINTS_SOURCES "src/API_Endpoints/*.cpp")  
+file(GLOB_RECURSE API_SOURCES "src/API_Endpoints/*.cpp")  
 file(GLOB_RECURSE BUSINESS_LOGIC_SOURCES "src/BusinessLogic/*.cpp")
-file(GLOB_RECURSE DATA_ACCESS_LAYER_SOURCES "src/DataAccessLayer/*.cpp")
+file(GLOB_RECURSE DATA_ACCESS_SOURCES "src/DataAccess/*.cpp")
 file(GLOB_RECURSE MEDIATORS_SOURCES "src/Mediators/*.cpp")  
 
 set(SERVER_SOURCES
