@@ -8,7 +8,7 @@ CREATE TABLE Roles (
 CREATE TABLE Users (
   UserID INTEGER PRIMARY KEY AUTOINCREMENT,
   Username VARCHAR(50) UNIQUE NOT NULL,
-  Password VARCHAR(255) NOT NULL, -- Assuming encrypted password
+  Password VARCHAR(255) NOT NULL, 
   RoleID INTEGER,
   FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
 );
@@ -58,10 +58,19 @@ CREATE TABLE Suppliers (
   Address TEXT
 );
 
+-- Create SupplierInfo table
+CREATE TABLE SupplierInfo (
+  SupplierInfoID INTEGER PRIMARY KEY AUTOINCREMENT,
+  SupplierID INTEGER,
+  Code VARCHAR(50),
+  Notes TEXT,
+  FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
+);
+
 -- Create ProductType table
 CREATE TABLE ProductType (
   ProductTypeID INTEGER PRIMARY KEY AUTOINCREMENT,
-  CatalogueCode VARCHAR(50),
+  Code VARCHAR(50),
   Barcode VARCHAR(50),
   UKT_ZED VARCHAR(50),
   Name VARCHAR(100),
@@ -72,59 +81,17 @@ CREATE TABLE ProductType (
   IsImported BOOLEAN
 );
 
--- Create ProductTypeSupplierInfo table
-CREATE TABLE ProductTypeSupplierInfo (
-  ProductTypeSupplierInfoID INTEGER PRIMARY KEY AUTOINCREMENT,
+-- Create ProductInfo table
+CREATE TABLE ProductInfo (
+  ProductInfoID INTEGER PRIMARY KEY AUTOINCREMENT,
   ProductTypeID INTEGER,
-  Code VARCHAR(50),
-  SupplierID INTEGER,
-  FOREIGN KEY (ProductTypeID) REFERENCES ProductType(ProductTypeID),
-  FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
-);
-
--- Create Inventory table
-CREATE TABLE Inventory (
-  InventoryID INTEGER PRIMARY KEY AUTOINCREMENT,
-  ProductTypeID INTEGER,
-  QuantityAvailable INTEGER,
-  EmployeeID INTEGER,
-  FOREIGN KEY (ProductTypeID) REFERENCES ProductType(ProductTypeID),
-  FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
-);
-
--- Create SaleOrders table
-CREATE TABLE SaleOrders (
-  OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Date DATETIME,
-  UserID INTEGER,
-  CustomerID INTEGER,
-  Status VARCHAR(50),
-  OrderInfoID INTEGER,
-  FOREIGN KEY (UserID) REFERENCES Users(UserID),
-  FOREIGN KEY (CustomerID) REFERENCES Contacts(ContactID),
-  FOREIGN KEY (OrderInfoID) REFERENCES OrderInfo(OrderInfoID)
-);
-
--- Create OrderInfo table
-CREATE TABLE OrderInfo (
-  OrderInfoID INTEGER PRIMARY KEY AUTOINCREMENT,
-  OrderID INTEGER,
-  ProductTypeID INTEGER,
-  Quantity INTEGER,
-  Price FLOAT,
-  FOREIGN KEY (OrderID) REFERENCES SaleOrders(OrderID),
+  Name VARCHAR(50),
+  Value VARCHAR(50),
   FOREIGN KEY (ProductTypeID) REFERENCES ProductType(ProductTypeID)
 );
 
--- Create PurchaseOrders table
-CREATE TABLE PurchaseOrders (
-  PurchaseOrderID INTEGER PRIMARY KEY AUTOINCREMENT,
-  Date DATETIME,
-  UserID INTEGER,
+-- Create ProductTypeSupplierInfo table
+CREATE TABLE ProductTypeSupplierInfo (
+  ProductTypeSupplierInfoID INTEGER PRIMARY KEY AUTOINCREMENT,
   SupplierID INTEGER,
-  Status VARCHAR(50),
-  OrderInfoID INTEGER,
-  FOREIGN KEY (UserID) REFERENCES Users(UserID),
-  FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID),
-  FOREIGN KEY (OrderInfoID) REFERENCES OrderInfo(OrderInfoID)
-);
+  ProductTypeID INTEGER,

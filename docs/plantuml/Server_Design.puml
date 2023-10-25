@@ -10,8 +10,8 @@ class Mediator {
   +mediate()
 }
 
-' API Endpoints
-package "API Endpoints" {
+' API
+package "APIs" {
   class APIFacade {
     +route(requestType, requestData): void
   }
@@ -53,8 +53,8 @@ package "Business Logic" {
   }
 }
 
-' Data Access Layer
-package "Data Access Layer" {
+' Data Access
+package "Data Access" {
   class DatabaseManager {
     +connect(): void
     +disconnect(): void
@@ -108,7 +108,7 @@ Mediator -down-> IRepository : uses
 ' Relationships for Business Logic
 BusinessLogic -down-> IBusinessModule : uses
 
-' Relationships for Data Access Layer
+' Relationships for Data Access
 DatabaseManager -down-> IRepository : uses
 
 ' Repositories
