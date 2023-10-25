@@ -196,7 +196,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - **SageStoreClient**: Serves as the entry point and orchestrator for the application. It initializes and runs the necessary components, including new modules like UserManagementModule and RoleManagementModule.
 - **UiManager**: Manages the user interface elements, including their initialization and updates. This now includes new views like UserManagementView and RoleManagementView.
 - **UiComponent Interface**: An interface for all UI components. Helps in adhering to the Open/Closed Principle, allowing new views to be added with minimal or no change to existing code.
-- **IModule Interface**: An interface for all application logic modules, encouraging a modular approach and easier testing.
+- **IModule Interface**: An interface for all models, encouraging a modular approach and easier testing.
 
 **Views:**
 
@@ -229,7 +229,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - **SageStoreClient**: Orchestrates the UiManager, ApplicationLogic, and Communication, initializing them and facilitating their communication.
 - **UiManager and UiComponent**: The manager uses the interface to manipulate UI elements, which are implemented by various views.
 - **ApplicationLogic and IModule**: The core logic uses the module interface to communicate with various modules, thereby decoupling the logic from the module implementations.
-- **CommunicationLayer and DataSerialization**: Separates the communication logic from the serialization logic, making it easier to switch to a different serialization method in the future.
+- **Network and DataSerialization**: Separates the communication logic from the serialization logic, making it easier to switch to a different serialization method in the future.
 
 #### Special Notes
 

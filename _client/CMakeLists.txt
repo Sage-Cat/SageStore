@@ -18,11 +18,6 @@ find_package(Qt6 COMPONENTS QuickControls2 REQUIRED)
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
-# Define source files
-set(APPLICATION_LOGIC_SOURCES
-    # Empty for now
-)
-
 set(COMMUNICATION_SOURCES
     # Empty for now
 )
