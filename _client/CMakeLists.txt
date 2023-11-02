@@ -25,6 +25,7 @@ set(COMMUNICATION_SOURCES
 set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/Ui/QmlTypeRegistrar.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/NAME_HEREViewModel.cpp
 )
 
 set(MAIN_SOURCES

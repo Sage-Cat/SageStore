@@ -7,6 +7,7 @@
 #include "Ui/QmlTypeRegistrar.hpp"
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
+#include "ViewModels/NAME_HEREViewModel.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -91,6 +92,8 @@ void UiManager::initModules()
 
     // PurchaseOrdersViewModel
     m_purchaseOrdersViewModel = new PurchaseOrdersViewModel(this);
+    // NAME_HEREViewModel
+    m_nAME_HEREViewModel = new NAME_HEREViewModel(this);
 }
 
 void UiManager::initDialogues()

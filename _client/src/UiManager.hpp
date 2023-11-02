@@ -8,6 +8,7 @@
 #include <QMap>
 
 class PurchaseOrdersViewModel;
+class NAME_HEREViewModel;
 
 /**
  * @class UiManager
@@ -129,4 +130,5 @@ private:
     QQmlApplicationEngine m_engine; ///< QQmlApplicationEngine for running the QML engine.
 
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
+    NAME_HEREViewModel *m_nAME_HEREViewModel;
 };

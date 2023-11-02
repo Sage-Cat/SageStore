@@ -40,6 +40,14 @@ ApplicationWindow {
                 PurchaseOrdersView {  
                 }
             }
+
+            
+            // NAME_HEREView
+            Component {
+                id: nAME_HEREComponent
+                NAME_HEREView {  
+                }
+            }
         }
     }
 
