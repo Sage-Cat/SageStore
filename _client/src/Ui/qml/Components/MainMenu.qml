@@ -55,7 +55,13 @@ MenuBar {
     // Users Module Menu
     Menu {
         title: "Users"
-        MenuItem { text: "User Roles" }
+        MenuItem { 
+            text: "User Roles";
+            onTriggered: {
+                stackView.clear();
+                stackView.push(userRolesComponent);
+                } 
+            }
         MenuItem { text: "User Logs" }
     }
 

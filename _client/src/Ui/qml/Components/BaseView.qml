@@ -10,6 +10,7 @@ Rectangle {
     
     property alias additionalButtonSpaceAlias: additionalButtonSpace
     property alias additionalUnderTableSpaceAlias: additionalUnderTableSpace
+    property alias tableMod: dataTable
     
     // Use a vertical layout to structure the main items
     ColumnLayout {
@@ -38,6 +39,8 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
+
+
         }
 
         // Additional space

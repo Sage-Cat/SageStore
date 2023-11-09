@@ -12,20 +12,20 @@
  *          It encapsulates the behavior and data necessary to interact with the
  *          purchase View within the UI.
  */
-class NAME_HEREViewModel : public QObject, public UiViewModel
+class UserRolesViewModel : public QObject, public UiViewModel
 {
     Q_OBJECT
 
 public:
     /**
-     * @brief Constructs a new NAME_HEREViewModel object.
+     * @brief Constructs a new UserRolesViewModel object.
      *
      * @param parent Parent QObject. Default is nullptr.
      */
-    explicit NAME_HEREViewModel(QObject *parent = nullptr);
+    explicit UserRolesViewModel(QObject *parent = nullptr);
 
     /**
-     * @brief Destroys the NAME_HEREViewModel object and cleans up resources.
+     * @brief Destroys the UserRolesViewModel object and cleans up resources.
      */
-    ~NAME_HEREViewModel() override;
+    ~UserRolesViewModel() override;
 };

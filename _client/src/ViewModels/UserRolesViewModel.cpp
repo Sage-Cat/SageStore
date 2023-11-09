@@ -1,4 +1,4 @@
-#include "NAME_HEREViewModel.hpp"
+#include "UserRolesViewModel.hpp"
 
 #include <QUrl>
 #include <QQmlEngine>
@@ -7,11 +7,11 @@
 
 #include "SpdlogWrapper.hpp"
 
-NAME_HEREViewModel::NAME_HEREViewModel(QObject *parent)
+UserRolesViewModel::UserRolesViewModel(QObject *parent)
     : QObject(parent)
 {
 }
 
-NAME_HEREViewModel::~NAME_HEREViewModel()
+UserRolesViewModel::~UserRolesViewModel()
 {
 }

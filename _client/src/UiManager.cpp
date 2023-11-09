@@ -7,7 +7,7 @@
 #include "Ui/QmlTypeRegistrar.hpp"
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
-#include "ViewModels/NAME_HEREViewModel.hpp"
+#include "ViewModels/UserRolesViewModel.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -93,7 +93,8 @@ void UiManager::initModules()
     // PurchaseOrdersViewModel
     m_purchaseOrdersViewModel = new PurchaseOrdersViewModel(this);
     // NAME_HEREViewModel
-    m_nAME_HEREViewModel = new NAME_HEREViewModel(this);
+    // UserRolesViewModel
+    m_userRolesViewModel = new UserRolesViewModel(this);
 }
 
 void UiManager::initDialogues()

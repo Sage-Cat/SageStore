@@ -8,7 +8,7 @@
 
     <!-- Views -->
     <file>Views/PurchaseOrdersView.qml</file>
-    <file>Views/NAME_HEREView.qml</file>
+    <file>Views/UserRolesView.qml</file>
 
     <!-- Components -->
     <file>Components/BaseView.qml</file>

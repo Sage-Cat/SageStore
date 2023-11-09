@@ -42,10 +42,10 @@ ApplicationWindow {
             }
 
             
-            // NAME_HEREView
+            // UserRolesView
             Component {
-                id: nAME_HEREComponent
-                NAME_HEREView {  
+                id: userRolesComponent
+                UserRolesView {  
                 }
             }
         }
