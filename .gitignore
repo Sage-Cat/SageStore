@@ -3,3 +3,4 @@ build/
 .vscode/
 CMakeLists.txt.user
 CMakeUserPresets.json
+docs/doxygen_generated
