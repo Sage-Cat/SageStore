@@ -22,6 +22,14 @@ Rectangle {
             spacing: 10
 
             Button { text: "Add"; /*...*/ }
+            Button {
+                text: "З кнопкою";
+                icon.source: "./icons/icons8-plus-80.png" // Вказуйте шлях до зображення;
+
+                onClicked: {
+                // Обробник події для натискання кнопки
+                }
+        }
             Button { text: "Delete"; /*...*/ }
             Button { text: "Edit"; /*...*/ }
             
