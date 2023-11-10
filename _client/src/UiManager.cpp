@@ -92,7 +92,6 @@ void UiManager::initModules()
 
     // PurchaseOrdersViewModel
     m_purchaseOrdersViewModel = new PurchaseOrdersViewModel(this);
-    // NAME_HEREViewModel
     // UserRolesViewModel
     m_userRolesViewModel = new UserRolesViewModel(this);
 }

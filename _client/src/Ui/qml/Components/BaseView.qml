@@ -34,13 +34,51 @@ Rectangle {
         }
 
         // Your data table
-        TableView {
+        Rectangle {
             id: dataTable
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
+            Row {
+                //header
+                width: userRolesView.tableMod.contentWidth
+                height: 40
+                spacing: 2
+                Repeater {
+                    model: table.model.columnWidth(index); height: parent.height
+                    //color: "blue";
 
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: 4;
+                        width: parent.width - 4;
+                        text: table.model.headerData(index, Qt.Horizontal)
+                    }
+                }
+            }
+            TableView {
+                //data
+                model: TableModel {
+                    // TableModelColumn { display: "name" }
+                    // TableModelColumn { display: "color"}
 
+                    rows: [
+                        {
+                            "name": "cat",
+                            "color": "black"
+                        },
+                        // {
+                        //     "name": "dog",
+                        //     "color": "brown"
+                        // },
+                        {
+                            "name": "bird",
+                            "color": "white"
+                        }
+                    ]
+                }
+                clip: true
+            }
+        
         }
 
         // Additional space

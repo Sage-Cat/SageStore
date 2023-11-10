@@ -17,52 +17,59 @@ BaseView {
         columnSpacing: 1
         rowSpacing: 1
         clip: true
+        // Row {
+        //     width: userRolesView.tableMod.contentWidth
+        //     height: 40
+        //     spacing: 2
+        //     Repeater {
+        //         model: table.model.columnWidth(index); height: parent.height
+        //         //color: "blue";
 
-        model: TableModel {
-            TableModelColumn { display: "name"}
-            TableModelColumn { display: "color"}
+        //         Text {
+        //             anchors.verticalCenter: parent.verticalCenter
+        //             x: 4;
+        //             width: parent.width - 4;
+        //             text: table.model.headerData(index, Qt.Horizontal)
+        //         }
+        //     }
 
-            rows: [
-                {
-                    "name": "cat",
-                    "color": "black"
-                },
-                {
-                    "name": "dog",
-                    "color": "brown"
-                },
-                {
-                    "name": "bird",
-                    "color": "white"
-                }
-            ]
-        }
-    
+        // }
+        // model: TableModel {
+        //     TableModelColumn { display: "name" }
+        //     TableModelColumn { display: "color"}
 
-        delegate: Rectangle {
-            implicitWidth: 100
-            implicitHeight: 50
-            Text {
-                text: display
-            }
-            MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                ignore;
-            }
-            property bool isPressed: false
+        //     rows: [
+        //         {
+        //             "name": "cat",
+        //             "color": "black"
+        //         },
+        //         // {
+        //         //     "name": "dog",
+        //         //     "color": "brown"
+        //         // },
+        //         {
+        //             "name": "bird",
+        //             "color": "white"
+        //         }
+        //     ]
+        // }
+        // column: TableColumn {
+        //     role: "name"
+        //     title: "Name"
+        // }
+        
+        // TableViewColumn {
+        //     role: "color"
+        //     title: "Color"
+        // }
 
-            onPressed: {
-                isPressed = true;
-            }
-
-            onReleased: {
-                if (isPressed) {
-                    isPressed = false;
-                    ignore;
-                }
-            }
-        }
-        }
+        // delegate: Rectangle {
+        //     implicitWidth: 100
+        //     implicitHeight: 50
+        //     Text {
+        //         text: display
+        //     }
+            
+        // }
     }
 }
