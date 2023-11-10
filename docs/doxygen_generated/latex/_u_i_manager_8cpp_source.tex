@@ -1,0 +1,102 @@
+\doxysection{UIManager.\+cpp}
+\hypertarget{_u_i_manager_8cpp_source}{}\label{_u_i_manager_8cpp_source}\index{C:/Users/UsVeR/Documents/GitLab/SageStore/\_client/src/UI/UIManager.cpp@{C:/Users/UsVeR/Documents/GitLab/SageStore/\_client/src/UI/UIManager.cpp}}
+\mbox{\hyperlink{_u_i_manager_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_u_i_manager_8hpp}{UiManager.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <QApplication>}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <QQmlContext>}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{logging_8hpp}{Logging.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_qml_type_registrar_8hpp}{UI/QmlTypeRegistrar.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00011}\mbox{\hyperlink{class_ui_manager_aa38f9f0ba13d018e6c108ea835e5af63}{00011}}\ \mbox{\hyperlink{class_ui_manager_aa38f9f0ba13d018e6c108ea835e5af63}{UiManager::UiManager}}(QObject\ *parent)\ noexcept}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00012}00012\ \ \ \ \ :\ QObject(parent)}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00013}00013\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00014}00014\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::UiManager"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00016}00016\ \ \ \ \ \mbox{\hyperlink{namespace_qml_type_registrar_a80fa91e3a0fe7b98d26a65f6c59156aa}{QmlTypeRegistrar::registerTypes}}();}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00018}00018\ \ \ \ \ connect(\&m\_engine,\ \&QQmlApplicationEngine::objectCreated,}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00019}00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{this},\ [\textcolor{keyword}{this}](QObject\ *obj,\ \textcolor{keyword}{const}\ QUrl\ \&objUrl)}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00020}00020\ \ \ \ \ \ \ \ \ \ \ \ \ \{\ \textcolor{keywordflow}{if}\ (!obj)\ SPDLOG\_CRITICAL(\textcolor{stringliteral}{"{}Failed\ to\ load\ QML\ from\ URL:\ \{\}"{}},\ objUrl.toString().toStdString());\ \});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00021}00021\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00023}\mbox{\hyperlink{class_ui_manager_a297f9de67bdb9b497a171bbff0ae2570}{00023}}\ \mbox{\hyperlink{class_ui_manager_a297f9de67bdb9b497a171bbff0ae2570}{UiManager::\string~UiManager}}()}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00024}00024\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00025}00025\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::\string~UiManager"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00026}00026\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00028}\mbox{\hyperlink{class_ui_manager_af5a8ba98c70f1e745de362fa1c87399d}{00028}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_ui_manager_af5a8ba98c70f1e745de362fa1c87399d}{UiManager::init}}()}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00029}00029\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00030}00030\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::init"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00032}00032\ \ \ \ \ initMainWindow();}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00033}00033\ \ \ \ \ initTheme();}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00034}00034\ \ \ \ \ initModules();}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00035}00035\ \ \ \ \ initDialogues();}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00036}00036\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00038}\mbox{\hyperlink{class_ui_manager_a53badc4685d55a3a83383090f70eae11}{00038}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_ui_manager_a53badc4685d55a3a83383090f70eae11}{UiManager::setTheme}}(\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}}\ theme)}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00039}00039\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00040}00040\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ theme\_str\ =\ \mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{theme}}\ ==\ \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824aa18366b217ebf811ad1886e4f4f865b2}{Theme::Dark}}\ ?\ \textcolor{stringliteral}{"{}Dark"{}}\ :\ \textcolor{stringliteral}{"{}Light"{}};}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00041}00041\ \ \ \ \ SPDLOG\_TRACE(std::string(\textcolor{stringliteral}{"{}UiManager::setTheme"{}})\ +\ theme\_str);}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00043}00043\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_theme\ !=\ \mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{theme}})}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00044}00044\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00045}00045\ \ \ \ \ \ \ \ \ m\_theme\ =\ \mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{theme}};}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00046}00046\ \ \ \ \ \ \ \ \ SPDLOG\_INFO(std::string(\textcolor{stringliteral}{"{}Changing\ theme\ to\ "{}})\ +\ theme\_str);}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00047}00047\ \ \ \ \ \ \ \ \ emit\ \mbox{\hyperlink{class_ui_manager_a062a1da183d6e0ae120f90f8b795149c}{themeChanged}}(\mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{theme}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00048}00048\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00049}00049\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00051}\mbox{\hyperlink{class_ui_manager_a12abf191b18edb7ec9b7daed39341f9c}{00051}}\ \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{UiManager::Theme}}\ \mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{UiManager::theme}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00052}00052\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00053}00053\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::theme"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00054}00054\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_theme;}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00055}00055\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00057}\mbox{\hyperlink{class_ui_manager_a50b6de074191000472d0b793aca3ef07}{00057}}\ QFont\ \mbox{\hyperlink{class_ui_manager_a50b6de074191000472d0b793aca3ef07}{UiManager::defaultFont}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00058}00058\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00059}00059\ \ \ \ \ \textcolor{comment}{//\ TODO:\ make\ possibility\ to\ setup}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00060}00060\ \ \ \ \ QFont\ \mbox{\hyperlink{class_ui_manager_a50b6de074191000472d0b793aca3ef07}{defaultFont}}(\textcolor{stringliteral}{"{}Helvetica"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00061}00061\ \ \ \ \ \mbox{\hyperlink{class_ui_manager_a50b6de074191000472d0b793aca3ef07}{defaultFont}}.setPixelSize(18);}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00062}00062\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_ui_manager_a50b6de074191000472d0b793aca3ef07}{defaultFont}};}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00063}00063\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00065}00065\ \textcolor{keywordtype}{void}\ UiManager::initTheme()}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00066}00066\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00067}00067\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::initTheme"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00068}00068\ \ \ \ \ \mbox{\hyperlink{class_ui_manager_a53badc4685d55a3a83383090f70eae11}{setTheme}}(\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824aa18366b217ebf811ad1886e4f4f865b2}{Theme::Dark}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00069}00069\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00071}00071\ \textcolor{keywordtype}{void}\ UiManager::initMainWindow()}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00072}00072\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00073}00073\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::initMainWindow"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00075}00075\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_engine.rootContext())}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00076}00076\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00077}00077\ \ \ \ \ \ \ \ \ m\_engine.rootContext()-\/>setContextProperty(\textcolor{stringliteral}{"{}uiManager"{}},\ \textcolor{keyword}{this});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ m\_engine.load(QUrl(QStringLiteral(\textcolor{stringliteral}{"{}qrc:/main.qml"{}})));}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00079}00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_engine.rootObjects().isEmpty())}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ SPDLOG\_CRITICAL(\textcolor{stringliteral}{"{}UiManager::initMainWindow\ Failed\ to\ load\ main\ window"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00081}00081\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00082}00082\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00083}00083\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00084}00084\ \ \ \ \ \ \ \ \ SPDLOG\_CRITICAL(\textcolor{stringliteral}{"{}UiManager::initMainWindow\ m\_engine\ is\ invalid"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00085}00085\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00086}00086\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00087}00087\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00088}00088\ \textcolor{keywordtype}{void}\ UiManager::initModules()}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00089}00089\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00090}00090\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::initModules"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00091}00091\ \}}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00092}00092\ }
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00093}00093\ \textcolor{keywordtype}{void}\ UiManager::initDialogues()}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00094}00094\ \{}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00095}00095\ \ \ \ \ SPDLOG\_TRACE(\textcolor{stringliteral}{"{}UiManager::initDialogues"{}});}
+\DoxyCodeLine{\Hypertarget{_u_i_manager_8cpp_source_l00096}00096\ \}}
+
+\end{DoxyCode}

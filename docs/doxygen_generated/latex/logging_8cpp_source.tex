@@ -1,0 +1,20 @@
+\doxysection{logging.\+cpp}
+\hypertarget{logging_8cpp_source}{}\label{logging_8cpp_source}\index{C:/Users/UsVeR/Documents/GitLab/SageStore/\_client/src/logging.cpp@{C:/Users/UsVeR/Documents/GitLab/SageStore/\_client/src/logging.cpp}}
+\mbox{\hyperlink{logging_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{logging_8hpp}{Logging.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00003}\mbox{\hyperlink{namespace_logging}{00003}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_logging}{Logging}}}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00004}00004\ \{}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00006}\mbox{\hyperlink{namespace_logging_a3c3da8e89892f1d395ed95d3bd7a1f1a}{00006}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespace_logging_a3c3da8e89892f1d395ed95d3bd7a1f1a}{init}}(\mbox{\hyperlink{namespace_logging_afe811a7054935e07f1e70c516dead08b}{LogLevel}}\ level)}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00007}00007\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00008}00008\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ console\ =\ spdlog::stdout\_color\_mt(\textcolor{stringliteral}{"{}console"{}});}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00009}00009\ \ \ \ \ \ \ \ \ console-\/>set\_level(\textcolor{keyword}{static\_cast<}spdlog::level::level\_enum\textcolor{keyword}{>}(level));}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00010}00010\ \ \ \ \ \ \ \ \ console-\/>set\_pattern(\textcolor{stringliteral}{"{}[\%Y-\/\%m-\/\%d\ \%H:\%M:\%S.\%e]\ [\%\string^\%l\%\$]\ \%v"{}});}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00011}00011\ \ \ \ \ \ \ \ \ console-\/>flush\_on(\textcolor{keyword}{static\_cast<}spdlog::level::level\_enum\textcolor{keyword}{>}(level));}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00012}00012\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{logging_8cpp_source_l00014}00014\ \}}
+
+\end{DoxyCode}

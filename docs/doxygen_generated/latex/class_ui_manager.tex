@@ -1,0 +1,235 @@
+\doxysection{Ui\+Manager Class Reference}
+\hypertarget{class_ui_manager}{}\label{class_ui_manager}\index{UiManager@{UiManager}}
+
+
+Manages UI components.  
+
+
+
+
+{\ttfamily \#include $<$UIManager.\+hpp$>$}
+
+Inheritance diagram for Ui\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_ui_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}} \+: int \{ \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824aa18366b217ebf811ad1886e4f4f865b2}{Dark}} = 0
+, \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824a9914a0ce04a7b7b6a8e39bec55064b82}{Light}}
+ \}
+\begin{DoxyCompactList}\small\item\em Identifies the set themes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_ui_manager_a062a1da183d6e0ae120f90f8b795149c}{theme\+Changed}} (\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}} new\+Theme)
+\begin{DoxyCompactList}\small\item\em Signal emitted when the theme changes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_ui_manager_aa38f9f0ba13d018e6c108ea835e5af63}{Ui\+Manager}} (QObject \texorpdfstring{$\ast$}{*}parent=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{class_ui_manager}{Ui\+Manager} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_ui_manager_a297f9de67bdb9b497a171bbff0ae2570}{\texorpdfstring{$\sim$}{\string~}\+Ui\+Manager}} () noexcept override
+\begin{DoxyCompactList}\small\item\em Destroy the \doxylink{class_ui_manager}{Ui\+Manager} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ui_manager_af5a8ba98c70f1e745de362fa1c87399d}{init}} ()
+\begin{DoxyCompactList}\small\item\em Initialize UI components. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}} \mbox{\hyperlink{class_ui_manager_a12abf191b18edb7ec9b7daed39341f9c}{theme}} () const
+\begin{DoxyCompactList}\small\item\em Get the current theme. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ui_manager_a53badc4685d55a3a83383090f70eae11}{set\+Theme}} (\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}} \mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{theme}})
+\begin{DoxyCompactList}\small\item\em Set the theme. \end{DoxyCompactList}\item 
+QFont \mbox{\hyperlink{class_ui_manager_a50b6de074191000472d0b793aca3ef07}{default\+Font}} () const
+\begin{DoxyCompactList}\small\item\em Get the default font. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}} \mbox{\hyperlink{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}{theme}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Manages UI components. 
+
+This class is responsible for initializing and managing UI components. 
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8hpp_source_l00013}{13}} of file \mbox{\hyperlink{_u_i_manager_8hpp_source}{UIManager.\+hpp}}.
+
+
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}\label{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824} 
+\index{UiManager@{UiManager}!Theme@{Theme}}
+\index{Theme@{Theme}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{Theme}{Theme}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Ui\+Manager\+::\+Theme}} \+: int\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Identifies the set themes. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Dark@{Dark}!UiManager@{UiManager}}\index{UiManager@{UiManager}!Dark@{Dark}}}\Hypertarget{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824aa18366b217ebf811ad1886e4f4f865b2}\label{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824aa18366b217ebf811ad1886e4f4f865b2} 
+Dark&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Light@{Light}!UiManager@{UiManager}}\index{UiManager@{UiManager}!Light@{Light}}}\Hypertarget{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824a9914a0ce04a7b7b6a8e39bec55064b82}\label{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824a9914a0ce04a7b7b6a8e39bec55064b82} 
+Light&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8hpp_source_l00023}{23}} of file \mbox{\hyperlink{_u_i_manager_8hpp_source}{UIManager.\+hpp}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_ui_manager_aa38f9f0ba13d018e6c108ea835e5af63}\label{class_ui_manager_aa38f9f0ba13d018e6c108ea835e5af63} 
+\index{UiManager@{UiManager}!UiManager@{UiManager}}
+\index{UiManager@{UiManager}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{UiManager()}{UiManager()}}
+{\footnotesize\ttfamily Ui\+Manager\+::\+Ui\+Manager (\begin{DoxyParamCaption}\item[{QObject \texorpdfstring{$\ast$}{*}}]{parent = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+
+
+Construct a new \doxylink{class_ui_manager}{Ui\+Manager} object. 
+
+Initializes a \doxylink{class_ui_manager}{Ui\+Manager} object. Optionally, a parent QObject can be passed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Parent QObject (default is nullptr). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8cpp_source_l00011}{11}} of file \mbox{\hyperlink{_u_i_manager_8cpp_source}{UIManager.\+cpp}}.
+
+\Hypertarget{class_ui_manager_a297f9de67bdb9b497a171bbff0ae2570}\label{class_ui_manager_a297f9de67bdb9b497a171bbff0ae2570} 
+\index{UiManager@{UiManager}!````~UiManager@{\texorpdfstring{$\sim$}{\string~}UiManager}}
+\index{````~UiManager@{\texorpdfstring{$\sim$}{\string~}UiManager}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}UiManager()}{\string~UiManager()}}
+{\footnotesize\ttfamily Ui\+Manager\+::\texorpdfstring{$\sim$}{\string~}\+Ui\+Manager (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [noexcept]}}
+
+
+
+Destroy the \doxylink{class_ui_manager}{Ui\+Manager} object. 
+
+Destroys the \doxylink{class_ui_manager}{Ui\+Manager} object and cleans up its resources. 
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8cpp_source_l00023}{23}} of file \mbox{\hyperlink{_u_i_manager_8cpp_source}{UIManager.\+cpp}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_ui_manager_a50b6de074191000472d0b793aca3ef07}\label{class_ui_manager_a50b6de074191000472d0b793aca3ef07} 
+\index{UiManager@{UiManager}!defaultFont@{defaultFont}}
+\index{defaultFont@{defaultFont}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{defaultFont()}{defaultFont()}}
+{\footnotesize\ttfamily QFont Ui\+Manager\+::default\+Font (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the default font. 
+
+\begin{DoxyReturn}{Returns}
+Default font as a QFont object. 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8cpp_source_l00057}{57}} of file \mbox{\hyperlink{_u_i_manager_8cpp_source}{UIManager.\+cpp}}.
+
+\Hypertarget{class_ui_manager_af5a8ba98c70f1e745de362fa1c87399d}\label{class_ui_manager_af5a8ba98c70f1e745de362fa1c87399d} 
+\index{UiManager@{UiManager}!init@{init}}
+\index{init@{init}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void Ui\+Manager\+::init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize UI components. 
+
+This method is responsible for setting up UI components. 
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8cpp_source_l00028}{28}} of file \mbox{\hyperlink{_u_i_manager_8cpp_source}{UIManager.\+cpp}}.
+
+\Hypertarget{class_ui_manager_a53badc4685d55a3a83383090f70eae11}\label{class_ui_manager_a53badc4685d55a3a83383090f70eae11} 
+\index{UiManager@{UiManager}!setTheme@{setTheme}}
+\index{setTheme@{setTheme}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{setTheme()}{setTheme()}}
+{\footnotesize\ttfamily void Ui\+Manager\+::set\+Theme (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}}}]{theme }\end{DoxyParamCaption})}
+
+
+
+Set the theme. 
+
+Updates the current theme.
+
+
+\begin{DoxyParams}{Parameters}
+{\em theme} & New theme as a Theme enum value. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8cpp_source_l00038}{38}} of file \mbox{\hyperlink{_u_i_manager_8cpp_source}{UIManager.\+cpp}}.
+
+\Hypertarget{class_ui_manager_a12abf191b18edb7ec9b7daed39341f9c}\label{class_ui_manager_a12abf191b18edb7ec9b7daed39341f9c} 
+\index{UiManager@{UiManager}!theme@{theme}}
+\index{theme@{theme}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{theme()}{theme()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Ui\+Manager\+::\+Theme}} Ui\+Manager\+::theme (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the current theme. 
+
+\begin{DoxyReturn}{Returns}
+Current theme as a Theme enum value. 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8cpp_source_l00051}{51}} of file \mbox{\hyperlink{_u_i_manager_8cpp_source}{UIManager.\+cpp}}.
+
+\Hypertarget{class_ui_manager_a062a1da183d6e0ae120f90f8b795149c}\label{class_ui_manager_a062a1da183d6e0ae120f90f8b795149c} 
+\index{UiManager@{UiManager}!themeChanged@{themeChanged}}
+\index{themeChanged@{themeChanged}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{themeChanged}{themeChanged}}
+{\footnotesize\ttfamily void Ui\+Manager\+::theme\+Changed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}}}]{new\+Theme }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Signal emitted when the theme changes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Theme} & New theme as a Theme enum value. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{src_2_sage_store_client__autogen_2_e_w_i_e_g_a46_w_w_2moc___ui_manager_8cpp_source_l00249}{249}} of file \mbox{\hyperlink{src_2_sage_store_client__autogen_2_e_w_i_e_g_a46_w_w_2moc___ui_manager_8cpp_source}{moc\+\_\+\+Ui\+Manager.\+cpp}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c}\label{class_ui_manager_af973724f555ce83d03a1f322e9b4aa3c} 
+\index{UiManager@{UiManager}!theme@{theme}}
+\index{theme@{theme}!UiManager@{UiManager}}
+\doxysubsubsection{\texorpdfstring{theme}{theme}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_ui_manager_a2cc37bd9249e6b7a3599fded44fba824}{Theme}} Ui\+Manager\+::theme\hspace{0.3cm}{\ttfamily [read]}, {\ttfamily [write]}}
+
+
+
+Definition at line \mbox{\hyperlink{_u_i_manager_8hpp_source_l00016}{16}} of file \mbox{\hyperlink{_u_i_manager_8hpp_source}{UIManager.\+hpp}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Us\+Ve\+R/\+Documents/\+Git\+Lab/\+Sage\+Store/\+\_\+client/src/\+UI/\mbox{\hyperlink{_u_i_manager_8hpp}{UIManager.\+hpp}}\item 
+C\+:/\+Users/\+Us\+Ve\+R/\+Documents/\+Git\+Lab/\+Sage\+Store/\+\_\+client/src/\+UI/\mbox{\hyperlink{_u_i_manager_8cpp}{UIManager.\+cpp}}\item 
+C\+:/\+Users/\+Us\+Ve\+R/\+Documents/\+Git\+Lab/\+Sage\+Store/build/\+\_\+client/src/\+Sage\+Store\+Client\+\_\+autogen/\+EWIEGA46\+WW/\mbox{\hyperlink{src_2_sage_store_client__autogen_2_e_w_i_e_g_a46_w_w_2moc___ui_manager_8cpp}{moc\+\_\+\+Ui\+Manager.\+cpp}}\item 
+C\+:/\+Users/\+Us\+Ve\+R/\+Documents/\+Git\+Lab/\+Sage\+Store/build/\+\_\+client/tests/unit/\+Client\+Test\+Lib\+\_\+autogen/5\+EOT6\+PJXF2/\mbox{\hyperlink{tests_2unit_2_client_test_lib__autogen_25_e_o_t6_p_j_x_f2_2moc___ui_manager_8cpp}{moc\+\_\+\+Ui\+Manager.\+cpp}}\end{DoxyCompactItemize}

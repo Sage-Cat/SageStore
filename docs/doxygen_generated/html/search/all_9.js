@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['ibusinessmodule_0',['IBusinessModule',['../class_i_business_module.html',1,'']]],
+  ['ibusinessmodule_2ehpp_1',['IBusinessModule.hpp',['../_i_business_module_8hpp.html',1,'']]],
+  ['idataserialization_2',['IDataSerialization',['../class_i_data_serialization.html',1,'']]],
+  ['idataserialization_2ehpp_3',['IDataSerialization.hpp',['../_i_data_serialization_8hpp.html',1,'']]],
+  ['imediator_4',['IMediator',['../class_i_mediator.html',1,'']]],
+  ['imediator_2ehpp_5',['IMediator.hpp',['../_i_mediator_8hpp.html',1,'']]],
+  ['imodule_6',['IModule',['../class_i_module.html',1,'']]],
+  ['imodule_2ehpp_7',['IModule.hpp',['../_i_module_8hpp.html',1,'']]],
+  ['info_8',['Info',['../namespace_logging.html#afe811a7054935e07f1e70c516dead08ba4059b0251f66a18cb56f544728796875',1,'Logging']]],
+  ['info_5farch_9',['info_arch',['../_c_make_c_compiler_id_8c.html#a59647e99d304ed33b15cb284c27ed391',1,'info_arch:&#160;CMakeCCompilerId.c'],['../_c_make_c_x_x_compiler_id_8cpp.html#a59647e99d304ed33b15cb284c27ed391',1,'info_arch:&#160;CMakeCXXCompilerId.cpp']]],
+  ['info_5fcompiler_10',['info_compiler',['../_c_make_c_compiler_id_8c.html#a4b0efeb7a5d59313986b3a0390f050f6',1,'info_compiler:&#160;CMakeCCompilerId.c'],['../_c_make_c_x_x_compiler_id_8cpp.html#a4b0efeb7a5d59313986b3a0390f050f6',1,'info_compiler:&#160;CMakeCXXCompilerId.cpp']]],
+  ['info_5flanguage_5fextensions_5fdefault_11',['info_language_extensions_default',['../_c_make_c_compiler_id_8c.html#a0f46a8a39e09d9b803c4766904fd7e99',1,'info_language_extensions_default:&#160;CMakeCCompilerId.c'],['../_c_make_c_x_x_compiler_id_8cpp.html#a0f46a8a39e09d9b803c4766904fd7e99',1,'info_language_extensions_default:&#160;CMakeCXXCompilerId.cpp']]],
+  ['info_5flanguage_5fstandard_5fdefault_12',['info_language_standard_default',['../_c_make_c_compiler_id_8c.html#a4607cccf070750927b458473ca82c090',1,'info_language_standard_default:&#160;CMakeCCompilerId.c'],['../_c_make_c_x_x_compiler_id_8cpp.html#a4607cccf070750927b458473ca82c090',1,'info_language_standard_default:&#160;CMakeCXXCompilerId.cpp']]],
+  ['info_5fplatform_13',['info_platform',['../_c_make_c_compiler_id_8c.html#a2321403dee54ee23f0c2fa849c60f7d4',1,'info_platform:&#160;CMakeCCompilerId.c'],['../_c_make_c_x_x_compiler_id_8cpp.html#a2321403dee54ee23f0c2fa849c60f7d4',1,'info_platform:&#160;CMakeCXXCompilerId.cpp']]],
+  ['init_14',['init',['../class_i_module.html#a94678affb5988fefa39e4111e39ef6d9',1,'IModule::init()'],['../class_sage_store_client.html#a5091c78948dd90326aa1916d4b05cb70',1,'SageStoreClient::init()'],['../class_ui_manager.html#af5a8ba98c70f1e745de362fa1c87399d',1,'UiManager::init()'],['../class_i_business_module.html#ae92ebf5f994da527746cb36a177255f3',1,'IBusinessModule::init()'],['../namespace_logging.html#a3c3da8e89892f1d395ed95d3bd7a1f1a',1,'Logging::init()']]],
+  ['initspdlog_15',['initSpdlog',['../__server_2src_2main_8cpp.html#a4f753805a93285978a409d2f29b2005d',1,'main.cpp']]],
+  ['insert_16',['insert',['../class_i_repository.html#a076c55e41f5c9ecae8742ef3b4621b49',1,'IRepository']]],
+  ['installation_17',['Installation',['../md__c_1_2_users_2_us_ve_r_2_documents_2_git_lab_2_sage_store_2_r_e_a_d_m_e.html#autotoc_md75',1,'']]],
+  ['introduction_18',['Introduction',['../md__c_1_2_users_2_us_ve_r_2_documents_2_git_lab_2_sage_store_2_r_e_a_d_m_e.html#autotoc_md66',1,'']]],
+  ['inventory_19',['Inventory',['../md__c_1_2_users_2_us_ve_r_2_documents_2_git_lab_2_sage_store_2docs_2_project___documentation.html#autotoc_md35',1,'']]],
+  ['irepository_20',['IRepository',['../class_i_repository.html',1,'']]],
+  ['irepository_2ehpp_21',['IRepository.hpp',['../_i_repository_8hpp.html',1,'']]]
+];

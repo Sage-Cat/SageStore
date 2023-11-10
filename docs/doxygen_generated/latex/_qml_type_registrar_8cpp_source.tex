@@ -1,0 +1,20 @@
+\doxysection{Qml\+Type\+Registrar.\+cpp}
+\hypertarget{_qml_type_registrar_8cpp_source}{}\label{_qml_type_registrar_8cpp_source}\index{C:/Users/UsVeR/Documents/GitLab/SageStore/\_client/src/UI/QmlTypeRegistrar.cpp@{C:/Users/UsVeR/Documents/GitLab/SageStore/\_client/src/UI/QmlTypeRegistrar.cpp}}
+\mbox{\hyperlink{_qml_type_registrar_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_qml_type_registrar_8hpp}{QmlTypeRegistrar.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_u_i_manager_8hpp}{UiManager.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{logging_8hpp}{Logging.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00006}\mbox{\hyperlink{namespace_qml_type_registrar}{00006}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_qml_type_registrar}{QmlTypeRegistrar}}}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00007}00007\ \{}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00008}\mbox{\hyperlink{namespace_qml_type_registrar_a80fa91e3a0fe7b98d26a65f6c59156aa}{00008}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespace_qml_type_registrar_a80fa91e3a0fe7b98d26a65f6c59156aa}{registerTypes}}()\ noexcept}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00009}00009\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00010}00010\ \ \ \ \ \ \ \ \ SPDLOG\_INFO(\textcolor{stringliteral}{"{}QmlTypeRegistrar::registerTypes"{}});}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00011}00011\ \ \ \ \ \ \ \ \ qmlRegisterType<UiManager>(\textcolor{stringliteral}{"{}com.sage"{}},\ 1,\ 0,\ \textcolor{stringliteral}{"{}UiManager"{}});}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00012}00012\ \ \ \ \ \ \ \ \ qmlRegisterUncreatableMetaObject(UiManager::staticMetaObject,\ \textcolor{stringliteral}{"{}com.sage"{}},\ 1,\ 0,\ \textcolor{stringliteral}{"{}Theme"{}},\ \textcolor{stringliteral}{"{}Error:\ only\ enums"{}});}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00013}00013\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_qml_type_registrar_8cpp_source_l00014}00014\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,78 @@
+\doxysection{IData\+Serialization Interface Reference}
+\hypertarget{class_i_data_serialization}{}\label{class_i_data_serialization}\index{IDataSerialization@{IDataSerialization}}
+
+
+Interface for data serialization and deserialization.  
+
+
+
+
+{\ttfamily \#include $<$IData\+Serialization.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_i_data_serialization_a4319f7bf89c614176e8ade36f6dd8b28}{\texorpdfstring{$\sim$}{\string~}\+IData\+Serialization}} ()=default
+\begin{DoxyCompactList}\small\item\em Virtual destructor for \doxylink{class_i_data_serialization}{IData\+Serialization}. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_i_data_serialization_a44ecd2ca4f765832825a6235c111d73c}{serialize}} ()=0
+\begin{DoxyCompactList}\small\item\em Serializes the data into a QString. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_i_data_serialization_af2955d541207fbaa88e1c54266a9b801}{deserialize}} (const QString \&data)=0
+\begin{DoxyCompactList}\small\item\em Deserializes the data from a QString. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interface for data serialization and deserialization. 
+
+This interface defines the basic functionalities for serializing and deserializing data. 
+
+Definition at line \mbox{\hyperlink{_i_data_serialization_8hpp_source_l00011}{11}} of file \mbox{\hyperlink{_i_data_serialization_8hpp_source}{IData\+Serialization.\+hpp}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_i_data_serialization_a4319f7bf89c614176e8ade36f6dd8b28}\label{class_i_data_serialization_a4319f7bf89c614176e8ade36f6dd8b28} 
+\index{IDataSerialization@{IDataSerialization}!````~IDataSerialization@{\texorpdfstring{$\sim$}{\string~}IDataSerialization}}
+\index{````~IDataSerialization@{\texorpdfstring{$\sim$}{\string~}IDataSerialization}!IDataSerialization@{IDataSerialization}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IDataSerialization()}{\string~IDataSerialization()}}
+{\footnotesize\ttfamily virtual IData\+Serialization\+::\texorpdfstring{$\sim$}{\string~}\+IData\+Serialization (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+Virtual destructor for \doxylink{class_i_data_serialization}{IData\+Serialization}. 
+
+Ensures proper cleanup for derived classes. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_data_serialization_af2955d541207fbaa88e1c54266a9b801}\label{class_i_data_serialization_af2955d541207fbaa88e1c54266a9b801} 
+\index{IDataSerialization@{IDataSerialization}!deserialize@{deserialize}}
+\index{deserialize@{deserialize}!IDataSerialization@{IDataSerialization}}
+\doxysubsubsection{\texorpdfstring{deserialize()}{deserialize()}}
+{\footnotesize\ttfamily virtual void IData\+Serialization\+::deserialize (\begin{DoxyParamCaption}\item[{const QString \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Deserializes the data from a QString. 
+
+This pure virtual function should be implemented by derived classes to handle their deserialization logic. 
+\begin{DoxyParams}{Parameters}
+{\em data} & A QString containing the data to be deserialized. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_i_data_serialization_a44ecd2ca4f765832825a6235c111d73c}\label{class_i_data_serialization_a44ecd2ca4f765832825a6235c111d73c} 
+\index{IDataSerialization@{IDataSerialization}!serialize@{serialize}}
+\index{serialize@{serialize}!IDataSerialization@{IDataSerialization}}
+\doxysubsubsection{\texorpdfstring{serialize()}{serialize()}}
+{\footnotesize\ttfamily virtual QString IData\+Serialization\+::serialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Serializes the data into a QString. 
+
+This pure virtual function should be implemented by derived classes to handle their serialization logic. \begin{DoxyReturn}{Returns}
+A QString containing the serialized data. 
+\end{DoxyReturn}
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Us\+Ve\+R/\+Documents/\+Git\+Lab/\+Sage\+Store/\+\_\+client/src/\+Communication\+Layer/\mbox{\hyperlink{_i_data_serialization_8hpp}{IData\+Serialization.\+hpp}}\end{DoxyCompactItemize}

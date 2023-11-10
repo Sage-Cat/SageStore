@@ -1,0 +1,94 @@
+\doxysection{IRepository Interface Reference}
+\hypertarget{class_i_repository}{}\label{class_i_repository}\index{IRepository@{IRepository}}
+
+
+Interface for repositories.  
+
+
+
+
+{\ttfamily \#include $<$IRepository.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_i_repository_a7ac8805a0256fe49e35d3dbbb118c326}{\texorpdfstring{$\sim$}{\string~}\+IRepository}} ()=default
+\begin{DoxyCompactList}\small\item\em Destructor for the \doxylink{class_i_repository}{IRepository} class. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_i_repository_a076c55e41f5c9ecae8742ef3b4621b49}{insert}} ()=0
+\begin{DoxyCompactList}\small\item\em Insert a new item into the repository. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_i_repository_a930b6bafa459ffaac21af17db10a4d44}{update}} ()=0
+\begin{DoxyCompactList}\small\item\em Update an existing item in the repository. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_i_repository_acf98faaec754d95f6e6014a0ccef8da1}{remove}} ()=0
+\begin{DoxyCompactList}\small\item\em Remove an item from the repository. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_i_repository_a1de6f03da74c8a790d97d29d0bd7b4c4}{query}} ()=0
+\begin{DoxyCompactList}\small\item\em Query the repository for data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interface for repositories. 
+
+This interface defines the basic CRUD (Create, Read, Update, Delete) functionalities that any repository should implement. 
+
+Definition at line \mbox{\hyperlink{_i_repository_8hpp_source_l00010}{10}} of file \mbox{\hyperlink{_i_repository_8hpp_source}{IRepository.\+hpp}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_i_repository_a7ac8805a0256fe49e35d3dbbb118c326}\label{class_i_repository_a7ac8805a0256fe49e35d3dbbb118c326} 
+\index{IRepository@{IRepository}!````~IRepository@{\texorpdfstring{$\sim$}{\string~}IRepository}}
+\index{````~IRepository@{\texorpdfstring{$\sim$}{\string~}IRepository}!IRepository@{IRepository}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IRepository()}{\string~IRepository()}}
+{\footnotesize\ttfamily virtual IRepository\+::\texorpdfstring{$\sim$}{\string~}\+IRepository (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+Destructor for the \doxylink{class_i_repository}{IRepository} class. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_repository_a076c55e41f5c9ecae8742ef3b4621b49}\label{class_i_repository_a076c55e41f5c9ecae8742ef3b4621b49} 
+\index{IRepository@{IRepository}!insert@{insert}}
+\index{insert@{insert}!IRepository@{IRepository}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily virtual void IRepository\+::insert (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Insert a new item into the repository. 
+
+This function is used to insert a new item into the repository. \Hypertarget{class_i_repository_a1de6f03da74c8a790d97d29d0bd7b4c4}\label{class_i_repository_a1de6f03da74c8a790d97d29d0bd7b4c4} 
+\index{IRepository@{IRepository}!query@{query}}
+\index{query@{query}!IRepository@{IRepository}}
+\doxysubsubsection{\texorpdfstring{query()}{query()}}
+{\footnotesize\ttfamily virtual void IRepository\+::query (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Query the repository for data. 
+
+This function is used to query the repository for data. \Hypertarget{class_i_repository_acf98faaec754d95f6e6014a0ccef8da1}\label{class_i_repository_acf98faaec754d95f6e6014a0ccef8da1} 
+\index{IRepository@{IRepository}!remove@{remove}}
+\index{remove@{remove}!IRepository@{IRepository}}
+\doxysubsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily virtual void IRepository\+::remove (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Remove an item from the repository. 
+
+This function is used to remove an item from the repository. \Hypertarget{class_i_repository_a930b6bafa459ffaac21af17db10a4d44}\label{class_i_repository_a930b6bafa459ffaac21af17db10a4d44} 
+\index{IRepository@{IRepository}!update@{update}}
+\index{update@{update}!IRepository@{IRepository}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily virtual void IRepository\+::update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Update an existing item in the repository. 
+
+This function is used to update an existing item in the repository. 
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Us\+Ve\+R/\+Documents/\+Git\+Lab/\+Sage\+Store/\+\_\+server/src/\+Data\+Access\+Layer/\mbox{\hyperlink{_i_repository_8hpp}{IRepository.\+hpp}}\end{DoxyCompactItemize}
