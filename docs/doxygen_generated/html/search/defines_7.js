@@ -1,4 +1,0 @@
-var searchData=
-[
-  ['mingw_5fhas_5fsecure_5fapi_0',['mingw_has_secure_api',['../src_2_sage_store_client__autogen_2moc__predefs_8h.html#a7652218632d79c675cce0c49732ee345',1,'MINGW_HAS_SECURE_API:&#160;moc_predefs.h'],['../tests_2unit_2_client_test_lib__autogen_2moc__predefs_8h.html#a7652218632d79c675cce0c49732ee345',1,'MINGW_HAS_SECURE_API:&#160;moc_predefs.h'],['../tests_2unit_2test___sage_store_client__autogen_2moc__predefs_8h.html#a7652218632d79c675cce0c49732ee345',1,'MINGW_HAS_SECURE_API:&#160;moc_predefs.h'],['../tests_2unit_2test___u_i_manager__autogen_2moc__predefs_8h.html#a7652218632d79c675cce0c49732ee345',1,'MINGW_HAS_SECURE_API:&#160;moc_predefs.h'],['../tests_2unit_2test_purchase_orders_view_model__autogen_2moc__predefs_8h.html#a7652218632d79c675cce0c49732ee345',1,'MINGW_HAS_SECURE_API:&#160;moc_predefs.h']]]
-];
