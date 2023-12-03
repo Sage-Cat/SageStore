@@ -30,3 +30,4 @@ void BaseWidget::setupUi()
 
     // add additional info in main layout
     _mMainLayout->addLayout(_mAdditionalInfo);
+}
