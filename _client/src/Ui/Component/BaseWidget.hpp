@@ -1,5 +1,4 @@
-#ifndef BASEWIDGET_H
-#define BASEWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -8,6 +7,9 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
+
+const int ADDIT_SPACE_WIDTH = 100;
+const int ADDIT_SPACE_HEIGHT = 50;
 
 class BaseWidget : public QWidget
 {
@@ -19,28 +21,21 @@ public:
 private:
     // setup
     void setupUi();
-    void setupConnections();
 
 protected:
     // layputs
-    QVBoxLayout *_mMainLayout = new QVBoxLayout(this);
-    QHBoxLayout *_mButtonRow = new QHBoxLayout;
-    QHBoxLayout *_mAdditionalInfo = new QHBoxLayout;
+    QVBoxLayout * m_MainLayout;
+    QHBoxLayout * m_ButtonRow;
+    QHBoxLayout * m_AdditionalInfo;
     // buttons
-    QPushButton *_mAddButton = new QPushButton("Add", this);
-    QPushButton *_mDeleteButton = new QPushButton("Delete", this);
-    QPushButton *_mEditButton = new QPushButton("Edit", this);
+    QPushButton * m_AddButton;
+    QPushButton * m_DeleteButton;
+    QPushButton * m_EditButton;
     // data table
-    QTableWidget *_mDataTable = new QTableWidget(this);
+    QTableWidget * m_DataTable;
     // additional space
-    QSpacerItem *_mAdditionalButtonSpace = new QSpacerItem(100, 50, QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QSpacerItem *_mAdditionalUnderTableSpace = new QSpacerItem(100, 10, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem * m_AdditionalButtonSpace;
+    QSpacerItem * m_AdditionalUnderTableSpace;
     // label
-    QLabel *_mStatus = new QLabel("Status: Ready", this);
-
-signals:
-
-public slots:
+    QLabel * m_Status;
 };
-
-#endif // BASEWIDGET_H

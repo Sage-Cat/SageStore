@@ -3,31 +3,40 @@
 BaseWidget::BaseWidget(QWidget *parent = nullptr)
 {
     setupUi();
-    setupConnections();
 }
 
 void BaseWidget::setupUi()
 {
     // set main layout
-    this->setLayout(_mMainLayout);
+    m_MainLayout = new QVBoxLayout(this);
+    this->setLayout(m_MainLayout);
 
     //  add buttons to button layout
-    _mButtonRow->addWidget(_mAddButton);
-    _mButtonRow->addWidget(_mEditButton);
-    _mButtonRow->addWidget(_mDeleteButton);
+    m_ButtonRow = new QHBoxLayout;
+    m_AddButton = new QPushButton("Add", this);
+    m_DeleteButton = new QPushButton("Delete", this);
+    m_EditButton = new QPushButton("Edit", this);
+
+    m_ButtonRow->addWidget(m_AddButton);
+    m_ButtonRow->addWidget(m_EditButton);
+    m_ButtonRow->addWidget(m_DeleteButton);
 
     // add spacer to button layout
-    _mButtonRow->addSpacerItem(_mAdditionalButtonSpace);
+    m_AdditionalButtonSpace = new QSpacerItem(ADDIT_SPACE_WIDTH, ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_ButtonRow->addSpacerItem(m_AdditionalButtonSpace);
 
     // add button layout to main layout
-    _mMainLayout->addLayout(_mButtonRow);
+    m_MainLayout->addLayout(m_ButtonRow);
 
     // add data table to main layout
-    _mMainLayout->addWidget(_mDataTable);
+    m_DataTable = new QTableWidget(this);
+    m_MainLayout->addWidget(m_DataTable);
 
     // add label to additional info
-    _mAdditionalInfo->addWidget(_mStatus);
+    m_Status = new QLabel("Status: Ready", this);
+    m_AdditionalInfo->addWidget(m_Status);
 
     // add additional info in main layout
-    _mMainLayout->addLayout(_mAdditionalInfo);
+    m_AdditionalUnderTableSpace = new QSpacerItem(ADDIT_SPACE_WIDTH, ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_MainLayout->addLayout(m_AdditionalInfo);
 }
