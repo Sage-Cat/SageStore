@@ -24,7 +24,7 @@ void BaseWidget::setupUi()
     m_buttonRow->addWidget(m_deleteButton);
 
     // add spacer to button layout
-    m_additionalButtonSpace = new QSpacerItem(ADDIT_SPACE_WIDTH, ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_additionalButtonSpace = new QSpacerItem(SpaceSize::ADDIT_SPACE_WIDTH, SpaceSize::ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_buttonRow->addSpacerItem(m_additionalButtonSpace);
 
     // add button layout to main layout
@@ -39,6 +39,6 @@ void BaseWidget::setupUi()
     m_additionalInfo->addWidget(m_status);
 
     // add additional info in main layout
-    m_additionalUnderTableSpace = new QSpacerItem(ADDIT_SPACE_WIDTH, ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_additionalUnderTableSpace = new QSpacerItem(SpaceSize::ADDIT_SPACE_WIDTH, SpaceSize::ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_mainLayout->addLayout(m_additionalInfo);
 }

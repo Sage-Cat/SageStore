@@ -33,7 +33,7 @@ set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
     ${CLIENT_SOURCES_DIR}/main.cpp
-    ${CLIENT_SOURCES_DIR}/Constants.cpp
+    ${CLIENT_SOURCES_DIR}/BaseWidgetStyles.hpp
 )
 
 # All sources

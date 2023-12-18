@@ -7,7 +7,7 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
-#include "Constants.cpp"
+#include "BaseWidgetStyles.hpp"
 
 class BaseWidget : public QWidget
 {
