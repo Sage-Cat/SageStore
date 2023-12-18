@@ -7,9 +7,7 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
-
-const int ADDIT_SPACE_WIDTH = 100;
-const int ADDIT_SPACE_HEIGHT = 50;
+#include "Constants.cpp"
 
 class BaseWidget : public QWidget
 {
@@ -17,25 +15,29 @@ class BaseWidget : public QWidget
 
 public:
     BaseWidget(QWidget *parent = nullptr);
-
-private:
-    // setup
-    void setupUi();
+    ~BaseWidget();
 
 protected:
+    // setup
+    void virtual setupUi();
+
     // layputs
-    QVBoxLayout * m_MainLayout;
-    QHBoxLayout * m_ButtonRow;
-    QHBoxLayout * m_AdditionalInfo;
+    QVBoxLayout *m_mainLayout;
+    QHBoxLayout *m_buttonRow;
+    QHBoxLayout *m_additionalInfo;
+
     // buttons
-    QPushButton * m_AddButton;
-    QPushButton * m_DeleteButton;
-    QPushButton * m_EditButton;
+    QPushButton *m_addButton;
+    QPushButton *m_deleteButton;
+    QPushButton *m_editButton;
+
     // data table
-    QTableWidget * m_DataTable;
+    QTableWidget *m_dataTable;
+
     // additional space
-    QSpacerItem * m_AdditionalButtonSpace;
-    QSpacerItem * m_AdditionalUnderTableSpace;
+    QSpacerItem *m_additionalButtonSpace;
+    QSpacerItem *m_additionalUnderTableSpace;
+
     // label
-    QLabel * m_Status;
+    QLabel *m_status;
 };
