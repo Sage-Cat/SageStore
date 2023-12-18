@@ -15,11 +15,11 @@ class BaseWidget : public QWidget
 
 public:
     BaseWidget(QWidget *parent = nullptr);
-    ~BaseWidget();
+    virtual ~BaseWidget();
 
 protected:
     // setup
-    void virtual setupUi();
+    virtual void setupUi();
 
     // layputs
     QVBoxLayout *m_mainLayout;
