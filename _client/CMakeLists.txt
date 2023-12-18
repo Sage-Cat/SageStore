@@ -26,6 +26,7 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/Ui/QmlTypeRegistrar.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Component/BaseWidget.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/MainWindow.cpp
 )
 
 set(MAIN_SOURCES
