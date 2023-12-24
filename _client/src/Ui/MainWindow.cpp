@@ -11,21 +11,13 @@ void MainWindow::setupWindow()
     // set size
     this->resize(MainWidSize::WINDOW_WIDTH, MainWidSize::WINDOW_HEIGHT);
 
-    // create colomn layout
-    colomnLayout = new QHBoxLayout(this);
-
     // add stackView
-    stackView = new QStackedWidget;
-    userRoles = new BaseWidget;
-    stackView->addWidget(userRoles);
+    stackView = new QStackedWidget(this);
+    stackView->resize(MainWidSize::WINDOW_WIDTH, MainWidSize::WINDOW_HEIGHT);
 
-    colomnLayout->addWidget(stackView);
-
-    // add status bar
-    statusBar = new QStatusBar;
-    colomnLayout->addWidget(statusBar);
-
-    this->setLayout(colomnLayout);
+    // stackView pages
+    QTabWidget *testW = new QTabWidget(this);
+    stackView->addWidget(testW);
 }
 
 MainWindow::~MainWindow()

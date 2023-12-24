@@ -2,10 +2,8 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
-#include <QHBoxLayout>
 #include <QStatusBar>
 #include "Ui/WidgetStyles.hpp"
-#include "Component/BaseWidget.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -21,10 +19,6 @@ private:
 
     // stack view
     QStackedWidget *stackView;
-    BaseWidget *userRoles;
-
-    // colomn layout
-    QHBoxLayout *colomnLayout;
 
     // status bar
     QStatusBar *statusBar;
