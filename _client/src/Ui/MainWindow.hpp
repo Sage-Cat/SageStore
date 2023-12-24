@@ -4,6 +4,7 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 #include "Ui/WidgetStyles.hpp"
+#include "Component/BaseWidget.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -19,6 +20,7 @@ private:
 
     // stack view
     QStackedWidget *stackView;
+    BaseWidget *userRoles;
 
     // status bar
     QStatusBar *statusBar;

@@ -16,8 +16,13 @@ void MainWindow::setupWindow()
     stackView->resize(MainWidSize::WINDOW_WIDTH, MainWidSize::WINDOW_HEIGHT);
 
     // stackView pages
-    QTabWidget *testW = new QTabWidget(this);
-    stackView->addWidget(testW);
+    userRoles = new BaseWidget(this);
+    // stackView->addWidget(userRoles);
+
+    // add status bar
+    statusBar = new QStatusBar(this);
+    statusBar->showMessage("test status bar");
+    this->setStatusBar(statusBar);
 }
 
 MainWindow::~MainWindow()
