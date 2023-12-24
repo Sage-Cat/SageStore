@@ -4,7 +4,7 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 #include "Ui/WidgetStyles.hpp"
-#include "Component/BaseWidget.hpp"
+#include "Ui/Component/BaseWidget.hpp"
 
 class MainWindow : public QMainWindow
 {

@@ -3,7 +3,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    setupWindow();
+    // setupWindow();
+    userRoles = new BaseWidget(this);
 }
 
 void MainWindow::setupWindow()
@@ -16,7 +17,7 @@ void MainWindow::setupWindow()
     stackView->resize(MainWidSize::WINDOW_WIDTH, MainWidSize::WINDOW_HEIGHT);
 
     // stackView pages
-    userRoles = new BaseWidget(this);
+
     // stackView->addWidget(userRoles);
 
     // add status bar
