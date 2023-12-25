@@ -3,7 +3,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    // setupWindow();
+    setupWindow();
     userRoles = new BaseWidget(this);
 }
 
