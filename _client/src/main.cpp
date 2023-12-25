@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     // SageStoreClient client(app);
     // client.init();
 
-    MainWindow *test = new MainWindow();
-    test->show();
+    MainWindow test;
+    test.show();
 
     return app.exec();
 }
