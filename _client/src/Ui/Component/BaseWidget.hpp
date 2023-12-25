@@ -1,5 +1,4 @@
-#ifndef BASEWIDGET_H
-#define BASEWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -42,5 +41,3 @@ protected:
     // label
     QLabel *m_status;
 };
-
-#endif BASEWIDGET_H
