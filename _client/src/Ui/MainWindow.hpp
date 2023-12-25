@@ -6,6 +6,8 @@
 #include "Ui/WidgetStyles.hpp"
 #include "Ui/Component/BaseWidget.hpp"
 
+#include "SpdlogWrapper.hpp"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
