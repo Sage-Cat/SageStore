@@ -1,6 +1,6 @@
 #include "BaseWidget.hpp"
 
-BaseWidget::BaseWidget(QWidget *parent = nullptr)
+BaseWidget::BaseWidget(QWidget *parent) : QWidget(parent)
 {
     setupUi();
 }
@@ -36,9 +36,14 @@ void BaseWidget::setupUi()
 
     // add label to additional info
     m_status = new QLabel("Status: Ready", this);
+    m_additionalInfo = new QHBoxLayout;
     m_additionalInfo->addWidget(m_status);
 
-    // add additional info in main layout
-    m_additionalUnderTableSpace = new QSpacerItem(SpaceSize::ADDIT_SPACE_WIDTH, SpaceSize::ADDIT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    m_mainLayout->addLayout(m_additionalInfo);
+    // add additional space under table in main layout
+    m_additionalUnderTableSpace = new QSpacerItem(SpaceSize::ADDIT_SPACE_WIDTH, SpaceSize::ADDIT_UND_TAB_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_mainLayout->addSpacerItem(m_additionalUnderTableSpace);
+
+    // add additional space under info
+    m_additionalUnderStatusSpace = new QSpacerItem(SpaceSize::ADDIT_SPACE_WIDTH, SpaceSize::ADDIT_UND_STAT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_mainLayout->addSpacerItem(m_additionalUnderStatusSpace);
 }
