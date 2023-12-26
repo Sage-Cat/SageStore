@@ -7,7 +7,7 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
-#include "BaseWidgetStyles.hpp"
+#include "Ui/WidgetStyles.hpp"
 
 class BaseWidget : public QWidget
 {
@@ -37,6 +37,7 @@ protected:
     // additional space
     QSpacerItem *m_additionalButtonSpace;
     QSpacerItem *m_additionalUnderTableSpace;
+    QSpacerItem *m_additionalUnderStatusSpace;
 
     // label
     QLabel *m_status;
