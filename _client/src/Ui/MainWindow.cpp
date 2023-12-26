@@ -4,7 +4,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setupWindow();
-    SPDLOG_DEBUG("Finish window setup");
 }
 
 void MainWindow::setupWindow()
@@ -17,10 +16,8 @@ void MainWindow::setupWindow()
     stackView->resize(MainWidSize::WINDOW_WIDTH, MainWidSize::WINDOW_HEIGHT);
 
     // stackView pages
-    SPDLOG_DEBUG("Starting userRoles init");
     userRoles = new BaseWidget(this);
     stackView->addWidget(userRoles);
-    SPDLOG_DEBUG("Finish userRoles init");
 
     // add status bar
     statusBar = new QStatusBar(this);

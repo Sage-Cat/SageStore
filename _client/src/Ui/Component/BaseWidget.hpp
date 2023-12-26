@@ -37,6 +37,7 @@ protected:
     // additional space
     QSpacerItem *m_additionalButtonSpace;
     QSpacerItem *m_additionalUnderTableSpace;
+    QSpacerItem *m_additionalUnderStatusSpace;
 
     // label
     QLabel *m_status;
