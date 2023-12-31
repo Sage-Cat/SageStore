@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <QQmlApplicationEngine>
-#include <QQuickItem>
 #include <QFont>
 #include <QString>
 #include <QMap>
@@ -18,7 +16,6 @@ class PurchaseOrdersViewModel;
 class UiManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Theme theme READ theme WRITE setTheme NOTIFY themeChanged)
 
 public:
     /**
@@ -30,7 +27,6 @@ public:
         Dark = 0,
         Light
     };
-    Q_ENUM(Theme)
 
     /**
      * @brief Construct a new UiManager object.
@@ -87,14 +83,6 @@ signals:
      */
     void themeChanged(Theme newTheme);
 
-    /**
-     * @brief request to push purchase view in stack
-     *
-     */
-    void pushToStackRequested(QQuickItem *item);
-
-    // ---- FROM UI ----
-
 private:
     /**
      * @brief Initialize the theme.
@@ -125,8 +113,7 @@ private:
     void initDialogues();
 
 private:
-    Theme m_theme;                  ///< Member variable storing the current theme.
-    QQmlApplicationEngine m_engine; ///< QQmlApplicationEngine for running the QML engine.
+    Theme m_theme; ///< Member variable storing the current theme.
 
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
 };
