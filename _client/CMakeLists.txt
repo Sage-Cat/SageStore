@@ -23,9 +23,8 @@ set(COMMUNICATION_SOURCES
 )
 
 set(UI_SOURCES
-    ${CLIENT_SOURCES_DIR}/Ui/QmlTypeRegistrar.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/Component/BaseWidget.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Component/BaseView.cpp
 )
 
 set(MAIN_SOURCES
@@ -33,7 +32,7 @@ set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
     ${CLIENT_SOURCES_DIR}/main.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/WidgetStyles.hpp
+    ${CLIENT_SOURCES_DIR}/Ui/ViewStyles.hpp
 )
 
 # All sources

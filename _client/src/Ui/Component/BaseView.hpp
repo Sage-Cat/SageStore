@@ -7,15 +7,14 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
-#include "Ui/WidgetStyles.hpp"
 
-class BaseWidget : public QWidget
+class BaseView : public QWidget
 {
     Q_OBJECT
 
 public:
-    BaseWidget(QWidget *parent = nullptr);
-    virtual ~BaseWidget();
+    BaseView(QWidget *parent = nullptr);
+    virtual ~BaseView();
 
 protected:
     // setup

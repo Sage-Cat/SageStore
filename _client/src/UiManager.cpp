@@ -1,10 +1,6 @@
 #include "UiManager.hpp"
 
-#include <QApplication>
-#include <QQmlContext>
-
 #include "SpdlogWrapper.hpp"
-#include "Ui/QmlTypeRegistrar.hpp"
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
 
@@ -12,12 +8,6 @@ UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
 {
     SPDLOG_TRACE("UiManager::UiManager");
-
-    QmlTypeRegistrar::registerTypes();
-
-    connect(&m_engine, &QQmlApplicationEngine::objectCreated,
-            this, [this](QObject *obj, const QUrl &objUrl)
-            { if (!obj) SPDLOG_CRITICAL("Failed to load QML from URL: {}", objUrl.toString().toStdString()); });
 }
 
 UiManager::~UiManager()
@@ -71,18 +61,6 @@ void UiManager::initTheme()
 void UiManager::initMainWindow()
 {
     SPDLOG_TRACE("UiManager::initMainWindow");
-
-    if (m_engine.rootContext())
-    {
-        m_engine.rootContext()->setContextProperty("uiManager", this);
-        m_engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
-        if (m_engine.rootObjects().isEmpty())
-            SPDLOG_CRITICAL("UiManager::initMainWindow Failed to load main window");
-    }
-    else
-    {
-        SPDLOG_CRITICAL("UiManager::initMainWindow m_engine is invalid");
-    }
 }
 
 void UiManager::initModules()

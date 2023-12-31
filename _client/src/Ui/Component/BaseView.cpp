@@ -1,13 +1,15 @@
-#include "BaseWidget.hpp"
+#include "BaseView.hpp"
 
-BaseWidget::BaseWidget(QWidget *parent) : QWidget(parent)
+#include "Ui/ViewStyles.hpp"
+
+BaseView::BaseView(QWidget *parent) : QWidget(parent)
 {
     setupUi();
 }
 
-BaseWidget::~BaseWidget() {}
+BaseView::~BaseView() {}
 
-void BaseWidget::setupUi()
+void BaseView::setupUi()
 {
     // set main layout
     m_mainLayout = new QVBoxLayout(this);

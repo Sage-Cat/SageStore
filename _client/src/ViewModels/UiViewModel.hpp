@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QQmlComponent>
-
 /**
  * @interface UiViewModel
  * @brief Interface for UI components.
