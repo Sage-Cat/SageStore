@@ -15,10 +15,6 @@ void MainWindow::init()
     m_stackView = new QStackedWidget(this);
     m_stackView->resize(MainWidSize::WINDOW_WIDTH, MainWidSize::WINDOW_HEIGHT);
 
-    // stackView pages
-    // m_userRoles = new BaseWidget(this);
-    // m_stackView->addWidget(userRoles);
-
     // add status bar
     m_statusBar = new QStatusBar(this);
     this->setStatusBar(m_statusBar);
