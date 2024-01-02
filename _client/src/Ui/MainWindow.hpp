@@ -16,15 +16,16 @@ public:
 
 private:
     // setup window
-    void setupWindow();
-
-    // stack view
-    QStackedWidget *stackView;
-    BaseWidget *userRoles;
-
-    // status bar
-    QStatusBar *statusBar;
+    void init();
 
     // override resizeEvent
     void resizeEvent(QResizeEvent *event) override;
+
+private:
+    // stack view
+    QStackedWidget *m_stackView;
+    BaseWidget *m_userRoles;
+
+    // status bar
+    QStatusBar *m_statusBar;
 };

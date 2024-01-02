@@ -7,6 +7,7 @@
 #include "Ui/QmlTypeRegistrar.hpp"
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
+#include "Ui/MainWindow.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -72,17 +73,8 @@ void UiManager::initMainWindow()
 {
     SPDLOG_TRACE("UiManager::initMainWindow");
 
-    if (m_engine.rootContext())
-    {
-        m_engine.rootContext()->setContextProperty("uiManager", this);
-        m_engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
-        if (m_engine.rootObjects().isEmpty())
-            SPDLOG_CRITICAL("UiManager::initMainWindow Failed to load main window");
-    }
-    else
-    {
-        SPDLOG_CRITICAL("UiManager::initMainWindow m_engine is invalid");
-    }
+    m_mainWindow = new MainWindow();
+    m_mainWindow->showMaximized();
 }
 
 void UiManager::initModules()

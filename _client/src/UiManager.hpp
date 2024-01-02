@@ -7,6 +7,8 @@
 #include <QString>
 #include <QMap>
 
+class MainWindow;
+
 class PurchaseOrdersViewModel;
 
 /**
@@ -128,5 +130,6 @@ private:
     Theme m_theme;                  ///< Member variable storing the current theme.
     QQmlApplicationEngine m_engine; ///< QQmlApplicationEngine for running the QML engine.
 
+    MainWindow *m_mainWindow;
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
 };

@@ -9,11 +9,8 @@ int main(int argc, char *argv[])
     SpdlogWrapper::init();
     SPDLOG_INFO("SageStoreClient starting");
 
-    // SageStoreClient client(app);
-    // client.init();
-
-    MainWindow test;
-    test.show();
+    SageStoreClient client(app);
+    client.init();
 
     return app.exec();
 }
