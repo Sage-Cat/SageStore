@@ -23,16 +23,21 @@ set(COMMUNICATION_SOURCES
 )
 
 set(UI_SOURCES
+    # Models
+
+    # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/Component/BaseView.cpp
+    
+    # Views
+    ${CLIENT_SOURCES_DIR}/Ui/Components/BaseView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/PurchaseOrdersView.cpp
 )
 
 set(MAIN_SOURCES
-    ${CLIENT_SOURCES_DIR}/SpdlogWrapper.cpp
+    ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
-    ${CLIENT_SOURCES_DIR}/main.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/ViewStyles.hpp
+    ${CLIENT_SOURCES_DIR}/SpdlogWrapper.cpp
 )
 
 # All sources
