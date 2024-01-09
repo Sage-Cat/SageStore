@@ -2,7 +2,12 @@
 
 #include "SpdlogWrapper.hpp"
 
+#include "ViewModels/AuthorizationViewModel.hpp"
+#include "ViewModels/RegistrationViewModel.hpp"
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
+
+#include "Views/AuthorizationView.hpp"
+#include "Views/RegistrationView.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -21,8 +26,8 @@ void UiManager::initUi()
 
     initMainWindow();
     initTheme();
-    initModules();
-    initDialogues();
+    initViewModels();
+    initViews();
 }
 
 void UiManager::setTheme(Theme theme)
@@ -63,15 +68,47 @@ void UiManager::initMainWindow()
     SPDLOG_TRACE("UiManager::initMainWindow");
 }
 
-void UiManager::initModules()
+void UiManager::initViewModels()
 {
-    SPDLOG_TRACE("UiManager::initModules");
+    SPDLOG_TRACE("UiManager::initViewModels");
 
-    // PurchaseOrdersViewModel
-    m_purchaseOrdersViewModel = new PurchaseOrdersViewModel(this);
+    m_authorizationViewModel = new AuthorizationViewModel;
+    m_registrationViewModel = new RegistrationViewModel;
 }
 
-void UiManager::initDialogues()
+void UiManager::initViews()
 {
-    SPDLOG_TRACE("UiManager::initDialogues");
+    SPDLOG_TRACE("UiManager::initViews");
+
+    m_authorizationView = new AuthorizationView;
+    m_registrationView = new RegistrationView;
+}
+
+void UiManager::setupVVMConnections()
+{
+    SPDLOG_TRACE("UiManager::setupVVMConnections");
+
+    // Authorization
+    QObject::connect(m_authorizationView, &AuthorizationView::loginAttempted,
+                     m_authorizationViewModel, &AuthorizationViewModel::requestAuthentication);
+    QObject::connect(m_authorizationViewModel, &AuthorizationViewModel::loginSuccessful,
+                     m_authorizationView, &AuthorizationView::onLoginSuccess);
+    QObject::connect(m_authorizationViewModel, &AuthorizationViewModel::loginFailed,
+                     m_authorizationView, &AuthorizationView::onLoginFailure);
+    // TODO:
+    // QObject::connect(m_authorizationView, &AuthorizationView::registerRequested,
+    //                  // Slot to handle registration request
+    // );
+
+    // Registration
+    QObject::connect(m_registrationView, &RegistrationView::registrationAttempted,
+                     m_registrationViewModel, &RegistrationViewModel::attemptRegistration);
+    QObject::connect(m_registrationViewModel, &RegistrationViewModel::registrationSuccessful,
+                     m_registrationView, &RegistrationView::onRegistrationSuccess);
+    QObject::connect(m_registrationViewModel, &RegistrationViewModel::registrationFailed,
+                     m_registrationView, &RegistrationView::onRegistrationFailure);
+    // TODO:
+    // QObject::connect(m_registrationView, &RegistrationView::loginRequested,
+    //                  // Slot or lambda for switching to login view
+    // );
 }

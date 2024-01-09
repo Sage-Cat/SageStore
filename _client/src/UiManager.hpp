@@ -5,7 +5,14 @@
 #include <QString>
 #include <QMap>
 
+// ViewModels
 class PurchaseOrdersViewModel;
+class AuthorizationViewModel;
+class RegistrationViewModel;
+
+// Views
+class AuthorizationView;
+class RegistrationView;
 
 /**
  * @class UiManager
@@ -99,21 +106,34 @@ private:
     void initMainWindow();
 
     /**
-     * @brief Initialize UI modules.
+     * @brief Initialize UI viewModels.
      *
-     * Sets up various UI modules required by the application.
+     * Sets up various UI viewModels required by the application.
      */
-    void initModules();
+    void initViewModels();
 
     /**
-     * @brief Initialize UI dialogues.
+     * @brief Initialize UI views.
      *
-     * Sets up any dialogues used in the UI.
+     * Sets up various UI views required by the application.
      */
-    void initDialogues();
+    void initViews();
+
+    /**
+     * @brief Setup viewModels - view connections according to MVVM
+     *
+     */
+    void setupVVMConnections();
 
 private:
     Theme m_theme; ///< Member variable storing the current theme.
 
+    // ViewModels
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
+    AuthorizationViewModel *m_authorizationViewModel;
+    RegistrationViewModel *m_registrationViewModel;
+
+    // Views
+    AuthorizationView *m_authorizationView;
+    RegistrationView *m_registrationView;
 };

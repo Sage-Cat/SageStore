@@ -3,7 +3,12 @@
 #include <QApplication>
 
 #include <memory>
-#include "UiManager.hpp"
+
+class UiManager;
+
+// Models
+class AuthorizationModel;
+class RegistrationModel;
 
 /**
  * @class SageStoreClient
@@ -61,5 +66,9 @@ private:
      *
      * This member is responsible for managing the user interface of the client.
      */
-    UiManager m_uiManager;
+    UiManager *m_uiManager;
+
+    // Models
+    AuthorizationModel *m_authorizationModel;
+    RegistrationModel *m_registrationModel;
 };

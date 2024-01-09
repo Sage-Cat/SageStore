@@ -36,6 +36,17 @@ signals:
      */
     void registerRequested();
 
+public slots:
+    /**
+     * @brief Slot for case with successful login attempt
+     */
+    void onLoginSuccess();
+
+    /**
+     * @brief Slot for case with failed login attempt
+     */
+    void onLoginFailure();
+
 private:
     /**
      * @brief Initializes the input fields.
