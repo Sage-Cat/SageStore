@@ -57,10 +57,10 @@ void AuthorizationView::setupConnections()
 
 void AuthorizationView::onLoginClicked()
 {
-    // TODO: Handle login logic
+    emit loginAttempted(m_usernameField->text(), m_passwordField->text());
 }
 
 void AuthorizationView::onRegisterLinkClicked()
 {
-    // TODO: Switch to RegistrationView
+    emit registerRequested();
 }

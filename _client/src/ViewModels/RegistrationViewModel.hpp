@@ -3,14 +3,15 @@
 #include <QObject>
 #include <QString>
 
+#include "IViewModel.hpp"
+
 /**
  * @class RegistrationViewModel
  * @brief Manages the logic for user registration.
  *
- * This class handles user registration attempts, including validation of user input
- * and interactions with network services, and emits signals based on the outcome.
+ * Handles user registration attempts and emits signals based on the outcome.
  */
-class RegistrationViewModel : public QObject
+class RegistrationViewModel : public QObject, public IViewModel
 {
     Q_OBJECT
 
@@ -21,16 +22,14 @@ public:
      */
     explicit RegistrationViewModel(QObject *parent = nullptr);
 
-public slots:
+signals:
     /**
-     * @brief Attempts to register a new user with the provided details.
+     * @brief Signal to request user registration.
      * @param username The user's chosen username.
      * @param password The user's chosen password.
-     * @param confirmPassword Password confirmation.
      */
-    void attemptRegistration(const QString &username, const QString &password, const QString &confirmPassword);
+    void requestRegistration(const QString &username, const QString &password);
 
-signals:
     /**
      * @brief Emitted when the registration is successful.
      */
@@ -41,4 +40,13 @@ signals:
      * @param error A description of the error.
      */
     void registrationFailed(const QString &error);
+
+public slots:
+    /**
+     * @brief Attempts to register a new user with the provided details.
+     * @param username The user's chosen username.
+     * @param password The user's chosen password.
+     * @param confirmPassword Password confirmation.
+     */
+    void attemptRegistration(const QString &username, const QString &password, const QString &confirmPassword);
 };

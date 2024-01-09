@@ -3,14 +3,15 @@
 #include <QObject>
 #include <QString>
 
+#include "IViewModel.hpp"
+
 /**
  * @class AuthorizationViewModel
  * @brief Manages the logic for user authorization.
  *
- * This class handles user login attempts, including interactions with network services
- * and emitting signals based on the outcome of the login process.
+ * Handles user login attempts and emits signals based on the outcome.
  */
-class AuthorizationViewModel : public QObject
+class AuthorizationViewModel : public QObject, public IViewModel
 {
     Q_OBJECT
 
@@ -21,15 +22,14 @@ public:
      */
     explicit AuthorizationViewModel(QObject *parent = nullptr);
 
-public slots:
+signals:
     /**
-     * @brief Attempts to log in with the provided username and password.
+     * @brief Signal to request user authentication.
      * @param username The user's username.
      * @param password The user's password.
      */
-    void attemptLogin(const QString &username, const QString &password);
+    void requestAuthentication(const QString &username, const QString &password);
 
-signals:
     /**
      * @brief Emitted when the login is successful.
      */

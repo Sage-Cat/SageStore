@@ -24,6 +24,8 @@ set(COMMUNICATION_SOURCES
 
 set(UI_SOURCES
     # Models
+    ${CLIENT_SOURCES_DIR}/Models/AuthorizationModel.cpp
+    ${CLIENT_SOURCES_DIR}/Models/RegistrationModel.cpp
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
@@ -31,12 +33,12 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationViewModel.cpp
     
     # Views
-    ${CLIENT_SOURCES_DIR}/Ui/Dialogs/AuthorizationView.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/Dialogs/RegistrationView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/AuthorizationView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/RegistrationView.cpp
 
-    ${CLIENT_SOURCES_DIR}/Ui/Components/BaseView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/Components/BaseView.cpp
     
-    ${CLIENT_SOURCES_DIR}/Ui/PurchaseOrdersView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/PurchaseOrdersView.cpp
 )
 
 set(MAIN_SOURCES

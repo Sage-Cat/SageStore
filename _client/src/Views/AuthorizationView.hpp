@@ -23,6 +23,19 @@ public:
      */
     explicit AuthorizationView(QWidget *parent = nullptr);
 
+signals:
+    /**
+     * @brief Signal emitted when the user attempts to log in.
+     * @param username The user's username.
+     * @param password The user's password.
+     */
+    void loginAttempted(const QString &username, const QString &password);
+
+    /**
+     * @brief Signal emitted when the user requests to switch to the registration view.
+     */
+    void registerRequested();
+
 private:
     /**
      * @brief Initializes the input fields.
