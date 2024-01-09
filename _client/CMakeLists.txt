@@ -27,9 +27,15 @@ set(UI_SOURCES
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationViewModel.cpp
     
     # Views
+    ${CLIENT_SOURCES_DIR}/Ui/Dialogs/AuthorizationView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Dialogs/RegistrationView.cpp
+
     ${CLIENT_SOURCES_DIR}/Ui/Components/BaseView.cpp
+    
     ${CLIENT_SOURCES_DIR}/Ui/PurchaseOrdersView.cpp
 )
 
