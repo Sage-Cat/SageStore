@@ -15,6 +15,13 @@ void AuthorizationModel::setCredentials(const QString &username, const QString &
     m_password = password;
 }
 
+void AuthorizationModel::onAuthenticationRequested(const QString &username, const QString &password)
+{
+    SPDLOG_TRACE("AuthorizationModel::onAuthenticationRequested");
+    setCredentials(username, password);
+    performAuthentication();
+}
+
 void AuthorizationModel::performAuthentication()
 {
     SPDLOG_TRACE("AuthorizationModel::performAuthentication");

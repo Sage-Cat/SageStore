@@ -46,12 +46,25 @@ public:
      */
     ~SageStoreClient();
 
+private:
     /**
      * @brief Initialize the SageStore client.
      *
      * This function performs all necessary initialization tasks for the client.
      */
     void init();
+
+    /**
+     * @brief Initialize UI models.
+     *
+     * Sets up various models required by the application (according MVVM).
+     */
+    void initModels();
+
+    /**
+     * @brief Setup model - viewModel connections according to MVVM
+     */
+    void setupMVMConnections();
 
 private:
     /**

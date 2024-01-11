@@ -52,13 +52,6 @@ public:
     ~UiManager() noexcept override;
 
     /**
-     * @brief Initialize UI components.
-     *
-     * This method is responsible for setting up UI components.
-     */
-    void initUi();
-
-    /**
      * @brief Get the current theme.
      *
      * @return Current theme as a Theme enum value.
@@ -81,6 +74,20 @@ public:
      */
     QFont defaultFont() const;
 
+    /**
+     * @brief Get Authorization ViewModel
+     *
+     * @return m_authorizationViewModel
+     */
+    AuthorizationViewModel *authorizationViewModel() const;
+
+    /**
+     * @brief Get Registration ViewModel
+     *
+     * @return m_registrationViewModel
+     */
+    RegistrationViewModel *registrationViewModel() const;
+
 signals:
     // ---- TO UI ----
     /**
@@ -91,6 +98,13 @@ signals:
     void themeChanged(Theme newTheme);
 
 private:
+    /**
+     * @brief Initialize UI components.
+     *
+     * This method is responsible for setting up UI components.
+     */
+    void init();
+
     /**
      * @brief Initialize the theme.
      *
@@ -121,7 +135,6 @@ private:
 
     /**
      * @brief Setup viewModels - view connections according to MVVM
-     *
      */
     void setupVVMConnections();
 
@@ -129,9 +142,9 @@ private:
     Theme m_theme; ///< Member variable storing the current theme.
 
     // ViewModels
-    PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
     AuthorizationViewModel *m_authorizationViewModel;
     RegistrationViewModel *m_registrationViewModel;
+    PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
 
     // Views
     AuthorizationView *m_authorizationView;

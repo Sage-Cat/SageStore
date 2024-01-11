@@ -13,6 +13,9 @@ UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
 {
     SPDLOG_TRACE("UiManager::UiManager");
+
+    // Initialize all necessary elements
+    init();
 }
 
 UiManager::~UiManager()
@@ -20,7 +23,7 @@ UiManager::~UiManager()
     SPDLOG_TRACE("UiManager::~UiManager");
 }
 
-void UiManager::initUi()
+void UiManager::init()
 {
     SPDLOG_TRACE("UiManager::init");
 
@@ -51,10 +54,23 @@ UiManager::Theme UiManager::theme() const
 
 QFont UiManager::defaultFont() const
 {
+    SPDLOG_TRACE("UiManager::defaultFont");
     // TODO: make possibility to setup
     QFont defaultFont("Helvetica");
     defaultFont.setPixelSize(18);
     return defaultFont;
+}
+
+AuthorizationViewModel *UiManager::authorizationViewModel() const
+{
+    SPDLOG_TRACE("UiManager::authorizationViewModel");
+    return m_authorizationViewModel;
+}
+
+RegistrationViewModel *UiManager::registrationViewModel() const
+{
+    SPDLOG_TRACE("UiManager::registrationViewModel");
+    return m_registrationViewModel;
 }
 
 void UiManager::initTheme()

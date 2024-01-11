@@ -30,6 +30,12 @@ public:
      */
     void setRegistrationDetails(const QString &username, const QString &password);
 
+public slots:
+    /**
+     * @brief Called by signal from UI to perform registration
+     */
+    void onRegistrationRequested(const QString &username, const QString &password);
+
 signals:
     /**
      * @brief Emitted when registration succeeds.

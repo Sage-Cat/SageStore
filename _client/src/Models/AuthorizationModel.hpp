@@ -42,6 +42,12 @@ signals:
      */
     void authenticationFailed(const QString &error);
 
+public slots:
+    /**
+     * @brief Called by signal from UI to perform authentication
+     */
+    void onAuthenticationRequested(const QString &username, const QString &password);
+
 private:
     /**
      * @brief Performs the actual authentication logic.

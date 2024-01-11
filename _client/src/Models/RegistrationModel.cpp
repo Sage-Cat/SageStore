@@ -15,6 +15,13 @@ void RegistrationModel::setRegistrationDetails(const QString &username, const QS
     m_password = password;
 }
 
+void RegistrationModel::onRegistrationRequested(const QString &username, const QString &password)
+{
+    SPDLOG_TRACE("RegistrationModel::onRegistrationRequested");
+    setRegistrationDetails(username, password);
+    performRegistration();
+}
+
 void RegistrationModel::performRegistration()
 {
     SPDLOG_TRACE("RegistrationModel::performRegistration");
