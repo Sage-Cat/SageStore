@@ -34,7 +34,7 @@ signals:
     /**
      * @brief Signal emitted when the user requests to switch to the registration view.
      */
-    void registerRequested();
+    void registrationRequested();
 
 public slots:
     /**
@@ -80,9 +80,8 @@ private slots:
     void onRegisterLinkClicked();
 
 private:
-    QLineEdit *m_usernameField;   ///< Line edit for the username.
-    QLineEdit *m_passwordField;   ///< Line edit for the password.
-    QPushButton *m_loginButton;   ///< Button for submitting login credentials.
-    QLabel *m_forgotPasswordLink; ///< Link to the forgot password dialog.
-    QLabel *m_registerLink;       ///< Link to the registration dialog.
+    QLineEdit *m_usernameField; ///< Line edit for the username.
+    QLineEdit *m_passwordField; ///< Line edit for the password.
+    QPushButton *m_loginButton; ///< Button for submitting login credentials.
+    QLabel *m_registerLink;     ///< Link to the registration dialog.
 };

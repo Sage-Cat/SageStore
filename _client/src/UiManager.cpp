@@ -16,6 +16,7 @@ UiManager::UiManager(QObject *parent) noexcept
 
     // Initialize all necessary elements
     init();
+    setupVVMConnections();
 }
 
 UiManager::~UiManager()
@@ -31,6 +32,11 @@ void UiManager::init()
     initTheme();
     initViewModels();
     initViews();
+}
+
+void UiManager::initiateAuthorizationProcess()
+{
+    m_authorizationView->show();
 }
 
 void UiManager::setTheme(Theme theme)
@@ -105,26 +111,30 @@ void UiManager::setupVVMConnections()
     SPDLOG_TRACE("UiManager::setupVVMConnections");
 
     // Authorization
-    QObject::connect(m_authorizationView, &AuthorizationView::loginAttempted,
-                     m_authorizationViewModel, &AuthorizationViewModel::requestAuthentication);
-    QObject::connect(m_authorizationViewModel, &AuthorizationViewModel::loginSuccessful,
-                     m_authorizationView, &AuthorizationView::onLoginSuccess);
-    QObject::connect(m_authorizationViewModel, &AuthorizationViewModel::loginFailed,
-                     m_authorizationView, &AuthorizationView::onLoginFailure);
-    // TODO:
-    // QObject::connect(m_authorizationView, &AuthorizationView::registerRequested,
-    //                  // Slot to handle registration request
-    // );
+    connect(m_authorizationView, &AuthorizationView::loginAttempted,
+            m_authorizationViewModel, &AuthorizationViewModel::requestAuthentication);
+    connect(m_authorizationViewModel, &AuthorizationViewModel::loginSuccessful,
+            m_authorizationView, &AuthorizationView::onLoginSuccess);
+    connect(m_authorizationViewModel, &AuthorizationViewModel::loginFailed,
+            m_authorizationView, &AuthorizationView::onLoginFailure);
+    connect(m_authorizationView, &AuthorizationView::registrationRequested,
+            [this]()
+            {
+                m_authorizationView->hide();
+                m_registrationView->show();
+            });
 
     // Registration
-    QObject::connect(m_registrationView, &RegistrationView::registrationAttempted,
-                     m_registrationViewModel, &RegistrationViewModel::attemptRegistration);
-    QObject::connect(m_registrationViewModel, &RegistrationViewModel::registrationSuccessful,
-                     m_registrationView, &RegistrationView::onRegistrationSuccess);
-    QObject::connect(m_registrationViewModel, &RegistrationViewModel::registrationFailed,
-                     m_registrationView, &RegistrationView::onRegistrationFailure);
-    // TODO:
-    // QObject::connect(m_registrationView, &RegistrationView::loginRequested,
-    //                  // Slot or lambda for switching to login view
-    // );
+    connect(m_registrationView, &RegistrationView::registrationAttempted,
+            m_registrationViewModel, &RegistrationViewModel::attemptRegistration);
+    connect(m_registrationViewModel, &RegistrationViewModel::registrationSuccessful,
+            m_registrationView, &RegistrationView::onRegistrationSuccess);
+    connect(m_registrationViewModel, &RegistrationViewModel::registrationFailed,
+            m_registrationView, &RegistrationView::onRegistrationFailure);
+    connect(m_registrationView, &RegistrationView::loginRequested,
+            [this]()
+            {
+                m_registrationView->hide();
+                m_authorizationView->show();
+            });
 }

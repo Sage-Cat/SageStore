@@ -52,6 +52,11 @@ public:
     ~UiManager() noexcept override;
 
     /**
+     * @brief Shows the Authorization dialog
+     */
+    void initiateAuthorizationProcess();
+
+    /**
      * @brief Get the current theme.
      *
      * @return Current theme as a Theme enum value.
@@ -74,6 +79,7 @@ public:
      */
     QFont defaultFont() const;
 
+public: // getters for ViewModels
     /**
      * @brief Get Authorization ViewModel
      *
@@ -99,7 +105,7 @@ signals:
 
 private:
     /**
-     * @brief Initialize UI components.
+     * @brief Initialize all UI components.
      *
      * This method is responsible for setting up UI components.
      */

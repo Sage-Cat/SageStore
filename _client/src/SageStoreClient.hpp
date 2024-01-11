@@ -66,6 +66,11 @@ private:
      */
     void setupMVMConnections();
 
+    /**
+     * @brief Gets default font from UiManager and sets it to QApplication
+     */
+    void applyAppFont();
+
 private:
     /**
      * @brief Reference to the QApplication object.

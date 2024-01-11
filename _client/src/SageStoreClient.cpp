@@ -18,9 +18,11 @@ SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
 
     // Initialize all necessary elements
     init();
+    setupMVMConnections();
+    m_uiManager->initiateAuthorizationProcess();
 
-    // QApplication styles
-    m_app.setFont(m_uiManager->defaultFont());
+    // QApplication settings
+    applyAppFont();
 
     // Log lifecycle ending
     connect(&m_app, &QCoreApplication::aboutToQuit, []()
@@ -36,7 +38,11 @@ void SageStoreClient::init()
 {
     SPDLOG_TRACE("SageStoreClient::init");
 
+    // UiManager
     m_uiManager = new UiManager(this);
+
+    // Models
+    initModels();
 }
 
 void SageStoreClient::initModels()
@@ -51,19 +57,33 @@ void SageStoreClient::setupMVMConnections()
 {
     SPDLOG_TRACE("SageStoreClient::setupMVMConnections");
 
-    // Authorization
-    connect(m_uiManager->authorizationViewModel(), &AuthorizationViewModel::requestAuthentication,
-            m_authorizationModel, &AuthorizationModel::onAuthenticationRequested);
-    connect(m_authorizationModel, &AuthorizationModel::authenticationSuccessful,
-            m_uiManager->authorizationViewModel(), &AuthorizationViewModel::loginSuccessful);
-    connect(m_authorizationModel, &AuthorizationModel::authenticationFailed,
-            m_uiManager->authorizationViewModel(), &AuthorizationViewModel::loginFailed);
+    if (m_uiManager)
+    {
+        // Authorization
+        connect(m_uiManager->authorizationViewModel(), &AuthorizationViewModel::requestAuthentication,
+                m_authorizationModel, &AuthorizationModel::onAuthenticationRequested);
+        connect(m_authorizationModel, &AuthorizationModel::authenticationSuccessful,
+                m_uiManager->authorizationViewModel(), &AuthorizationViewModel::loginSuccessful);
+        connect(m_authorizationModel, &AuthorizationModel::authenticationFailed,
+                m_uiManager->authorizationViewModel(), &AuthorizationViewModel::loginFailed);
 
-    // Registration
-    connect(m_uiManager->registrationViewModel(), &RegistrationViewModel::requestRegistration,
-            m_registrationModel, &RegistrationModel::onRegistrationRequested);
-    connect(m_registrationModel, &RegistrationModel::registrationSuccessful,
-            m_uiManager->registrationViewModel(), &RegistrationViewModel::registrationSuccessful);
-    connect(m_registrationModel, &RegistrationModel::registrationFailed,
-            m_uiManager->registrationViewModel(), &RegistrationViewModel::registrationFailed);
+        // Registration
+        connect(m_uiManager->registrationViewModel(), &RegistrationViewModel::requestRegistration,
+                m_registrationModel, &RegistrationModel::onRegistrationRequested);
+        connect(m_registrationModel, &RegistrationModel::registrationSuccessful,
+                m_uiManager->registrationViewModel(), &RegistrationViewModel::registrationSuccessful);
+        connect(m_registrationModel, &RegistrationModel::registrationFailed,
+                m_uiManager->registrationViewModel(), &RegistrationViewModel::registrationFailed);
+    }
+    else
+    {
+        SPDLOG_ERROR("SageStoreClient::setupMVMConnections m_uiManager is not initialized");
+    }
+}
+
+void SageStoreClient::applyAppFont()
+{
+    const QFont font = m_uiManager->defaultFont();
+    m_app.setFont(font);
+    SPDLOG_INFO("Application font set to {}", font.toString().toStdString());
 }

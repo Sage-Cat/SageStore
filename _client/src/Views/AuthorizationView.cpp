@@ -37,12 +37,7 @@ void AuthorizationView::initButtonsAndLinks()
     SPDLOG_TRACE("AuthorizationView::initButtonsAndLinks");
 
     m_loginButton = new QPushButton(tr("Login"), this);
-    m_forgotPasswordLink = new QLabel(tr("<a href='#'>Forgot Password?</a>"), this);
     m_registerLink = new QLabel(tr("<a href='#'>Register</a>"), this);
-
-    m_forgotPasswordLink->setTextFormat(Qt::RichText);
-    m_forgotPasswordLink->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    m_forgotPasswordLink->setOpenExternalLinks(false);
 
     m_registerLink->setTextFormat(Qt::RichText);
     m_registerLink->setTextInteractionFlags(Qt::TextBrowserInteraction);
@@ -59,7 +54,6 @@ void AuthorizationView::setupLayout()
     mainLayout->addWidget(m_loginButton);
 
     auto *linkLayout = new QHBoxLayout;
-    linkLayout->addWidget(m_forgotPasswordLink);
     linkLayout->addWidget(m_registerLink);
     linkLayout->setAlignment(Qt::AlignCenter);
 
@@ -84,5 +78,5 @@ void AuthorizationView::onLoginClicked()
 void AuthorizationView::onRegisterLinkClicked()
 {
     SPDLOG_TRACE("AuthorizationView::onRegisterLinkClicked");
-    emit registerRequested();
+    emit registrationRequested();
 }
