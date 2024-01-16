@@ -15,11 +15,4 @@ public:
      * Ensures proper cleanup for derived classes.
      */
     virtual ~IModel() = default;
-
-    /**
-     * @brief Initializes the model.
-     *
-     * This pure virtual function should be implemented by derived classes to handle their initialization logic.
-     */
-    virtual void init() = 0;
 };

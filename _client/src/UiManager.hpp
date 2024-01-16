@@ -5,7 +5,14 @@
 #include <QString>
 #include <QMap>
 
+// ViewModels
 class PurchaseOrdersViewModel;
+class AuthorizationViewModel;
+class RegistrationViewModel;
+
+// Views
+class AuthorizationView;
+class RegistrationView;
 
 /**
  * @class UiManager
@@ -45,11 +52,9 @@ public:
     ~UiManager() noexcept override;
 
     /**
-     * @brief Initialize UI components.
-     *
-     * This method is responsible for setting up UI components.
+     * @brief Shows the Authorization dialog
      */
-    void initUi();
+    void initiateAuthorizationProcess();
 
     /**
      * @brief Get the current theme.
@@ -74,6 +79,21 @@ public:
      */
     QFont defaultFont() const;
 
+public: // getters for ViewModels
+    /**
+     * @brief Get Authorization ViewModel
+     *
+     * @return m_authorizationViewModel
+     */
+    AuthorizationViewModel *authorizationViewModel() const;
+
+    /**
+     * @brief Get Registration ViewModel
+     *
+     * @return m_registrationViewModel
+     */
+    RegistrationViewModel *registrationViewModel() const;
+
 signals:
     // ---- TO UI ----
     /**
@@ -84,6 +104,13 @@ signals:
     void themeChanged(Theme newTheme);
 
 private:
+    /**
+     * @brief Initialize all UI components.
+     *
+     * This method is responsible for setting up UI components.
+     */
+    void init();
+
     /**
      * @brief Initialize the theme.
      *
@@ -99,21 +126,33 @@ private:
     void initMainWindow();
 
     /**
-     * @brief Initialize UI modules.
+     * @brief Initialize UI viewModels.
      *
-     * Sets up various UI modules required by the application.
+     * Sets up various UI viewModels required by the application.
      */
-    void initModules();
+    void initViewModels();
 
     /**
-     * @brief Initialize UI dialogues.
+     * @brief Initialize UI views.
      *
-     * Sets up any dialogues used in the UI.
+     * Sets up various UI views required by the application.
      */
-    void initDialogues();
+    void initViews();
+
+    /**
+     * @brief Setup viewModels - view connections according to MVVM
+     */
+    void setupVVMConnections();
 
 private:
     Theme m_theme; ///< Member variable storing the current theme.
 
+    // ViewModels
+    AuthorizationViewModel *m_authorizationViewModel;
+    RegistrationViewModel *m_registrationViewModel;
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
+
+    // Views
+    AuthorizationView *m_authorizationView;
+    RegistrationView *m_registrationView;
 };

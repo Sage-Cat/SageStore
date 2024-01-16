@@ -9,7 +9,6 @@ int main(int argc, char *argv[])
     SPDLOG_INFO("SageStoreClient starting");
 
     SageStoreClient client(app);
-    client.init();
 
     return app.exec();
 }
