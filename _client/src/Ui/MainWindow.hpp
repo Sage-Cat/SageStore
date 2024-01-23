@@ -14,7 +14,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
+protected:
     // setup window
     void init();
 
