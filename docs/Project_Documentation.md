@@ -22,6 +22,7 @@
 10. [Architecture Design](#architecture-design)
     - [Client Design](#client-design)
     - [Server Design](#server-design)
+    - [Dataset Schema](#dataset-schema)
     - [REST API](#rest-api)
 11. [Practices and Methodologies](#practices-and-methodologies)
 12. [Development Phase](#development-phase)
@@ -272,9 +273,59 @@ The server architecture for the SageStore Management System aims to provide a ro
 - **Responsibilities**: Serve as intermediaries that coordinate and facilitate interactions between different modules and their corresponding repositories.
 - **Purpose**: Decouples modules from each other, making the system easier to modify and understand.
 
+#### Dataset Schema
+
+The `Dataset` structure in our application is designed to efficiently handle tabled data, particularly for communication over a network using formats like JSON or XML. The structure is defined as follows:
+
+##### Components
+
+    - Data: Represents a single column of a table. It is a QStringList, where each QString is an individual cell value in the column.
+    - Dataset: Represents the entire table. It is a QHash that maps a QString key to a Data object. The key is used to identify each column.
+
+##### Usage Example
+
+###### Field-oriented data representation:
+
+```cpp
+Dataset myDataset;
+myDataset["VarName"] = {"Value1"};
+myDataset["ArrayName"] = {"Value2", "Value3", "Value4"};
+```
+
+###### Table-oriented data representation:
+
+If we want to use this representation it's important to remember that parser expect to see column with the name listed by key "TableColumns".
+For case, when TableColumns does not exist Dataset will be parsed as Field-oriented
+
+```cpp
+Dataset myDataset;
+myDataset["TableColumns"] = {"ColumnName1", "ColumnName2", "ColumnName3"};
+myDataset["ColumnName1"] = {"Data1", "Data2", "Data3"};
+```
+
 #### REST API
 
-##### Sales
+It's possible to use recommended up-to-date configuration for client using GET request.
+
+##### Config
+
+| Method | URL                             | Description                            |
+| ------ | ------------------------------- | -------------------------------------- |
+| `GET`  | `https://localhost:8000/config` | Fetch recommended client configuration |
+
+Current configuration structure:
+
+| Field               | Value                        |
+| ------------------- | ---------------------------- |
+| `apiUrl`            | `https://localhost:8000/api` |
+| `serializationType` | `json`, `xml`                |
+
+Before you start to use next API Endpoints you should to remember that REST API url starts with `/api` endpoint
+For example `https://localhost:8000/api/sales`
+
+##### Endpoints
+
+###### Sales
 
 | Method   | Endpoint      | Description             |
 | -------- | ------------- | ----------------------- |
@@ -285,7 +336,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### Inventory
+###### Inventory
 
 | Method   | Endpoint          | Description                      |
 | -------- | ----------------- | -------------------------------- |
@@ -296,7 +347,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### User Management
+###### User Management
 
 | Method   | Endpoint         | Description                           |
 | -------- | ---------------- | ------------------------------------- |
@@ -309,7 +360,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### Employees
+###### Employees
 
 | Method   | Endpoint          | Description                             |
 | -------- | ----------------- | --------------------------------------- |
@@ -320,7 +371,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### Clients
+###### Clients
 
 | Method   | Endpoint        | Description              |
 | -------- | --------------- | ------------------------ |
@@ -331,7 +382,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### Suppliers
+###### Suppliers
 
 | Method   | Endpoint          | Description                |
 | -------- | ----------------- | -------------------------- |
@@ -342,7 +393,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### Analytics
+###### Analytics
 
 | Method | Endpoint               | Description               |
 | ------ | ---------------------- | ------------------------- |
@@ -351,7 +402,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### Logs
+###### Logs
 
 | Method   | Endpoint     | Description           |
 | -------- | ------------ | --------------------- |
@@ -362,7 +413,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ---
 
-##### User Roles
+###### User Roles
 
 | Method   | Endpoint           | Description                 |
 | -------- | ------------------ | --------------------------- |
@@ -425,3 +476,7 @@ Will be soon
 | 09/10/2023 | 1.3     | Created Client and Server base Architectural Designs              | Pavlenko Volodymyr |
 | 09/10/2023 | 1.4     | Created REST API design. Updated Server schema                    | Pavlenko Volodymyr |
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
+
+```
+
+```

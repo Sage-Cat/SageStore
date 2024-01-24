@@ -1,5 +1,7 @@
 #include "UiManager.hpp"
 
+#include <QMessageBox>
+
 #include "SpdlogWrapper.hpp"
 
 #include "ViewModels/AuthorizationViewModel.hpp"
@@ -77,6 +79,11 @@ RegistrationViewModel *UiManager::registrationViewModel() const
 {
     SPDLOG_TRACE("UiManager::registrationViewModel");
     return m_registrationViewModel;
+}
+
+void UiManager::showErrorMessageBox(const QString &message)
+{
+    QMessageBox::critical(nullptr, tr("Error"), message);
 }
 
 void UiManager::initTheme()

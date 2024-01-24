@@ -103,6 +103,16 @@ signals:
      */
     void themeChanged(Theme newTheme);
 
+public slots:
+    /**
+     * @brief Displays an error message box.
+     *
+     * Shows a modal message box with an error message.
+     *
+     * @param message The error message to display.
+     */
+    void showErrorMessageBox(const QString &message);
+
 private:
     /**
      * @brief Initialize all UI components.

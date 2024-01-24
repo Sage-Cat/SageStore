@@ -2,8 +2,6 @@
 
 #include <QApplication>
 
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-
 #include "SageStoreClient.hpp"
 #include "SpdlogWrapper.hpp"
 
