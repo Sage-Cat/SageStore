@@ -4,6 +4,11 @@
 
 #include <memory>
 
+// --- Networking
+class NetworkService;
+class ConfigManager;
+
+// --- UI
 class UiManager;
 
 // Models
@@ -62,6 +67,11 @@ private:
     void initModels();
 
     /**
+     * @brief Setup networkservice - get URL using ConfigManager and setup NetworkService
+     */
+    void setupNetworkService();
+
+    /**
      * @brief Setup model - viewModel connections according to MVVM
      */
     void setupMVMConnections();
@@ -71,6 +81,12 @@ private:
      */
     void applyAppFont();
 
+private slots:
+    /**
+     * @brief Handle the case when config failed to fetch Url for NetworkService
+     */
+    void onConfigFetchFailed();
+
 private:
     /**
      * @brief Reference to the QApplication object.
@@ -78,6 +94,10 @@ private:
      * Holds a reference to the QApplication object to manage application-wide settings.
      */
     QApplication &m_app;
+
+    ConfigManager *m_configManager;
+    NetworkService *m_networkService;
+    QThread *m_networkServiceThread;
 
     /**
      * @brief UiManager object initialized on stack.

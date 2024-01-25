@@ -45,23 +45,23 @@ package "Client" {
       +receiveResponse(): void
     }
 
-    class IDataSerialization <<interface>> {
+    class IDataSerializer <<interface>> {
       +serialize(): void
       +deserialize(): void
     }
 
-    class JsonSerialization
+    class JsonSerializer
   }
 
   ' Relationships
   SageStoreClient -down-> UiManager
   SageStoreClient -down-> IModel
   SageStoreClient -down-> NetworkService
-  NetworkService -down-> IDataSerialization
+  NetworkService -down-> IDataSerializer
   UiManager -down-> IViewModel
 
   ' Inheritance
-  IDataSerialization <|-- JsonSerialization
+  IDataSerializer <|-- JsonSerializer
 
   note "SIGNAL-SLOT approach" as N1
   IModel .. N1
