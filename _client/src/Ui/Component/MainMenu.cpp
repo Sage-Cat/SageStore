@@ -1,50 +1,57 @@
 #include "MainMenu.hpp"
+#include "Actions.hpp"
 
 MainMenu::MainMenu() : QMenuBar()
 {
     // File Menu
-    fileMenu->addAction(settingsAction);
-    connect(exitAction, &QAction::triggered, this, &MainMenu::close);
-    fileMenu->addAction(exitAction);
+    m_fileMenu = createModuleMenu("File", {ActionTypes::SETTINGS, ActionTypes::EXIT}); 
+        //QAction *settingsAction = new QAction("Settings", this);
+        //QAction *exitAction = new QAction("Exit", this);
+        // connect(exitAction, &QAction::triggered, this, &MainMenu::close);
+    addMenu(m_fileMenu);
 
     // Purchasing Module Menu
-    connect(purchaseOrdersAction, &QAction::triggered, this, &MainMenu::showPurchaseOrders);
-    purchasingMenu->addAction(purchaseOrdersAction);
-    purchasingMenu->addAction("Supplier Management");
-    purchasingMenu->addAction("Goods Receipts");
+    m_purchasingMenu = createModuleMenu("Purchasing", {ActionTypes::PURCHASE_ORDERS, ActionTypes::SUPPLIER_MANAGEMENT, ActionTypes::GOODS_RECEIPTS});
+        //QAction *purchaseOrdersAction = new QAction("Purchase Orders", this);
+        // connect(purchaseOrdersAction, &QAction::triggered, this, &MainMenu::showPurchaseOrders);
+    addMenu(m_purchasingMenu);
 
     // Sales Module Menu
-    connect(salesOrdersAction, &QAction::triggered, this, &MainMenu::showSalesOrders);
-    salesMenu->addAction(salesOrdersAction);
-    salesMenu->addAction("Customer Management");
-    salesMenu->addAction("Invoicing");
+    m_salesMenu = createModuleMenu("Sales", {ActionTypes::SALES_ORDERS, ActionTypes::CUSTOMER_MANAGEMENT, ActionTypes::INVOICING});
+        //QAction *salesOrdersAction = new QAction("Sales Orders", this);
+        //  connect(salesOrdersAction, &QAction::triggered, this, &MainMenu::showSalesOrders);
+    addMenu(m_salesMenu);
 
     // Inventory Module Menu
-    inventoryMenu->addAction("Product Management");
-    inventoryMenu->addAction("Supplier's Pricelist Upload");
-    inventoryMenu->addAction("Stock Tracking");
+    m_inventoryMenu = createModuleMenu("Inventory", {ActionTypes::PRODUCT_MANAGEMENT, ActionTypes::SUPPLIER_PRICELIST_UPLOAD, ActionTypes::STOCK_TRACKING});
+    addMenu(m_inventoryMenu);
 
     // Analytics Module Menu
-    analyticsMenu->addAction("Sales Analytics");
-    analyticsMenu->addAction("Inventory Analytics");
+    m_analyticsMenu = createModuleMenu("Analytics", {ActionTypes::SALES_ANALYTICS, ActionTypes::INVENTORY_ANALYTICS});
+    addMenu(m_analyticsMenu);
 
     // Users Module Menu
-    usersMenu->addAction("User Roles");
-    usersMenu->addAction("User Logs");
+    m_usersMenu = createModuleMenu("Users", {ActionTypes::USER_ROLES, ActionTypes::USER_LOGS});
+    addMenu(m_usersMenu);
 
     // Management Module Menu
-    managementMenu->addAction("Employees");
-    managementMenu->addAction("Customers");
-    managementMenu->addAction("Suppliers");
+    m_managementMenu = createModuleMenu("Management", {ActionTypes::EMPLOYEES, ActionTypes::CUSTOMERS, ActionTypes::SUPPLIERS});
+    addMenu(m_managementMenu);
 
 }
-
-void MainMenu::showPurchaseOrders()
+//Custom function that create module menu using map
+QMenu* MainMenu::createModuleMenu(const QString& menuTitle, const std::vector<ActionTypes>& actions)
 {
-    qDebug() << "Show Purchase Orders";
+    QMenu* menu = new QMenu(menuTitle);
+
+    for (ActionTypes actionType : actions) {
+        QAction* action = new QAction(ACTION_NAMES.at(actionType).c_str(), this);
+        connect(action, &QAction::triggered, this, [this, actionType]() { showModuleAction(actionType); });
+        menu->addAction(action);
+
+        actionTypeMap[action] = actionType;
+    }
+
+    return menu;
 }
 
-void MainMenu::showSalesOrders()
-{
-    qDebug() << "Show Sales Orders";
-}
