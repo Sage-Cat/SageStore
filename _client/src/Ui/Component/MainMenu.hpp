@@ -1,5 +1,4 @@
-#ifndef MAINMENU_H
-#define MAINMENU_H
+#pragma once
 
 #include <QMenuBar>
 #include <QMenu>
@@ -9,32 +8,38 @@
 class MainMenu : public QMenuBar
 {
 public:
-    MainMenu();
+        MainMenu();
     //destructor
     virtual ~MainMenu();
-
+private:
+    QMenu* createModuleMenu(const QString& menuTitle, const std::vector<ActionTypes>& actions);
+private:
+    std::map<QAction*, ActionTypes> actionTypeMap;
     // File Menu
-    QMenu *fileMenu = this->addMenu("File");
-    QAction *settingsAction = new QAction("Settings", this);
-    QAction *exitAction = new QAction("Exit", this);
+    QMenu *m_fileMenu;
+    
     // Purchasing Module Menu
-    QMenu *purchasingMenu = this->addMenu("Purchasing");
-    QAction *purchaseOrdersAction = new QAction("Purchase Orders", this);
+    QMenu *m_purchasingMenu;
+    
     // Sales Module Menu
-    QMenu *salesMenu = this->addMenu("Sales");
-    QAction *salesOrdersAction = new QAction("Sales Orders", this);
+    QMenu *m_salesMenu;
+    
     // Inventory Module Menu
-    QMenu *inventoryMenu = this->addMenu("Inventory");
+    QMenu *m_inventoryMenu;
+    
     // Analytics Module Menu
-    QMenu *analyticsMenu = this->addMenu("Analytics");
+    QMenu *m_analyticsMenu;
+    
     // Users Module Menu
-    QMenu *usersMenu = this->addMenu("Users");
+    QMenu *m_usersMenu;
+    
     // Management Module Menu
-    QMenu *managementMenu = this->addMenu("Management");
+    QMenu *m_managementMenu;
+    
 public slots:
     void showPurchaseOrders();
     void showSalesOrders();
 
 };
 
-#endif // MAINMENU_H
+#endif 
