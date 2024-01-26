@@ -3,20 +3,22 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QStatusBar>
-#include "Ui/WidgetStyles.hpp"
-#include "Ui/Component/BaseWidget.hpp"
 
-class MainWindow : public QMainWindow
+#include "Views/ViewStyles.hpp"
+
+class MainWindowView : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    MainWindowView(QWidget *parent = nullptr);
+    ~MainWindowView();
 
 protected:
     // setup window
     void init();
+    // setup UI
+    void setupUI();
 
     // override resizeEvent
     void resizeEvent(QResizeEvent *event) override;
@@ -24,7 +26,6 @@ protected:
 private:
     // stack view
     QStackedWidget *m_stackView;
-    BaseWidget *m_userRoles;
 
     // status bar
     QStatusBar *m_statusBar;

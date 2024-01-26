@@ -2,9 +2,7 @@
 
 #include <QApplication>
 
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-
-#include "Ui/MainWindow.hpp"
+#include "Views/MainWindowView.hpp"
 #include "SpdlogWrapper.hpp"
 
 class MainWindowTest : public ::testing::Test
@@ -22,7 +20,7 @@ protected:
 TEST_F(MainWindowTest, ConstructorDoesNotThrow)
 {
     SPDLOG_TRACE("Running test case: ConstructorDoesNotThrow");
-    EXPECT_NO_THROW(MainWindow mainwind);
+    EXPECT_NO_THROW(MainWindowView mainwind);
 }
 
 int main(int argc, char **argv)

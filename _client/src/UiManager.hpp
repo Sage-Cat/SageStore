@@ -157,7 +157,7 @@ private:
 private:
     Theme m_theme; ///< Member variable storing the current theme.
 
-    MainWindow *m_mainWindow;
+    MainWindowView *m_mainWindow;
     // ViewModels
     AuthorizationViewModel *m_authorizationViewModel;
     RegistrationViewModel *m_registrationViewModel;

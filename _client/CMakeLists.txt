@@ -30,14 +30,10 @@ set(UI_SOURCES
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/Component/BaseWidget.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/MainWindow.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationViewModel.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationViewModel.cpp
-
-
-    ${CLIENT_SOURCES_DIR}/Views/Components/BaseView.cpp
-    
+    ${CLIENT_SOURCES_DIR}/Views/MainWindow.cpp
+    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp  
     ${CLIENT_SOURCES_DIR}/Views/PurchaseOrdersView.cpp
 )
 
