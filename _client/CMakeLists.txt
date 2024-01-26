@@ -42,7 +42,6 @@ set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
-    ${CLIENT_SOURCES_DIR}/Ui/WidgetStyles.hpp
     ${CLIENT_SOURCES_DIR}/SpdlogWrapper.cpp
 )
 

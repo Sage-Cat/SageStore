@@ -11,6 +11,7 @@ class AuthorizationViewModel;
 class RegistrationViewModel;
 
 // Views
+class MainWindowView;
 class AuthorizationView;
 class RegistrationView;
 
