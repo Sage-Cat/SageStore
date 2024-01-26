@@ -1,13 +1,14 @@
-#include "BaseWidget.hpp"
+#include "BaseView.hpp"
+#include "Views/ViewStyles.hpp"
 
-BaseWidget::BaseWidget(QWidget *parent) : QWidget(parent)
+BaseView::BaseView(QWidget *parent) : QWidget(parent)
 {
     setupUi();
 }
 
-BaseWidget::~BaseWidget() {}
+BaseView::~BaseView() {}
 
-void BaseWidget::setupUi()
+void BaseView::setupUi()
 {
     // set main layout
     m_mainLayout = new QVBoxLayout(this);
@@ -47,6 +48,7 @@ void BaseWidget::setupUi()
     m_mainLayout->addLayout(m_additionalInfo);
 
     // add additional space under unfo
+
     m_additionalUnderStatusSpace = new QSpacerItem(SpaceSize::ADDIT_SPACE_WIDTH, SpaceSize::ADDIT_UND_STAT_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_mainLayout->addSpacerItem(m_additionalUnderStatusSpace);
 }

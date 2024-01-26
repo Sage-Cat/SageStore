@@ -1,20 +1,18 @@
 #pragma once
 
-#include <QQmlComponent>
-
 /**
- * @interface UiViewModel
+ * @interface IViewModel
  * @brief Interface for UI components.
  *
  * This interface defines the basic functionalities for rendering UI components.
  */
-class UiViewModel
+class IViewModel
 {
 public:
     /**
-     * @brief Virtual destructor for UiViewModel.
+     * @brief Virtual destructor for IViewModel.
      *
      * Ensures proper cleanup for derived classes.
      */
-    virtual ~UiViewModel() = default;
+    virtual ~IViewModel() = default;
 };

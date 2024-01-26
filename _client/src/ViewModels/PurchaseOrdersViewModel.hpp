@@ -1,9 +1,8 @@
 #pragma once
 
 #include <QObject>
-#include <QQmlApplicationEngine>
 
-#include "UiViewModel.hpp"
+#include "IViewModel.hpp"
 
 /**
  * @brief Manages the UI rendering and interactions for the purchase View.
@@ -12,7 +11,7 @@
  *          It encapsulates the behavior and data necessary to interact with the
  *          purchase View within the UI.
  */
-class PurchaseOrdersViewModel : public QObject, public UiViewModel
+class PurchaseOrdersViewModel : public QObject, public IViewModel
 {
     Q_OBJECT
 
