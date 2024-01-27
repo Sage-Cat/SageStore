@@ -30,13 +30,16 @@ set(UI_SOURCES
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationDialogModel.cpp
+    ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationDialogModel.cpp
     
+    # Dialogs
+    ${CLIENT_SOURCES_DIR}/Views/BaseDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Views/AuthorizationDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Views/RegistrationDialog.cpp
+
     # Views
-    ${CLIENT_SOURCES_DIR}/Views/AuthorizationView.cpp
-    ${CLIENT_SOURCES_DIR}/Views/RegistrationView.cpp
-    
+    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
     ${CLIENT_SOURCES_DIR}/Views/PurchaseOrdersView.cpp
     
     ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp

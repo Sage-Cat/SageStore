@@ -1,27 +1,28 @@
 #pragma once
 
-#include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
 
+#include "BaseDialog.hpp"
+
 /**
- * @class RegistrationView
+ * @class RegistrationDialog
  * @brief Represents the registration dialog in the application.
  *
  * This class manages the UI elements for user registration, including
  * input fields for username, password, and confirmation, and a button for registration.
  */
-class RegistrationView : public QDialog
+class RegistrationDialog : public BaseDialog
 {
     Q_OBJECT
 
 public:
     /**
-     * @brief Construct a new Registration View object
+     * @brief Construct a new Registration Dialog object
      * @param parent The parent widget of this dialog, nullptr if it has no parent.
      */
-    explicit RegistrationView(QWidget *parent = nullptr);
+    explicit RegistrationDialog(BaseDialog *parent = nullptr);
 
 signals:
     /**

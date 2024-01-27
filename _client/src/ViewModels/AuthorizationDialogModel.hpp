@@ -3,24 +3,24 @@
 #include <QObject>
 #include <QString>
 
-#include "IViewModel.hpp"
+#include "IDialogModel.hpp"
 
 /**
- * @class AuthorizationViewModel
+ * @class AuthorizationDialogModel
  * @brief Manages the logic for user authorization.
  *
  * Handles user login attempts and emits signals based on the outcome.
  */
-class AuthorizationViewModel : public QObject, public IViewModel
+class AuthorizationDialogModel : public QObject, public IDialogModel
 {
     Q_OBJECT
 
 public:
     /**
-     * @brief Construct a new Authorization ViewModel object.
+     * @brief Construct a new Authorization DialogModel object.
      * @param parent The parent QObject, nullptr if it has no parent.
      */
-    explicit AuthorizationViewModel(QObject *parent = nullptr);
+    explicit AuthorizationDialogModel(QObject *parent = nullptr);
 
 signals:
     /**

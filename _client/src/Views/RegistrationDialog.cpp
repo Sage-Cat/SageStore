@@ -1,11 +1,12 @@
-#include "RegistrationView.hpp"
+#include "RegistrationDialog.hpp"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "SpdlogWrapper.hpp" // Include your custom SpdlogWrapper header
 
-RegistrationView::RegistrationView(QWidget *parent) : QDialog(parent)
+#include "SpdlogWrapper.hpp"
+
+RegistrationDialog::RegistrationDialog(BaseDialog *parent) : BaseDialog(parent)
 {
-    SPDLOG_TRACE("RegistrationView::RegistrationView");
+    SPDLOG_TRACE("RegistrationDialog::RegistrationDialog");
 
     initFields();
     initButtonsAndLinks();
@@ -13,19 +14,19 @@ RegistrationView::RegistrationView(QWidget *parent) : QDialog(parent)
     setupConnections();
 }
 
-void RegistrationView::onRegistrationSuccess()
+void RegistrationDialog::onRegistrationSuccess()
 {
-    SPDLOG_TRACE("RegistrationView::onRegistrationSuccess");
+    SPDLOG_TRACE("RegistrationDialog::onRegistrationSuccess");
 }
 
-void RegistrationView::onRegistrationFailure()
+void RegistrationDialog::onRegistrationFailure()
 {
-    SPDLOG_TRACE("RegistrationView::onRegistrationFailure");
+    SPDLOG_TRACE("RegistrationDialog::onRegistrationFailure");
 }
 
-void RegistrationView::initFields()
+void RegistrationDialog::initFields()
 {
-    SPDLOG_TRACE("RegistrationView::initFields");
+    SPDLOG_TRACE("RegistrationDialog::initFields");
 
     m_usernameField = new QLineEdit(this);
     m_passwordField = new QLineEdit(this);
@@ -34,9 +35,9 @@ void RegistrationView::initFields()
     m_confirmPasswordField->setEchoMode(QLineEdit::Password);
 }
 
-void RegistrationView::initButtonsAndLinks()
+void RegistrationDialog::initButtonsAndLinks()
 {
-    SPDLOG_TRACE("RegistrationView::initButtonsAndLinks");
+    SPDLOG_TRACE("RegistrationDialog::initButtonsAndLinks");
 
     m_registerButton = new QPushButton(tr("Register"), this);
     m_loginLink = new QLabel(tr("<a href='#'>Login</a>"), this);
@@ -45,9 +46,9 @@ void RegistrationView::initButtonsAndLinks()
     m_loginLink->setOpenExternalLinks(false);
 }
 
-void RegistrationView::setupLayout()
+void RegistrationDialog::setupLayout()
 {
-    SPDLOG_TRACE("RegistrationView::setupLayout");
+    SPDLOG_TRACE("RegistrationDialog::setupLayout");
 
     auto *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(m_usernameField);
@@ -63,22 +64,22 @@ void RegistrationView::setupLayout()
     setLayout(mainLayout);
 }
 
-void RegistrationView::setupConnections()
+void RegistrationDialog::setupConnections()
 {
-    SPDLOG_TRACE("RegistrationView::setupConnections");
+    SPDLOG_TRACE("RegistrationDialog::setupConnections");
 
-    connect(m_registerButton, &QPushButton::clicked, this, &RegistrationView::onRegisterClicked);
-    connect(m_loginLink, &QLabel::linkActivated, this, &RegistrationView::onLoginLinkClicked);
+    connect(m_registerButton, &QPushButton::clicked, this, &RegistrationDialog::onRegisterClicked);
+    connect(m_loginLink, &QLabel::linkActivated, this, &RegistrationDialog::onLoginLinkClicked);
 }
 
-void RegistrationView::onRegisterClicked()
+void RegistrationDialog::onRegisterClicked()
 {
-    SPDLOG_TRACE("RegistrationView::onRegisterClicked | Username: {}", m_usernameField->text().toStdString());
+    SPDLOG_TRACE("RegistrationDialog::onRegisterClicked | Username: {}", m_usernameField->text().toStdString());
     emit registrationAttempted(m_usernameField->text(), m_passwordField->text(), m_confirmPasswordField->text());
 }
 
-void RegistrationView::onLoginLinkClicked()
+void RegistrationDialog::onLoginLinkClicked()
 {
-    SPDLOG_TRACE("RegistrationView::onLoginLinkClicked");
+    SPDLOG_TRACE("RegistrationDialog::onLoginLinkClicked");
     emit loginRequested();
 }

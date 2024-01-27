@@ -1,0 +1,35 @@
+@startuml
+skinparam componentStyle uml2
+
+package "SageStore Client" {
+    [SageStoreClient] as SSC
+    [UiManager] as UIM
+    [NetworkService] as NS
+    [ConfigManager] as CM
+    [Models] <<MVVM>>
+    [ViewModels] <<MVVM>>
+    [Views] <<MVVM>>
+    [Serializers] <<json, xml etc.>>
+
+    SSC -down-> UIM : uses
+    SSC -down-> NS : uses
+    SSC -down-> CM : uses
+    SSC -down-> Models  : "1"   "1..*"
+    UIM -down-> Views : "1"   "1..*"
+    UIM -down-> ViewModels : "1"   "1..*"
+    NS -down-> [Serializers] : "1"   "1..*" 
+    CM -down-> [Serializers] : "1"   "1..*"
+
+    Models -[hidden]left-> ViewModels
+    ViewModels -[hidden]right-> Views 
+    Views -[hidden]left-> Models
+    CM -[hidden]right-> NS : <<diagram alignment>>
+}
+
+note "MVVM Architecture\n(SIGNAL-SLOT Mechanism)" as MVVMNote
+MVVMNote .. Models
+MVVMNote .. ViewModels
+MVVMNote .. Views
+MVVMNote -[hidden]down- Models
+
+@enduml

@@ -4,13 +4,14 @@
 
 #include "SpdlogWrapper.hpp"
 
-#include "ViewModels/AuthorizationViewModel.hpp"
-#include "ViewModels/RegistrationViewModel.hpp"
+#include "ViewModels/AuthorizationDialogModel.hpp"
+#include "ViewModels/RegistrationDialogModel.hpp"
+
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
 #include "Views/MainWindow.hpp"
 
-#include "Views/AuthorizationView.hpp"
-#include "Views/RegistrationView.hpp"
+#include "Views/AuthorizationDialog.hpp"
+#include "Views/RegistrationDialog.hpp"
 
 UiManager::UiManager(QObject *parent) noexcept
     : QObject(parent)
@@ -70,13 +71,13 @@ QFont UiManager::defaultFont() const
     return defaultFont;
 }
 
-AuthorizationViewModel *UiManager::authorizationViewModel() const
+AuthorizationDialogModel *UiManager::authorizationViewModel() const
 {
     SPDLOG_TRACE("UiManager::authorizationViewModel");
     return m_authorizationViewModel;
 }
 
-RegistrationViewModel *UiManager::registrationViewModel() const
+RegistrationDialogModel *UiManager::registrationViewModel() const
 {
     SPDLOG_TRACE("UiManager::registrationViewModel");
     return m_registrationViewModel;
@@ -104,16 +105,16 @@ void UiManager::initViewModels()
 {
     SPDLOG_TRACE("UiManager::initViewModels");
 
-    m_authorizationViewModel = new AuthorizationViewModel;
-    m_registrationViewModel = new RegistrationViewModel;
+    m_authorizationViewModel = new AuthorizationDialogModel;
+    m_registrationViewModel = new RegistrationDialogModel;
 }
 
 void UiManager::initViews()
 {
     SPDLOG_TRACE("UiManager::initViews");
 
-    m_authorizationView = new AuthorizationView;
-    m_registrationView = new RegistrationView;
+    m_authorizationView = new AuthorizationDialog;
+    m_registrationView = new RegistrationDialog;
 }
 
 void UiManager::setupVVMConnections()
@@ -121,13 +122,13 @@ void UiManager::setupVVMConnections()
     SPDLOG_TRACE("UiManager::setupVVMConnections");
 
     // Authorization
-    connect(m_authorizationView, &AuthorizationView::loginAttempted,
-            m_authorizationViewModel, &AuthorizationViewModel::requestAuthentication);
-    connect(m_authorizationViewModel, &AuthorizationViewModel::loginSuccessful,
-            m_authorizationView, &AuthorizationView::onLoginSuccess);
-    connect(m_authorizationViewModel, &AuthorizationViewModel::loginFailed,
-            m_authorizationView, &AuthorizationView::onLoginFailure);
-    connect(m_authorizationView, &AuthorizationView::registrationRequested,
+    connect(m_authorizationView, &AuthorizationDialog::loginAttempted,
+            m_authorizationViewModel, &AuthorizationDialogModel::requestAuthentication);
+    connect(m_authorizationViewModel, &AuthorizationDialogModel::loginSuccessful,
+            m_authorizationView, &AuthorizationDialog::onLoginSuccess);
+    connect(m_authorizationViewModel, &AuthorizationDialogModel::loginFailed,
+            m_authorizationView, &AuthorizationDialog::onLoginFailure);
+    connect(m_authorizationView, &AuthorizationDialog::registrationRequested,
             [this]()
             {
                 m_authorizationView->hide();
@@ -135,13 +136,13 @@ void UiManager::setupVVMConnections()
             });
 
     // Registration
-    connect(m_registrationView, &RegistrationView::registrationAttempted,
-            m_registrationViewModel, &RegistrationViewModel::attemptRegistration);
-    connect(m_registrationViewModel, &RegistrationViewModel::registrationSuccessful,
-            m_registrationView, &RegistrationView::onRegistrationSuccess);
-    connect(m_registrationViewModel, &RegistrationViewModel::registrationFailed,
-            m_registrationView, &RegistrationView::onRegistrationFailure);
-    connect(m_registrationView, &RegistrationView::loginRequested,
+    connect(m_registrationView, &RegistrationDialog::registrationAttempted,
+            m_registrationViewModel, &RegistrationDialogModel::attemptRegistration);
+    connect(m_registrationViewModel, &RegistrationDialogModel::registrationSuccessful,
+            m_registrationView, &RegistrationDialog::onRegistrationSuccess);
+    connect(m_registrationViewModel, &RegistrationDialogModel::registrationFailed,
+            m_registrationView, &RegistrationDialog::onRegistrationFailure);
+    connect(m_registrationView, &RegistrationDialog::loginRequested,
             [this]()
             {
                 m_registrationView->hide();

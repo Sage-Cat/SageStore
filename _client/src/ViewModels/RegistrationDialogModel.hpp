@@ -3,24 +3,24 @@
 #include <QObject>
 #include <QString>
 
-#include "IViewModel.hpp"
+#include "IDialogModel.hpp"
 
 /**
- * @class RegistrationViewModel
+ * @class RegistrationDialogModel
  * @brief Manages the logic for user registration.
  *
  * Handles user registration attempts and emits signals based on the outcome.
  */
-class RegistrationViewModel : public QObject, public IViewModel
+class RegistrationDialogModel : public QObject, public IDialogModel
 {
     Q_OBJECT
 
 public:
     /**
-     * @brief Construct a new Registration ViewModel object.
+     * @brief Construct a new Registration DialogModel object.
      * @param parent The parent QObject, nullptr if it has no parent.
      */
-    explicit RegistrationViewModel(QObject *parent = nullptr);
+    explicit RegistrationDialogModel(QObject *parent = nullptr);
 
 signals:
     /**

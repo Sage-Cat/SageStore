@@ -12,8 +12,8 @@
 #include "UiManager.hpp"
 #include "Models/AuthorizationModel.hpp"
 #include "Models/RegistrationModel.hpp"
-#include "ViewModels/AuthorizationViewModel.hpp"
-#include "ViewModels/RegistrationViewModel.hpp"
+#include "ViewModels/AuthorizationDialogModel.hpp"
+#include "ViewModels\RegistrationDialogModel.hpp"
 
 SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
 {
@@ -100,20 +100,20 @@ void SageStoreClient::setupMVMConnections()
     if (m_uiManager)
     {
         // Authorization
-        connect(m_uiManager->authorizationViewModel(), &AuthorizationViewModel::requestAuthentication,
+        connect(m_uiManager->authorizationViewModel(), &AuthorizationDialogModel::requestAuthentication,
                 m_authorizationModel, &AuthorizationModel::onAuthenticationRequested);
         connect(m_authorizationModel, &AuthorizationModel::authenticationSuccessful,
-                m_uiManager->authorizationViewModel(), &AuthorizationViewModel::loginSuccessful);
+                m_uiManager->authorizationViewModel(), &AuthorizationDialogModel::loginSuccessful);
         connect(m_authorizationModel, &AuthorizationModel::authenticationFailed,
-                m_uiManager->authorizationViewModel(), &AuthorizationViewModel::loginFailed);
+                m_uiManager->authorizationViewModel(), &AuthorizationDialogModel::loginFailed);
 
         // Registration
-        connect(m_uiManager->registrationViewModel(), &RegistrationViewModel::requestRegistration,
+        connect(m_uiManager->registrationViewModel(), &RegistrationDialogModel::requestRegistration,
                 m_registrationModel, &RegistrationModel::onRegistrationRequested);
         connect(m_registrationModel, &RegistrationModel::registrationSuccessful,
-                m_uiManager->registrationViewModel(), &RegistrationViewModel::registrationSuccessful);
+                m_uiManager->registrationViewModel(), &RegistrationDialogModel::registrationSuccessful);
         connect(m_registrationModel, &RegistrationModel::registrationFailed,
-                m_uiManager->registrationViewModel(), &RegistrationViewModel::registrationFailed);
+                m_uiManager->registrationViewModel(), &RegistrationDialogModel::registrationFailed);
     }
     else
     {

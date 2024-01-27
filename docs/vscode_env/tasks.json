@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "clean-build-folder",
+      "type": "shell",
+      "command": "Remove-Item",
+      "args": [
+        "-Path",
+        "${workspaceFolder}\\build",
+        "-Recurse",
+        "-Force",
+        "-ErrorAction",
+        "SilentlyContinue"
+      ],
+      "windows": {
+        "command": "powershell.exe",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Remove-Item -Path '${workspaceFolder}\\build' -Recurse -Force -ErrorAction SilentlyContinue"
+        ]
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "conan-install-debug",
+      "type": "shell",
+      "command": "conan install . --output-folder=build --build=missing -s build_type=Debug",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "cmake-configure-debug",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "..",
+        "--preset",
+        "conan-debug"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "cmake-build-debug",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "."
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "clean-and-rebuild",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "clean-build-folder",
+        "conan-install-debug",
+        "cmake-configure-debug",
+        "cmake-build-debug"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

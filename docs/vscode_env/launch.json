@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/_client/SageStoreClient.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "C:/Qt/Tools/mingw1120_64/bin/gdb.exe",
+            "windows": {
+                "MIMode": "gdb"
+            },
+            "preLaunchTask": "cmake-build-debug",
+            "visualizerFile": "c:\\Users\\sagec\\AppData\\Roaming\\Code\\User\\workspaceStorage\\53ce190ea41a1926f86ffe7ac8ba596d\\tonka3000.qtvsctools\\qt.natvis.xml"
+        }
+    ]
+}

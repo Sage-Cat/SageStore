@@ -7,13 +7,13 @@
 
 // ViewModels
 class PurchaseOrdersViewModel;
-class AuthorizationViewModel;
-class RegistrationViewModel;
+class AuthorizationDialogModel;
+class RegistrationDialogModel;
 
 // Views
 class MainWindow;
-class AuthorizationView;
-class RegistrationView;
+class AuthorizationDialog;
+class RegistrationDialog;
 
 /**
  * @class UiManager
@@ -86,14 +86,14 @@ public: // getters for ViewModels
      *
      * @return m_authorizationViewModel
      */
-    AuthorizationViewModel *authorizationViewModel() const;
+    AuthorizationDialogModel *authorizationViewModel() const;
 
     /**
      * @brief Get Registration ViewModel
      *
      * @return m_registrationViewModel
      */
-    RegistrationViewModel *registrationViewModel() const;
+    RegistrationDialogModel *registrationViewModel() const;
 
 signals:
     // ---- TO UI ----
@@ -160,11 +160,11 @@ private:
 
     MainWindow *m_mainWindow;
     // ViewModels
-    AuthorizationViewModel *m_authorizationViewModel;
-    RegistrationViewModel *m_registrationViewModel;
+    AuthorizationDialogModel *m_authorizationViewModel;
+    RegistrationDialogModel *m_registrationViewModel;
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
 
     // Views
-    AuthorizationView *m_authorizationView;
-    RegistrationView *m_registrationView;
+    AuthorizationDialog *m_authorizationView;
+    RegistrationDialog *m_registrationView;
 };
