@@ -32,10 +32,17 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationViewModel.cpp
     ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
-    ${CLIENT_SOURCES_DIR}/Views/MainWindowView.cpp
-    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp  
+    
+    # Views
+    ${CLIENT_SOURCES_DIR}/Views/AuthorizationView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/RegistrationView.cpp
+    
     ${CLIENT_SOURCES_DIR}/Views/PurchaseOrdersView.cpp
+    
+    ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
+    
+    ${CLIENT_SOURCES_DIR}/Views/MainWindowView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
 )
 
 set(MAIN_SOURCES
