@@ -3,8 +3,6 @@
 #include <QThread>
 #include <QFont>
 
-#include "SpdlogWrapper.hpp"
-
 #include "Network/ConfigManager.hpp"
 #include "Network/NetworkService.hpp"
 #include "Network/JsonSerializer.hpp"
@@ -13,7 +11,9 @@
 #include "Models/AuthorizationModel.hpp"
 #include "Models/RegistrationModel.hpp"
 #include "ViewModels/AuthorizationDialogModel.hpp"
-#include "ViewModels\RegistrationDialogModel.hpp"
+#include "ViewModels/RegistrationDialogModel.hpp"
+
+#include "SpdlogConfig.hpp"
 
 SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
 {

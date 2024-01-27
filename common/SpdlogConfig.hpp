@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace SpdlogWrapper
+namespace SpdlogConfig
 {
     enum class LogLevel
     {
@@ -19,5 +19,4 @@ namespace SpdlogWrapper
     };
 
     void init(LogLevel level = LogLevel::Trace);
-
 }

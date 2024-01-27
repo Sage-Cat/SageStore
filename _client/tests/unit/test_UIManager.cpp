@@ -4,7 +4,7 @@
 #include <QApplication>
 
 #include "UiManager.hpp"
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 class UIManagerTest : public ::testing::Test
 {
@@ -49,7 +49,7 @@ TEST_F(UIManagerTest, NoFatalFailureInThemeSetting)
 
 int main(int argc, char **argv)
 {
-    SpdlogWrapper::init();
+    SpdlogConfig::init();
     QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);

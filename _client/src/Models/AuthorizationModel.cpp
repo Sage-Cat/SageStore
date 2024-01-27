@@ -1,6 +1,6 @@
 #include "AuthorizationModel.hpp"
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 AuthorizationModel::AuthorizationModel(QObject *parent)
     : QObject(parent), m_username(""), m_password("")

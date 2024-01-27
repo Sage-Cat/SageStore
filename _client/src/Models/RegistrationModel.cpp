@@ -1,6 +1,6 @@
 #include "RegistrationModel.hpp"
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 RegistrationModel::RegistrationModel(QObject *parent)
     : QObject(parent), m_username(""), m_password("")

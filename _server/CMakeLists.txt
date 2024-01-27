@@ -1,14 +1,11 @@
 project(SageStoreServer)
 
+set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
 # Specify source files
-file(GLOB_RECURSE API_SOURCES "src/API_Endpoints/*.cpp")  
-file(GLOB_RECURSE BUSINESS_LOGIC_SOURCES "src/BusinessLogic/*.cpp")
-file(GLOB_RECURSE DATA_ACCESS_SOURCES "src/DataAccess/*.cpp")
-file(GLOB_RECURSE MEDIATORS_SOURCES "src/Mediators/*.cpp")  
-
 set(SERVER_SOURCES
     src/main.cpp
     src/SageStoreServer.cpp
@@ -18,10 +15,10 @@ set(SERVER_SOURCES
 )
 
 # Create server executable
-add_executable(SageStoreServer ${SERVER_SOURCES})
+add_executable(SageStoreServer ${SERVER_SOURCES} ${COMMON_SOURCES})
 
 # Include directories
-target_include_directories(SageStoreServer PUBLIC ${CMAKE_SOURCE_DIR}/_server/src)
+target_include_directories(SageStoreServer PUBLIC ${SERVER_SOURCES_DIR})
 
 # link libs
 target_link_libraries(SageStoreServer spdlog::spdlog)

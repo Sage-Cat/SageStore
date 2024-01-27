@@ -1,6 +1,6 @@
 #include "NetworkService.hpp"
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 NetworkService::NetworkService(QObject *parent)
     : QObject(parent), m_manager(new QNetworkAccessManager(this))

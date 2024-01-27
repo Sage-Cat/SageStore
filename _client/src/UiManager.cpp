@@ -2,7 +2,7 @@
 
 #include <QMessageBox>
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 #include "ViewModels/AuthorizationDialogModel.hpp"
 #include "ViewModels/RegistrationDialogModel.hpp"

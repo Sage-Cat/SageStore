@@ -1,7 +1,9 @@
 #include "AuthorizationDialog.hpp"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "SpdlogWrapper.hpp"
+
+#include "SpdlogConfig.hpp"
 
 AuthorizationDialog::AuthorizationDialog(BaseDialog *parent) : BaseDialog(parent)
 {

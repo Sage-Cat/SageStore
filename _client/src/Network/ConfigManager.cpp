@@ -1,6 +1,6 @@
 #include "ConfigManager.hpp"
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 const char *SERVER_CONFIG_URL{"http://localhost:8000/config"};
 namespace CONFIG_KEYS

@@ -13,7 +13,6 @@ find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
 find_package(Qt6Quick REQUIRED)
 
-
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
@@ -52,7 +51,6 @@ set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
-    ${CLIENT_SOURCES_DIR}/SpdlogWrapper.cpp
 )
 
 # All sources

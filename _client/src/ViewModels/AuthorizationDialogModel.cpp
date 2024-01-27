@@ -1,6 +1,6 @@
 #include "AuthorizationDialogModel.hpp"
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 AuthorizationDialogModel::AuthorizationDialogModel(QObject *parent)
     : QObject(parent)

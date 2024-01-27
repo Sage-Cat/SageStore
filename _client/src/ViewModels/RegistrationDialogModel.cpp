@@ -1,5 +1,5 @@
 #include "RegistrationDialogModel.hpp"
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 RegistrationDialogModel::RegistrationDialogModel(QObject *parent)
     : QObject(parent)

@@ -1,6 +1,6 @@
 #include "PurchaseOrdersViewModel.hpp"
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 PurchaseOrdersViewModel::PurchaseOrdersViewModel(QObject *parent)
     : QObject(parent)

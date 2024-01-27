@@ -3,7 +3,7 @@
 #include <QApplication>
 
 #include "SageStoreClient.hpp"
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 class SageStoreClientTest : public ::testing::Test
 {
@@ -30,7 +30,7 @@ TEST_F(SageStoreClientTest, LifetimeNoThrow)
 
 int main(int argc, char **argv)
 {
-    SpdlogWrapper::init();
+    SpdlogConfig::init();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

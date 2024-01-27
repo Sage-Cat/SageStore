@@ -8,6 +8,13 @@ project(SageStore)
 enable_testing()
 option(BUILD_TESTING "Build the testing tree." ON)
 
+# Dir with common include headers
+set(COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
+set(COMMON_SOURCES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/common/SpdlogConfig.cpp"
+)
+include_directories(${COMMON_DIR})
+
 # Recursively include sub-projects
 add_subdirectory(_client)
 add_subdirectory(_server)
