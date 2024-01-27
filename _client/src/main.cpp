@@ -1,6 +1,5 @@
 #include "SageStoreClient.hpp"
 #include "SpdlogWrapper.hpp"
-#include "Views/MainWindowView.hpp"
 
 int main(int argc, char *argv[])
 {
