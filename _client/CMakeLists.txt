@@ -36,10 +36,13 @@ set(UI_SOURCES
     # Views
     ${CLIENT_SOURCES_DIR}/Views/AuthorizationView.cpp
     ${CLIENT_SOURCES_DIR}/Views/RegistrationView.cpp
-
-    ${CLIENT_SOURCES_DIR}/Views/Components/BaseView.cpp
     
     ${CLIENT_SOURCES_DIR}/Views/PurchaseOrdersView.cpp
+    
+    ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
+    
+    ${CLIENT_SOURCES_DIR}/Views/MainWindow.cpp
+    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
 )
 
 set(MAIN_SOURCES
