@@ -1,13 +1,13 @@
-#include "MainWindowView.hpp"
+#include "MainWindow.hpp"
 
-MainWindowView::MainWindowView(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     init();
     setupUI();
 }
 
-void MainWindowView::init()
+void MainWindow::init()
 {
     // add stackView
     m_stackView = new QStackedWidget(this);
@@ -18,18 +18,18 @@ void MainWindowView::init()
     this->setStatusBar(m_statusBar);
 }
 
-void MainWindowView::setupUI()
+void MainWindow::setupUI()
 {
     // set size and at fullscreen
     this->resize(MainWindowSize::WINDOW_WIDTH, MainWindowSize::WINDOW_HEIGHT);
     this->showMaximized();
 }
 
-MainWindowView::~MainWindowView()
+MainWindow::~MainWindow()
 {
 }
 
-void MainWindowView::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent *event)
 {
     m_stackView->resize(this->size().width(), this->size().height());
 }

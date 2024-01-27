@@ -2,7 +2,7 @@
 
 #include <QApplication>
 
-#include "Views/MainWindowView.hpp"
+#include "Views/MainWindow.hpp"
 #include "SpdlogWrapper.hpp"
 
 class MainWindowTest : public ::testing::Test
@@ -20,7 +20,7 @@ protected:
 TEST_F(MainWindowTest, ConstructorDoesNotThrow)
 {
     SPDLOG_TRACE("Running test case: ConstructorDoesNotThrow");
-    EXPECT_NO_THROW(MainWindowView mainwind);
+    EXPECT_NO_THROW(MainWindow mainwind);
 }
 
 int main(int argc, char **argv)

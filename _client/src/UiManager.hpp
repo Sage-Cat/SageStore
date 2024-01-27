@@ -11,7 +11,7 @@ class AuthorizationViewModel;
 class RegistrationViewModel;
 
 // Views
-class MainWindowView;
+class MainWindow;
 class AuthorizationView;
 class RegistrationView;
 
@@ -158,7 +158,7 @@ private:
 private:
     Theme m_theme; ///< Member variable storing the current theme.
 
-    MainWindowView *m_mainWindow;
+    MainWindow *m_mainWindow;
     // ViewModels
     AuthorizationViewModel *m_authorizationViewModel;
     RegistrationViewModel *m_registrationViewModel;

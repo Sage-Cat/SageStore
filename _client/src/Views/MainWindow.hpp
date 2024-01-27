@@ -6,13 +6,13 @@
 
 #include "Views/ViewStyles.hpp"
 
-class MainWindowView : public QMainWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindowView(QWidget *parent = nullptr);
-    ~MainWindowView();
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 protected:
     // setup window

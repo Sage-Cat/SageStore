@@ -41,7 +41,7 @@ set(UI_SOURCES
     
     ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
     
-    ${CLIENT_SOURCES_DIR}/Views/MainWindowView.cpp
+    ${CLIENT_SOURCES_DIR}/Views/MainWindow.cpp
     ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
 )
 

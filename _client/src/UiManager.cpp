@@ -7,7 +7,7 @@
 #include "ViewModels/AuthorizationViewModel.hpp"
 #include "ViewModels/RegistrationViewModel.hpp"
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
-#include "Views/MainWindowView.hpp"
+#include "Views/MainWindow.hpp"
 
 #include "Views/AuthorizationView.hpp"
 #include "Views/RegistrationView.hpp"
@@ -97,7 +97,7 @@ void UiManager::initMainWindow()
 {
     SPDLOG_TRACE("UiManager::initMainWindow");
 
-    m_mainWindow = new MainWindowView();
+    m_mainWindow = new MainWindow();
 }
 
 void UiManager::initViewModels()
