@@ -13,9 +13,9 @@ foreach(testSrc ${TEST_SOURCES})
     get_filename_component(testName ${testSrc} NAME_WE)
     set(testExecutable "${testName}")
 
-    add_executable(${testExecutable} ${testSrc})
+    add_executable(${testExecutable} ${testSrc} ${COMMON_SOURCES})
 
-    target_include_directories(${testExecutable} PUBLIC ${CMAKE_SOURCE_DIR}/_client/src)
+    target_include_directories(${testExecutable} PUBLIC ${CLIENT_SOURCES_DIR})
 
     target_link_libraries(${testExecutable} ClientTestLib)
     target_link_libraries(${testExecutable} GTest::GTest GTest::Main)

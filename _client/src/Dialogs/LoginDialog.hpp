@@ -1,27 +1,28 @@
 #pragma once
 
-#include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
 
+#include "BaseDialog.hpp"
+
 /**
- * @class AuthorizationView
+ * @class LoginDialog
  * @brief Represents the authorization dialog in the application.
  *
  * This class manages the UI elements for user authorization, including
  * fields for username and password, and buttons for login and registration.
  */
-class AuthorizationView : public QDialog
+class LoginDialog : public BaseDialog
 {
     Q_OBJECT
 
 public:
     /**
-     * @brief Construct a new Authorization View object.
+     * @brief Construct a new Authorization Dialog object.
      * @param parent The parent widget of this dialog, nullptr if it has no parent.
      */
-    explicit AuthorizationView(QWidget *parent = nullptr);
+    explicit LoginDialog(BaseDialog *parent = nullptr);
 
 signals:
     /**
@@ -35,17 +36,6 @@ signals:
      * @brief Signal emitted when the user requests to switch to the registration view.
      */
     void registrationRequested();
-
-public slots:
-    /**
-     * @brief Slot for case with successful login attempt
-     */
-    void onLoginSuccess();
-
-    /**
-     * @brief Slot for case with failed login attempt
-     */
-    void onLoginFailure();
 
 private:
     /**

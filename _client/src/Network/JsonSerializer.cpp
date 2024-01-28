@@ -4,7 +4,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 QByteArray JsonSerializer::serialize(const Dataset &dataset)
 {

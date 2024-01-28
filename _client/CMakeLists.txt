@@ -13,43 +13,42 @@ find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
 find_package(Qt6Quick REQUIRED)
 
-
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
 set(NETWORK_SOURCES
-    ${CLIENT_SOURCES_DIR}/Network/ConfigManager.cpp
+    ${CLIENT_SOURCES_DIR}/Network/ApiConstants.hpp
+    ${CLIENT_SOURCES_DIR}/Network/ApiManager.cpp
     ${CLIENT_SOURCES_DIR}/Network/NetworkService.cpp
     ${CLIENT_SOURCES_DIR}/Network/JsonSerializer.cpp
+
 )
 
 set(UI_SOURCES
+    ${CLIENT_SOURCES_DIR}/MainWindow.cpp
+
     # Models
-    ${CLIENT_SOURCES_DIR}/Models/AuthorizationModel.cpp
-    ${CLIENT_SOURCES_DIR}/Models/RegistrationModel.cpp
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationViewModel.cpp
     
+    # Dialogs
+    ${CLIENT_SOURCES_DIR}/Dialogs/BaseDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Dialogs/LoginDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Dialogs/RegistrationDialog.cpp
+
     # Views
-    ${CLIENT_SOURCES_DIR}/Views/AuthorizationView.cpp
-    ${CLIENT_SOURCES_DIR}/Views/RegistrationView.cpp
-    
+    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
     ${CLIENT_SOURCES_DIR}/Views/PurchaseOrdersView.cpp
     
     ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
     
-    ${CLIENT_SOURCES_DIR}/Views/MainWindow.cpp
-    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
 )
 
 set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
-    ${CLIENT_SOURCES_DIR}/SpdlogWrapper.cpp
 )
 
 # All sources

@@ -4,8 +4,6 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 
-#include "Views/ViewStyles.hpp"
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

@@ -190,7 +190,9 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 #### Client Design
 
-![Client Design](Client_Design.png)
+#### Component diagram
+
+![Client component diagram](client/Client_Design.png)
 
 #### Components
 
@@ -198,6 +200,10 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - **UiManager**: Manages the user interface elements, including their initialization and updates. This now includes new views like UserManagementView and RoleManagementView.
 - **UiComponent Interface**: An interface for all UI components. Helps in adhering to the Open/Closed Principle, allowing new views to be added with minimal or no change to existing code.
 - **IModule Interface**: An interface for all models, encouraging a modular approach and easier testing.
+
+#### MVVM Class Diagram
+
+![MVVM Class Diagram](client/GUI_CD.png)
 
 **Views:**
 
@@ -224,6 +230,10 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - AnalyticsModule: Responsible for specific Frontend functionalities related to analytics for inventory and sales.
 - LogsModule: Responsible for specific Frontend functionalities related to show logs.
 - UserRolesModule: Responsible for specific Frontend functionalities related to roles view.
+
+#### Networking Class Diagram
+
+![Networking Class Diagram](client/Networking_CD.png)
 
 #### Relationships
 
@@ -349,14 +359,14 @@ For example `https://localhost:8000/api/sales`
 
 ###### User Management
 
-| Method   | Endpoint         | Description                           |
-| -------- | ---------------- | ------------------------------------- |
-| `POST`   | `/auth/register` | Register a new user                   |
-| `POST`   | `/auth/login`    | Authenticate a user                   |
-| `GET`    | `/roles`         | Fetch all roles for Role-based access |
-| `POST`   | `/roles`         | Add a new role (Admin only)           |
-| `PUT`    | `/roles/{id}`    | Edit a specific role (Admin only)     |
-| `DELETE` | `/roles/{id}`    | Delete a specific role (Admin only)   |
+| Method   | Endpoint          | Description                           |
+| -------- | ----------------- | ------------------------------------- |
+| `POST`   | `/users/login`    | Authenticate a user                   |
+| `POST`   | `/users/register` | Register a new user                   |
+| `GET`    | `/roles`          | Fetch all roles for Role-based access |
+| `POST`   | `/roles`          | Add a new role (Admin only)           |
+| `PUT`    | `/roles/{id}`     | Edit a specific role (Admin only)     |
+| `DELETE` | `/roles/{id}`     | Delete a specific role (Admin only)   |
 
 ---
 

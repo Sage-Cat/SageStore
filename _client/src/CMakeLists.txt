@@ -2,7 +2,7 @@
 set(RESOURCE_FILES "")
 
 # Create client executable
-add_executable(SageStoreClient ${ALL_CLIENT_SOURCES} ${RESOURCE_FILES})
+add_executable(SageStoreClient ${ALL_CLIENT_SOURCES} ${RESOURCE_FILES} ${COMMON_SOURCES})
 
 # Include directories
 target_include_directories(SageStoreClient PUBLIC ${CLIENT_SOURCES_DIR})

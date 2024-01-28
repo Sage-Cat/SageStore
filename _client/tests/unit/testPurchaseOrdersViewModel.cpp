@@ -4,7 +4,7 @@
 #include <QApplication>
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
-#include "SpdlogWrapper.hpp"
+#include "SpdlogConfig.hpp"
 
 class PurchaseOrdersViewModelTest : public ::testing::Test
 {
@@ -26,7 +26,7 @@ TEST_F(PurchaseOrdersViewModelTest, LifetimeNoThrow)
 
 int main(int argc, char **argv)
 {
-    SpdlogWrapper::init();
+    SpdlogConfig::init();
     QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);

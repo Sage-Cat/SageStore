@@ -25,7 +25,11 @@ void BaseView::setupUi()
     m_buttonRow->addWidget(m_deleteButton);
 
     // add spacer to button layout
-    m_additionalButtonSpace = new QSpacerItem(SpaceSize::ADDITITIONAL_SPACE_WIDTH, SpaceSize::ADDITITIONAL_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_additionalButtonSpace = new QSpacerItem(
+        ViewsStyles::ButtonsSpacer::WIDTH,
+        ViewsStyles::ButtonsSpacer::HEIGHT,
+        QSizePolicy::Expanding,
+        QSizePolicy::Fixed);
     m_buttonRow->addSpacerItem(m_additionalButtonSpace);
 
     // add button layout to main layout
@@ -41,7 +45,11 @@ void BaseView::setupUi()
     m_additionalInfo->addWidget(m_status);
 
     // add additional space under table in main layout
-    m_additionalUnderTableSpace = new QSpacerItem(SpaceSize::ADDITITIONAL_SPACE_WIDTH, SpaceSize::ADDITIONAL_UNDER_TABLE_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_additionalUnderTableSpace = new QSpacerItem(
+        ViewsStyles::UnderTableSpacer::WIDTH,
+        ViewsStyles::UnderTableSpacer::HEIGHT,
+        QSizePolicy::Expanding,
+        QSizePolicy::Minimum);
     m_mainLayout->addSpacerItem(m_additionalUnderTableSpace);
 
     // add additional info in main layout
@@ -49,6 +57,10 @@ void BaseView::setupUi()
 
     // add additional space under unfo
 
-    m_additionalUnderStatusSpace = new QSpacerItem(SpaceSize::ADDITITIONAL_SPACE_WIDTH, SpaceSize::ADDITIONAL_UNDER_STATUS_SPACE_HEIGHT, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_additionalUnderStatusSpace = new QSpacerItem(
+        ViewsStyles::UnderStatusbarSpacer::WIDTH,
+        ViewsStyles::UnderStatusbarSpacer::HEIGHT,
+        QSizePolicy::Expanding,
+        QSizePolicy::Fixed);
     m_mainLayout->addSpacerItem(m_additionalUnderStatusSpace);
 }

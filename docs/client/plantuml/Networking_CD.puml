@@ -1,0 +1,37 @@
+@startuml
+class SageStoreClient {
+    -m_configManager: ConfigManager
+    -m_uiManager: UiManager
+    -m_apiManager: ApiManager
+    ... <<other properties>>
+}
+
+class NetworkService {
+    -m_serializer: IDataSerializer
+    -m_manager: QNetworkAccessManager
+    -m_apiUrl: QString
+}
+
+class ApiManager
+{
+    -m_networkService: NetworkService
+    <<slots>> 
+    - loginUser(username, password)
+    - registerUser(username, password)
+}
+
+interface IDataSerializer {
+    +serialize(dataset: Dataset): QByteArray
+    +deserialize(serializedData: QByteArray): Dataset
+}
+
+class JsonSerializer implements IDataSerializer {
+}
+
+SageStoreClient "manages" --> ApiManager
+ApiManager "uses" --> NetworkService
+NetworkService "uses" -> IDataSerializer
+
+note right of JsonSerializer : one of many classes \nimplementing IDataSerializer
+
+@enduml

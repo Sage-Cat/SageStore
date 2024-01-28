@@ -7,13 +7,10 @@
 // --- Networking
 class NetworkService;
 class ConfigManager;
+class ApiManager;
 
 // --- UI
 class UiManager;
-
-// Models
-class AuthorizationModel;
-class RegistrationModel;
 
 /**
  * @class SageStoreClient
@@ -60,23 +57,6 @@ private:
     void init();
 
     /**
-     * @brief Initialize UI models.
-     *
-     * Sets up various models required by the application (according MVVM).
-     */
-    void initModels();
-
-    /**
-     * @brief Setup networkservice - get URL using ConfigManager and setup NetworkService
-     */
-    void setupNetworkService();
-
-    /**
-     * @brief Setup model - viewModel connections according to MVVM
-     */
-    void setupMVMConnections();
-
-    /**
      * @brief Gets default font from UiManager and sets it to QApplication
      */
     void applyAppFont();
@@ -88,25 +68,12 @@ private slots:
     void onConfigFetchFailed();
 
 private:
-    /**
-     * @brief Reference to the QApplication object.
-     *
-     * Holds a reference to the QApplication object to manage application-wide settings.
-     */
     QApplication &m_app;
 
-    ConfigManager *m_configManager;
-    NetworkService *m_networkService;
-    QThread *m_networkServiceThread;
+    // --- Networking ---
+    ApiManager *m_apiManager;
+    QThread *m_apiManagerThread;
 
-    /**
-     * @brief UiManager object initialized on stack.
-     *
-     * This member is responsible for managing the user interface of the client.
-     */
+    // --- UI ---
     UiManager *m_uiManager;
-
-    // Models
-    AuthorizationModel *m_authorizationModel;
-    RegistrationModel *m_registrationModel;
 };

@@ -5,15 +5,22 @@
 #include <QString>
 #include <QMap>
 
+// Networking
+class ApiManager;
+
+// UI
+class MainWindow;
+
+// Dialogs
+class LoginDialog;
+class RegistrationDialog;
+
 // ViewModels
 class PurchaseOrdersViewModel;
-class AuthorizationViewModel;
-class RegistrationViewModel;
+class LoginDialogModel;
+class RegistrationDialogModel;
 
 // Views
-class MainWindow;
-class AuthorizationView;
-class RegistrationView;
 
 /**
  * @class UiManager
@@ -43,7 +50,7 @@ public:
      *
      * @param parent Parent QObject (default is nullptr).
      */
-    explicit UiManager(QObject *parent = nullptr) noexcept;
+    explicit UiManager(ApiManager *apiClient, QObject *parent = nullptr) noexcept;
 
     /**
      * @brief Destroy the UiManager object.
@@ -55,7 +62,7 @@ public:
     /**
      * @brief Shows the Authorization dialog
      */
-    void initiateAuthorizationProcess();
+    void startUiProcess();
 
     /**
      * @brief Get the current theme.
@@ -81,20 +88,6 @@ public:
     QFont defaultFont() const;
 
 public: // getters for ViewModels
-    /**
-     * @brief Get Authorization ViewModel
-     *
-     * @return m_authorizationViewModel
-     */
-    AuthorizationViewModel *authorizationViewModel() const;
-
-    /**
-     * @brief Get Registration ViewModel
-     *
-     * @return m_registrationViewModel
-     */
-    RegistrationViewModel *registrationViewModel() const;
-
 signals:
     // ---- TO UI ----
     /**
@@ -137,6 +130,13 @@ private:
     void initMainWindow();
 
     /**
+     * @brief Initialize UI dialogs.
+     *
+     * Sets up various UI dialogs required by the application.
+     */
+    void initDialogs();
+
+    /**
      * @brief Initialize UI viewModels.
      *
      * Sets up various UI viewModels required by the application.
@@ -151,20 +151,35 @@ private:
     void initViews();
 
     /**
-     * @brief Setup viewModels - view connections according to MVVM
+     * @brief Setup API networking connections
      */
-    void setupVVMConnections();
+    void setupApiConnections();
+
+    /**
+     * @brief Setup dialogs logic connections
+     */
+    void setupDialogsConnections();
+
+    /**
+     * @brief Setup Models-Views-ViewModels connections according to MVVM
+     */
+    void setupMVVMConnections();
 
 private:
-    Theme m_theme; ///< Member variable storing the current theme.
+    ApiManager *m_apiManager;
 
+    // UI
     MainWindow *m_mainWindow;
+
+    // Dialogs
+    LoginDialog *m_loginDialog;
+    RegistrationDialog *m_registrationDialog;
+
     // ViewModels
-    AuthorizationViewModel *m_authorizationViewModel;
-    RegistrationViewModel *m_registrationViewModel;
     PurchaseOrdersViewModel *m_purchaseOrdersViewModel;
 
     // Views
-    AuthorizationView *m_authorizationView;
-    RegistrationView *m_registrationView;
+
+    // Styles
+    Theme m_theme; ///< Member variable storing the current themes
 };
