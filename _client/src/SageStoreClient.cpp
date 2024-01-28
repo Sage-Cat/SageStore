@@ -6,12 +6,9 @@
 #include "Network/ConfigManager.hpp"
 #include "Network/NetworkService.hpp"
 #include "Network/JsonSerializer.hpp"
+#include "Network/ApiClient.hpp"
 
 #include "UiManager.hpp"
-#include "Models/AuthorizationModel.hpp"
-#include "Models/RegistrationModel.hpp"
-#include "ViewModels/AuthorizationDialogModel.hpp"
-#include "ViewModels/RegistrationDialogModel.hpp"
 
 #include "SpdlogConfig.hpp"
 
@@ -25,16 +22,15 @@ SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
     // setup Networking
     setupNetworkService();
 
-    // setup UI
-    setupMVMConnections();
-    m_uiManager->initiateAuthorizationProcess();
-
     // QApplication settings
     applyAppFont();
 
     // Log lifecycle ending
     connect(&m_app, &QCoreApplication::aboutToQuit, []()
             { SPDLOG_INFO("SageStoreClient finished with code=0"); });
+
+    // start UI
+    m_uiManager->initiateAuthorizationProcess();
 }
 
 SageStoreClient::~SageStoreClient()
@@ -54,20 +50,10 @@ void SageStoreClient::init()
     m_configManager = new ConfigManager(std::make_unique<JsonSerializer>(), this); // JSON is used by default
     m_networkService = new NetworkService(this);
     m_networkServiceThread = new QThread(this);
+    m_apiManager = new ApiClient(m_networkService, this);
 
-    // UiManager
-    m_uiManager = new UiManager(this);
-
-    // Init all Models
-    initModels();
-}
-
-void SageStoreClient::initModels()
-{
-    SPDLOG_TRACE("SageStoreClient::initModels");
-
-    m_authorizationModel = new AuthorizationModel;
-    m_registrationModel = new RegistrationModel;
+    // UI
+    m_uiManager = new UiManager(m_apiManager, this);
 }
 
 void SageStoreClient::setupNetworkService()
@@ -91,34 +77,6 @@ void SageStoreClient::setupNetworkService()
             this, &SageStoreClient::onConfigFetchFailed);
 
     m_configManager->fetchConfiguration();
-}
-
-void SageStoreClient::setupMVMConnections()
-{
-    SPDLOG_TRACE("SageStoreClient::setupMVMConnections");
-
-    if (m_uiManager)
-    {
-        // Authorization
-        connect(m_uiManager->authorizationViewModel(), &AuthorizationDialogModel::requestAuthentication,
-                m_authorizationModel, &AuthorizationModel::onAuthenticationRequested);
-        connect(m_authorizationModel, &AuthorizationModel::authenticationSuccessful,
-                m_uiManager->authorizationViewModel(), &AuthorizationDialogModel::loginSuccessful);
-        connect(m_authorizationModel, &AuthorizationModel::authenticationFailed,
-                m_uiManager->authorizationViewModel(), &AuthorizationDialogModel::loginFailed);
-
-        // Registration
-        connect(m_uiManager->registrationViewModel(), &RegistrationDialogModel::requestRegistration,
-                m_registrationModel, &RegistrationModel::onRegistrationRequested);
-        connect(m_registrationModel, &RegistrationModel::registrationSuccessful,
-                m_uiManager->registrationViewModel(), &RegistrationDialogModel::registrationSuccessful);
-        connect(m_registrationModel, &RegistrationModel::registrationFailed,
-                m_uiManager->registrationViewModel(), &RegistrationDialogModel::registrationFailed);
-    }
-    else
-    {
-        SPDLOG_ERROR("SageStoreClient::setupMVMConnections m_uiManager is not initialized");
-    }
 }
 
 void SageStoreClient::applyAppFont()

@@ -1,5 +1,8 @@
 #include "MainWindow.hpp"
 
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -11,7 +14,7 @@ void MainWindow::init()
 {
     // add stackView
     m_stackView = new QStackedWidget(this);
-    m_stackView->resize(MainWindowSize::WINDOW_WIDTH, MainWindowSize::WINDOW_HEIGHT);
+    m_stackView->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // add status bar
     m_statusBar = new QStatusBar(this);
@@ -21,7 +24,7 @@ void MainWindow::init()
 void MainWindow::setupUI()
 {
     // set size and at fullscreen
-    this->resize(MainWindowSize::WINDOW_WIDTH, MainWindowSize::WINDOW_HEIGHT);
+    this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     this->showMaximized();
 }
 

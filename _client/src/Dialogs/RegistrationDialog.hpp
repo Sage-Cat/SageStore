@@ -29,9 +29,13 @@ signals:
      * @brief Signal emitted when the user attempts to register.
      * @param username The user's chosen username.
      * @param password The user's chosen password.
-     * @param confirmPassword Password confirmation.
      */
-    void registrationAttempted(const QString &username, const QString &password, const QString &confirmPassword);
+    void registrationAttempted(const QString &username, const QString &password);
+
+    /**
+     * @brief Signal emitted when user attempts to register not appropriate data.
+     */
+    void requestErrorMessageBox(const QString &errorMessage);
 
     /**
      * @brief Signal emitted when the user requests to switch to the login view.

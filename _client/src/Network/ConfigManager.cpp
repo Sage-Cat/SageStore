@@ -2,6 +2,7 @@
 
 #include "SpdlogConfig.hpp"
 
+const std::chrono::milliseconds TIMEOUT_INTERVAl{5000};
 const char *SERVER_CONFIG_URL{"http://localhost:8000/config"};
 namespace CONFIG_KEYS
 {
@@ -16,7 +17,7 @@ ConfigManager::ConfigManager(std::unique_ptr<IDataSerializer> serializer, QObjec
 
     // Setup the timeout timer
     m_timeoutTimer = new QTimer(this);
-    m_timeoutTimer->setInterval(5000); // Set timeout interval (e.g., 5000 ms)
+    m_timeoutTimer->setInterval(TIMEOUT_INTERVAl);
     connect(m_timeoutTimer, &QTimer::timeout, this, &ConfigManager::onTimeout);
 
     connect(m_manager, &QNetworkAccessManager::finished, this, &ConfigManager::onNetworkReply);

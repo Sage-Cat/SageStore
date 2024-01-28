@@ -31,10 +31,10 @@ interface BaseDialog {
 class AuthorizationModel implements IModel {
 }
 
-class AuthorizationDialogModel implements IDialogModel {
+class LoginDialogModel implements IDialogModel {
 }
 
-class AuthorizationDialog implements BaseDialog {
+class LoginDialog implements BaseDialog {
 }
 
 class PurchaseOrdersModel implements IModel {
@@ -49,13 +49,13 @@ class PurchaseOrdersView implements BaseView {
 SageStoreClient "Manages"-->  UiManager
 SageStoreClient "Manages"-->  AuthorizationModel
 SageStoreClient "Manages"-->  PurchaseOrdersModel
-UiManager --> "Manages" AuthorizationDialogModel
-UiManager --> "Manages" AuthorizationDialog
+UiManager --> "Manages" LoginDialogModel
+UiManager --> "Manages" LoginDialog
 UiManager --> "Manages" PurchaseOrdersViewModel
 UiManager --> "Manages" PurchaseOrdersView
 
-AuthorizationModel -[hidden]left- AuthorizationDialogModel
-AuthorizationDialogModel -[hidden]left- AuthorizationDialog
+AuthorizationModel -[hidden]left- LoginDialogModel
+LoginDialogModel -[hidden]left- LoginDialog
 PurchaseOrdersModel -[hidden]right- PurchaseOrdersViewModel
 PurchaseOrdersViewModel -[hidden]right- PurchaseOrdersView
 

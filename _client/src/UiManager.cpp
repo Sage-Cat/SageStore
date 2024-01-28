@@ -2,25 +2,25 @@
 
 #include <QMessageBox>
 
+#include "Network/ApiClient.hpp"
+
+#include "MainWindow.hpp"
+#include "Dialogs/LoginDialog.hpp"
+#include "Dialogs/RegistrationDialog.hpp"
+#include "ViewModels/PurchaseOrdersViewModel.hpp"
+
 #include "SpdlogConfig.hpp"
 
-#include "ViewModels/AuthorizationDialogModel.hpp"
-#include "ViewModels/RegistrationDialogModel.hpp"
-
-#include "ViewModels/PurchaseOrdersViewModel.hpp"
-#include "Views/MainWindow.hpp"
-
-#include "Views/AuthorizationDialog.hpp"
-#include "Views/RegistrationDialog.hpp"
-
-UiManager::UiManager(QObject *parent) noexcept
-    : QObject(parent)
+UiManager::UiManager(ApiClient *apiClient, QObject *parent) noexcept
+    : m_apiClient(apiClient), QObject(parent)
 {
     SPDLOG_TRACE("UiManager::UiManager");
 
     // Initialize all necessary elements
     init();
-    setupVVMConnections();
+    setupApiConnections();
+    setupDialogsConnections();
+    setupMVVMConnections();
 }
 
 UiManager::~UiManager()
@@ -33,14 +33,15 @@ void UiManager::init()
     SPDLOG_TRACE("UiManager::init");
 
     initMainWindow();
-    initTheme();
+    initDialogs();
     initViewModels();
     initViews();
+    initTheme();
 }
 
 void UiManager::initiateAuthorizationProcess()
 {
-    m_authorizationView->show();
+    m_loginDialog->show();
 }
 
 void UiManager::setTheme(Theme theme)
@@ -71,18 +72,6 @@ QFont UiManager::defaultFont() const
     return defaultFont;
 }
 
-AuthorizationDialogModel *UiManager::authorizationViewModel() const
-{
-    SPDLOG_TRACE("UiManager::authorizationViewModel");
-    return m_authorizationViewModel;
-}
-
-RegistrationDialogModel *UiManager::registrationViewModel() const
-{
-    SPDLOG_TRACE("UiManager::registrationViewModel");
-    return m_registrationViewModel;
-}
-
 void UiManager::showErrorMessageBox(const QString &message)
 {
     QMessageBox::critical(nullptr, tr("Error"), message);
@@ -101,51 +90,66 @@ void UiManager::initMainWindow()
     m_mainWindow = new MainWindow();
 }
 
+void UiManager::initDialogs()
+{
+    SPDLOG_TRACE("UiManager::initViews");
+
+    m_loginDialog = new LoginDialog();
+    m_registrationDialog = new RegistrationDialog();
+}
+
 void UiManager::initViewModels()
 {
     SPDLOG_TRACE("UiManager::initViewModels");
-
-    m_authorizationViewModel = new AuthorizationDialogModel;
-    m_registrationViewModel = new RegistrationDialogModel;
 }
 
 void UiManager::initViews()
 {
     SPDLOG_TRACE("UiManager::initViews");
-
-    m_authorizationView = new AuthorizationDialog;
-    m_registrationView = new RegistrationDialog;
 }
 
-void UiManager::setupVVMConnections()
+void UiManager::setupApiConnections()
 {
-    SPDLOG_TRACE("UiManager::setupVVMConnections");
+    SPDLOG_TRACE("UiManager::setupApiConnections");
+    // Login
+    connect(m_loginDialog, &LoginDialog::loginAttempted,
+            m_apiClient, &ApiClient::loginUser);
+    connect(m_apiClient, &ApiClient::loginSuccess,
+            this, [this]() { /* nothing for now */ });
+    connect(m_apiClient, &ApiClient::loginFailed,
+            this, showErrorMessageBox);
 
-    // Authorization
-    connect(m_authorizationView, &AuthorizationDialog::loginAttempted,
-            m_authorizationViewModel, &AuthorizationDialogModel::requestAuthentication);
-    connect(m_authorizationViewModel, &AuthorizationDialogModel::loginSuccessful,
-            m_authorizationView, &AuthorizationDialog::onLoginSuccess);
-    connect(m_authorizationViewModel, &AuthorizationDialogModel::loginFailed,
-            m_authorizationView, &AuthorizationDialog::onLoginFailure);
-    connect(m_authorizationView, &AuthorizationDialog::registrationRequested,
+    // Registration
+    connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
+            m_apiClient, &ApiClient::registerUser);
+    connect(m_apiClient, &ApiClient::registerSuccess,
+            m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
+    connect(m_apiClient, &ApiClient::registerFailed,
+            this, showErrorMessageBox);
+}
+
+void UiManager::setupDialogsConnections()
+{
+    SPDLOG_TRACE("UiManager::setupDialogsConnections");
+    // Login
+    connect(m_loginDialog, &LoginDialog::registrationRequested,
             [this]()
             {
-                m_authorizationView->hide();
-                m_registrationView->show();
+                m_loginDialog->hide();
+                m_registrationDialog->show();
             });
 
     // Registration
-    connect(m_registrationView, &RegistrationDialog::registrationAttempted,
-            m_registrationViewModel, &RegistrationDialogModel::attemptRegistration);
-    connect(m_registrationViewModel, &RegistrationDialogModel::registrationSuccessful,
-            m_registrationView, &RegistrationDialog::onRegistrationSuccess);
-    connect(m_registrationViewModel, &RegistrationDialogModel::registrationFailed,
-            m_registrationView, &RegistrationDialog::onRegistrationFailure);
-    connect(m_registrationView, &RegistrationDialog::loginRequested,
+    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this, showErrorMessageBox);
+    connect(m_registrationDialog, &RegistrationDialog::loginRequested,
             [this]()
             {
-                m_registrationView->hide();
-                m_authorizationView->show();
+                m_registrationDialog->hide();
+                m_loginDialog->show();
             });
+}
+
+void UiManager::setupMVVMConnections()
+{
+    SPDLOG_TRACE("UiManager::setupMVVMConnections");
 }

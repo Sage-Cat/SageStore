@@ -1,4 +1,5 @@
 #include "RegistrationDialog.hpp"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
@@ -75,7 +76,11 @@ void RegistrationDialog::setupConnections()
 void RegistrationDialog::onRegisterClicked()
 {
     SPDLOG_TRACE("RegistrationDialog::onRegisterClicked | Username: {}", m_usernameField->text().toStdString());
-    emit registrationAttempted(m_usernameField->text(), m_passwordField->text(), m_confirmPasswordField->text());
+
+    if (m_passwordField->text() == m_confirmPasswordField->text())
+        emit registrationAttempted(m_usernameField->text(), m_passwordField->text());
+    else
+        emit requestErrorMessageBox(tr("Passwords do not match"));
 }
 
 void RegistrationDialog::onLoginLinkClicked()

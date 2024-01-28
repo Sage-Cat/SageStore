@@ -10,10 +10,18 @@ NetworkService::NetworkService(QObject *parent)
     connect(m_manager, &QNetworkAccessManager::finished, this, &NetworkService::onNetworkReply);
 }
 
-void NetworkService::sendRequest(const QByteArray &data, QNetworkAccessManager::Operation operation)
+void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager::Operation operation, const Dataset &dataset)
 {
     SPDLOG_TRACE("NetworkService::sendRequest");
-    QNetworkRequest request(m_apiUrl);
+
+    if (!m_serializer)
+    {
+        SPDLOG_ERROR("NetworkService::sendRequest serializer was not set");
+        return;
+    }
+
+    QUrl fullUrl(m_apiUrl + endpoint); // Append the endpoint to the base URL
+    QNetworkRequest request(fullUrl);
 
     switch (operation)
     {
@@ -21,7 +29,7 @@ void NetworkService::sendRequest(const QByteArray &data, QNetworkAccessManager::
         m_manager->get(request);
         break;
     case QNetworkAccessManager::PostOperation:
-        m_manager->post(request, data);
+        m_manager->post(request, m_serializer->serialize(dataset));
         break;
         // TODO: implement for PUT and DELETE too
     }

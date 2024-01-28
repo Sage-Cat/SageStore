@@ -20,22 +20,23 @@ set(NETWORK_SOURCES
     ${CLIENT_SOURCES_DIR}/Network/ConfigManager.cpp
     ${CLIENT_SOURCES_DIR}/Network/NetworkService.cpp
     ${CLIENT_SOURCES_DIR}/Network/JsonSerializer.cpp
+    ${CLIENT_SOURCES_DIR}/Network/ApiClient.cpp
+    ${CLIENT_SOURCES_DIR}/Network/ApiConstants.hpp
+
 )
 
 set(UI_SOURCES
+    ${CLIENT_SOURCES_DIR}/MainWindow.cpp
+
     # Models
-    ${CLIENT_SOURCES_DIR}/Models/AuthorizationModel.cpp
-    ${CLIENT_SOURCES_DIR}/Models/RegistrationModel.cpp
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
-    ${CLIENT_SOURCES_DIR}/ViewModels/AuthorizationDialogModel.cpp
-    ${CLIENT_SOURCES_DIR}/ViewModels/RegistrationDialogModel.cpp
     
     # Dialogs
-    ${CLIENT_SOURCES_DIR}/Views/BaseDialog.cpp
-    ${CLIENT_SOURCES_DIR}/Views/AuthorizationDialog.cpp
-    ${CLIENT_SOURCES_DIR}/Views/RegistrationDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Dialogs/BaseDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Dialogs/LoginDialog.cpp
+    ${CLIENT_SOURCES_DIR}/Dialogs/RegistrationDialog.cpp
 
     # Views
     ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
@@ -43,8 +44,6 @@ set(UI_SOURCES
     
     ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
     
-    ${CLIENT_SOURCES_DIR}/Views/MainWindow.cpp
-    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
 )
 
 set(MAIN_SOURCES

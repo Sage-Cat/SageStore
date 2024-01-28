@@ -2,8 +2,9 @@
 
 #include <QApplication>
 
-#include "Views/MainWindow.hpp"
-#include "SpdlogWrapper.hpp"
+#include "MainWindow.hpp"
+
+#include "SpdlogConfig.hpp"
 
 class MainWindowTest : public ::testing::Test
 {
@@ -25,7 +26,7 @@ TEST_F(MainWindowTest, ConstructorDoesNotThrow)
 
 int main(int argc, char **argv)
 {
-    SpdlogWrapper::init();
+    SpdlogConfig::init();
     QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);

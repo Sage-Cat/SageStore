@@ -359,14 +359,14 @@ For example `https://localhost:8000/api/sales`
 
 ###### User Management
 
-| Method   | Endpoint         | Description                           |
-| -------- | ---------------- | ------------------------------------- |
-| `POST`   | `/auth/register` | Register a new user                   |
-| `POST`   | `/auth/login`    | Authenticate a user                   |
-| `GET`    | `/roles`         | Fetch all roles for Role-based access |
-| `POST`   | `/roles`         | Add a new role (Admin only)           |
-| `PUT`    | `/roles/{id}`    | Edit a specific role (Admin only)     |
-| `DELETE` | `/roles/{id}`    | Delete a specific role (Admin only)   |
+| Method   | Endpoint          | Description                           |
+| -------- | ----------------- | ------------------------------------- |
+| `POST`   | `/users/login`    | Authenticate a user                   |
+| `POST`   | `/users/register` | Register a new user                   |
+| `GET`    | `/roles`          | Fetch all roles for Role-based access |
+| `POST`   | `/roles`          | Add a new role (Admin only)           |
+| `PUT`    | `/roles/{id}`     | Edit a specific role (Admin only)     |
+| `DELETE` | `/roles/{id}`     | Delete a specific role (Admin only)   |
 
 ---
 

@@ -29,11 +29,15 @@ public:
     explicit NetworkService(QObject *parent = nullptr);
 
     /**
-     * @brief Sends a network request to the specified URL.
-     * @param data Data to be sent in the request (for POST, PUT, etc.).
+     * @brief Sends a network request to a specific endpoint.
+     * @param endpoint The specific API endpoint for the request.
      * @param operation Type of network operation (GET, POST, etc.).
+     * @param dataset Data to be sent in the request.
      */
-    void sendRequest(const QByteArray &data, QNetworkAccessManager::Operation operation);
+    void sendRequest(
+        const QString &endpoint,
+        QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation,
+        const Dataset &dataset = Dataset());
 
     /**
      * @brief Updates the API base URL used for network requests.
