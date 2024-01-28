@@ -1,0 +1,60 @@
+@startuml
+
+class SageStoreClient {
+    -m_uiManager: UiManager
+}
+
+class UiManager {
+    -m_dialogManager: DialogManager
+    ...
+    -m_concreteModel: ConcreteModel 
+    ... <<other Models>>
+    -m_concreteViewModel: ConcreteViewModel
+    ... <<other ViewModels>>
+    -m_concreteView: ConcreteView
+    ... <<other Views>>
+}
+
+interface IModel {
+}
+
+interface IViewModel {
+}
+
+interface BaseView {
+}
+
+interface BaseDialog {
+}
+
+class DialogManager {
+    -m_loginDialog: LoginDialog
+    ... <<other Dialogs>>
+}
+
+class LoginDialog implements BaseDialog {
+}
+
+class PurchaseOrdersModel implements IModel {
+}
+
+class PurchaseOrdersViewModel implements IViewModel {
+}
+
+class PurchaseOrdersView implements BaseView {
+}
+
+SageStoreClient "manages"-->  UiManager
+
+UiManager "manages"-->  PurchaseOrdersModel
+UiManager "manages" -->  PurchaseOrdersViewModel
+UiManager "manages" -->  PurchaseOrdersView
+UiManager -[hidden]right- IViewModel
+UiManager -[hidden]right- IModel
+UiManager -[hidden]right- BaseView
+UiManager "manages" --> DialogManager
+
+DialogManager "manages" --> LoginDialog
+DialogManager -[hidden]left- BaseDialog
+
+@enduml

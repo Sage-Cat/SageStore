@@ -8,17 +8,18 @@
 
 using ResponseHandler = std::function<void(const Dataset &)>;
 
-class ApiClient : public QObject
+class ApiManager : public QObject
 {
     Q_OBJECT
 
 public:
-    ApiClient(NetworkService *networkService, QObject *parent = nullptr);
+    ApiManager(QObject *parent = nullptr);
 
     void loginUser(const QString &username, const QString &password);
     void registerUser(const QString &username, const QString &password);
 
 private:
+    void setupNetworkService();
     void setupHandlers();
 
 signals:

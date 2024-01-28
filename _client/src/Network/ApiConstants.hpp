@@ -4,6 +4,8 @@
 
 namespace Api
 {
+    const QString API_URL = "http://localhost:8000/api/";
+
     namespace Endpoints
     {
         const QString LOGIN = "/users/login";
@@ -14,6 +16,6 @@ namespace Api
     {
         const QString TOKEN = "token";
         const QString ENDPOINT = "endpoint";
-        const QString ERROR = "error";
+        const QString ERR = "error"; // ERROR is defined in Qt
     }
 }

@@ -7,7 +7,7 @@
 // --- Networking
 class NetworkService;
 class ConfigManager;
-class ApiClient;
+class ApiManager;
 
 // --- UI
 class UiManager;
@@ -57,18 +57,6 @@ private:
     void init();
 
     /**
-     * @brief Initialize UI models.
-     *
-     * Sets up various models required by the application (according MVVM).
-     */
-    void initModels();
-
-    /**
-     * @brief Setup networkservice - get URL using ConfigManager and setup NetworkService
-     */
-    void setupNetworkService();
-
-    /**
      * @brief Gets default font from UiManager and sets it to QApplication
      */
     void applyAppFont();
@@ -83,12 +71,8 @@ private:
     QApplication &m_app;
 
     // --- Networking ---
-    ConfigManager *m_configManager;
-
-    NetworkService *m_networkService;
-    QThread *m_networkServiceThread;
-
-    ApiClient *m_apiManager;
+    ApiManager *m_apiManager;
+    QThread *m_apiManagerThread;
 
     // --- UI ---
     UiManager *m_uiManager;

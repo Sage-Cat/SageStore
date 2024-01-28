@@ -6,7 +6,7 @@
 #include <QMap>
 
 // Networking
-class ApiClient;
+class ApiManager;
 
 // UI
 class MainWindow;
@@ -50,7 +50,7 @@ public:
      *
      * @param parent Parent QObject (default is nullptr).
      */
-    explicit UiManager(ApiClient *apiClient, QObject *parent = nullptr) noexcept;
+    explicit UiManager(ApiManager *apiClient, QObject *parent = nullptr) noexcept;
 
     /**
      * @brief Destroy the UiManager object.
@@ -62,7 +62,7 @@ public:
     /**
      * @brief Shows the Authorization dialog
      */
-    void initiateAuthorizationProcess();
+    void startUiProcess();
 
     /**
      * @brief Get the current theme.
@@ -166,7 +166,7 @@ private:
     void setupMVVMConnections();
 
 private:
-    ApiClient *m_apiClient;
+    ApiManager *m_apiManager;
 
     // UI
     MainWindow *m_mainWindow;

@@ -1,21 +1,31 @@
-#include "ApiClient.hpp"
+#include "ApiManager.hpp"
 
-#include "NetworkService.hpp"
 #include "ApiConstants.hpp"
+#include "NetworkService.hpp"
+#include "JsonSerializer.hpp"
 
 #include "SpdlogConfig.hpp"
 
-ApiClient::ApiClient(NetworkService *networkService, QObject *parent)
-    : QObject(parent), m_networkService(networkService)
+ApiManager::ApiManager(QObject *parent)
+    : QObject(parent)
 {
-    SPDLOG_TRACE("ApiClient::ApiClient");
+    SPDLOG_TRACE("ApiManager::ApiManager");
+
+    setupNetworkService();
     setupHandlers();
 }
 
-void ApiClient::loginUser(const QString &username, const QString &password)
+void ApiManager::setupNetworkService()
+{
+    m_networkService = new NetworkService(this);
+    m_networkService->updateApiUrl(Api::API_URL);
+    m_networkService->updateSerializer(std::make_unique<JsonSerializer>());
+}
+
+void ApiManager::loginUser(const QString &username, const QString &password)
 {
     SPDLOG_TRACE(
-        "ApiClient::ApiClient username={}, password={}",
+        "ApiManager::ApiManager username={}, password={}",
         username.toStdString(),
         password.toStdString());
 
@@ -28,9 +38,9 @@ void ApiClient::loginUser(const QString &username, const QString &password)
         dataset);
 }
 
-void ApiClient::registerUser(const QString &username, const QString &password)
+void ApiManager::registerUser(const QString &username, const QString &password)
 {
-    SPDLOG_TRACE("ApiClient::registerUser");
+    SPDLOG_TRACE("ApiManager::registerUser");
 
     Dataset dataset;
     dataset["username"] = {username};
@@ -42,19 +52,19 @@ void ApiClient::registerUser(const QString &username, const QString &password)
         dataset);
 }
 
-void ApiClient::setupHandlers()
+void ApiManager::setupHandlers()
 {
-    SPDLOG_TRACE("ApiClient::setupHandlers");
+    SPDLOG_TRACE("ApiManager::setupHandlers");
     m_responseHandlers[Api::Endpoints::LOGIN] = [this](const Dataset &dataset)
     { handleLoginResponse(dataset); };
     m_responseHandlers[Api::Endpoints::REGISTER] = [this](const Dataset &dataset)
     { handleRegistrationResponse(dataset); };
 }
 
-void ApiClient::handleResponse(const Dataset &dataset)
+void ApiManager::handleResponse(const Dataset &dataset)
 {
     const QString endpoint = dataset[Api::Params::ENDPOINT].front();
-    SPDLOG_TRACE("ApiClient::handleResponse for endpoint={}", endpoint.toStdString());
+    SPDLOG_TRACE("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
 
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
@@ -63,24 +73,24 @@ void ApiClient::handleResponse(const Dataset &dataset)
     }
     else
     {
-        SPDLOG_ERROR("ApiClient::handleResponse - couldn't find handler for endpoint");
+        SPDLOG_ERROR("ApiManager::handleResponse - couldn't find handler for endpoint");
     }
 }
 
-void ApiClient::handleLoginResponse(const Dataset &dataset)
+void ApiManager::handleLoginResponse(const Dataset &dataset)
 {
-    SPDLOG_TRACE("ApiClient::handleLoginResponse");
+    SPDLOG_TRACE("ApiManager::handleLoginResponse");
     m_currentUserToken = dataset[Api::Params::TOKEN].front();
     if (!m_currentUserToken.isEmpty())
         emit loginSuccess();
     else
-        emit loginFailed("ApiClient::handleLoginResponse got empty user token");
+        emit loginFailed("ApiManager::handleLoginResponse got empty user token");
 }
 
-void ApiClient::handleRegistrationResponse(const Dataset &dataset)
+void ApiManager::handleRegistrationResponse(const Dataset &dataset)
 {
-    SPDLOG_TRACE("ApiClient::handleLoginResponse");
-    const QString error_msg = dataset[Api::Params::ERROR].front();
+    SPDLOG_TRACE("ApiManager::handleLoginResponse");
+    const QString error_msg = dataset[Api::Params::ERR].front();
     if (error_msg.isEmpty())
         emit registerSuccess();
     else

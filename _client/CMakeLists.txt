@@ -17,11 +17,10 @@ find_package(Qt6Quick REQUIRED)
 find_package(spdlog REQUIRED)
 
 set(NETWORK_SOURCES
-    ${CLIENT_SOURCES_DIR}/Network/ConfigManager.cpp
+    ${CLIENT_SOURCES_DIR}/Network/ApiConstants.hpp
+    ${CLIENT_SOURCES_DIR}/Network/ApiManager.cpp
     ${CLIENT_SOURCES_DIR}/Network/NetworkService.cpp
     ${CLIENT_SOURCES_DIR}/Network/JsonSerializer.cpp
-    ${CLIENT_SOURCES_DIR}/Network/ApiClient.cpp
-    ${CLIENT_SOURCES_DIR}/Network/ApiConstants.hpp
 
 )
 

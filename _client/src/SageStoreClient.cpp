@@ -3,10 +3,7 @@
 #include <QThread>
 #include <QFont>
 
-#include "Network/ConfigManager.hpp"
-#include "Network/NetworkService.hpp"
-#include "Network/JsonSerializer.hpp"
-#include "Network/ApiClient.hpp"
+#include "Network\ApiManager.hpp"
 
 #include "UiManager.hpp"
 
@@ -18,9 +15,8 @@ SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
 
     // Initialize all necessary elements
     init();
-
-    // setup Networking
-    setupNetworkService();
+    m_apiManager->moveToThread(m_apiManagerThread);
+    m_apiManagerThread->start();
 
     // QApplication settings
     applyAppFont();
@@ -30,14 +26,14 @@ SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
             { SPDLOG_INFO("SageStoreClient finished with code=0"); });
 
     // start UI
-    m_uiManager->initiateAuthorizationProcess();
+    m_uiManager->startUiProcess();
 }
 
 SageStoreClient::~SageStoreClient()
 {
-    m_networkServiceThread->quit();
-    m_networkServiceThread->wait();
-    delete m_networkService;
+    m_apiManagerThread->quit();
+    m_apiManagerThread->wait();
+    delete m_apiManager;
 
     SPDLOG_TRACE("SageStoreClient::~SageStoreClient");
 }
@@ -47,36 +43,11 @@ void SageStoreClient::init()
     SPDLOG_TRACE("SageStoreClient::init");
 
     // Network
-    m_configManager = new ConfigManager(std::make_unique<JsonSerializer>(), this); // JSON is used by default
-    m_networkService = new NetworkService(this);
-    m_networkServiceThread = new QThread(this);
-    m_apiManager = new ApiClient(m_networkService, this);
+    m_apiManager = new ApiManager();
+    m_apiManagerThread = new QThread(this);
 
     // UI
     m_uiManager = new UiManager(m_apiManager, this);
-}
-
-void SageStoreClient::setupNetworkService()
-{
-    SPDLOG_TRACE("SageStoreClient::setupNetworkService");
-
-    connect(m_configManager, &ConfigManager::configurationFetched,
-            [this](const Config &config)
-            {
-                std::unique_ptr<IDataSerializer> serializer;
-                if (config.serializationType == "json")
-                    serializer = std::make_unique<JsonSerializer>();
-
-                this->m_networkService->updateApiUrl(config.apiUrl);
-                this->m_networkService->updateSerializer(std::move(serializer));
-                this->m_networkService->moveToThread(m_networkServiceThread);
-                this->m_networkServiceThread->start();
-            });
-
-    connect(m_configManager, &ConfigManager::configurationFetchFailed,
-            this, &SageStoreClient::onConfigFetchFailed);
-
-    m_configManager->fetchConfiguration();
 }
 
 void SageStoreClient::applyAppFont()
@@ -92,5 +63,5 @@ void SageStoreClient::onConfigFetchFailed()
 {
     const QString errorMessage = "Failed to fetch configuration.";
     SPDLOG_ERROR(errorMessage.toStdString());
-    m_uiManager->showErrorMessageBox(errorMessage);
+    m_uiManager->showErrorMessageBox(tr(errorMessage.toLocal8Bit()));
 }

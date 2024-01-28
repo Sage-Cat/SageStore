@@ -4,32 +4,40 @@ skinparam componentStyle uml2
 package "SageStore Client" {
     [SageStoreClient] as SSC
     [UiManager] as UIM
+    [ApiManager] as AC
     [NetworkService] as NS
     [ConfigManager] as CM
-    [Models] <<MVVM>>
-    [ViewModels] <<MVVM>>
-    [Views] <<MVVM>>
+    [Models] <<MVVM>> as M
+    [ViewModels] <<MVVM>> as VM
+    [Views] <<MVVM>> as V
     [Serializers] <<json, xml etc.>>
 
-    SSC -down-> UIM : uses
-    SSC -down-> NS : uses
-    SSC -down-> CM : uses
-    SSC -down-> Models  : "1"   "1..*"
-    UIM -down-> Views : "1"   "1..*"
-    UIM -down-> ViewModels : "1"   "1..*"
-    NS -down-> [Serializers] : "1"   "1..*" 
-    CM -down-> [Serializers] : "1"   "1..*"
+    SSC -down-> UIM : manages
+    SSC -down-> AC : manages
+    SSC -down-> CM : manages
+    SSC -down-> M  : "1"   "1..*"
 
-    Models -[hidden]left-> ViewModels
-    ViewModels -[hidden]right-> Views 
-    Views -[hidden]left-> Models
+    AC -down-> NS : manages
+    AC <- UIM : request
+    AC -> UIM : response
+
+    UIM -down-> V : "1"   "1..*"
+    UIM -down-> VM : "1"   "1..*"
+
+    NS -down-> [Serializers] : "1"   "1..*" 
+
+    CM -down-> [Serializers] : "1"   "1..*"
     CM -[hidden]right-> NS : <<diagram alignment>>
+
+    M -[hidden]left-> VM
+    VM -[hidden]right-> V 
+    V -[hidden]left-> M
 }
 
 note "MVVM Architecture\n(SIGNAL-SLOT Mechanism)" as MVVMNote
-MVVMNote .. Models
-MVVMNote .. ViewModels
-MVVMNote .. Views
-MVVMNote -[hidden]down- Models
+MVVMNote .. M
+MVVMNote .. VM
+MVVMNote .. V
+MVVMNote -[hidden]down- M
 
 @enduml

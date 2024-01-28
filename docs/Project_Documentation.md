@@ -203,7 +203,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 #### MVVM Class Diagram
 
-![MVVM Class Diagram](client/MVVM_CD.png)
+![MVVM Class Diagram](client/GUI_CD.png)
 
 **Views:**
 

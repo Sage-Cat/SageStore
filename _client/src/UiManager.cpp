@@ -2,7 +2,7 @@
 
 #include <QMessageBox>
 
-#include "Network/ApiClient.hpp"
+#include "Network\ApiManager.hpp"
 
 #include "MainWindow.hpp"
 #include "Dialogs/LoginDialog.hpp"
@@ -11,8 +11,8 @@
 
 #include "SpdlogConfig.hpp"
 
-UiManager::UiManager(ApiClient *apiClient, QObject *parent) noexcept
-    : m_apiClient(apiClient), QObject(parent)
+UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
+    : m_apiManager(apiClient), QObject(parent)
 {
     SPDLOG_TRACE("UiManager::UiManager");
 
@@ -21,6 +21,9 @@ UiManager::UiManager(ApiClient *apiClient, QObject *parent) noexcept
     setupApiConnections();
     setupDialogsConnections();
     setupMVVMConnections();
+
+    // Before initialization
+    m_mainWindow->hide();
 }
 
 UiManager::~UiManager()
@@ -39,7 +42,7 @@ void UiManager::init()
     initTheme();
 }
 
-void UiManager::initiateAuthorizationProcess()
+void UiManager::startUiProcess()
 {
     m_loginDialog->show();
 }
@@ -113,18 +116,18 @@ void UiManager::setupApiConnections()
     SPDLOG_TRACE("UiManager::setupApiConnections");
     // Login
     connect(m_loginDialog, &LoginDialog::loginAttempted,
-            m_apiClient, &ApiClient::loginUser);
-    connect(m_apiClient, &ApiClient::loginSuccess,
-            this, [this]() { /* nothing for now */ });
-    connect(m_apiClient, &ApiClient::loginFailed,
+            m_apiManager, &ApiManager::loginUser);
+    connect(m_apiManager, &ApiManager::loginSuccess,
+            m_mainWindow, &MainWindow::showMaximized);
+    connect(m_apiManager, &ApiManager::loginFailed,
             this, showErrorMessageBox);
 
     // Registration
     connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
-            m_apiClient, &ApiClient::registerUser);
-    connect(m_apiClient, &ApiClient::registerSuccess,
+            m_apiManager, &ApiManager::registerUser);
+    connect(m_apiManager, &ApiManager::registerSuccess,
             m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
-    connect(m_apiClient, &ApiClient::registerFailed,
+    connect(m_apiManager, &ApiManager::registerFailed,
             this, showErrorMessageBox);
 }
 
