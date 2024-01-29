@@ -1,24 +1,24 @@
 project(SageStoreServer)
 
-set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 # Locate conan packages
+find_package(Boost)
 find_package(spdlog REQUIRED)
 
-# Specify source files
-set(SERVER_SOURCES
-    src/main.cpp
-    src/SageStoreServer.cpp
-    ${BUSINESS_LOGIC_SOURCES}
-    ${DATA_ACCESS_LAYER_SOURCES}
-    ${IMEDIATOR}
+set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(MAIN_SOURCES
+    ${SERVER_SOURCES_DIR}/main.cpp
+    ${SERVER_SOURCES_DIR}/SageStoreServer.cpp
 )
 
-# Create server executable
-add_executable(SageStoreServer ${SERVER_SOURCES} ${COMMON_SOURCES})
+# All server sources
+set(ALL_SERVER_SOURCES
+    ${MAIN_SOURCES}
+)
 
-# Include directories
-target_include_directories(SageStoreServer PUBLIC ${SERVER_SOURCES_DIR})
+add_subdirectory(src)
 
-# link libs
-target_link_libraries(SageStoreServer spdlog::spdlog)
+if(BUILD_SERVER_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

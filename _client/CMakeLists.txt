@@ -61,4 +61,8 @@ set(ALL_CLIENT_SOURCES
 
 # Adding main code and tests
 add_subdirectory(src)
-add_subdirectory(tests)
+
+if(BUILD_CLIENT_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
