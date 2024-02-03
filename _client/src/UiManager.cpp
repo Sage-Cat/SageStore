@@ -96,9 +96,6 @@ void UiManager::initMainWindow()
 void UiManager::initDialogs()
 {
     SPDLOG_TRACE("UiManager::initViews");
-
-    m_loginDialog = new LoginDialog();
-    m_registrationDialog = new RegistrationDialog();
 }
 
 void UiManager::initViewModels()

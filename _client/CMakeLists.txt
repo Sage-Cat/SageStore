@@ -33,6 +33,7 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
     
     # Dialogs
+    ${CLIENT_SOURCES_DIR}/Dialogs/DialogManager.cpp
     ${CLIENT_SOURCES_DIR}/Dialogs/BaseDialog.cpp
     ${CLIENT_SOURCES_DIR}/Dialogs/LoginDialog.cpp
     ${CLIENT_SOURCES_DIR}/Dialogs/RegistrationDialog.cpp
