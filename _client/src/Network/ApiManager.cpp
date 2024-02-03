@@ -69,12 +69,21 @@ void ApiManager::handleResponse(const Dataset &dataset)
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
     {
-        handler.value()(dataset);
+        if (!dataset.contains(Api::Params::ERR))
+            handler.value()(dataset);
+        else
+            handleError(dataset[Api::Params::ERR].front());
     }
     else
     {
         SPDLOG_ERROR("ApiManager::handleResponse - couldn't find handler for endpoint");
     }
+}
+
+void ApiManager::handleError(const QString &errorMessage)
+{
+    SPDLOG_TRACE("ApiManager::handleError - {}", errorMessage.toStdString());
+    emit errorOccurred(errorMessage);
 }
 
 void ApiManager::handleLoginResponse(const Dataset &dataset)
@@ -90,9 +99,5 @@ void ApiManager::handleLoginResponse(const Dataset &dataset)
 void ApiManager::handleRegistrationResponse(const Dataset &dataset)
 {
     SPDLOG_TRACE("ApiManager::handleLoginResponse");
-    const QString error_msg = dataset[Api::Params::ERR].front();
-    if (error_msg.isEmpty())
-        emit registerSuccess();
-    else
-        emit registerFailed("Server: " + error_msg);
+    emit registerSuccess();
 }

@@ -23,6 +23,8 @@ private:
     void setupHandlers();
 
 signals:
+    void errorOccurred(const QString &errorMessage);
+
     void loginSuccess();
     void loginFailed(const QString &errorMessage);
 
@@ -31,6 +33,7 @@ signals:
 
 private slots:
     void handleResponse(const Dataset &dataset);
+    void handleError(const QString &errorMessage);
 
     void handleLoginResponse(const Dataset &dataset);
     void handleRegistrationResponse(const Dataset &dataset);

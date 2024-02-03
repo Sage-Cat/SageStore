@@ -319,19 +319,19 @@ It's possible to use recommended up-to-date configuration for client using GET r
 
 ##### Config
 
-| Method | URL                             | Description                            |
-| ------ | ------------------------------- | -------------------------------------- |
-| `GET`  | `https://localhost:8000/config` | Fetch recommended client configuration |
+| Method | URL                            | Description                            |
+| ------ | ------------------------------ | -------------------------------------- |
+| `GET`  | `http://localhost:8000/config` | Fetch recommended client configuration |
 
 Current configuration structure:
 
-| Field               | Value                        |
-| ------------------- | ---------------------------- |
-| `apiUrl`            | `https://localhost:8000/api` |
-| `serializationType` | `json`, `xml`                |
+| Field               | Value                       |
+| ------------------- | --------------------------- |
+| `apiUrl`            | `http://localhost:8000/api` |
+| `serializationType` | `json`, `xml`               |
 
 Before you start to use next API Endpoints you should to remember that REST API url starts with `/api` endpoint
-For example `https://localhost:8000/api/sales`
+For example `http://localhost:8000/api/sales`
 
 ##### Endpoints
 

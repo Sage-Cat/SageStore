@@ -2,6 +2,8 @@
 
 #include "SpdlogConfig.hpp"
 
+#include "IDataSerializer.hpp"
+
 NetworkService::NetworkService(QObject *parent)
     : QObject(parent), m_manager(new QNetworkAccessManager(this))
 {

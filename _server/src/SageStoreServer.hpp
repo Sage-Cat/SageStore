@@ -1,5 +1,10 @@
 #pragma once
 
+#include <memory>
+
+class BusinessLogicFacade;
+class HttpServer;
+
 /**
  * @class SageStoreServer
  * @brief Class for managing the SageStore server.
@@ -27,5 +32,6 @@ public:
     void run();
 
 private:
-    // Private members can be added here
+    std::unique_ptr<BusinessLogicFacade> m_businessLogicFacade;
+    std::unique_ptr<HttpServer> m_httpServer;
 };
