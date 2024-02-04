@@ -63,5 +63,5 @@ void SageStoreClient::onConfigFetchFailed()
 {
     const QString errorMessage = "Failed to fetch configuration.";
     SPDLOG_ERROR(errorMessage.toStdString());
-    m_uiManager->showErrorMessageBox(tr(errorMessage.toLocal8Bit()));
+    m_uiManager->handleError(tr(errorMessage.toLocal8Bit()));
 }

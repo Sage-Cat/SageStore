@@ -1,9 +1,10 @@
 #include "DialogManager.hpp"
 
-DialogManager::DialogManager()
+DialogManager::DialogManager(ApiManager *apiManager)
 {
-    m_loginDialog = new LoginDialog();
-    m_registrationDialog = new RegistrationDialog();
+    initDialogs();
+    setupApiConnections();
+    setupDialogsConnections();
 }
 
 DialogManager::~DialogManager()
@@ -12,7 +13,50 @@ DialogManager::~DialogManager()
     delete m_registrationDialog;
 }
 
-void DialogManager::showErrorMessageBox(QString &message)
+void DialogManager::initDialogs()
+{
+    m_loginDialog = new LoginDialog();
+    m_registrationDialog = new RegistrationDialog();
+}
+
+void DialogManager::setupApiConnections()
+{
+    // Login
+    connect(m_loginDialog, &LoginDialog::loginAttempted,
+            apiManager, &ApiManager::loginUser);
+    connect(apiManager, &ApiManager::loginFailed,
+            this, showErrorMessageBox);
+
+    // Registrations
+    connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
+            apiManager, &ApiManager::registerUser);
+    connect(apiManager, &ApiManager::registerSuccess,
+            m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
+    connect(apiManager, &ApiManager::registerFailed,
+            this, showErrorMessageBox);
+}
+
+void DialogManager::setupDialogsConnections()
+{
+    // Login
+    connect(m_loginDialog, &LoginDialog::registrationRequested,
+            [this]()
+            {
+                m_loginDialog->hide();
+                m_registrationDialog->show();
+            });
+
+    // Registration
+    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this, showErrorMessageBox);
+    connect(m_registrationDialog, &RegistrationDialog::loginRequested,
+            [this]()
+            {
+                m_registrationDialog->hide();
+                m_loginDialog->show();
+            });
+}
+
+void DialogManager::showErrorMessageBox(const QString &message)
 {
     QMessageBox::critical(nullptr, tr("Error"), message, QMessageBox::Ok);
 }
