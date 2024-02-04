@@ -1,6 +1,8 @@
 // HttpSession.cpp
 #include "HttpSession.hpp"
 
+#include <vector>
+#include <algorithm>
 #include <boost/algorithm/string.hpp>
 
 #include "IDataSerializer.hpp"
@@ -8,11 +10,14 @@
 
 #include "SpdlogConfig.hpp"
 
-HttpSession::HttpSession(tcp::socket socket,
-                         //    ssl::context &ctx,
+HttpSession::HttpSession(unsigned long long session_id,
+                         tcp::socket socket,
                          std::unique_ptr<IDataSerializer> serializer,
                          BusinessLogicFacade &facade)
-    : m_stream(std::move(socket) /*, ctx*/), m_serializer(std::move(serializer)), m_businessLogicFacade(facade)
+    : m_sessionId(session_id),
+      m_stream(std::move(socket) /*, ctx*/),
+      m_serializer(std::move(serializer)),
+      m_businessLogicFacade(facade)
 {
     SPDLOG_TRACE("HttpSession::HttpSession");
 }
@@ -20,19 +25,6 @@ HttpSession::HttpSession(tcp::socket socket,
 void HttpSession::start()
 {
     SPDLOG_TRACE("HttpSession::start");
-    // Perform the SSL handshake
-    // m_stream.async_handshake(ssl::m_streambase::server,
-    //                          [self = shared_from_this()](beast::error_code ec)
-    //                          {
-    //                              if (!ec)
-    //                              {
-    //                                  self->do_read();
-    //                              }
-    //                              else
-    //                              {
-    //                                  SPDLOG_ERROR("HttpSession::start::async_handshake" + ec.to_string());
-    //                              }
-    //                          });
 
     do_read();
 }
@@ -101,19 +93,39 @@ void HttpSession::do_close()
 void HttpSession::handle_request()
 {
     SPDLOG_TRACE("HttpSession::handle_request");
+    SPDLOG_INFO("Session ID: {} received a request", m_sessionId);
 
     // Parse request
     const auto target = std::string(m_request.target());
     std::vector<std::string> segments;
     boost::split(segments, target, boost::is_any_of("/"), boost::token_compress_on);
 
+    // Trunc all ""
+    segments.erase(std::remove_if(segments.begin(), segments.end(),
+                                  [](const std::string &s)
+                                  { return s.empty(); }),
+                   segments.end());
+
+    if (m_request.body().size() != 0)
+    {
+        auto bodyStr = beast::buffers_to_string(m_request.body().data());
+        SPDLOG_DEBUG("Received data (before deserialization): {}", bodyStr);
+    }
+
     // Prepare RequestData
     RequestData requestData;
     requestData.method = std::string(m_request.method_string());
-    requestData.module = segments.size() > 0 ? segments[0] : "";
-    requestData.submodule = segments.size() > 1 ? segments[1] : "";
+    const std::string root = segments[0];
+    requestData.module = segments[1];
+    requestData.submodule = segments[2];
     requestData.dataset = m_serializer->deserialize(
         beast::buffers_to_string(m_request.body().data()));
+
+    if (root != "api")
+    {
+        SPDLOG_ERROR("HttpSession::handle_request error: this is not API requets, expected /api endpoint");
+        return;
+    }
 
     if (requestData.module.empty() || requestData.submodule.empty())
     {
@@ -128,16 +140,22 @@ void HttpSession::handle_request()
     };
 
     // Process request and send response
+    SPDLOG_INFO("Processing request for session ID: {}", m_sessionId);
     m_businessLogicFacade.executeTask(requestData, callback);
 }
 
 void HttpSession::do_response(const ResponseData &data)
 {
+    SPDLOG_TRACE("HttpSession::do_response");
+
     m_response.result(http::status::ok);
     m_response.set(http::field::content_type, "application/json");
     const auto serializedData = m_serializer->serialize(data.dataset);
+
+    SPDLOG_DEBUG("Sending data (serialized): {}", serializedData);
     beast::ostream(m_response.body()) << serializedData;
-    m_response.prepare_payload();
+
+    SPDLOG_INFO("Session ID: {} sent response to client", m_sessionId);
 
     auto self = shared_from_this();
     http::async_write(m_stream, m_response,

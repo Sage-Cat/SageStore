@@ -1,11 +1,8 @@
 #pragma once
 
 #include <QByteArray>
-#include <QHash>
-#include <QStringList>
 
-using Data = QStringList;
-using Dataset = QHash<QString, Data>;
+#include "DataSpecs.hpp"
 
 /**
  * @interface IDataSerializer

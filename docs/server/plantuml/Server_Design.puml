@@ -2,32 +2,40 @@
 skinparam componentStyle uml2
 
 package "SageStore Server" {
-    [SageStoreServer] as SSS
-    [RequestRouter] as AF
-    [BusinessLogic] as BL
+    [SageStoreServer] as SSS 
+    [HttpServer] as HSer 
+    [HttpSession] as HSes 
+    [Serializers] as S 
+    [BusinessLogicFacade] as BLF 
+    [BusinessModules] as BM 
+    [Mediators] as M 
     [DatabaseManager] as DM
-    [Mediator] as M
-    [BusinessModels] 
-    [Repositories] 
+    [Repositories] as R  
 
-    SSS -down-> AF : uses
-    SSS -down-> BL : uses
-    SSS -down-> DM : uses
-    SSS -down-> M : uses
+    SSS -down-> HSer 
+    SSS -down-> BLF 
+    SSS -down-> DM
 
-    AF -down-> [RESTful APIs] : "1  "   "1..*"
-    BL -down-> [BusinessModels] : "1   "   "1..*"
-    DM -down-> [Repositories] : "1  "   "1..*"
-    M -right-> [BusinessModels] : "1"   "1..*"
-    M -left-> [Repositories] : "1"   "1..*"
+    HSer -right-> BLF : "executeTask"
+    HSer <-right- BLF : "callback"
 
-    BL -[hidden]right-> AF
+    HSer "1"-down->"1..*" HSes
+    HSes "1"-down->"one of" S 
+
+    BLF "1"-down->"1..*" BM
+
+    DM "1"-down->"1..*" R 
+
+    BM -right-> M
+    BM <-right- M 
+    M -right-> R 
+    M <-right- R
 
     note "Mediator Pattern" as MediatorNote
     MediatorNote .. M
 
     note "Repository Pattern" as RepoNote
-    RepoNote .. [Repositories]
+    RepoNote .. R
 }
 
 @enduml

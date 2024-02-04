@@ -8,8 +8,8 @@
 #include <QUrl>
 #include <QByteArray>
 
-class Dataset;
-class IDataSerializer;
+#include "DataSpecs.hpp"
+#include "IDataSerializer.hpp"
 
 /**
  * @class NetworkService

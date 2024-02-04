@@ -11,7 +11,6 @@ target_link_libraries(
     boost::boost 
     spdlog::spdlog 
     nlohmann_json::nlohmann_json
-    # wolfssl::wolfssl 
     $<$<PLATFORM_ID:Windows>:Ws2_32>
     $<$<PLATFORM_ID:Windows>:Wsock32>
 )

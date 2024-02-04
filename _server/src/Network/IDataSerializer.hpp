@@ -19,16 +19,16 @@ public:
     virtual ~IDataSerializer() = default;
 
     /**
-     * @brief Serializes 2-dimensional data into a QByteArray.
-     * @param data2D The 2-dimensional data to serialize.
+     * @brief Serializes Dataset into a QByteArray.
+     * @param data2D The Dataset to serialize.
      * @return QByteArray containing the serialized data.
      */
     virtual std::string serialize(const Dataset &dataset) = 0;
 
     /**
-     * @brief Deserializes data from a QByteArray into a 2-dimensional format.
+     * @brief Deserializes data from a QByteArray into a Dataset format.
      * @param serializedData QByteArray containing the data to be deserialized.
-     * @return The deserialized 2-dimensional data.
+     * @return The deserialized Dataset data.
      */
     virtual Dataset deserialize(const std::string &serializedData) = 0;
 };

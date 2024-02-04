@@ -2,7 +2,6 @@ project(SageStoreServer)
 
 # Locate conan packages
 find_package(Boost)
-# find_package(wolfssl)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json)
 

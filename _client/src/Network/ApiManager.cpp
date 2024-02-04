@@ -33,7 +33,7 @@ void ApiManager::loginUser(const QString &username, const QString &password)
     dataset["username"] = {username};
     dataset["password"] = {password};
     m_networkService->sendRequest(
-        Api::Endpoints::LOGIN,
+        Api::Endpoints::Users::LOGIN,
         QNetworkAccessManager::Operation::PostOperation,
         dataset);
 }
@@ -47,7 +47,7 @@ void ApiManager::registerUser(const QString &username, const QString &password)
     dataset["password"] = {password};
 
     m_networkService->sendRequest(
-        Api::Endpoints::REGISTER,
+        Api::Endpoints::Users::REGISTER,
         QNetworkAccessManager::Operation::PostOperation,
         dataset);
 }
@@ -55,9 +55,9 @@ void ApiManager::registerUser(const QString &username, const QString &password)
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
-    m_responseHandlers[Api::Endpoints::LOGIN] = [this](const Dataset &dataset)
+    m_responseHandlers[Api::Endpoints::Users::LOGIN] = [this](const Dataset &dataset)
     { handleLoginResponse(dataset); };
-    m_responseHandlers[Api::Endpoints::REGISTER] = [this](const Dataset &dataset)
+    m_responseHandlers[Api::Endpoints::Users::REGISTER] = [this](const Dataset &dataset)
     { handleRegistrationResponse(dataset); };
 }
 

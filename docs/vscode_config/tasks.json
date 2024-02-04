@@ -7,10 +7,10 @@
       "description": "Select the build configuration",
       "options": [
         "-DBUILD_CLIENT=ON",
-        "-DBUILD_CLIENT=ON -DBUILD_CLIENT_TESTS=ON", 
         "-DBUILD_SERVER=ON",
-        "-DBUILD_SERVER=ON -DBUILD_SERVER_TESTS=ON",
-        "-DBUILD_CLIENT=ON -DBUILD_CLIENT_TESTS=ON -DBUILD_SERVER=ON -DBUILD_SERVER_TESTS=ON" 
+        "-DBUILD_CLIENT=ON -DBUILD_SERVER=ON",
+        "-DBUILD_CLIENT_TESTS=ON", 
+        "-DBUILD_SERVER_TESTS=ON"
       ],
       "default": "client"
     }
@@ -31,9 +31,9 @@
       "problemMatcher": []
     },
     {
-      "label": "conan-install-debug",
+      "label": "conan-install",
       "type": "shell",
-      "command": "conan install . --output-folder=build --build=missing -s build_type=Debug",
+      "command": "conan install . --output-folder=build --build=missing",
       "group": "build",
       "problemMatcher": []
     },
@@ -69,13 +69,27 @@
       "dependsOrder": "sequence",
       "dependsOn": [
         "clean-build-folder",
-        "conan-install-debug",
+        "conan-install",
         "cmake-configure-debug",
         "cmake-build-debug"
       ],
       "group": {
         "kind": "build"
       },
+      "problemMatcher": []
+    },
+    {
+      "label": "run-client",
+      "type": "shell",
+      "command": "${workspaceFolder}/build/_client/SageStoreClient.exe",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "run-server",
+      "type": "shell",
+      "command": "${workspaceFolder}/build/_server/SageStoreServer.exe",
+      "group": "test",
       "problemMatcher": []
     }
   ]

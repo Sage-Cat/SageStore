@@ -12,4 +12,6 @@ public:
     std::string executeTask(const RequestData &requestData, BusinessLogicCallback callback);
 
 private:
+
+
 };
