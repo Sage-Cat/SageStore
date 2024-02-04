@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QByteArray>
 
+#include "DataSpecs.hpp"
 #include "IDataSerializer.hpp"
 
 /**

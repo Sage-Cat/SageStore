@@ -59,7 +59,7 @@ The project aims to build an ERP system to manage core business processes for SM
 | Database     | SQLite       |
 | Build Tool   | CMake, Conan |
 | Version Ctrl | Git          |
-| CI/CD        | Gitlab-ci    |
+| CI/CD        | Jenkins      |
 
 ---
 
@@ -74,6 +74,8 @@ The project aims to build an ERP system to manage core business processes for SM
 - [GTest](http://google.github.io/googletest/)
 
 ### Installation
+
+> If you are using VS Code you could use my [tasks.json](docs/vscode_config/tasks.json) config file
 
 1. Clone the repo
 
@@ -91,7 +93,7 @@ The project aims to build an ERP system to manage core business processes for SM
 
    ```
    cd build
-   cmake .. --preset conan-debug
+   cmake .. --preset conan-debug -DBUILD_CLIENT=ON -DBUILD_SERVER=ON
    ```
 
 4. Build the project
@@ -110,20 +112,28 @@ The project aims to build an ERP system to manage core business processes for SM
    ./_client/SageStoreClient
    ```
 
-6. Run tests
+## Preparing cetificates for network connectivity
 
-   ```
-   # Inside build folder
-   ctest
+```
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+```
 
-   # More detailed output
-   ctest --verbose
+## Testing
 
-   # Run specific test
-   .\_client\unit\test_SageStoreClient.exe
-   # or
-   ./_client/unit/test_SageStoreClient
-   ```
+Run tests
+
+```
+# Inside build folder
+ctest
+
+# More detailed output
+ctest --verbose
+
+# Run specific test
+.\_client\unit\test_SageStoreClient.exe
+# or
+./_client/unit/test_SageStoreClient
+```
 
 ## Contributing
 

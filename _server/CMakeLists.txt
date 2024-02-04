@@ -1,24 +1,41 @@
 project(SageStoreServer)
 
-set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 # Locate conan packages
+find_package(Boost)
 find_package(spdlog REQUIRED)
+find_package(nlohmann_json)
 
-# Specify source files
-set(SERVER_SOURCES
-    src/main.cpp
-    src/SageStoreServer.cpp
-    ${BUSINESS_LOGIC_SOURCES}
-    ${DATA_ACCESS_LAYER_SOURCES}
-    ${IMEDIATOR}
+set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(SERVER_BUILD_DIR "${CMAKE_BINARY_DIR}/_server")
+
+set(BUSINESS_SOURCESS
+    ${SERVER_SOURCES_DIR}/BusinessLogic/BusinessLogicFacade.cpp 
+    ${SERVER_SOURCES_DIR}/BusinessLogic/UsersModule.cpp
 )
 
-# Create server executable
-add_executable(SageStoreServer ${SERVER_SOURCES} ${COMMON_SOURCES})
+set(NETWORK_SOURCES
+    ${SERVER_SOURCES_DIR}/Network/HttpServer.cpp 
+    ${SERVER_SOURCES_DIR}/Network/HttpSession.cpp 
+    ${SERVER_SOURCES_DIR}/Network/JsonSerializer.cpp
+    
+    ${SERVER_SOURCES_DIR}/Network/NetworkCommon.hpp
+)
 
-# Include directories
-target_include_directories(SageStoreServer PUBLIC ${SERVER_SOURCES_DIR})
+set(MAIN_SOURCES
+    ${SERVER_SOURCES_DIR}/main.cpp
+    ${SERVER_SOURCES_DIR}/SageStoreServer.cpp
+)
 
-# link libs
-target_link_libraries(SageStoreServer spdlog::spdlog)
+# All server sources
+set(ALL_SERVER_SOURCES
+    ${BUSINESS_SOURCESS}
+    ${NETWORK_SOURCES}
+    ${MAIN_SOURCES}
+)
+
+add_subdirectory(src)
+
+if(BUILD_SERVER_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

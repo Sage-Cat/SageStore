@@ -24,6 +24,9 @@ UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
 
     // Before initialization
     m_mainWindow->hide();
+
+    // Error handling
+    connect(m_apiManager, &ApiManager::errorOccurred, this, showErrorMessageBox);
 }
 
 UiManager::~UiManager()
