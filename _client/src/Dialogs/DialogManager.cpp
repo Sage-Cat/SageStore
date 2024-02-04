@@ -15,14 +15,12 @@ DialogManager::~DialogManager()
 
 void DialogManager::initDialogs()
 {
-    SPDLOG_DEBUG("DialogManager::initDialogs");
     m_loginDialog = new LoginDialog();
     m_registrationDialog = new RegistrationDialog();
 }
 
 void DialogManager::setupApiConnections()
 {
-    SPDLOG_DEBUG("DialogManager::setupApiConnections");
     // Login
     connect(m_loginDialog, &LoginDialog::loginAttempted,
             m_apiManager, &ApiManager::loginUser);
@@ -40,7 +38,6 @@ void DialogManager::setupApiConnections()
 
 void DialogManager::setupDialogsConnections()
 {
-    SPDLOG_DEBUG("DialogManager::setupDialogsConnections");
     // Login
     connect(m_loginDialog, &LoginDialog::registrationRequested,
             [this]()

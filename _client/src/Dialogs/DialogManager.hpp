@@ -8,8 +8,6 @@
 #include "RegistrationDialog.hpp"
 #include "Network/ApiManager.hpp"
 
-#include "SpdlogConfig.hpp"
-
 /**
  * @class DialogManager
  * Controls all dialogs in MessageBoxes
