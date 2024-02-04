@@ -63,7 +63,7 @@ void LoginDialog::setupConnections()
 
 void LoginDialog::onLoginClicked()
 {
-    SPDLOG_TRACE("LoginDialog::onLoginClicked | Username: {}", m_usernameField->text().toStdString());
+    SPDLOG_TRACE("LoginDialog::onLoginClicked | username: {} | password: {}", m_usernameField->text().toStdString(), m_passwordField->text().toStdString());
     emit loginAttempted(m_usernameField->text(), m_passwordField->text());
 }
 
