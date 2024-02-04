@@ -63,6 +63,7 @@ void DialogManager::showErrorMessageBox(const QString &message)
 
 void DialogManager::showLoginDialog()
 {
+    m_loginDialog->show();
 }
 
 void DialogManager::showRegistrationDialog()

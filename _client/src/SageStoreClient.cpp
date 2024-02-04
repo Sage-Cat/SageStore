@@ -24,7 +24,6 @@ SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
     // Log lifecycle ending
     connect(&m_app, &QCoreApplication::aboutToQuit, []()
             { SPDLOG_INFO("SageStoreClient finished with code=0"); });
-
     // start UI
     m_uiManager->startUiProcess();
 }

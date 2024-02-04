@@ -46,7 +46,7 @@ void UiManager::init()
 
 void UiManager::startUiProcess()
 {
-    m_loginDialog->show();
+    m_dialogManager->showLoginDialog();
 }
 
 void UiManager::setTheme(Theme theme)
