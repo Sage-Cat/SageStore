@@ -71,7 +71,10 @@ The project aims to build an ERP system to manage core business processes for SM
 - [Conan](https://conan.io/)
 - [SQLite](https://www.sqlite.org/index.html)
 - [CMake](https://cmake.org/)
+- [Boost](https://www.boost.org/)
 - [GTest](http://google.github.io/googletest/)
+
+_Check conanfile.py if you need versions of specific libs, that were used_
 
 ### Installation
 
@@ -84,6 +87,8 @@ The project aims to build an ERP system to manage core business processes for SM
    ```
 
 2. Install prerequisites
+
+   > You can use our VS Code config for [tasks.json](docs/vscode_config/tasks.json)
 
    ```
    conan install . --output-folder=build --build=missing
@@ -106,9 +111,11 @@ The project aims to build an ERP system to manage core business processes for SM
 
    ```
    # Windows
+   .\_server\SageStoreServer.exe
    .\_client\SageStoreClient.exe
 
    # Linux
+   ./_server/SageStoreServer
    ./_client/SageStoreClient
    ```
 
