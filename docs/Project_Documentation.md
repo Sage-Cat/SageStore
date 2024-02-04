@@ -22,17 +22,17 @@
 10. [Architecture Design](#architecture-design)
     - [Client Design](#client-design)
     - [Server Design](#server-design)
-    - [Dataset Schema](#dataset-schema)
-    - [REST API](#rest-api)
-11. [Practices and Methodologies](#practices-and-methodologies)
-12. [Development Phase](#development-phase)
-13. [Deployment Phase](#deployment-phase)
-14. [Post-launch](#post-launch)
-15. [Executive Summary](#executive-summary)
-16. [Risk Management](#risk-management)
-17. [Quality Assurance Plans](#quality-assurance-plans)
-18. [Compliance and Regulations](#compliance-and-regulations)
-19. [Document Versioning](#document-versioning)
+11. [Dataset Schema](#dataset-schema)
+12. [REST API](#rest-api)
+13. [Practices and Methodologies](#practices-and-methodologies)
+14. [Development Phase](#development-phase)
+15. [Deployment Phase](#deployment-phase)
+16. [Post-launch](#post-launch)
+17. [Executive Summary](#executive-summary)
+18. [Risk Management](#risk-management)
+19. [Quality Assurance Plans](#quality-assurance-plans)
+20. [Compliance and Regulations](#compliance-and-regulations)
+21. [Document Versioning](#document-versioning)
 
 ---
 
@@ -44,10 +44,10 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 ## Project Time Borders
 
-| Event         | Date              |
-| ------------- | ----------------- |
-| Project Start | October 1, 2023   |
-| Project End   | December 31, 2023 |
+| Event         | Date            |
+| ------------- | --------------- |
+| Project Start | October 1, 2023 |
+| Project End   | going on        |
 
 ---
 
@@ -64,40 +64,42 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 ## Timeline and Milestones
 
-| Milestone                                | Deadline          | Deliverable                                      |
-| ---------------------------------------- | ----------------- | ------------------------------------------------ |
-| Requirement Analysis and Planning        | October 18, 2023  | Detailed requirements and planning documents     |
-| Database Schema Design                   | October 20, 2023  | Database Schema and Entity-Relationship Diagrams |
-| Frontend Development (Basic Features)    | October 28, 2023  | Completed UI for Basic Features                  |
-| Backend Development (Basic Features)     | November 7, 2023  | Working Backend for Basic Features               |
-| Frontend Development (Advanced Features) | November 21, 2023 | Completed UI for Advanced Features               |
-| Backend Development (Advanced Features)  | November 28, 2023 | Working Backend for Advanced Features            |
-| Testing                                  | December 7, 2023  | Complete bug fixes                               |
-| User Testing and Feedback                | December 21, 2023 | User feedback and final adjustments              |
+| Milestone                                | Deadline         | Deliverable                                               | Sprint end (two weeks) |
+| ---------------------------------------- | ---------------- | --------------------------------------------------------- | ---------------------- |
+| Requirement Analysis and Planning        | October 18, 2023 | Detailed requirements and planning documents              | 2                      |
+| Database Schema Design                   | October 20, 2023 | Database Schema and Entity-Relationship Diagrams          | 2                      |
+| Tracebullet Project Version              | February 4, 2024 | Tracer implementation for login and registration features | 8                      |
+| Frontend Development (Basic Features)    | April 28, 2024   | Completed UI for Basic Features                           | 12                     |
+| Backend Development (Basic Features)     | May 7, 2024      | Working Backend for Basic Features                        | 13                     |
+| Frontend Development (Advanced Features) | June 21, 2024    | Completed UI for Advanced Features                        | 16                     |
+| Backend Development (Advanced Features)  | June 28, 2024    | Working Backend for Advanced Features                     | 17                     |
+| Testing                                  | July 30, 2024    | Complete bug fixes                                        | 19                     |
+| User Testing and Feedback                | July 31, 2024    | User feedback and final adjustments                       | 19                     |
 
 ---
 
 ## Feature Breakdown
 
-| **Module**     | **Submodule**            | **Functionality**                                 | **Additional Features**                                                                    |
-| -------------- | ------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| **Purchase**   | Barcodes                 | Create PDF for 2.5\*4                             | Auto-generating for new ProductType. Creating label for custom size. Allow direct printing |
-|                | Incoming invoices        | Create/View (Register received goods)             | Attach to Purchase Order                                                                   |
-|                | Upload invoices          | Upload CSV file                                   | Upload XML, XLSX etc. Custom functions                                                     |
-| **Sale**       | Sale invoices            | Create/View Sale invoices                         | Edit/Delete, Search/Filter                                                                 |
-|                | Export invoices          | Generate HTML/PDF for many types of docs          | Allow direct Print, export to XML for Medoc etc.                                           |
-| **Inventory**  | Product Types            | Add/View Product types                            | Edit/Delete, Search/Filter                                                                 |
-|                | Supplier's products base | Upload from XML & CSV                             | Create new ProductTypes from Incoming invoices                                             |
-|                | Stock Tracking           | View all stock. Each User has a his own "storage" | Inventarization                                                                            |
-| **Analytics**  | Sales Analytics          | Basic Sales Reports                               | Advanced Filters, Time Range                                                               |
-|                | Inventory Analytics      | Basic Stock Reports                               | Advanced Filters, Time Range                                                               |
-| **Users**      | Users                    | Create/View Users                                 | Edit/Delete, Search/Filter                                                                 |
-|                | User Roles               | Assign roles                                      | Create/Edit/Delete Roles                                                                   |
-|                | User History             | View logs                                         | Search/Filter                                                                              |
-| **Management** | Employees                | Add/View Employees                                | Edit/Delete, Search/Filter                                                                 |
-|                | Suppliers                | Add/View Suppliers                                | Edit/Delete, Search/Filter                                                                 |
-|                | Contacts                 | Add/View Contacts                                 | Edit/Delete, Search/Filter                                                                 |
-|                | Contacts History         | View logs                                         | Search/Filter                                                                              |
+| **Module**     | **Submodule**            | **Functionality**                                     | **Additional Features**                                                                    |
+| -------------- | ------------------------ | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Purchase**   | Barcodes                 | Create PDF for 2.5\*4                                 | Auto-generating for new ProductType. Creating label for custom size. Allow direct printing |
+|                | Incoming invoices        | Create/View (Register received goods)                 | Attach to Purchase Order                                                                   |
+|                | Upload invoices          | Upload CSV file                                       | Upload XML, XLSX etc. Custom functions                                                     |
+| **Sale**       | Sale invoices            | Create/View Sale invoices                             | Edit/Delete, Search/Filter                                                                 |
+|                | Export invoices          | Generate HTML/PDF for two types of invoices           | Allow direct Print, export to XML for Medoc etc.                                           |
+| **Inventory**  | Product Types            | Add/View Product types                                | Edit/Delete, Search/Filter                                                                 |
+|                | Supplier's products base | Upload from XML & CSV                                 | Create new ProductTypes from Incoming invoices                                             |
+|                | Stock Tracking           | View all stock. Each Company has a it's own "storage" | Inventarization                                                                            |
+| **Analytics**  | Sales Analytics          | Basic Sales Reports                                   | Advanced Filters, Time Range                                                               |
+|                | Inventory Analytics      | Basic Stock Reports                                   | Advanced Filters, Time Range                                                               |
+| **Users**      | Users                    | Create/View Users                                     | Edit/Delete, Search/Filter                                                                 |
+|                | Users Roles              | Assign roles                                          | Create/Edit/Delete Roles                                                                   |
+|                | User's History           | View logs                                             | Search/Filter                                                                              |
+| **Management** | Employees                | Add/View Employees                                    | Edit/Delete, Search/Filter                                                                 |
+|                | Suppliers                | Add/View Suppliers                                    | Edit/Delete, Search/Filter                                                                 |
+|                | Contacts                 | Add/View Contacts                                     | Edit/Delete, Search/Filter                                                                 |
+|                | Companies                | Add/View Company                                      | Edit/Delete, Search/Filter                                                                 |
+|                | Contacts History         | View logs                                             | Search/Filter                                                                              |
 
 ## User Stories
 
@@ -164,21 +166,22 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 ### Table Name: Roles
 
-| Table Name              | Fields                                                            | Primary Key               | Foreign Key                     | Notes                                |
-| ----------------------- | ----------------------------------------------------------------- | ------------------------- | ------------------------------- | ------------------------------------ |
-| Roles                   | RoleID, Name                                                      | RoleID                    | -                               | User roles for access control        |
-| Users                   | UserID, Username, Password, RoleID                                | UserID                    | RoleID                          | User information                     |
-| UserLogs                | LogID, UserID, Action, Timestamp                                  | LogID                     | UserID                          |
-| Contacts                | ContactID, Name, Type, Email, Phone                               | ContactID                 | -                               | Consolidates Customers and Suppliers |
-| ContactInfo             | ContactInfoID, ContactID, Name, Value                             | ContactInfoID             | ContactID                       |
-| Employees               | EmployeeID, Name, Number, Email, Address                          | EmployeeID                | -                               | Employee details                     |
-| Suppliers               | SupplierID, Name, Number, Email, Address                          | SupplierID                | -                               | Supplier details                     |
-| ProductType             | ProductTypeID, CatalogueCode, Barcode, ...                        | ProductTypeID             | -                               | Product type details                 |
-| ProductTypeSupplierInfo | ProductTypeSupplierInfoID, ProductTypeID, ...                     | ProductTypeSupplierInfoID | ProductTypeID, SupplierID       | Supplier info for product types      |
-| Inventory               | InventoryID, ProductTypeID, QuantityAvailable, EmployeeID         | InventoryID               | ProductTypeID, EmployeeID       | Current product inventory            |
-| SaleOrders              | OrderID, Date, UserID, ContactID, EmployeeID, Status, OrderInfoID | OrderID                   | UserID, CustomerID, OrderInfoID | Manages sales orders                 |
-| OrderInfo               | OrderInfoID, OrderID, ProductTypeID, Quantity, Price              | OrderInfoID               | OrderID, ProductTypeID          | Details of each order                |
-| PurchaseOrders          | PurchaseOrderID, Date, UserID, SupplierID, Status, OrderInfoID    | PurchaseOrderID           | UserID, SupplierID, OrderInfoID | Manages purchase orders              |
+| Table Name              | Fields                                                            | Primary Key               | Foreign Key                          | Notes                                |
+| ----------------------- | ----------------------------------------------------------------- | ------------------------- | ------------------------------------ | ------------------------------------ |
+| Roles                   | RoleID, Name                                                      | RoleID                    | -                                    | User roles for access control        |
+| Users                   | UserID, Username, Password, RoleID                                | UserID                    | RoleID                               | User information                     |
+| UserLogs                | LogID, UserID, Action, Timestamp                                  | LogID                     | UserID                               |
+| Contacts                | ContactID, Name, Type, Email, Phone                               | ContactID                 | -                                    | Consolidates Customers and Suppliers |
+| ContactInfo             | ContactInfoID, ContactID, Name, Value                             | ContactInfoID             | ContactID                            |
+| Employees               | EmployeeID, Name, Number, Email, Address                          | EmployeeID                | -                                    | Employee details                     |
+| Suppliers               | SupplierID, Name, Number, Email, Address                          | SupplierID                | -                                    | Supplier details                     |
+| Companies               | CompanyID, Name, Number, Email, Address                           | SupplierID                | -                                    | Supplier details                     |
+| ProductType             | ProductTypeID, CatalogueCode, Barcode, ...                        | ProductTypeID             | -                                    | Product type details                 |
+| ProductTypeSupplierInfo | ProductTypeSupplierInfoID, ProductTypeID, ...                     | ProductTypeSupplierInfoID | SupplierID                           | Supplier info for product types      |
+| Inventory               | InventoryID, ProductTypeID, QuantityAvailable, EmployeeID         | InventoryID               | ProductTypeID, EmployeeID, CompanyID | Current products inventory           |
+| SaleOrders              | OrderID, Date, UserID, ContactID, EmployeeID, Status, OrderInfoID | OrderID                   | UserID, CustomerID, OrderInfoID      | Manages sales orders                 |
+| OrderInfo               | OrderInfoID, OrderID, ProductTypeID, Quantity, Price              | OrderInfoID               | OrderID, ProductTypeID               | Details of each order                |
+| PurchaseOrders          | PurchaseOrderID, Date, UserID, SupplierID, Status, OrderInfoID    | PurchaseOrderID           | UserID, SupplierID, OrderInfoID      | Manages purchase orders              |
 
 ### Database schema
 
@@ -196,40 +199,18 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 #### Components
 
-- **SageStoreClient**: Serves as the entry point and orchestrator for the application. It initializes and runs the necessary components, including new modules like UserManagementModule and RoleManagementModule.
+- **SageStoreClient**: Serves as the entry point and orchestrator for the application. It initializes and runs the necessary components.
 - **UiManager**: Manages the user interface elements, including their initialization and updates. This now includes new views like UserManagementView and RoleManagementView.
-- **UiComponent Interface**: An interface for all UI components. Helps in adhering to the Open/Closed Principle, allowing new views to be added with minimal or no change to existing code.
-- **IModule Interface**: An interface for all models, encouraging a modular approach and easier testing.
 
 #### MVVM Class Diagram
 
 ![MVVM Class Diagram](client/GUI_CD.png)
 
-**Views:**
-
-- PurchaseOrdersViewModel: Responsible for a specific user interface element related to purchase (receipt invoices).
-- SaleView: Responsible for a specific user interface element related to sales.
-- InventoryView: Responsible for a specific user interface element related to inventory.
-- ManagementView: Responsible for specific Frontend functionalities related to managing users/contacts/employees/suppliers.
-- AnalyticsView: Responsible for specific user interface element related to analytics for inventory and sales.
-- LogsView: Responsible for specific user interface element related to show logs.
-- UserRolesView: Responsible for specific user interface element related to roles view.
-
 **Layers:**
 
-- **UI**: The core logic for managing QML UI interactions
-- **ApplicationLogic**: The core frontend logic for client to manage modules. It communicates with the different modules for executing operations, including logic.
-- **Communication**: Responsible for the communication between the client and server.
-
-**Modules:**
-
-- PurchaseModule: Responsible for a specific Frontend functionalities related to purchase (receipt invoices).
-- SaleModule: Responsible for specific Frontend functionalities related to sales.
-- InventoryModule: Responsible for specific Frontend functionalities related to inventory.
-- ManagementModule: Responsible for specific Frontend functionalities related to managing users/contacts/employees/suppliers.
-- AnalyticsModule: Responsible for specific Frontend functionalities related to analytics for inventory and sales.
-- LogsModule: Responsible for specific Frontend functionalities related to show logs.
-- UserRolesModule: Responsible for specific Frontend functionalities related to roles view.
+- **UI**: The core logic for managing UI interactions and Frontend logic (key elements are Dialogs and MVVM components)
+- **DialogManager**: Manages all dialog windows, that appear in the application, like login dialog or messageboxes.
+- **MVVM**: Model-View-ViewModel architecture for the widgets that will be used by user.
 
 #### Networking Class Diagram
 
@@ -237,14 +218,10 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 #### Relationships
 
-- **SageStoreClient**: Orchestrates the UiManager, ApplicationLogic, and Communication, initializing them and facilitating their communication.
-- **UiManager and UiComponent**: The manager uses the interface to manipulate UI elements, which are implemented by various views.
-- **ApplicationLogic and IModule**: The core logic uses the module interface to communicate with various modules, thereby decoupling the logic from the module implementations.
-- **Network and DataSerialization**: Separates the communication logic from the serialization logic, making it easier to switch to a different serialization method in the future.
-
-#### Special Notes
-
-- **SIGNAL-SLOT Approach**: The architecture uses a signal-slot mechanism to decouple the modules and views from the core logic. This approach allows the modules and views to communicate with the core logic without having to know specifics, thereby making the system more maintainable and extensible.
+- **SageStoreClient**: Manages ApiManager class.
+- **ApiManager**: Implement API abstraction layer and send requests to server via NetworkService.
+- **NetworkService**: Provides methods to send GET, POST etc. HTTP requests to server.
+- **Serializers**: JSON, XML etc. serializers that could be set dynamically.
 
 ### Server
 
@@ -254,47 +231,47 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 #### Overview
 
-The server architecture for the SageStore Management System aims to provide a robust, scalable, and maintainable backend for the system. The architecture is designed to accommodate new high-priority functional requirements, including User Roles, Logs, and Analytics, in addition to Sales, Inventory, User Management, Employee, and Client Management.
+The server architecture for the SageStore Management System aims to provide a robust, scalable, and maintainable backend for the system.
 
 #### Architecture Layers and Components
 
-**API Endpoints**
+**APIFacade**
 
-- **Responsibilities**: Expose RESTful APIs and RPC Endpoints for frontend and external systems.
-- **Purpose**: To allow for scalability and maintainability by decoupling the client-side from the server-side.
+- **Responsibilities**: Acts as a gateway for the system, exposing RESTful APIs and RPC Endpoints to frontend clients and external systems.
+- **Purpose**: Facilitates scalability and maintainability by abstracting the server-side complexities from the client-side, ensuring a decoupled architecture that simplifies client interactions.
 
-**SageStoreServer (Orchestrator class)**
+**SageStoreServer**
 
-- **Responsibilities**: Initialize the system, manage component life cycles, and ensure coordination between different layers.
-- **Purpose**: Serves as the entry point and manager for the application, making high-level calls to other components.
+- **Responsibilities**: Initializes the application, orchestrates the startup process, and manages the lifecycle of various components such as APIFacade, BusinessLogic, DatabaseManager, and Mediator.
+- **Purpose**: Functions as the central control unit of the application, coordinating high-level operations and ensuring smooth interaction across different layers for a cohesive system behavior.
 
-**Business Logic**
+**BusinessLogic**
 
-- **Responsibilities**: Implement the core functionality and rules of the system, including new modules like UserRolesModule and LogsModule.
-- **Purpose**: Modular design makes it easy to extend or modify individual functionalities.
+- **Responsibilities**: Implements the core business rules and functionalities of the system. It is structured into modules, with examples including UserRolesModule and LogsModule, to encapsulate specific business scenarios.
+- **Purpose**: Enables a modular and extensible design that simplifies the addition, modification, or removal of functionalities, thereby enhancing the system's adaptability to changing business requirements.
 
-**Data Access**
+**DatabaseManager**
 
-- **Responsibilities**: Provide a clean API for database operations, including new repositories like UserRolesRepository and LogsRepository.
-- **Purpose**: Decouples the business logic from database operations, allowing for easier changes to the underlying database system.
+- **Responsibilities**: Provides an abstraction layer for database interactions, offering a clean API for CRUD operations and more complex queries. It includes specific repositories like UserRolesRepository and LogsRepository.
+- **Purpose**: Separates the business logic from data access concerns, allowing for flexibility in changing database technologies or schemas without impacting the business logic layer.
 
 **Mediator**
 
-- **Responsibilities**: Serve as intermediaries that coordinate and facilitate interactions between different modules and their corresponding repositories.
-- **Purpose**: Decouples modules from each other, making the system easier to modify and understand.
+- **Responsibilities**: Acts as a communication hub between different parts of the application, particularly between BusinessLogic modules and their corresponding repositories in the DatabaseManager. It ensures that modules can interact with each other without direct dependencies.
+- **Purpose**: Reduces coupling between components, making the system more maintainable and scalable. By facilitating indirect interactions, it simplifies module integration and enhances the system's overall modularity.
 
-#### Dataset Schema
+## Dataset Schema
 
 The `Dataset` structure in our application is designed to efficiently handle tabled data, particularly for communication over a network using formats like JSON or XML. The structure is defined as follows:
 
-##### Components
+### Components
 
     - Data: Represents a single column of a table. It is a QStringList, where each QString is an individual cell value in the column.
     - Dataset: Represents the entire table. It is a QHash that maps a QString key to a Data object. The key is used to identify each column.
 
-##### Usage Example
+### Usage Example
 
-###### Field-oriented data representation:
+#### Field-oriented data representation:
 
 ```cpp
 Dataset myDataset;
@@ -302,7 +279,7 @@ myDataset["VarName"] = {"Value1"};
 myDataset["ArrayName"] = {"Value2", "Value3", "Value4"};
 ```
 
-###### Table-oriented data representation:
+#### Table-oriented data representation:
 
 If we want to use this representation it's important to remember that parser expect to see column with the name listed by key "TableColumns".
 For case, when TableColumns does not exist Dataset will be parsed as Field-oriented
@@ -313,11 +290,11 @@ myDataset["TableColumns"] = {"ColumnName1", "ColumnName2", "ColumnName3"};
 myDataset["ColumnName1"] = {"Data1", "Data2", "Data3"};
 ```
 
-#### REST API
+## REST API
 
 It's possible to use recommended up-to-date configuration for client using GET request.
 
-##### Config
+### Config
 
 | Method | URL                            | Description                            |
 | ------ | ------------------------------ | -------------------------------------- |
@@ -333,104 +310,73 @@ Current configuration structure:
 Before you start to use next API Endpoints you should to remember that REST API url starts with `/api` endpoint
 For example `http://localhost:8000/api/sales`
 
-##### Endpoints
+### Endpoints
 
-###### Sales
+#### Users
 
-| Method   | Endpoint      | Description             |
-| -------- | ------------- | ----------------------- |
-| `GET`    | `/sales`      | Fetch all sales records |
-| `POST`   | `/sales`      | Add a new sale          |
-| `PUT`    | `/sales/{id}` | Edit a specific sale    |
-| `DELETE` | `/sales/{id}` | Delete a specific sale  |
+| Method   | Endpoint                | Request          | Response             | Description                           |
+| -------- | ----------------------- | ---------------- | -------------------- | ------------------------------------- |
+| `POST`   | `/users/login`          | User credentials | Authentication token | Authenticate a user                   |
+| `POST`   | `/users/register`       | User data        | User profile         | Register a new user                   |
+| `GET`    | `/users/roles`          | -                | Roles list           | Fetch all roles for Role-based access |
+| `POST`   | `/users/roles`          | Role data        | New role's id        | Add a new role (Admin only)           |
+| `PUT`    | `/users/roles/{roleId}` | Role data        | Edited role's id     | Edit a specific role (Admin only)     |
+| `DELETE` | `/users/roles/{roleId}` | -                | Result               | Delete a specific role (Admin only)   |
 
----
+#### Sales
 
-###### Inventory
+| Method   | Endpoint          | Request | Response         | Description             |
+| -------- | ----------------- | ------- | ---------------- | ----------------------- |
+| `GET`    | `/sales`          | -       | Dataset          | Fetch all sales records |
+| `POST`   | `/sales`          | Dataset | New sale's id    | Add a new sale          |
+| `PUT`    | `/sales/{saleId}` | Dataset | Edited sale's id | Edit a specific sale    |
+| `DELETE` | `/sales/{saleId}` | -       | Result           | Delete a specific sale  |
 
-| Method   | Endpoint          | Description                      |
-| -------- | ----------------- | -------------------------------- |
-| `GET`    | `/inventory`      | Fetch all inventory items        |
-| `POST`   | `/inventory`      | Add new inventory items          |
-| `PUT`    | `/inventory/{id}` | Edit a specific inventory item   |
-| `DELETE` | `/inventory/{id}` | Delete a specific inventory item |
+#### Inventory
 
----
+| Method   | Endpoint              | Request        | Response         | Description                      |
+| -------- | --------------------- | -------------- | ---------------- | -------------------------------- |
+| `GET`    | `/inventory`          | -              | Inventory list   | Fetch all inventory items        |
+| `POST`   | `/inventory`          | Inventory item | New item's id    | Add new inventory items          |
+| `PUT`    | `/inventory/{itemId}` | Inventory item | Edited item's id | Edit a specific inventory item   |
+| `DELETE` | `/inventory/{itemId}` | -              | Result           | Delete a specific inventory item |
 
-###### User Management
+#### Management
 
-| Method   | Endpoint          | Description                           |
-| -------- | ----------------- | ------------------------------------- |
-| `POST`   | `/users/login`    | Authenticate a user                   |
-| `POST`   | `/users/register` | Register a new user                   |
-| `GET`    | `/roles`          | Fetch all roles for Role-based access |
-| `POST`   | `/roles`          | Add a new role (Admin only)           |
-| `PUT`    | `/roles/{id}`     | Edit a specific role (Admin only)     |
-| `DELETE` | `/roles/{id}`     | Delete a specific role (Admin only)   |
+| Method   | Endpoint                     | Request       | Response             | Description                             |
+| -------- | ---------------------------- | ------------- | -------------------- | --------------------------------------- |
+| `GET`    | `/management/employees`      | -             | Employees list       | Fetch all employees                     |
+| `POST`   | `/management/employees`      | Employee data | New employee's id    | Add a new employee (Admin only)         |
+| `PUT`    | `/management/employees/{id}` | Employee data | Edited employee's id | Edit a specific employee (Admin only)   |
+| `DELETE` | `/management/employees/{id}` | -             | Result               | Delete a specific employee (Admin only) |
+| `GET`    | `/management/clients`        | -             | Clients list         | Fetch all clients                       |
+| `POST`   | `/management/clients`        | Client data   | New client's id      | Add a new client                        |
+| `PUT`    | `/management/clients/{id}`   | Client data   | Edited client's id   | Edit a specific client                  |
+| `DELETE` | `/management/clients/{id}`   | -             | Result               | Delete a specific client                |
+| `GET`    | `/management/suppliers`      | -             | Suppliers list       | Fetch all suppliers                     |
+| `POST`   | `/management/suppliers`      | Supplier data | New supplier's id    | Add a new supplier                      |
+| `PUT`    | `/management/suppliers/{id}` | Supplier data | Edited supplier's id | Edit a specific supplier                |
+| `DELETE` | `/management/suppliers/{id}` | -             | Result               | Delete a specific supplier              |
+| `GET`    | `/management/companies`      | -             | Companies list       | Fetch all companies                     |
+| `POST`   | `/management/companies`      | Company data  | New company's id     | Add a new company                       |
+| `PUT`    | `/management/companies/{id}` | Company data  | Edited company's id  | Edit a specific company                 |
+| `DELETE` | `/management/companies/{id}` | -             | Result               | Delete a specific company               |
 
----
+#### Analytics
 
-###### Employees
+| Method | Endpoint               | Request | Response                 | Description               |
+| ------ | ---------------------- | ------- | ------------------------ | ------------------------- |
+| `GET`  | `/analytics/sales`     | -       | Sales analytics data     | Fetch Sales Analytics     |
+| `GET`  | `/analytics/inventory` | -       | Inventory analytics data | Fetch Inventory Analytics |
 
-| Method   | Endpoint          | Description                             |
-| -------- | ----------------- | --------------------------------------- |
-| `GET`    | `/employees`      | Fetch all employees                     |
-| `POST`   | `/employees`      | Add a new employee (Admin only)         |
-| `PUT`    | `/employees/{id}` | Edit a specific employee (Admin only)   |
-| `DELETE` | `/employees/{id}` | Delete a specific employee (Admin only) |
+#### Logs
 
----
-
-###### Clients
-
-| Method   | Endpoint        | Description              |
-| -------- | --------------- | ------------------------ |
-| `GET`    | `/clients`      | Fetch all clients        |
-| `POST`   | `/clients`      | Add a new client         |
-| `PUT`    | `/clients/{id}` | Edit a specific client   |
-| `DELETE` | `/clients/{id}` | Delete a specific client |
-
----
-
-###### Suppliers
-
-| Method   | Endpoint          | Description                |
-| -------- | ----------------- | -------------------------- |
-| `GET`    | `/suppliers`      | Fetch all suppliers        |
-| `POST`   | `/suppliers`      | Add a new supplier         |
-| `PUT`    | `/suppliers/{id}` | Edit a specific supplier   |
-| `DELETE` | `/suppliers/{id}` | Delete a specific supplier |
-
----
-
-###### Analytics
-
-| Method | Endpoint               | Description               |
-| ------ | ---------------------- | ------------------------- |
-| `GET`  | `/analytics/sales`     | Fetch Sales Analytics     |
-| `GET`  | `/analytics/inventory` | Fetch Inventory Analytics |
-
----
-
-###### Logs
-
-| Method   | Endpoint     | Description           |
-| -------- | ------------ | --------------------- |
-| `GET`    | `/logs`      | Fetch all logs        |
-| `POST`   | `/logs`      | Add a new log         |
-| `PUT`    | `/logs/{id}` | Edit a specific log   |
-| `DELETE` | `/logs/{id}` | Delete a specific log |
-
----
-
-###### User Roles
-
-| Method   | Endpoint           | Description                 |
-| -------- | ------------------ | --------------------------- |
-| `GET`    | `/user-roles`      | Fetch all user roles        |
-| `POST`   | `/user-roles`      | Add a new user role         |
-| `PUT`    | `/user-roles/{id}` | Edit a specific user role   |
-| `DELETE` | `/user-roles/{id}` | Delete a specific user role |
+| Method   | Endpoint        | Request  | Response        | Description           |
+| -------- | --------------- | -------- | --------------- | --------------------- |
+| `GET`    | `/logs`         | -        | Logs list       | Fetch all logs        |
+| `POST`   | `/logs`         | Log data | New log's id    | Add a new log         |
+| `PUT`    | `/logs/{logId}` | Log data | Edited log's id | Edit a specific log   |
+| `DELETE` | `/logs/{logId}` | -        | Result          | Delete a specific log |
 
 ## Practices and Methodologies
 
@@ -486,7 +432,4 @@ Will be soon
 | 09/10/2023 | 1.3     | Created Client and Server base Architectural Designs              | Pavlenko Volodymyr |
 | 09/10/2023 | 1.4     | Created REST API design. Updated Server schema                    | Pavlenko Volodymyr |
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
-
-```
-
-```
+| 2/04/2024  | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |

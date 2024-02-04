@@ -20,7 +20,7 @@ package "SageStore Server" {
     HSer <-right- BLF : "callback"
 
     HSer "1"-down->"1..*" HSes
-    HSes "1"-down->"one of" S 
+    HSes "1"-down->"1" S 
 
     BLF "1"-down->"1..*" BM
 

@@ -2,12 +2,19 @@ pipeline {
     agent any
     environment {
         PATH = "/home/sagecat/Qt/6.5.3/gcc_64/bin:/var/lib/jenkins/.local/bin:${env.PATH}"
-        QT_QPA_PLATFORM = "offscreen" // Set Qt to use offscreen platform
+        QT_QPA_PLATFORM = "offscreen" // Ensures Qt uses the offscreen platform, useful for headless environments
     }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('Clean Build Folder') {
+            steps {
+                sh '''
+                    rm -rf build || true
+                '''
             }
         }
         stage('Conan Install') {
@@ -22,7 +29,7 @@ pipeline {
                 sh '''
                     mkdir -p build
                     cd build
-                    cmake .. --preset conan-release
+                    cmake .. --preset conan-release -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_CLIENT_TESTS=ON -DBUILD_SERVER_TESTS=ON
                 '''
             }
         }
