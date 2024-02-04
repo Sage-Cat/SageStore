@@ -8,6 +8,8 @@
 #include "RegistrationDialog.hpp"
 #include "Network/ApiManager.hpp"
 
+#include "SpdlogConfig.hpp"
+
 /**
  * @class DialogManager
  * Controls all dialogs in MessageBoxes
@@ -59,5 +61,5 @@ private:
 private:
     LoginDialog *m_loginDialog;               ///< responsible for login dialog
     RegistrationDialog *m_registrationDialog; ///< responsible for registration dialog
-    ApiManager *apiManager;                   ///< pointer for connections
+    ApiManager *m_apiManager;                 ///< pointer for connections
 };
