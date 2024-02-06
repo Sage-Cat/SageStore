@@ -13,6 +13,9 @@
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
 
 #include "SpdlogConfig.hpp"
+#include "Views/MainMenuView.hpp"
+#include "Views/AuthorizationView.hpp"
+#include "Views/RegistrationView.hpp"
 
 UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
     : m_apiManager(apiClient), QObject(parent)
