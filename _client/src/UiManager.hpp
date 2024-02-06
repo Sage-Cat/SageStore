@@ -14,6 +14,7 @@ class RegistrationViewModel;
 class MainWindow;
 class AuthorizationView;
 class RegistrationView;
+class MainMenuViews;
 
 /**
  * @class UiManager
