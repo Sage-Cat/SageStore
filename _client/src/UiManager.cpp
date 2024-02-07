@@ -37,8 +37,8 @@ void UiManager::init()
 {
     SPDLOG_TRACE("UiManager::init");
 
-    initMainWindow();
-    initDialogManager();
+    m_mainWindow = new MainWindow();
+    m_dialogManager = new DialogManager(m_apiManager);
     initViewModels();
     initViews();
     initTheme();
@@ -86,19 +86,6 @@ void UiManager::initTheme()
 {
     SPDLOG_TRACE("UiManager::initTheme");
     setTheme(Theme::Dark);
-}
-
-void UiManager::initMainWindow()
-{
-    SPDLOG_TRACE("UiManager::initMainWindow");
-
-    m_mainWindow = new MainWindow();
-}
-
-void UiManager::initDialogManager()
-{
-    SPDLOG_TRACE("UiManager::initViews");
-    m_dialogManager = new DialogManager(m_apiManager);
 }
 
 void UiManager::initViewModels()

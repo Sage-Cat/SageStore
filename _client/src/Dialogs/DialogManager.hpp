@@ -10,9 +10,10 @@
 
 /**
  * @class DialogManager
- * Controls all dialogs in MessageBoxes
+ * This class manages all dialogs in client: initializes them
+ * and control their behavior
  */
-class DialogManager : public QObject
+class DialogManager final : public QObject
 {
     Q_OBJECT
 
@@ -22,7 +23,7 @@ public:
      * @brief Constructor and destructor of DialogManager, which control other objects
      */
     DialogManager(ApiManager *apiManager);
-    virtual ~DialogManager();
+    ~DialogManager();
 
     /**
      * @brief Show MessageBox with error message
@@ -47,12 +48,12 @@ private:
     void initDialogs();
 
     /**
-     * @brief setup connections for ApiManager
+     * @brief setup connections between ApiManager and DialogManager
      */
     void setupApiConnections();
 
     /**
-     * @brief setup connections for Dialogs
+     * @brief setup connections between Dialogs and DialogManager
      */
     void setupDialogsConnections();
 

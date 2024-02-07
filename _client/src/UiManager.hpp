@@ -124,20 +124,6 @@ private:
     void initTheme();
 
     /**
-     * @brief Initialize the main window.
-     *
-     * Sets up the main application window.
-     */
-    void initMainWindow();
-
-    /**
-     * @brief Initialize UI dialogs.
-     *
-     * Sets up various UI dialogs required by the application.
-     */
-    void initDialogManager();
-
-    /**
      * @brief Initialize UI viewModels.
      *
      * Sets up various UI viewModels required by the application.
@@ -155,7 +141,6 @@ private:
      * @brief Setup API networking connections
      */
     void setupApiConnections();
-
 
     /**
      * @brief Setup Models-Views-ViewModels connections according to MVVM

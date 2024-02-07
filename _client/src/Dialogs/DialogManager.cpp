@@ -68,4 +68,5 @@ void DialogManager::showLoginDialog()
 
 void DialogManager::showRegistrationDialog()
 {
+    m_registrationDialog->show();
 }
