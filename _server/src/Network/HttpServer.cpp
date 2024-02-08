@@ -4,7 +4,7 @@
 #include "JsonSerializer.hpp"
 #include "BusinessLogic/BusinessLogicFacade.hpp"
 
-#include "SpdlogConfig.hpp"
+#include <spdlog/spdlog.h>
 
 HttpServer::HttpServer(const std::string &address, unsigned short port, BusinessLogicFacade &businessLogicFacade)
     : m_ioc{1},

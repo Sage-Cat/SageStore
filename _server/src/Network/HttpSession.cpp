@@ -8,7 +8,7 @@
 #include "IDataSerializer.hpp"
 #include "BusinessLogic/BusinessLogicFacade.hpp"
 
-#include "SpdlogConfig.hpp"
+#include <spdlog/spdlog.h>
 
 HttpSession::HttpSession(unsigned long long session_id,
                          tcp::socket socket,

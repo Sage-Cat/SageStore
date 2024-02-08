@@ -3,7 +3,7 @@
 #include "Network/HttpServer.hpp"
 #include "BusinessLogic/BusinessLogicFacade.hpp"
 
-#include "SpdlogConfig.hpp"
+#include <spdlog/spdlog.h>
 
 // TODO: consider moving or refactoring
 const std::string SERVER_ADDRESS{"127.0.0.1"};

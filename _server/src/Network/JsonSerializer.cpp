@@ -1,5 +1,5 @@
 #include "JsonSerializer.hpp"
-#include "SpdlogConfig.hpp"
+#include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;

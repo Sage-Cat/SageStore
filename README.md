@@ -93,7 +93,7 @@ _Check conanfile.py if you need versions of specific libs, that were used_
    ```
    conan install . --output-folder=build --build=missing
    ```
-
+ 
 3. Go to build folder and run cmake with presets
 
    ```

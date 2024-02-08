@@ -4,7 +4,7 @@
 #include <QApplication>
 
 #include "UiManager.hpp"
-#include "SpdlogConfig.hpp"
+#include <spdlog/spdlog.h>
 
 class UIManagerTest : public ::testing::Test
 {

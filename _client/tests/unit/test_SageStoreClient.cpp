@@ -3,7 +3,7 @@
 #include <QApplication>
 
 #include "SageStoreClient.hpp"
-#include "SpdlogConfig.hpp"
+#include <spdlog/spdlog.h>
 
 class SageStoreClientTest : public ::testing::Test
 {

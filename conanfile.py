@@ -15,7 +15,6 @@ class SageStorePkg(ConanFile):
     }
 
     def requirements(self):
-        # Core dependencies for the project
         self.requires("spdlog/1.12.0")
         self.requires("nlohmann_json/3.11.2")
         self.requires("boost/1.82.0")
