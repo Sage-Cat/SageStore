@@ -41,8 +41,29 @@ void LoginDialog::setupLayout()
     SPDLOG_TRACE("LoginDialog::setupLayout");
 
     auto *mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(m_usernameField);
-    mainLayout->addWidget(m_passwordField);
+
+    ///> Layout for labels
+    std::vector<QWidget *> labels;
+    labels.push_back(new QLabel(tr("Username")));
+    labels.push_back(new QLabel(tr("Password")));
+
+    auto *labelLayout = Utils::createLayout(labels);
+
+    ///> Layout for lines
+    std::vector<QWidget *> lines;
+    lines.push_back(m_usernameField);
+    lines.push_back(m_passwordField);
+
+    auto *lineLayout = Utils::createLayout(lines);
+
+    ///> Layout for labels and lines
+    auto *inputLayout = new QHBoxLayout(this);
+    inputLayout->addLayout(labelLayout);
+    inputLayout->addLayout(lineLayout);
+
+    mainLayout->addLayout(inputLayout);
+
+    ///> Buttons and links
     mainLayout->addWidget(m_loginButton);
 
     auto *linkLayout = new QHBoxLayout;

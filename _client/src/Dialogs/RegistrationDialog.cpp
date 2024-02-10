@@ -52,9 +52,31 @@ void RegistrationDialog::setupLayout()
     SPDLOG_TRACE("RegistrationDialog::setupLayout");
 
     auto *mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(m_usernameField);
-    mainLayout->addWidget(m_passwordField);
-    mainLayout->addWidget(m_confirmPasswordField);
+
+    ///> Layout for labels
+    std::vector<QWidget *> labels;
+    labels.push_back(new QLabel(tr("Username")));
+    labels.push_back(new QLabel(tr("Password")));
+    labels.push_back(new QLabel(tr("Confirm password")));
+
+    auto *labelLayout = Utils::createLayout(labels);
+
+    ///> Layout for lines
+    std::vector<QWidget *> lines;
+    lines.push_back(m_usernameField);
+    lines.push_back(m_passwordField);
+    lines.push_back(m_confirmPasswordField);
+
+    auto *lineLayout = Utils::createLayout(lines);
+
+    ///> Layout for labels and lines
+    auto *inputLayout = new QHBoxLayout(this);
+    inputLayout->addLayout(labelLayout);
+    inputLayout->addLayout(lineLayout);
+
+    mainLayout->addLayout(inputLayout);
+
+    ///> Buttons and links
     mainLayout->addWidget(m_registerButton);
 
     auto *linkLayout = new QHBoxLayout;
