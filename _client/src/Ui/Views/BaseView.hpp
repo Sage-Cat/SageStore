@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QGroupBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -17,6 +18,27 @@ public:
     BaseView(QWidget *parent = nullptr);
     virtual ~BaseView();
 
+    //Methods with buttons
+    void addButton(QPushButton* buttonToAdd);
+    void addButton(const std::vector<QPushButton*> buttonsToAdd);
+
+    void removeButton(QPushButton* buttonToRemove);
+    void removeButton(const std::vector<QPushButton*> buttonsToRemove);
+
+    void setButtonLayout(QHBoxLayout* buttonlayout);
+    void setButtonLayout(QGroupBox* buttonGroupBox);
+    const QLayout* getButtonLayout();
+
+    //Methods with dataTable
+    //void setDataTable(QTableWidget* dataTable);
+    const QTableWidget* getDataTable();
+
+    //Methods with AdditionalInfo
+    void setStatus(const char* status);
+    QLabel* getStatus();
+
+    //Methods with UnderSpace
+    void addUnderSpace();
 protected:
     // setup
     virtual void setupUi();
@@ -26,6 +48,10 @@ protected:
     QHBoxLayout *m_buttonRow;
     QHBoxLayout *m_additionalInfo;
 
+    //GroupBoxes
+    QGroupBox *buttonGroupBox;
+    QGroupBox *infoGroupBox;
+
     // buttons
     QPushButton *m_addButton;
     QPushButton *m_deleteButton;
@@ -33,11 +59,6 @@ protected:
 
     // data table
     QTableWidget *m_dataTable;
-
-    // additional space
-    QSpacerItem *m_additionalButtonSpace;
-    QSpacerItem *m_additionalUnderTableSpace;
-    QSpacerItem *m_additionalUnderStatusSpace;
 
     // label
     QLabel *m_status;
