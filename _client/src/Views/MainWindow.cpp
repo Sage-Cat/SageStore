@@ -1,5 +1,5 @@
 #include "MainWindow.hpp"
-#include "MainMenuView.hpp"
+
 #include "SpdlogWrapper.hpp"
 
 MainWindow::MainWindow(QWidget *parent)

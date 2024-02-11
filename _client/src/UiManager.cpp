@@ -9,7 +9,6 @@
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
 #include "Views/MainWindow.hpp"
 
-#include "Views/MainMenuView.hpp"
 #include "Views/AuthorizationView.hpp"
 #include "Views/RegistrationView.hpp"
 
