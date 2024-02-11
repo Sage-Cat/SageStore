@@ -1,5 +1,5 @@
 #include "MainWindow.hpp"
-#include "MainMenuView.hpp"
+
 #include "SpdlogWrapper.hpp"
 
 const int WINDOW_WIDTH = 1200;

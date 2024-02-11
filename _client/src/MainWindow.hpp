@@ -7,7 +7,6 @@
 #include <QMenu>
 
 #include "Views/Actions.hpp"
-#include "MainMenuView.hpp"
 #include "Views/ViewStyles.hpp"
 
 class MainWindow : public QMainWindow 
