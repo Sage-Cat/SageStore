@@ -39,7 +39,4 @@ private:
 
     // menu bar
     QMenuBar *m_mainMenuBar;
-
-    //elements of MenuBar
-    QMenu *m_fileMenu,*m_purchasingMenu,*m_salesMenu,*m_inventoryMenu,*m_analyticsMenu,*m_usersMenu,*m_managementMenu; 
 };
