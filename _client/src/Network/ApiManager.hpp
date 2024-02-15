@@ -43,6 +43,31 @@ public:
      */
     void registerUser(const QString &username, const QString &password);
 
+    /**
+     * @brief Initilates a get operation for a user
+     *
+     */
+    void getUsersRoles();
+
+    /**
+     * @brief Initilates a new role
+     * @param new_role The name of role which add
+     */
+    void setNewRole(const QString &new_role);
+
+    /**
+     *@brief edit a chosen role
+     *@param editrole The edit role
+     *@param id - role id
+     */
+    void editRoleId(const QString &editrole, const QString &id);
+
+    /**
+     * @brief Delete the role
+     * @param id - role id
+     */
+    void deleteRole(const QString &id);
+
 private:
     /**
      * @brief Sets up the network service and prepares it for making API calls.

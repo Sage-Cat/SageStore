@@ -33,6 +33,18 @@ namespace Api
 
             /// Endpoint for user registration action.
             const QString REGISTER = USERS_PREFIX + "/register";
+
+            /// Endpoint for user role action
+            const QString GET_ROLE = USERS_PREFIX + "/users/roles";
+
+            /// Endpoint for post new role
+            const QString NEW_ROLE = USERS_PREFIX + "/users/roles";
+
+            /// Endpoint for editing role
+            const QString EDIT_ROlE = USERS_PREFIX + "/users/roles";
+
+            /// Endpoint for deleting role
+            const QString DELETE_ROlE = USERS_PREFIX + "/users/roles";
         }
     }
 

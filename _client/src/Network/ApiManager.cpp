@@ -52,12 +52,64 @@ void ApiManager::registerUser(const QString &username, const QString &password)
         dataset);
 }
 
+void ApiManager::getUsersRoles()
+{
+    SPDLOG_TRACE("ApiManager::getUsersRole");
+
+    m_networkService->sendRequest(
+        Api::Endpoints::Users::GET_ROLE,
+        QNetworkAccessManager::Operation::GetOperation);
+}
+
+void ApiManager::setNewRole(const QString &new_role)
+{
+    SPDLOG_TRACE("ApiManager::setNewRole");
+
+    Dataset dataset;
+    dataset["new_role"] = {new_role};
+
+    m_networkService->sendRequest(
+        Api::Endpoints::Users::NEW_ROLE,
+        QNetworkAccessManager::Operation::PostOperation,
+        dataset);
+}
+
+void ApiManager::editRoleId(const QString &editrole, const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::editRole");
+
+    Dataset dataset;
+    dataset["editrole"] = {editrole};
+
+    m_networkService->sendRequest(
+        Api::Endpoints::Users::EDIT_ROlE + "/" + id,
+        QNetworkAccessManager::Operation::PutOperation,
+        dataset);
+}
+
+void ApiManager::deleteRole(const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::deleteRole");
+
+    m_networkService->sendRequest(
+        Api::Endpoints::Users::DELETE_ROlE + "/" + id,
+        QNetworkAccessManager::Operation::DeleteOperation);
+}
+
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
     m_responseHandlers[Api::Endpoints::Users::LOGIN] = [this](const Dataset &dataset)
     { handleLoginResponse(dataset); };
     m_responseHandlers[Api::Endpoints::Users::REGISTER] = [this](const Dataset &dataset)
+    { handleRegistrationResponse(dataset); };
+    m_responseHandlers[Api::Endpoints::Users::GET_ROLE] = [this](const Dataset &dataset)
+    { handleRegistrationResponse(dataset); };
+    m_responseHandlers[Api::Endpoints::Users::NEW_ROLE] = [this](const Dataset &dataset)
+    { handleRegistrationResponse(dataset); };
+    m_responseHandlers[Api::Endpoints::Users::EDIT_ROlE] = [this](const Dataset &dataset)
+    { handleRegistrationResponse(dataset); };
+    m_responseHandlers[Api::Endpoints::Users::DELETE_ROlE] = [this](const Dataset &dataset)
     { handleRegistrationResponse(dataset); };
 }
 
