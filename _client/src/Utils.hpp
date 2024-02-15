@@ -4,5 +4,6 @@
 
 namespace Utils
 {
-    QVBoxLayout *createLayout(std::vector<QWidget *> widgets);
+    QVBoxLayout *createVBoxLayout(QWidget *parent = nullptr, std::vector<QWidget *> widgets);
+    QHBoxLayout *createHBoxLayout(QWidget *parent = nullptr, std::vector<QWidget *> widgets);
 }

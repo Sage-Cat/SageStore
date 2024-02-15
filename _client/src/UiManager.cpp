@@ -25,7 +25,7 @@ UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
     setupMVVMConnections();
 
     // Before initialization
-    m_mainWindow->setEnabled(false);
+    m_mainWindow->hide();
 }
 
 UiManager::~UiManager()

@@ -54,25 +54,17 @@ void RegistrationDialog::setupLayout()
     auto *mainLayout = new QVBoxLayout(this);
 
     ///> Layout for labels
-    std::vector<QWidget *> labels;
-    labels.push_back(new QLabel(tr("Username")));
-    labels.push_back(new QLabel(tr("Password")));
-    labels.push_back(new QLabel(tr("Confirm password")));
+    QLabel *m_usernameLable = new QLabel(tr("Username"));
+    QLabel *m_passwordLable = new QLabel(tr("Password"));
+    QLabel *m_confirmPasswordLable = new QLabel(tr("Confirm password"));
 
-    auto *labelLayout = Utils::createLayout(labels);
+    auto *labelLayout = Utils::createVBoxLayout(this, {m_usernameLable, m_passwordLable, m_confirmPasswordLable});
 
     ///> Layout for lines
-    std::vector<QWidget *> lines;
-    lines.push_back(m_usernameField);
-    lines.push_back(m_passwordField);
-    lines.push_back(m_confirmPasswordField);
-
-    auto *lineLayout = Utils::createLayout(lines);
+    auto *lineLayout = Utils::createVBoxLayout(this, {m_usernameField, m_passwordField, m_confirmPasswordField});
 
     ///> Layout for labels and lines
-    auto *inputLayout = new QHBoxLayout(this);
-    inputLayout->addLayout(labelLayout);
-    inputLayout->addLayout(lineLayout);
+    auto *inputLayout = Utils::createHBoxLayout(this, {labelLayout, lineLayout});
 
     mainLayout->addLayout(inputLayout);
 
