@@ -72,8 +72,7 @@ private:
     /**
      * @brief Sets up the network service and prepares it for making API calls.
      */
-    void
-    setupNetworkService();
+    void setupNetworkService();
 
     /**
      * @brief Configures response handlers for the different API responses.
