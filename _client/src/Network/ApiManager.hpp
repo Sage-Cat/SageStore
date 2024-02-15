@@ -55,6 +55,19 @@ public:
      */
     void setNewRole(const QString &new_role);
 
+    /**
+     *@brief edit a chosen role
+     *@param editrole The edit role
+     *@param id - role id
+     */
+    void editRoleId(const QString &editrole, const QString &id);
+
+    /**
+     * @brief Delete the role
+     * @param id - role id
+     */
+    void deleteRole(const QString &id);
+
 private:
     /**
      * @brief Sets up the network service and prepares it for making API calls.
