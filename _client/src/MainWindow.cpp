@@ -61,11 +61,11 @@ void MainWindow::setupMenu()
 //Custom function that create module menu using map
 QMenu* MainWindow::createModuleMenu(const QString& menuTitle, const std::vector<ActionTypes>& actions)
 {
-    QMenu* menu = new QMenu(menuTitle);
+    QMenu* menu = new QMenu(menuTitle, this);
 
     for (ActionTypes actionType : actions) {
-        QAction* action = new QAction(ACTION_NAMES.at(actionType).c_str(), this);
-        connect(action, &QAction::triggered, this, [this, actionType]() {SPDLOG_DEBUG(std::string("Show ") + ACTION_NAMES.at(actionType).c_str());});
+        QAction* action = new QAction(ACTION_NAMES.at(actionType).c_str(), menu);
+        connect(action, &QAction::triggered, menu, [menu, actionType]() {SPDLOG_DEBUG(std::string("Show ") + ACTION_NAMES.at(actionType).c_str());});
         menu->addAction(action);
     }
 
