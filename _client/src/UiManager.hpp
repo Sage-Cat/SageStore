@@ -12,6 +12,7 @@ class ApiManager;
 class MainWindow;
 
 // Dialogs
+class DialogManager;
 class LoginDialog;
 class RegistrationDialog;
 
@@ -105,7 +106,7 @@ public slots:
      *
      * @param message The error message to display.
      */
-    void showErrorMessageBox(const QString &message);
+    void handleError(const QString &message);
 
 private:
     /**
@@ -121,20 +122,6 @@ private:
      * Sets the initial theme based on some criteria or settings.
      */
     void initTheme();
-
-    /**
-     * @brief Initialize the main window.
-     *
-     * Sets up the main application window.
-     */
-    void initMainWindow();
-
-    /**
-     * @brief Initialize UI dialogs.
-     *
-     * Sets up various UI dialogs required by the application.
-     */
-    void initDialogs();
 
     /**
      * @brief Initialize UI viewModels.
@@ -156,11 +143,6 @@ private:
     void setupApiConnections();
 
     /**
-     * @brief Setup dialogs logic connections
-     */
-    void setupDialogsConnections();
-
-    /**
      * @brief Setup Models-Views-ViewModels connections according to MVVM
      */
     void setupMVVMConnections();
@@ -172,6 +154,7 @@ private:
     MainWindow *m_mainWindow;
 
     // Dialogs
+    DialogManager *m_dialogManager;
     LoginDialog *m_loginDialog;
     RegistrationDialog *m_registrationDialog;
 
