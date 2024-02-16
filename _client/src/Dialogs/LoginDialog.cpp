@@ -46,15 +46,15 @@ void LoginDialog::setupLayout()
     QLabel *m_usernameLable = new QLabel(tr("Username"));
     QLabel *m_passwordLable = new QLabel(tr("Password"));
 
-    auto *labelLayout = Utils::createVBoxLayout(this,
-                                                std::vector<QWidget *>{m_usernameLable, m_passwordLable});
+    auto *labelLayout = Utils::createLayout<QVBoxLayout>(this,
+                                                         {m_usernameLable, m_passwordLable});
 
     ///> Layout for lines
-    auto *lineLayout = Utils::createVBoxLayout(this,
-                                               std::vector<QWidget *>{m_usernameField, m_passwordField});
+    auto *lineLayout = Utils::createLayout<QVBoxLayout>(this,
+                                                        {m_usernameField, m_passwordField});
 
     ///> Layout for labels and lines
-    auto *inputLayout = Utils::createHBoxLayout(this, std::vector<QVBoxLayout *>{labelLayout, lineLayout});
+    auto *inputLayout = Utils::createLayout<QHBoxLayout>(this, {labelLayout, lineLayout});
 
     mainLayout->addLayout(inputLayout);
 
