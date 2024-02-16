@@ -33,6 +33,7 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/ViewModels/PurchaseOrdersViewModel.cpp
     
     # Dialogs
+    ${CLIENT_SOURCES_DIR}/Dialogs/DialogManager.cpp
     ${CLIENT_SOURCES_DIR}/Dialogs/BaseDialog.cpp
     ${CLIENT_SOURCES_DIR}/Dialogs/LoginDialog.cpp
     ${CLIENT_SOURCES_DIR}/Dialogs/RegistrationDialog.cpp
@@ -49,6 +50,7 @@ set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
+    ${CLIENT_SOURCES_DIR}/Utils.cpp
 )
 
 # All sources

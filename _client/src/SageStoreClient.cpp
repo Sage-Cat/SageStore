@@ -24,7 +24,6 @@ SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
     // Log lifecycle ending
     connect(&m_app, &QCoreApplication::aboutToQuit, []()
             { SPDLOG_INFO("SageStoreClient finished with code=0"); });
-
     // start UI
     m_uiManager->startUiProcess();
 }
@@ -63,5 +62,5 @@ void SageStoreClient::onConfigFetchFailed()
 {
     const QString errorMessage = "Failed to fetch configuration.";
     SPDLOG_ERROR(errorMessage.toStdString());
-    m_uiManager->showErrorMessageBox(tr(errorMessage.toLocal8Bit()));
+    m_uiManager->handleError(tr(errorMessage.toLocal8Bit()));
 }

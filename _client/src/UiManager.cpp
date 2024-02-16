@@ -5,8 +5,11 @@
 #include "Network\ApiManager.hpp"
 
 #include "MainWindow.hpp"
+
+#include "Dialogs/DialogManager.hpp"
 #include "Dialogs/LoginDialog.hpp"
 #include "Dialogs/RegistrationDialog.hpp"
+
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
 
 #include "SpdlogConfig.hpp"
@@ -19,7 +22,6 @@ UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
     // Initialize all necessary elements
     init();
     setupApiConnections();
-    setupDialogsConnections();
     setupMVVMConnections();
 
     // Before initialization
@@ -38,8 +40,8 @@ void UiManager::init()
 {
     SPDLOG_TRACE("UiManager::init");
 
-    initMainWindow();
-    initDialogs();
+    m_mainWindow = new MainWindow();
+    m_dialogManager = new DialogManager(m_apiManager);
     initViewModels();
     initViews();
     initTheme();
@@ -47,7 +49,7 @@ void UiManager::init()
 
 void UiManager::startUiProcess()
 {
-    m_loginDialog->show();
+    m_dialogManager->showLoginDialog();
 }
 
 void UiManager::setTheme(Theme theme)
@@ -78,30 +80,15 @@ QFont UiManager::defaultFont() const
     return defaultFont;
 }
 
-void UiManager::showErrorMessageBox(const QString &message)
+void UiManager::handleError(const QString &message)
 {
-    QMessageBox::critical(nullptr, tr("Error"), message);
+    m_dialogManager->showErrorMessageBox(message);
 }
 
 void UiManager::initTheme()
 {
     SPDLOG_TRACE("UiManager::initTheme");
     setTheme(Theme::Dark);
-}
-
-void UiManager::initMainWindow()
-{
-    SPDLOG_TRACE("UiManager::initMainWindow");
-
-    m_mainWindow = new MainWindow();
-}
-
-void UiManager::initDialogs()
-{
-    SPDLOG_TRACE("UiManager::initViews");
-
-    m_loginDialog = new LoginDialog();
-    m_registrationDialog = new RegistrationDialog();
 }
 
 void UiManager::initViewModels()
@@ -118,41 +105,8 @@ void UiManager::setupApiConnections()
 {
     SPDLOG_TRACE("UiManager::setupApiConnections");
     // Login
-    connect(m_loginDialog, &LoginDialog::loginAttempted,
-            m_apiManager, &ApiManager::loginUser);
     connect(m_apiManager, &ApiManager::loginSuccess,
             m_mainWindow, &MainWindow::showMaximized);
-    connect(m_apiManager, &ApiManager::loginFailed,
-            this, showErrorMessageBox);
-
-    // Registration
-    connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
-            m_apiManager, &ApiManager::registerUser);
-    connect(m_apiManager, &ApiManager::registerSuccess,
-            m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
-    connect(m_apiManager, &ApiManager::registerFailed,
-            this, showErrorMessageBox);
-}
-
-void UiManager::setupDialogsConnections()
-{
-    SPDLOG_TRACE("UiManager::setupDialogsConnections");
-    // Login
-    connect(m_loginDialog, &LoginDialog::registrationRequested,
-            [this]()
-            {
-                m_loginDialog->hide();
-                m_registrationDialog->show();
-            });
-
-    // Registration
-    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this, showErrorMessageBox);
-    connect(m_registrationDialog, &RegistrationDialog::loginRequested,
-            [this]()
-            {
-                m_registrationDialog->hide();
-                m_loginDialog->show();
-            });
 }
 
 void UiManager::setupMVVMConnections()

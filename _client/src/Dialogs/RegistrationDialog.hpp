@@ -4,6 +4,8 @@
 #include <QPushButton>
 #include <QLabel>
 
+#include "Utils.hpp"
+
 #include "BaseDialog.hpp"
 
 /**
