@@ -16,7 +16,7 @@
 
 
 UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
-    : m_apiManager(apiClient), QObject(parent)
+    : QObject(parent), m_apiManager(apiClient)
 {
     SPDLOG_TRACE("UiManager::UiManager");
 

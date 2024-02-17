@@ -31,7 +31,12 @@ void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager:
     case QNetworkAccessManager::PostOperation:
         m_manager->post(request, m_serializer->serialize(dataset));
         break;
-        // TODO: implement for PUT and DELETE too
+    case QNetworkAccessManager::PutOperation:     // fall down
+    case QNetworkAccessManager::DeleteOperation:  // fall down
+    case QNetworkAccessManager::CustomOperation:  // fall down
+    case QNetworkAccessManager::UnknownOperation: // fall down
+    default:
+        SPDLOG_ERROR("NetworkService::sendRequest unexpected switch(operation) occured.");
     }
 }
 

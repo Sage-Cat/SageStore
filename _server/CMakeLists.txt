@@ -1,4 +1,4 @@
-project(SageStoreServer)
+project(${SERVER_NAME})
 
 # Locate conan packages
 find_package(Boost)

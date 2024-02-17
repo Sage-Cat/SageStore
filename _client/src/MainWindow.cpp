@@ -75,7 +75,7 @@ MainWindow::~MainWindow()
 {
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent *)
 {
     m_stackView->resize(this->size().width(), this->size().height());
 }

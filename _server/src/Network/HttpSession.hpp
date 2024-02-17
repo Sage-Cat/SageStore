@@ -77,15 +77,12 @@ private:
     void do_response(const ResponseData &data);
 
 private:
+    const unsigned long long m_sessionId;          ///< Unique session identifier.
+    beast::tcp_stream m_stream;                    ///< TCP stream for socket communication.
     std::unique_ptr<IDataSerializer> m_serializer; ///< Serializer for request/response data.
-
-    beast::tcp_stream m_stream; ///< TCP stream for socket communication.
+    BusinessLogicFacade &m_businessLogicFacade;    ///< Reference to the business logic processing facade.
 
     beast::flat_buffer m_buffer;                   ///< Buffer for reading from the stream.
     http::request<http::dynamic_body> m_request;   ///< HTTP request object.
     http::response<http::dynamic_body> m_response; ///< HTTP response object.
-
-    BusinessLogicFacade &m_businessLogicFacade; ///< Reference to the business logic processing facade.
-
-    const unsigned long long m_sessionId; ///< Unique session identifier.
 };

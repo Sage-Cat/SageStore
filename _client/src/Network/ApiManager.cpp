@@ -96,7 +96,7 @@ void ApiManager::handleLoginResponse(const Dataset &dataset)
         emit loginFailed("ApiManager::handleLoginResponse got empty user token");
 }
 
-void ApiManager::handleRegistrationResponse(const Dataset &dataset)
+void ApiManager::handleRegistrationResponse(const Dataset &)
 {
     SPDLOG_TRACE("ApiManager::handleLoginResponse");
     emit registerSuccess();

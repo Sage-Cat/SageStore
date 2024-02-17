@@ -1,4 +1,4 @@
-project(SageStoreClient)
+project(${CLIENT_NAME})
 
 set(CLIENT_SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(CLIENT_BUILD_DIR "${CMAKE_BINARY_DIR}/_client")

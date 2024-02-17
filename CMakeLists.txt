@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.23)
-project(SageStore)
+
+set(PROJECT_NAME "SageStore")
+project(${PROJECT_NAME})
+
+set(CLIENT_NAME "${PROJECT_NAME}Client")
+set(SERVER_NAME "${PROJECT_NAME}Server")
+
+# CMake standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -34,4 +41,10 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen"
         VERBATIM
     )
+endif()
+
+# Compiler flags for GCC/MinGW
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(${CLIENT_NAME} PRIVATE -Wall -Wextra -Werror)
+    target_compile_options(${SERVER_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()

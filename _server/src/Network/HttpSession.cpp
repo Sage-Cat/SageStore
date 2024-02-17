@@ -39,7 +39,7 @@ void HttpSession::do_read()
 
     // Read a request
     http::async_read(m_stream, m_buffer, m_request,
-                     [self = shared_from_this()](beast::error_code ec, std::size_t bytes_transferred)
+                     [self = shared_from_this()](beast::error_code ec, std::size_t)
                      {
                          if (!ec)
                          {
@@ -52,7 +52,7 @@ void HttpSession::do_read()
                      });
 }
 
-void HttpSession::on_write(beast::error_code ec, std::size_t bytes_transferred, bool close)
+void HttpSession::on_write(beast::error_code ec, std::size_t, bool close)
 {
     SPDLOG_TRACE("HttpSession::on_write");
     if (ec)
