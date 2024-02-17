@@ -1,6 +1,6 @@
 #include "NetworkService.hpp"
 
-#include <spdlog/spdlog.h>
+#include "SpdlogConfig.hpp"
 
 NetworkService::NetworkService(QObject *parent)
     : QObject(parent), m_manager(new QNetworkAccessManager(this))
@@ -22,6 +22,7 @@ void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager:
 
     QUrl fullUrl(m_apiUrl + endpoint); // Append the endpoint to the base URL
     QNetworkRequest request(fullUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     switch (operation)
     {

@@ -4,12 +4,10 @@
 
 #include "DataSpecs.hpp"
 
-class RequestData;
-
 class BusinessLogicFacade
 {
 public:
-    std::string executeTask(const RequestData &requestData, BusinessLogicCallback callback);
+    std::string executeTask(RequestData requestData, BusinessLogicCallback callback);
 
 private:
 

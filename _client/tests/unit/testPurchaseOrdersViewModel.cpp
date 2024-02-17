@@ -4,7 +4,7 @@
 #include <QApplication>
 
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
-#include <spdlog/spdlog.h>
+#include "SpdlogConfig.hpp"
 
 class PurchaseOrdersViewModelTest : public ::testing::Test
 {

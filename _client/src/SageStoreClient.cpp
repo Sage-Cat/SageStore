@@ -7,7 +7,7 @@
 
 #include "UiManager.hpp"
 
-#include <spdlog/spdlog.h>
+#include "SpdlogConfig.hpp"
 
 SageStoreClient::SageStoreClient(QApplication &app) : m_app(app)
 {

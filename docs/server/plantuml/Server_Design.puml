@@ -4,7 +4,7 @@ skinparam componentStyle uml2
 package "SageStore Server" {
     [SageStoreServer] as SSS 
     [HttpServer] as HSer 
-    [HttpSession] as HSes 
+    [HttpTransaction] as HSes 
     [Serializers] as S 
     [BusinessLogicFacade] as BLF 
     [BusinessModules] as BM 

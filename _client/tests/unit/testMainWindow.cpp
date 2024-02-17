@@ -4,7 +4,7 @@
 
 #include "MainWindow.hpp"
 
-#include <spdlog/spdlog.h>
+#include "SpdlogConfig.hpp"
 
 class MainWindowTest : public ::testing::Test
 {

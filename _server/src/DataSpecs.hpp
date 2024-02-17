@@ -10,7 +10,7 @@ struct ResponseData;
 
 using Data = std::list<std::string>;
 using Dataset = std::unordered_map<std::string, Data>;
-using BusinessLogicCallback = std::function<void(const ResponseData &)>;
+using BusinessLogicCallback = std::function<void(ResponseData)>;
 
 /**
  * @struct RequestData

@@ -1,6 +1,9 @@
 #include "BusinessLogicFacade.hpp"
 
-std::string BusinessLogicFacade::executeTask(const RequestData &, BusinessLogicCallback)
+#include "SpdlogConfig.hpp"
+
+std::string BusinessLogicFacade::executeTask(RequestData, BusinessLogicCallback)
 {
+    SPDLOG_TRACE("BusinessLogicFacade::executeTask");
     return std::string();
 }

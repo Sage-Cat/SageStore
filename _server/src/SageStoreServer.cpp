@@ -3,7 +3,7 @@
 #include "Network/HttpServer.hpp"
 #include "BusinessLogic/BusinessLogicFacade.hpp"
 
-#include <spdlog/spdlog.h>
+#include "SpdlogConfig.hpp"
 
 // TODO: consider moving or refactoring
 const std::string SERVER_ADDRESS{"127.0.0.1"};
@@ -11,7 +11,13 @@ const unsigned short SERVER_PORT{8001};
 
 SageStoreServer::SageStoreServer()
     : m_businessLogicFacade(std::make_unique<BusinessLogicFacade>()),
-      m_httpServer(std::make_unique<HttpServer>(SERVER_ADDRESS, SERVER_PORT, *m_businessLogicFacade))
+      m_httpServer(std::make_unique<HttpServer>(
+          SERVER_ADDRESS,
+          SERVER_PORT,
+          [this](RequestData requestData, BusinessLogicCallback callback)
+          {
+              m_businessLogicFacade->executeTask(std::move(requestData), std::move(callback));
+          }))
 {
 }
 

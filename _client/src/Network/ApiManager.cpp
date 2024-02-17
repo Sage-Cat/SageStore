@@ -4,7 +4,7 @@
 #include "NetworkService.hpp"
 #include "JsonSerializer.hpp"
 
-#include <spdlog/spdlog.h>
+#include "SpdlogConfig.hpp"
 
 ApiManager::ApiManager(QObject *parent)
     : QObject(parent)

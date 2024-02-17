@@ -15,7 +15,7 @@ set(BUSINESS_SOURCESS
 
 set(NETWORK_SOURCES
     ${SERVER_SOURCES_DIR}/Network/HttpServer.cpp 
-    ${SERVER_SOURCES_DIR}/Network/HttpSession.cpp 
+    ${SERVER_SOURCES_DIR}/Network/HttpTransaction.cpp 
     ${SERVER_SOURCES_DIR}/Network/JsonSerializer.cpp
     
     ${SERVER_SOURCES_DIR}/Network/NetworkCommon.hpp
