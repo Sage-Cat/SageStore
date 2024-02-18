@@ -13,7 +13,6 @@
 #include "ViewModels/PurchaseOrdersViewModel.hpp"
 
 #include "SpdlogConfig.hpp"
-#include "Views/MainMenuView.hpp"
 
 
 UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
