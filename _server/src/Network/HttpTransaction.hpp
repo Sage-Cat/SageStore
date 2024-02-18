@@ -32,6 +32,8 @@ public:
                     std::unique_ptr<IDataSerializer> serializer,
                     PostBusinessTaskCallback callback);
 
+    ~HttpTransaction();
+
     /**
      * @brief Starts the transaction, initiating reading from the socket.
      */

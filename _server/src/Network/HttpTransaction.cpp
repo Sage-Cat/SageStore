@@ -21,6 +21,11 @@ HttpTransaction::HttpTransaction(unsigned long long id,
     SPDLOG_TRACE("[Transaction ID: {}] - HttpTransaction::HttpTransaction initiated", m_id);
 }
 
+HttpTransaction::~HttpTransaction()
+{
+    SPDLOG_TRACE("[Transaction ID: {}] - HttpTransaction::~HttpTransaction object was destroyed", m_id);
+}
+
 void HttpTransaction::start()
 {
     SPDLOG_TRACE("[Transaction ID: {}] - HttpTransaction::start", m_id);
@@ -90,10 +95,9 @@ void HttpTransaction::handle_request()
         return;
     }
 
-    // Example callback for business logic completion
-    BusinessLogicCallback callback = [this](ResponseData responseData)
+    BusinessLogicCallback callback = [self = shared_from_this()](ResponseData responseData)
     {
-        this->do_response(std::move(responseData));
+        self->do_response(std::move(responseData));
     };
 
     // Post some task to be executed
@@ -110,17 +114,18 @@ void HttpTransaction::do_response(ResponseData data)
 
     beast::ostream(m_response.body()) << serializedData;
 
+    // Ensure the response is fully sent before closing the transaction
     auto self = shared_from_this();
     http::async_write(m_stream, m_response,
                       [self](boost::beast::error_code ec, std::size_t)
                       {
                           if (!ec)
                           {
-                              self->do_close(); // Close transaction after response s sent
+                              self->do_close();
                           }
                           else
                           {
-                              SPDLOG_ERROR("HttpTransaction::async_write error: {}", ec.message());
+                              SPDLOG_ERROR("[Transaction ID: {}] - HttpTransaction::async_write error: {}", self->m_id, ec.message());
                           }
                       });
 }

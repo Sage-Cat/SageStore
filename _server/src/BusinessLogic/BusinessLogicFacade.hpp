@@ -7,7 +7,7 @@
 class BusinessLogicFacade
 {
 public:
-    std::string executeTask(RequestData requestData, BusinessLogicCallback callback);
+    void executeTask(RequestData requestData, BusinessLogicCallback callback);
 
 private:
 

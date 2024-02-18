@@ -2,8 +2,8 @@
 
 #include "SpdlogConfig.hpp"
 
-std::string BusinessLogicFacade::executeTask(RequestData, BusinessLogicCallback)
+void BusinessLogicFacade::executeTask(RequestData, BusinessLogicCallback callback)
 {
     SPDLOG_TRACE("BusinessLogicFacade::executeTask");
-    return std::string();
+    callback(ResponseData());
 }
