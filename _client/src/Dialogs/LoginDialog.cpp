@@ -46,13 +46,15 @@ void LoginDialog::setupLayout()
     QLabel *m_usernameLable = new QLabel(tr("Username"));
     QLabel *m_passwordLable = new QLabel(tr("Password"));
 
-    auto *labelLayout = Utils::createVBoxLayout(this, {m_usernameLable, m_passwordLable});
+    auto *labelLayout = Utils::createLayout<QVBoxLayout>(this,
+                                                         {m_usernameLable, m_passwordLable});
 
     ///> Layout for lines
-    auto *lineLayout = Utils::createVBoxLayout(this, {m_usernameField, m_passwordField});
+    auto *lineLayout = Utils::createLayout<QVBoxLayout>(this,
+                                                        {m_usernameField, m_passwordField});
 
     ///> Layout for labels and lines
-    auto *inputLayout = Utils::createHBoxLayout(this, {labelLayout, lineLayout});
+    auto *inputLayout = Utils::createLayout<QHBoxLayout>(this, {labelLayout, lineLayout});
 
     mainLayout->addLayout(inputLayout);
 
@@ -77,7 +79,7 @@ void LoginDialog::setupConnections()
 
 void LoginDialog::onLoginClicked()
 {
-    SPDLOG_TRACE("LoginDialog::onLoginClicked | username: {} | password: {}", m_usernameField->text().toStdString(), m_passwordField->text().toStdString());
+    SPDLOG_TRACE("LoginDialog::onLoginClicked | Username: {}", m_usernameField->text().toStdString());
     emit loginAttempted(m_usernameField->text(), m_passwordField->text());
 }
 

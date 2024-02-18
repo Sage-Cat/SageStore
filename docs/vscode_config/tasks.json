@@ -9,7 +9,7 @@
         "-DBUILD_CLIENT=ON",
         "-DBUILD_SERVER=ON",
         "-DBUILD_CLIENT=ON -DBUILD_SERVER=ON",
-        "-DBUILD_CLIENT_TESTS=ON", 
+        "-DBUILD_CLIENT_TESTS=ON",
         "-DBUILD_SERVER_TESTS=ON"
       ],
       "default": "client"
@@ -50,10 +50,9 @@
     {
       "label": "cmake-build-debug",
       "type": "shell",
-      "command": "cmake",
+      "command": "ninja",
       "args": [
-        "--build",
-        "."
+        "-j4"
       ],
       "options": {
         "cwd": "${workspaceFolder}/build"
