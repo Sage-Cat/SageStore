@@ -7,7 +7,7 @@ NetworkService::NetworkService(QObject *parent)
     SPDLOG_TRACE("NetworkService::NetworkService");
 }
 
-void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager::Operation operation, const Dataset &dataset)
+void NetworkService::sendRequest(QString endpoint, QNetworkAccessManager::Operation operation, const Dataset &dataset)
 {
     SPDLOG_TRACE("NetworkService::sendRequest");
 
@@ -38,11 +38,12 @@ void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager:
 
     if (reply)
     {
-        connect(reply, &QNetworkReply::finished, this, &NetworkService::onNetworkReply);
+        connect(reply, &QNetworkReply::finished, this, [this, endpoint = std::move(endpoint), reply]()
+                { this->onNetworkReply(std::move(endpoint), reply); });
     }
 }
 
-void NetworkService::onNetworkReply(const QString &endpoint, QNetworkReply *reply)
+void NetworkService::onNetworkReply(QString endpoint, QNetworkReply *reply)
 {
     SPDLOG_TRACE("NetworkService::onNetworkReply");
 

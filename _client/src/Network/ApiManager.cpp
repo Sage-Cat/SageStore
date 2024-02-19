@@ -70,10 +70,14 @@ void ApiManager::handleResponse(const QString &endpoint, const Dataset &dataset)
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
     {
-        if (!dataset.contains(Keys::_ERROR))
+        QString errorMsg{};
+        if (dataset.contains(Keys::_ERROR))
+            errorMsg = dataset[Keys::_ERROR].front();
+
+        if (errorMsg.isEmpty())
             handler.value()(dataset);
         else
-            handleError(dataset[Keys::_ERROR].front());
+            handleError(errorMsg);
     }
     else
     {
@@ -83,27 +87,32 @@ void ApiManager::handleResponse(const QString &endpoint, const Dataset &dataset)
 
 void ApiManager::handleError(const QString &errorMessage)
 {
-    SPDLOG_TRACE("ApiManager::handleError - {}", errorMessage.toStdString());
+    SPDLOG_TRACE("ApiManager::handleError | {}", errorMessage.toStdString());
     emit errorOccurred(errorMessage);
 }
 
 void ApiManager::handleLoginResponse(const Dataset &dataset)
 {
     SPDLOG_TRACE("ApiManager::handleLoginResponse");
-    const auto id = dataset[Keys::User::ID].front();
-    const auto roleId = dataset[Keys::User::ROLE_ID].front();
-    if (!id.isEmpty() && !roleId.isEmpty())
-        emit loginSuccess(id, roleId);
+
+    if (!dataset[Keys::User::ID].isEmpty() && !dataset[Keys::User::ROLE_ID].isEmpty())
+    {
+        const auto id = dataset[Keys::User::ID].front();
+        const auto roleId = dataset[Keys::User::ROLE_ID].front();
+
+        if (!id.isEmpty() && !roleId.isEmpty())
+            emit loginSuccess(id, roleId);
+        else
+            handleError("ApiManager::handleLoginResponse got empty id or roleId from server");
+    }
     else
-        emit loginFailed("ApiManager::handleLoginResponse got empty id or roleId from server");
+    {
+        handleError("ApiManager::handleLoginResponse got empty lists for id and roleId");
+    }
 }
 
-void ApiManager::handleRegistrationResponse(const Dataset &dataset)
+void ApiManager::handleRegistrationResponse(const Dataset &)
 {
     SPDLOG_TRACE("ApiManager::handleLoginResponse");
-    const auto error = dataset[Keys::_ERROR].front();
-    if (error.isEmpty())
-        emit registerSuccess();
-    else
-        emit registerFailed(error);
+    emit registerSuccess();
 }

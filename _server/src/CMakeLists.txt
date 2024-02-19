@@ -11,6 +11,7 @@ target_link_libraries(
     boost::boost 
     spdlog::spdlog 
     nlohmann_json::nlohmann_json
+    SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
     $<$<PLATFORM_ID:Windows>:Wsock32>
 )

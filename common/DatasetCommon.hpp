@@ -2,7 +2,7 @@
 
 namespace Keys
 {
-    constexpr char _ERROR[] = "";
+    constexpr char _ERROR[] = "error";
 
     namespace User
     {

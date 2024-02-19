@@ -65,23 +65,9 @@ signals:
     void loginSuccess(const QString &id, const QString &roleId);
 
     /**
-     * @brief Emitted when login fails.
-     *
-     * @param errorMessage The error message describing why the login failed.
-     */
-    void loginFailed(const QString &errorMessage);
-
-    /**
      * @brief Emitted upon successful user registration.
      */
     void registerSuccess();
-
-    /**
-     * @brief Emitted when user registration fails.
-     *
-     * @param errorMessage The error message describing why the registration failed.
-     */
-    void registerFailed(const QString &errorMessage);
 
 private slots:
     /**

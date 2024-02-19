@@ -11,7 +11,7 @@ class SageStorePkg(ConanFile):
     default_options = {
         "shared": False,
         "boost/*:without_test": True,
-        # "wolfssl/*:opensslextra": True
+        "sqlite3/*:threadsafe": 2
     }
 
     def requirements(self):
@@ -19,6 +19,4 @@ class SageStorePkg(ConanFile):
         self.requires("nlohmann_json/3.11.2")
         self.requires("boost/1.82.0")
         self.requires("gtest/1.14.0")
-
-        # Security library (custom build options might be applied in its recipe)
-        # self.requires("wolfssl/5.6.6")
+        self.requires("sqlite3/3.45.1")

@@ -8,7 +8,7 @@
 
 HttpServer::HttpServer(const std::string &address, unsigned short port, ExecuteBusinessTaskCallback callback)
     : m_ioc{1},
-      m_acceptor{m_ioc, tcp::endpoint{net::ip::make_address(address), static_cast<net::ip::port_type>(port)}},
+      m_acceptor{m_ioc, tcp::endpoint{asio::ip::make_address(address), static_cast<asio::ip::port_type>(port)}},
       m_executeBusinessTaskCallback(std::move(callback))
 {
     SPDLOG_TRACE("HttpServer::HttpServer");
@@ -50,10 +50,10 @@ void HttpServer::on_accept(beast::error_code ec, tcp::socket socket)
             transactionId,
             std::move(socket),
             std::make_unique<JsonSerializer>(),
-            [this](RequestData requestData, BusinessLogicCallback callback)
+            [this](RequestData requestData, BusinessLogicCallback callback) // TODO: use m_ioc.wrap() instead
             {
                 auto boundTask = boost::bind(m_executeBusinessTaskCallback, std::move(requestData), std::move(callback));
-                net::post(m_ioc, boundTask);
+                asio::post(m_ioc, boundTask);
             });
         transaction->start();
         SPDLOG_INFO("Transaction created with ID: {}", transactionId);

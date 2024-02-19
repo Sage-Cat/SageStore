@@ -51,7 +51,7 @@ private:
     void on_accept(beast::error_code ec, tcp::socket socket);
 
 private:
-    net::io_context m_ioc; ///< The I/O context used to perform asynchronous operations.
+    asio::io_context m_ioc;   ///< The I/O context used to perform asynchronous operations.
     tcp::acceptor m_acceptor; ///< Acceptor used for listening for and accepting incoming connections.
 
     unsigned long long transactionId{0}; ///< Counter for generating unique transaction IDs.

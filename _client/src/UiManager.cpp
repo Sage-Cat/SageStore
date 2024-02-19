@@ -27,9 +27,6 @@ UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
 
     // Before initialization
     m_mainWindow->hide();
-
-    // Error handling
-    connect(m_apiManager, &ApiManager::errorOccurred, this, handleError);
 }
 
 UiManager::~UiManager()
@@ -105,6 +102,10 @@ void UiManager::initViews()
 void UiManager::setupApiConnections()
 {
     SPDLOG_TRACE("UiManager::setupApiConnections");
+
+    // Error handling
+    connect(m_apiManager, &ApiManager::errorOccurred, this, handleError);
+
     // Login
     connect(m_apiManager, &ApiManager::loginSuccess,
             m_mainWindow, &MainWindow::showMaximized);

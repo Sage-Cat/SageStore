@@ -313,7 +313,7 @@ If some key is not specified, it has `{ "" }` value as a placeholder for the lis
 
 #### Result
 
-If error is empty it means that operation was successful.
+If error is empty, it means that operation was successful.
 
 | Key   | Value  |
 | ----- | ------ |

@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-
-set(PROJECT_NAME "SageStore")
-project(${PROJECT_NAME})
+project("SageStore")
 
 set(CLIENT_NAME "${PROJECT_NAME}Client")
 set(SERVER_NAME "${PROJECT_NAME}Server")

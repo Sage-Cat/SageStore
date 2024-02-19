@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DataSpecs.hpp"
+
 /**
  * @interface IBusinessModule
  * @brief Interface for business modules.
@@ -15,9 +17,7 @@ public:
     virtual ~IBusinessModule() = default;
 
     /**
-     * @brief Initialize the business module.
-     *
-     * This function is used to initialize the business module and prepare it for operation.
+     * @brief Executes action according to requested action and requestId (if specified)
      */
-    virtual void init() = 0;
+    virtual ResponseData executeTask(const RequestData &requestData) = 0;
 };

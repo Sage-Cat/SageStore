@@ -1,36 +1,27 @@
 #include "SageStoreServer.hpp"
 
-#include "Network/HttpServer.hpp"
+#include "Database/RepositoryManager.hpp"
 #include "BusinessLogic/BusinessLogicFacade.hpp"
+#include "Network/HttpServer.hpp"
 
 #include "SpdlogConfig.hpp"
 
-// TODO: consider moving or refactoring
-const std::string SERVER_ADDRESS{"127.0.0.1"};
-const unsigned short SERVER_PORT{8001};
-
-SageStoreServer::SageStoreServer()
-    : m_businessLogicFacade(std::make_unique<BusinessLogicFacade>()),
-      m_httpServer(std::make_unique<HttpServer>(
-          SERVER_ADDRESS,
-          SERVER_PORT,
-          [this](RequestData requestData, BusinessLogicCallback callback)
-          {
-              m_businessLogicFacade->executeTask(std::move(requestData), std::move(callback));
-          }))
+SageStoreServer::SageStoreServer(RepositoryManager &repositoryManager,
+                                 BusinessLogicFacade &businessLogicFacade,
+                                 HttpServer &httpServer)
+    : m_repositoryManager(repositoryManager),
+      m_businessLogicFacade(businessLogicFacade),
+      m_httpServer(httpServer)
 {
-}
-
-SageStoreServer::~SageStoreServer()
-{
+    SPDLOG_TRACE("SageStoreServer::SageStoreServer");
 }
 
 void SageStoreServer::run()
 {
-    SPDLOG_INFO("Starting SageStoreServer on address: {} port: {}", SERVER_ADDRESS, SERVER_PORT);
+    SPDLOG_TRACE("SageStoreServer::~run");
     try
     {
-        m_httpServer->run();
+        m_httpServer.run();
     }
     catch (const std::exception &e)
     {
