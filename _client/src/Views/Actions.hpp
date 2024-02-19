@@ -3,7 +3,9 @@
 #include <map>
 #include <string>
 
-enum class ActionTypes {
+namespace Actions {
+
+enum class Types {
     SETTINGS,
     EXIT,
     PURCHASE_ORDERS,
@@ -24,23 +26,25 @@ enum class ActionTypes {
     SUPPLIERS
 };
 
-const std::map<ActionTypes, std::string> ACTION_NAMES = {
-    {ActionTypes::SETTINGS, "Settings"},
-    {ActionTypes::EXIT, "Exit"},
-    {ActionTypes::PURCHASE_ORDERS, "Purchase Orders"},
-    {ActionTypes::SUPPLIER_MANAGEMENT, "Supplier Management"},
-    {ActionTypes::GOODS_RECEIPTS, "Goods Receipts"},
-    {ActionTypes::SALES_ORDERS, "Sales Orders"},
-    {ActionTypes::CUSTOMER_MANAGEMENT, "Customer Management"},
-    {ActionTypes::INVOICING, "Invoicing"},
-    {ActionTypes::PRODUCT_MANAGEMENT, "Product Management"},
-    {ActionTypes::SUPPLIER_PRICELIST_UPLOAD, "Supplier's Pricelist Upload"},
-    {ActionTypes::STOCK_TRACKING, "Stock Tracking"},
-    {ActionTypes::SALES_ANALYTICS, "Sales Analytics"},
-    {ActionTypes::INVENTORY_ANALYTICS, "Inventory Analytics"},
-    {ActionTypes::USER_ROLES, "User Roles"},
-    {ActionTypes::USER_LOGS, "User Logs"},
-    {ActionTypes::EMPLOYEES, "Employees"},
-    {ActionTypes::CUSTOMERS, "Customers"},
-    {ActionTypes::SUPPLIERS, "Suppliers"}
+const std::map<Types, std::string> NAMES = {
+    {Types::SETTINGS, "Settings"},
+    {Types::EXIT, "Exit"},
+    {Types::PURCHASE_ORDERS, "Purchase Orders"},
+    {Types::SUPPLIER_MANAGEMENT, "Supplier Management"},
+    {Types::GOODS_RECEIPTS, "Goods Receipts"},
+    {Types::SALES_ORDERS, "Sales Orders"},
+    {Types::CUSTOMER_MANAGEMENT, "Customer Management"},
+    {Types::INVOICING, "Invoicing"},
+    {Types::PRODUCT_MANAGEMENT, "Product Management"},
+    {Types::SUPPLIER_PRICELIST_UPLOAD, "Supplier's Pricelist Upload"},
+    {Types::STOCK_TRACKING, "Stock Tracking"},
+    {Types::SALES_ANALYTICS, "Sales Analytics"},
+    {Types::INVENTORY_ANALYTICS, "Inventory Analytics"},
+    {Types::USER_ROLES, "User Roles"},
+    {Types::USER_LOGS, "User Logs"},
+    {Types::EMPLOYEES, "Employees"},
+    {Types::CUSTOMERS, "Customers"},
+    {Types::SUPPLIERS, "Suppliers"}
 };
+
+} 

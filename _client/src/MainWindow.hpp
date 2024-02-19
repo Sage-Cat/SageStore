@@ -28,7 +28,7 @@ protected:
     // override resizeEvent
     void resizeEvent(QResizeEvent *event) override;
 
-    QMenu* createModuleMenu(const QString& menuTitle, const std::vector<ActionTypes>& actions);
+    QMenu* createModuleMenu(const QString& menuTitle, const std::vector<Actions::Types>& names);
 
 private:
     // stack view

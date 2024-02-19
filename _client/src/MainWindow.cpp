@@ -37,38 +37,37 @@ void MainWindow::setupMenu()
     m_mainMenuBar =  menuBar();
 
     // File Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("File"), {ActionTypes::SETTINGS, ActionTypes::EXIT}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("File"), {Actions::Types::SETTINGS, Actions::Types::EXIT}));
     
     // Purchasing Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Purchasing"), {ActionTypes::PURCHASE_ORDERS, ActionTypes::SUPPLIER_MANAGEMENT, ActionTypes::GOODS_RECEIPTS}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Purchasing"), {Actions::Types::PURCHASE_ORDERS, Actions::Types::SUPPLIER_MANAGEMENT, Actions::Types::GOODS_RECEIPTS}));
 
     // Sales Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Sales"), {ActionTypes::SALES_ORDERS, ActionTypes::CUSTOMER_MANAGEMENT, ActionTypes::INVOICING}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Sales"), {Actions::Types::SALES_ORDERS, Actions::Types::CUSTOMER_MANAGEMENT, Actions::Types::INVOICING}));
     
     // Inventory Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Inventory"), {ActionTypes::PRODUCT_MANAGEMENT, ActionTypes::SUPPLIER_PRICELIST_UPLOAD, ActionTypes::STOCK_TRACKING}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Inventory"), {Actions::Types::PRODUCT_MANAGEMENT, Actions::Types::SUPPLIER_PRICELIST_UPLOAD, Actions::Types::STOCK_TRACKING}));
 
     // Analytics Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Analytics"), {ActionTypes::SALES_ANALYTICS, ActionTypes::INVENTORY_ANALYTICS}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Analytics"), {Actions::Types::SALES_ANALYTICS, Actions::Types::INVENTORY_ANALYTICS}));
 
     // Users Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Users"), {ActionTypes::USER_ROLES, ActionTypes::USER_LOGS}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Users"), {Actions::Types::USER_ROLES, Actions::Types::USER_LOGS}));
 
     // Management Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Management"), {ActionTypes::EMPLOYEES, ActionTypes::CUSTOMERS, ActionTypes::SUPPLIERS}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Management"), {Actions::Types::EMPLOYEES, Actions::Types::CUSTOMERS, Actions::Types::SUPPLIERS}));
 }
 
 //Custom function that create module menu using map
-QMenu* MainWindow::createModuleMenu(const QString& menuTitle, const std::vector<ActionTypes>& actions)
+QMenu* MainWindow::createModuleMenu(const QString& menuTitle, const std::vector<Actions::Types>& names)
 {
     QMenu* menu = new QMenu(menuTitle, this);
 
-    for (ActionTypes actionType : actions) {
-        QAction* action = new QAction(ACTION_NAMES.at(actionType).c_str(), menu);
-        connect(action, &QAction::triggered, menu, [menu, actionType]() {SPDLOG_DEBUG(std::string("Show ") + ACTION_NAMES.at(actionType).c_str());});
+    for (Actions::Types actionType : names) {
+        QAction* action = new QAction(Actions::NAMES.at(actionType).c_str(), menu);
+        connect(action, &QAction::triggered, menu, [menu, actionType]() {SPDLOG_DEBUG(std::string("Show ") + Actions::NAMES.at(actionType).c_str());});
         menu->addAction(action);
     }
-
     return menu;
 }
 
