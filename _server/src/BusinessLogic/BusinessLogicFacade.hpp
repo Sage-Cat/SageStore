@@ -1,17 +1,22 @@
 #pragma once
 
-#include <string>
+#include <functional>
+#include <memory>
 
 #include "DataSpecs.hpp"
 
-class RequestData;
+class RepositoryManager;
+class UsersModule;
 
 class BusinessLogicFacade
 {
 public:
-    std::string executeTask(const RequestData &requestData, BusinessLogicCallback callback);
+    BusinessLogicFacade(RepositoryManager &repositoryManager);
+    ~BusinessLogicFacade();
+
+    void executeTask(RequestData requestData, BusinessLogicCallback callback);
 
 private:
-
-
+    // Modules
+    std::unique_ptr<UsersModule> m_usersModule;
 };

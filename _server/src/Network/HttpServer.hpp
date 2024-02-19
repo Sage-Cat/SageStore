@@ -1,29 +1,30 @@
 #pragma once
 
 #include "NetworkCommon.hpp"
-
-class HttpSession;
-class BusinessLogicFacade;
+#include "HttpTransaction.hpp"
+#include "DataSpecs.hpp"
 
 /**
  * @class HttpServer
  * @brief Implements an HTTP server that accepts connections and manages HTTP sessions.
  *
  * This class sets up a listening TCP socket on a specified address and port. It accepts incoming
- * connections and creates HttpSession objects for handling each connection, leveraging the
+ * connections and creates HttpTransaction objects for handling each connection, leveraging the
  * BusinessLogicFacade for processing requests.
  */
 class HttpServer
 {
 public:
+    using ExecuteBusinessTaskCallback = std::function<void(RequestData, BusinessLogicCallback)>;
+
     /**
      * @brief Constructs an HttpServer with a given address, port, and reference to BusinessLogicFacade.
      *
      * @param address The IP address on which the server will listen.
      * @param port The port number on which the server will listen.
-     * @param businessLogicFacade Reference to the BusinessLogicFacade for request processing.
+     * @param callback to execute business layer task
      */
-    HttpServer(const std::string &address, unsigned short port, BusinessLogicFacade &businessLogicFacade);
+    HttpServer(const std::string &address, unsigned short port, ExecuteBusinessTaskCallback callback);
 
     /**
      * @brief Destructor for HttpServer.
@@ -50,11 +51,10 @@ private:
     void on_accept(beast::error_code ec, tcp::socket socket);
 
 private:
-    net::io_context m_ioc; ///< The I/O context used to perform asynchronous operations.
+    asio::io_context m_ioc;   ///< The I/O context used to perform asynchronous operations.
     tcp::acceptor m_acceptor; ///< Acceptor used for listening for and accepting incoming connections.
 
-    unsigned long long nextSessionId{0};                                           ///< Counter for generating unique session IDs.
-    std::unordered_map<unsigned long long, std::shared_ptr<HttpSession>> sessions; ///< Map of session IDs to HttpSession objects.
+    unsigned long long transactionId{0}; ///< Counter for generating unique transaction IDs.
 
-    BusinessLogicFacade &m_businessLogicFacade; ///< Reference to the business logic layer for processing requests.
+    ExecuteBusinessTaskCallback m_executeBusinessTaskCallback; // Store the callback};
 };

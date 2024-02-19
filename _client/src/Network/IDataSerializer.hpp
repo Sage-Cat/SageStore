@@ -2,7 +2,7 @@
 
 #include <QByteArray>
 
-#include "DataSpecs.hpp"
+#include "DataTypes.hpp"
 
 /**
  * @interface IDataSerializer

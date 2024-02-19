@@ -3,8 +3,8 @@ skinparam componentStyle uml2
 
 package "SageStore Server" {
     [SageStoreServer] as SSS 
-    [HttpServer] as HSer 
-    [HttpSession] as HSes 
+    [HttpServer] as HS 
+    [HttpTransaction] as HT 
     [Serializers] as S 
     [BusinessLogicFacade] as BLF 
     [BusinessModules] as BM 
@@ -12,15 +12,15 @@ package "SageStore Server" {
     [DatabaseManager] as DM
     [Repositories] as R  
 
-    SSS -down-> HSer 
+    SSS -down-> HS 
     SSS -down-> BLF 
     SSS -down-> DM
 
-    HSer -right-> BLF : "executeTask"
-    HSer <-right- BLF : "callback"
+    HS -right-> BLF : "executeTask"
+    HS <-right- BLF : "callback"
 
-    HSer "1"-down->"1..*" HSes
-    HSes "1"-down->"one of" S 
+    HS "1"-down->"1..*" HT
+    HT "1"-down->"1" S 
 
     BLF "1"-down->"1..*" BM
 

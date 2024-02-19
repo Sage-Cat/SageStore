@@ -1,6 +1,8 @@
 #include "JsonSerializer.hpp"
-#include "SpdlogConfig.hpp"
+
 #include <nlohmann/json.hpp>
+
+#include "SpdlogConfig.hpp"
 
 using json = nlohmann::json;
 
@@ -9,6 +11,12 @@ std::string JsonSerializer::serialize(const Dataset &dataset)
     SPDLOG_TRACE("JsonSerializer::serialize");
 
     json jsonObject;
+
+    if (dataset.empty())
+    {
+        return json({}).dump();
+    }
+
     for (const auto &[key, value] : dataset)
     {
         json jsonRow = json::array();
@@ -27,7 +35,7 @@ Dataset JsonSerializer::deserialize(const std::string &serializedData)
     SPDLOG_TRACE("JsonSerializer::deserialize");
 
     Dataset dataset;
-    auto jsonObject = json::parse(serializedData, nullptr, false); // parse and get a json object
+    auto jsonObject = json::parse(serializedData, nullptr, false);
 
     if (!jsonObject.is_object())
     {

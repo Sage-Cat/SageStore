@@ -24,16 +24,12 @@ void DialogManager::setupApiConnections()
     // Login
     connect(m_loginDialog, &LoginDialog::loginAttempted,
             m_apiManager, &ApiManager::loginUser);
-    connect(m_apiManager, &ApiManager::loginFailed,
-            this, showErrorMessageBox);
 
     // Registrations
     connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
             m_apiManager, &ApiManager::registerUser);
     connect(m_apiManager, &ApiManager::registerSuccess,
             m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
-    connect(m_apiManager, &ApiManager::registerFailed,
-            this, showErrorMessageBox);
 }
 
 void DialogManager::setupDialogsConnections()

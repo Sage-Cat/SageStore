@@ -8,7 +8,7 @@
 #include <QUrl>
 #include <QByteArray>
 
-#include "DataSpecs.hpp"
+#include "DataTypes.hpp"
 #include "IDataSerializer.hpp"
 
 /**
@@ -36,7 +36,7 @@ public:
      * @param dataset Data to be sent in the request.
      */
     void sendRequest(
-        const QString &endpoint,
+        QString endpoint,
         QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation,
         const Dataset &dataset = Dataset());
 
@@ -57,14 +57,14 @@ signals:
      * @brief Signal emitted with deserialized response data.
      * @param dataset deserialized response data as a QString.
      */
-    void responseReceived(const Dataset &dataset);
+    void responseReceived(const QString &endpoint, const Dataset &dataset);
 
 private slots:
     /**
      * @brief Slot to handle network responses.
      * @param reply Network reply object from the request.
      */
-    void onNetworkReply(QNetworkReply *reply);
+    void onNetworkReply(QString endpoint, QNetworkReply *reply);
 
 private:
     std::unique_ptr<IDataSerializer> m_serializer; ///< Object for handling serialization.
