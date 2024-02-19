@@ -1,9 +1,16 @@
 #pragma once
 
-#include <QVBoxLayout>
+#include <variant>
+
+#include <QLayout>
+#include <QWidget>
+#include <QVector>
 
 namespace Utils
 {
-    QVBoxLayout *createVBoxLayout(QWidget *parent = nullptr, std::vector<QWidget *> widgets);
-    QHBoxLayout *createHBoxLayout(QWidget *parent = nullptr, std::vector<QWidget *> widgets);
-}
+
+    template <typename LayoutType>
+        requires std::is_base_of_v<QLayout, LayoutType>
+    LayoutType *createLayout(QWidget *parent, const QVector<std::variant<QWidget *, QLayout *>> &items);
+
+} // namespace Utils
