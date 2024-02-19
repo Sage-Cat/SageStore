@@ -35,20 +35,4 @@ namespace Api
             const QString REGISTER = USERS_PREFIX + "/register";
         }
     }
-
-    /**
-     * @namespace Api::Params
-     * @brief Defines common parameter names used in API requests and responses.
-     */
-    namespace Params
-    {
-        /// Parameter name for authentication token.
-        const QString TOKEN{"token"};
-
-        /// Parameter name for specifying the API endpoint in a request.
-        const QString ENDPOINT{"endpoint"};
-
-        /// Parameter name for error messages in API responses. Note: "ERROR" is a reserved word in Qt.
-        const QString ERR{"error"};
-    }
 }

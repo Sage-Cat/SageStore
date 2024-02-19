@@ -17,7 +17,7 @@ void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager:
         return;
     }
 
-    QUrl fullUrl(m_apiUrl + endpoint); // Append the endpoint to the base URL
+    QUrl fullUrl(m_apiUrl + endpoint);
     QNetworkRequest request(fullUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
@@ -38,24 +38,11 @@ void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager:
 
     if (reply)
     {
-        connect(reply, &QNetworkReply::finished, this, [this, reply]()
-                {
-                    if (reply->error() == QNetworkReply::NoError)
-                    {
-                        QByteArray responseData = reply->readAll();
-                        Dataset dataset = m_serializer->deserialize(responseData);
-                        emit responseReceived(dataset);
-                    }
-                    else
-                    {
-                        SPDLOG_ERROR("Network request error: {}", reply->errorString().toStdString());
-                    }
-                    reply->deleteLater(); // Ensure reply is deleted after processing
-                });
+        connect(reply, &QNetworkReply::finished, this, &NetworkService::onNetworkReply);
     }
 }
 
-void NetworkService::onNetworkReply(QNetworkReply *reply)
+void NetworkService::onNetworkReply(const QString &endpoint, QNetworkReply *reply)
 {
     SPDLOG_TRACE("NetworkService::onNetworkReply");
 
@@ -63,11 +50,10 @@ void NetworkService::onNetworkReply(QNetworkReply *reply)
     {
         QByteArray responseData = reply->readAll();
         Dataset dataset = m_serializer->deserialize(responseData);
-        emit responseReceived(dataset);
+        emit responseReceived(endpoint, dataset);
     }
     else
     {
-        // Handle error
         SPDLOG_ERROR("Network request error: {}", reply->errorString().toStdString());
     }
     reply->deleteLater();

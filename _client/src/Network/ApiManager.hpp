@@ -2,11 +2,8 @@
 
 #include <QObject>
 #include <QMap>
-#include <functional>
 
 #include "NetworkService.hpp"
-
-using ResponseHandler = std::function<void(const Dataset &)>;
 
 /**
  * @class ApiManager
@@ -65,7 +62,7 @@ signals:
     /**
      * @brief Emitted upon successful login.
      */
-    void loginSuccess();
+    void loginSuccess(const QString &id, const QString &roleId);
 
     /**
      * @brief Emitted when login fails.
@@ -90,9 +87,10 @@ private slots:
     /**
      * @brief Hadles response by calling m_responseHandlers
      *
+     * @param endpoint Endpoint that is binded to response.
      * @param dataset The data set received in response to an API call.
      */
-    void handleResponse(const Dataset &dataset);
+    void handleResponse(const QString &endpoint, const Dataset &dataset);
 
     /**
      * @brief Handles errors that occur during network communication.
@@ -118,6 +116,5 @@ private:
 
 private:
     NetworkService *m_networkService;                  ///< Pointer to the network service used for API calls.
-    QMap<QString, ResponseHandler> m_responseHandlers; ///< Maps API endpoints to their respective response handlers.
-    QString m_currentUserToken;                        ///< Stores the current user's authentication token.
+    QMap<QString, ResponseHandler> m_responseHandlers; ///< Maps API endpoints to their respective response handlers.                      ///< Stores the current user's authentication token.
 };
