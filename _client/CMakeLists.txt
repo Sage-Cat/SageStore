@@ -44,6 +44,9 @@ set(UI_SOURCES
     
     ${CLIENT_SOURCES_DIR}/Views/ViewStyles.hpp
     
+    ${CLIENT_SOURCES_DIR}/Views/BaseView.cpp
+
+    ${CLIENT_SOURCES_DIR}/Views/Actions.hpp
 )
 
 set(MAIN_SOURCES

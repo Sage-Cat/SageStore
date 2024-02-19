@@ -22,6 +22,9 @@ class LoginDialogModel;
 class RegistrationDialogModel;
 
 // Views
+class MainWindow;
+class AuthorizationView;
+class RegistrationView;
 
 /**
  * @class UiManager
