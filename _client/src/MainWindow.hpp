@@ -3,8 +3,13 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QStatusBar>
+#include <QMenuBar>
+#include <QMenu>
 
-class MainWindow : public QMainWindow
+#include "Views/Actions.hpp"
+#include "Views/ViewStyles.hpp"
+
+class MainWindow : public QMainWindow 
 {
     Q_OBJECT
 
@@ -18,8 +23,12 @@ protected:
     // setup UI
     void setupUI();
 
+    void setupMenu();
+
     // override resizeEvent
     void resizeEvent(QResizeEvent *event) override;
+
+    QMenu* createModuleMenu(const QString& menuTitle, const std::vector<Actions::Types>& names);
 
 private:
     // stack view
@@ -27,4 +36,7 @@ private:
 
     // status bar
     QStatusBar *m_statusBar;
+
+    // menu bar
+    QMenuBar *m_mainMenuBar;
 };

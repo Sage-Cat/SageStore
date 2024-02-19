@@ -14,6 +14,7 @@
 
 #include "SpdlogConfig.hpp"
 
+
 UiManager::UiManager(ApiManager *apiClient, QObject *parent) noexcept
     : m_apiManager(apiClient), QObject(parent)
 {
