@@ -57,8 +57,8 @@ ResponseData UsersModule::loginUser(const Dataset &request)
     }
     catch (const std::out_of_range &e)
     {
-        SPDLOG_ERROR("UsersModule::loginUser username or password does not exit");
-        throw ServerException(_M, "Server got no username or password in Dataset");
+        SPDLOG_ERROR("UsersModule::loginUser | dataset has no needed info: {}", e.what());
+        throw ServerException(_M, "Server got no username or password from Client");
     }
 
     // get user by username from repository
@@ -69,17 +69,18 @@ ResponseData UsersModule::loginUser(const Dataset &request)
         User user = userOpt.value();
         if (user.password == clientPassword)
         {
+            SPDLOG_INFO("UsersModule::loginUser | SUCCESS");
             user >> response.dataset;
         }
         else
         {
-            SPDLOG_ERROR("UsersModule::loginUser | user entered incorrect password");
+            SPDLOG_WARN("UsersModule::loginUser | user entered incorrect password");
             throw ServerException(_M, "Wrong password");
         }
     }
     else
     {
-        SPDLOG_ERROR("UsersModule::loginUser | user does not exist");
+        SPDLOG_WARN("UsersModule::loginUser | user does not exist");
         throw ServerException(_M, "User with such username does not exist");
     }
 
@@ -99,7 +100,7 @@ ResponseData UsersModule::registerUser(const Dataset &request)
     }
     catch (const std::out_of_range &e)
     {
-        SPDLOG_ERROR("UsersModule::registerUser username or password does not exit");
+        SPDLOG_WARN("UsersModule::registerUser username or password does not exit");
         throw ServerException(_M, "Server got no username or password in Dataset");
     }
 
@@ -109,10 +110,11 @@ ResponseData UsersModule::registerUser(const Dataset &request)
     if (!userOpt.has_value())
     {
         m_usersRepository->add(User("", clientUsername, clientPassword, ""));
+        SPDLOG_INFO("UsersModule::registerUser | new user `{}` is registered", clientUsername);
     }
     else
     {
-        SPDLOG_WARN("UsersModule::registerUser such user aready is in database");
+        SPDLOG_WARN("UsersModule::registerUser | user with such name already exists");
         throw ServerException(_M, "User with this name already exists");
     }
 

@@ -65,7 +65,7 @@ void ApiManager::setupHandlers()
 
 void ApiManager::handleResponse(const QString &endpoint, const Dataset &dataset)
 {
-    SPDLOG_TRACE("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
+    SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
 
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
@@ -103,16 +103,16 @@ void ApiManager::handleLoginResponse(const Dataset &dataset)
         if (!id.isEmpty() && !roleId.isEmpty())
             emit loginSuccess(id, roleId);
         else
-            handleError("ApiManager::handleLoginResponse got empty id or roleId from server");
+            handleError("ApiManager::handleLoginResponse | empty id or roleId");
     }
     else
     {
-        handleError("ApiManager::handleLoginResponse got empty lists for id and roleId");
+        handleError("ApiManager::handleLoginResponse | empty lists");
     }
 }
 
 void ApiManager::handleRegistrationResponse(const Dataset &)
 {
-    SPDLOG_TRACE("ApiManager::handleLoginResponse");
+    SPDLOG_TRACE("ApiManager::handleRegisterResponse");
     emit registerSuccess();
 }

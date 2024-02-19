@@ -48,6 +48,5 @@ void BusinessLogicFacade::executeTask(RequestData requestData, BusinessLogicCall
     }
 
     // Send response to client
-    responseData.dataset[Keys::_ERROR] = {""}; // indicate successful operation
     callback(responseData);
 }

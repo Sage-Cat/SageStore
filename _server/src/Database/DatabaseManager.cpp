@@ -97,7 +97,6 @@ bool DatabaseManager::step()
 
 std::string DatabaseManager::columnText(int index)
 {
-    SPDLOG_TRACE("DatabaseManager::columnText");
     const unsigned char *text = sqlite3_column_text(m_stmt.get(), index);
     if (text != nullptr)
     {

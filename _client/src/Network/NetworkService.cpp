@@ -23,13 +23,15 @@ void NetworkService::sendRequest(QString endpoint, QNetworkAccessManager::Operat
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
 
     QNetworkReply *reply = nullptr;
+    const auto serializedData = m_serializer->serialize(dataset);
+    SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT sent data: {}", serializedData.toStdString());
     switch (operation)
     {
     case QNetworkAccessManager::GetOperation:
         reply = m_manager->get(request);
         break;
     case QNetworkAccessManager::PostOperation:
-        reply = m_manager->post(request, m_serializer->serialize(dataset));
+        reply = m_manager->post(request, serializedData);
         break;
     default:
         SPDLOG_ERROR("NetworkService::sendRequest unexpected switch(operation) occurred.");
@@ -50,6 +52,7 @@ void NetworkService::onNetworkReply(QString endpoint, QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError)
     {
         QByteArray responseData = reply->readAll();
+        SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT received data: {}", responseData.toStdString());
         Dataset dataset = m_serializer->deserialize(responseData);
         emit responseReceived(endpoint, dataset);
     }

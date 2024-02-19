@@ -71,7 +71,7 @@ void HttpTransaction::handle_request()
     if (m_request.body().size() != 0)
     {
         auto bodyStr = beast::buffers_to_string(m_request.body().data());
-        SPDLOG_DEBUG("[Transaction ID: {}], Received data: {}", m_id, bodyStr);
+        SPDLOG_DEBUG("[Transaction ID: {}] SERVER received data: {}", m_id, bodyStr);
     }
 
     // Prepare RequestData
@@ -113,6 +113,8 @@ void HttpTransaction::do_response(ResponseData data)
     const auto serializedData = m_serializer->serialize(data.dataset);
 
     beast::ostream(m_response.body()) << serializedData;
+
+    SPDLOG_DEBUG("[Transaction ID: {}] SERVER sent data: {}", m_id, serializedData);
 
     // Ensure the response is fully sent before closing the transaction
     auto self = shared_from_this();

@@ -46,15 +46,10 @@ void HttpServer::on_accept(beast::error_code ec, tcp::socket socket)
     SPDLOG_TRACE("HttpServer::on_accept");
     if (!ec)
     {
-        auto transaction = std::make_shared<HttpTransaction>(
-            transactionId,
-            std::move(socket),
-            std::make_unique<JsonSerializer>(),
-            [this](RequestData requestData, BusinessLogicCallback callback) // TODO: use m_ioc.wrap() instead
-            {
-                auto boundTask = boost::bind(m_executeBusinessTaskCallback, std::move(requestData), std::move(callback));
-                asio::post(m_ioc, boundTask);
-            });
+        auto transaction = std::make_shared<HttpTransaction>(transactionId,
+                                                             std::move(socket),
+                                                             std::make_unique<JsonSerializer>(),
+                                                             m_ioc.wrap(m_executeBusinessTaskCallback));
         transaction->start();
         SPDLOG_INFO("Transaction created with ID: {}", transactionId);
         transactionId++;

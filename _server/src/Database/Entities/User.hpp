@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "DatasetCommon.hpp"
+
 class User
 {
 public:
@@ -16,10 +18,10 @@ public:
 
     Dataset &operator>>(Dataset &dataset)
     {
-        dataset["id"].push_back(id.empty() ? "" : id);
-        dataset["username"].push_back(username.empty() ? "" : username);
-        dataset["password"].push_back(password.empty() ? "" : password);
-        dataset["roleId"].push_back(roleId.empty() ? "" : roleId);
+        dataset[Keys::User::ID].push_back(id.empty() ? "" : id);
+        dataset[Keys::User::USERNAME].push_back(username.empty() ? "" : username);
+        dataset[Keys::User::PASSWORD].push_back(password.empty() ? "" : password);
+        dataset[Keys::User::ROLE_ID].push_back(roleId.empty() ? "" : roleId);
 
         return dataset;
     }
