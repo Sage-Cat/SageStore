@@ -10,29 +10,61 @@
 
 ## Table of Contents
 
-1. [Confidentiality Notice](#confidentiality-notice)
-2. [Project Overview](#project-overview)
-3. [Project Time Borders](#project-time-borders)
-4. [Project Objectives](#project-objectives)
-5. [Timeline and Milestones](#timeline-and-milestones)
-6. [Feature Breakdown](#feature-breakdown)
-7. [User Stories](#user-stories)
-8. [Tech Stack](#tech-stack)
-9. [Database](#database)
-10. [Architecture Design](#architecture-design)
-    - [Client Design](#client-design)
-    - [Server Design](#server-design)
-11. [Dataset Schema](#dataset-schema)
-12. [REST API](#rest-api)
-13. [Practices and Methodologies](#practices-and-methodologies)
-14. [Development Phase](#development-phase)
-15. [Deployment Phase](#deployment-phase)
-16. [Post-launch](#post-launch)
-17. [Executive Summary](#executive-summary)
-18. [Risk Management](#risk-management)
-19. [Quality Assurance Plans](#quality-assurance-plans)
-20. [Compliance and Regulations](#compliance-and-regulations)
-21. [Document Versioning](#document-versioning)
+- [SageStore](#sagestore)
+  - [Comprehensive Documentation for Design, Development, and Deployment Phases](#comprehensive-documentation-for-design-development-and-deployment-phases)
+  - [Table of Contents](#table-of-contents)
+  - [Project Overview](#project-overview)
+  - [Project Time Borders](#project-time-borders)
+  - [Project Objectives](#project-objectives)
+  - [Timeline and Milestones](#timeline-and-milestones)
+  - [Feature Breakdown](#feature-breakdown)
+  - [User Stories](#user-stories)
+    - [User Stories for Administrator](#user-stories-for-administrator)
+    - [User Stories for User](#user-stories-for-user)
+  - [Tech Stack](#tech-stack)
+    - [Tools and Libraries](#tools-and-libraries)
+  - [Database](#database)
+    - [Table Name: Roles](#table-name-roles)
+    - [Database schema](#database-schema)
+  - [Architecture Design](#architecture-design)
+    - [Client](#client)
+      - [Client Design](#client-design)
+      - [Component diagram](#component-diagram)
+      - [Components](#components)
+      - [MVVM Class Diagram](#mvvm-class-diagram)
+      - [Networking Class Diagram](#networking-class-diagram)
+      - [Relationships](#relationships)
+    - [Server](#server)
+      - [Server Design](#server-design)
+      - [Overview](#overview)
+      - [Architecture Layers and Components](#architecture-layers-and-components)
+  - [Dataset specification](#dataset-specification)
+    - [Components](#components-1)
+    - [Entities](#entities)
+      - [Result](#result)
+      - [User](#user)
+      - [Role](#role)
+  - [REST API](#rest-api)
+    - [Config](#config)
+    - [Endpoints](#endpoints)
+      - [Users](#users)
+      - [Sales](#sales)
+      - [Inventory](#inventory)
+      - [Management](#management)
+      - [Analytics](#analytics)
+      - [Logs](#logs)
+  - [Practices and Methodologies](#practices-and-methodologies)
+  - [Development Phase](#development-phase)
+    - [Environment Setup](#environment-setup)
+  - [Deployment Phase](#deployment-phase)
+    - [Preparation](#preparation)
+  - [Post-launch](#post-launch)
+  - [Executive Summary](#executive-summary)
+  - [Risk Management](#risk-management)
+  - [Quality Assurance Plans](#quality-assurance-plans)
+    - [Testing Phases](#testing-phases)
+  - [Compliance and Regulations](#compliance-and-regulations)
+  - [Document Versioning](#document-versioning)
 
 ---
 
@@ -260,39 +292,50 @@ The server architecture for the SageStore Management System aims to provide a ro
 - **Responsibilities**: Acts as a communication hub between different parts of the application, particularly between BusinessLogic modules and their corresponding repositories in the DatabaseManager. It ensures that modules can interact with each other without direct dependencies.
 - **Purpose**: Reduces coupling between components, making the system more maintainable and scalable. By facilitating indirect interactions, it simplifies module integration and enhances the system's overall modularity.
 
-## Dataset Schema
+## Dataset specification
 
 The `Dataset` structure in our application is designed to efficiently handle tabled data, particularly for communication over a network using formats like JSON or XML. The structure is defined as follows:
 
 ### Components
 
-    - Data: Represents a single column of a table. It is a QStringList, where each QString is an individual cell value in the column.
-    - Dataset: Represents the entire table. It is a QHash that maps a QString key to a Data object. The key is used to identify each column.
+    - `Data`: Represents a single column of a table. It is a QStringList, where each QString is an individual cell value in the column.
+    - `Dataset`: Represents the entire table. It is a QHash that maps a QString key to a Data object. The key is used to identify each column.
 
-### Usage Example
+### Entities
 
-#### Field-oriented data representation:
+Dataset is actually a `map<key, value>`, where `key is a string` and `value is a list of strings`
 
-```cpp
-Dataset myDataset;
-myDataset["VarName"] = {"Value1"};
-myDataset["ArrayName"] = {"Value2", "Value3", "Value4"};
-```
+Dataset could store data `entities`. All possible entities are described below. 
 
-#### Table-oriented data representation:
+It's important to know that Dataset could store any array of one entity, because `value` is actually an array.
 
-If we want to use this representation it's important to remember that parser expect to see column with the name listed by key "TableColumns".
-For case, when TableColumns does not exist Dataset will be parsed as Field-oriented
+If some key is not specified, it has `{ "" }` value as a placeholder for the list of strings.
 
-```cpp
-Dataset myDataset;
-myDataset["TableColumns"] = {"ColumnName1", "ColumnName2", "ColumnName3"};
-myDataset["ColumnName1"] = {"Data1", "Data2", "Data3"};
-```
+#### Result
+
+If error is empty it means that operation was successful.
+
+| Key   | Value  |
+| ----- | ------ |
+| error | { "" } |
+
+#### User
+| Key      | Value            |
+| -------- | ---------------- |
+| id       | { "0" }          |
+| username | { "MyLogin" }    |
+| password | { "MyPassword" } |
+| roleId   | { "0" }          |
+
+#### Role
+| Key  | Value               |
+| ---- | ------------------- |
+| id   | { "0" }             |
+| name | { "Administrator" } |
 
 ## REST API
 
-It's possible to use recommended up-to-date configuration for client using GET request.
+Below you could find spesification for different RESTful API request-response. 
 
 ### Config
 
@@ -312,16 +355,24 @@ For example `http://localhost:8000/api/sales`
 
 ### Endpoints
 
+Request or Response are one of entities described above. 
+
+Important: `User[username, password]` - data specified in `[]` tell about important keys, that must be present. It means that else keys are optional.
+
+As for the cases of simple entity name `User`, it just means that all keys must be presented and be valid.
+
+About arrays: Request or Response is array of entities if it's specified as `array<User>`
+
 #### Users
 
-| Method   | Endpoint                | Request          | Response             | Description                           |
-| -------- | ----------------------- | ---------------- | -------------------- | ------------------------------------- |
-| `POST`   | `/users/login`          | User credentials | Authentication token | Authenticate a user                   |
-| `POST`   | `/users/register`       | User data        | User profile         | Register a new user                   |
-| `GET`    | `/users/roles`          | -                | Roles list           | Fetch all roles for Role-based access |
-| `POST`   | `/users/roles`          | Role data        | New role's id        | Add a new role (Admin only)           |
-| `PUT`    | `/users/roles/{roleId}` | Role data        | Edited role's id     | Edit a specific role (Admin only)     |
-| `DELETE` | `/users/roles/{roleId}` | -                | Result               | Delete a specific role (Admin only)   |
+| Method   | Endpoint                | Request                  | Response         | Description                           |
+| -------- | ----------------------- | ------------------------ | ---------------- | ------------------------------------- |
+| `POST`   | `/users/login`          | User[username, password] | User[id, roleId] | Authenticate a user                   |
+| `POST`   | `/users/register`       | User[username, password] | Result           | Register a new user                   |
+| `GET`    | `/users/roles`          | -                        | array<Role>      | Fetch all roles for Role-based access |
+| `POST`   | `/users/roles`          | Role                     | Result           | Add a new role (Admin only)           |
+| `PUT`    | `/users/roles/{roleId}` | Role                     | Result           | Edit a specific role (Admin only)     |
+| `DELETE` | `/users/roles/{roleId}` | -                        | Result           | Delete a specific role (Admin only)   |
 
 #### Sales
 
@@ -377,6 +428,7 @@ For example `http://localhost:8000/api/sales`
 | `POST`   | `/logs`         | Log data | New log's id    | Add a new log         |
 | `PUT`    | `/logs/{logId}` | Log data | Edited log's id | Edit a specific log   |
 | `DELETE` | `/logs/{logId}` | -        | Result          | Delete a specific log |
+
 
 ## Practices and Methodologies
 
