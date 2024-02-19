@@ -14,9 +14,8 @@ int main()
 
     const std::string SERVER_ADDRESS{"127.0.0.1"};
     const unsigned short SERVER_PORT{8001};
-    const std::string DB_PATH{""};
 
-    RepositoryManager repositoryManager(std::make_shared<DatabaseManager>(DB_PATH));
+    RepositoryManager repositoryManager(std::make_shared<DatabaseManager>(DB_PATH, CREATE_DB_SQL_FILE_PATH));
     BusinessLogicFacade businessLogicFacade(repositoryManager);
     HttpServer httpServer(
         SERVER_ADDRESS,

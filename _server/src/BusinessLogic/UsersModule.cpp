@@ -37,8 +37,8 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
     }
     else
     {
-        SPDLOG_ERROR("Unrecognized action: " + requestData.submodule + "/" + requestData.method);
-        throw ServerException(_M, "Unrecognized action");
+        SPDLOG_ERROR("UsersModule::executeTask Unrecognized task: " + requestData.submodule + "/" + requestData.method);
+        throw ServerException(_M, "Unrecognized task");
     }
 
     return response;
@@ -71,11 +71,16 @@ ResponseData UsersModule::loginUser(const Dataset &request)
         {
             user >> response.dataset;
         }
+        else
+        {
+            SPDLOG_ERROR("UsersModule::loginUser | user entered incorrect password");
+            throw ServerException(_M, "Wrong password");
+        }
     }
     else
     {
-        SPDLOG_ERROR("UsersModule::loginUser optional value was empty");
-        throw ServerException(_M, "Server could not get password from Database");
+        SPDLOG_ERROR("UsersModule::loginUser | user does not exist");
+        throw ServerException(_M, "User with such username does not exist");
     }
 
     return response;

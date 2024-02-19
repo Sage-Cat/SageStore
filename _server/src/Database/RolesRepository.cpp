@@ -1,5 +1,5 @@
 #include "RolesRepository.hpp"
-#include "SpdlogConfig.hpp" // Include your logging configuration if necessary
+#include "SpdlogConfig.hpp"
 
 RolesRepository::RolesRepository(std::shared_ptr<DatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
@@ -17,27 +17,27 @@ void RolesRepository::add(const Role &entity)
     SPDLOG_TRACE("RolesRepository::add");
 
     // id is autoincremented
-    executePrepared("INSERT INTO Roles (Name) VALUES (?);",
+    executePrepared("INSERT INTO Roles (name) VALUES (?);",
                     {entity.name});
 }
 
 void RolesRepository::update(const Role &entity)
 {
     SPDLOG_TRACE("RolesRepository::update");
-    executePrepared("UPDATE Roles SET Name = ? WHERE RoleID = ?;",
+    executePrepared("UPDATE Roles SET name = ? WHERE id = ?;",
                     {entity.name, entity.id});
 }
 
 void RolesRepository::deleteResource(const std::string &id)
 {
     SPDLOG_TRACE("RolesRepository::deleteResource | id = {}", id);
-    executePrepared("DELETE FROM Roles WHERE RoleID = ?;", {id});
+    executePrepared("DELETE FROM Roles WHERE id = ?;", {id});
 }
 
 std::optional<Role> RolesRepository::getById(const std::string &id) const
 {
     SPDLOG_TRACE("RolesRepository::getById | id = {}", id);
-    m_dbManager->prepareStatement("SELECT RoleID, Name FROM Roles WHERE RoleID = ?;");
+    m_dbManager->prepareStatement("SELECT id, name FROM Roles WHERE id = ?;");
     m_dbManager->bind(1, id);
     if (m_dbManager->step())
     {
@@ -53,7 +53,7 @@ std::vector<Role> RolesRepository::getAll() const
 {
     SPDLOG_TRACE("RolesRepository::getAll");
     std::vector<Role> roles;
-    m_dbManager->prepareStatement("SELECT RoleID, Name FROM Roles;");
+    m_dbManager->prepareStatement("SELECT id, name FROM Roles;");
     while (m_dbManager->step())
     {
         if (auto role = roleFromCurrentRow())

@@ -1,24 +1,44 @@
 #include "DatabaseManager.hpp"
 
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <filesystem>
+
 #include "ServerException.hpp"
 
 #include "SpdlogConfig.hpp"
 
-DatabaseManager::DatabaseManager(std::string_view dbPath)
+DatabaseManager::DatabaseManager(std::string_view dbPath, std::string_view createDatabaseSqlPath)
     : m_dbPath(dbPath),
+      m_createDatabaseSqlPath(createDatabaseSqlPath),
       m_db(nullptr, sqlite3_close),
       m_stmt(nullptr, sqlite3_finalize)
 {
     SPDLOG_TRACE("DatabaseManager::DatabaseManager");
+    open();
 }
 
 bool DatabaseManager::open()
 {
-    SPDLOG_TRACE("DatabaseManager::open");
+    SPDLOG_INFO("DatabaseManager::open | path: {}", m_dbPath);
+
+    // Check if database file already exists
+    bool dbExists = std::filesystem::exists(m_dbPath);
+
     sqlite3 *dbTemp = nullptr;
     auto resultCode = sqlite3_open(m_dbPath.c_str(), &dbTemp);
     m_db.reset(dbTemp);
+
     checkSQLiteResult(resultCode, "Open database");
+
+    // If the database did not exist before, initialize schema
+    if (!dbExists)
+    {
+        SPDLOG_INFO("DatabaseManager::open | Database was not found | Creating new database");
+        initializeDatabaseSchema();
+    }
+
     return resultCode == SQLITE_OK;
 }
 
@@ -62,11 +82,11 @@ bool DatabaseManager::step()
     int resultCode = sqlite3_step(m_stmt.get());
     if (resultCode == SQLITE_ROW)
     {
-        return true; // More rows available
+        return true;
     }
     else if (resultCode == SQLITE_DONE)
     {
-        return false; // No more rows
+        return false;
     }
     else
     {
@@ -94,6 +114,30 @@ int DatabaseManager::columnInt(int index)
 void DatabaseManager::finalizeStatement()
 {
     m_stmt.reset();
+}
+
+void DatabaseManager::initializeDatabaseSchema()
+{
+    SPDLOG_TRACE("DatabaseManager::initializeDatabaseSchema | using sql script: {}", m_createDatabaseSqlPath);
+    std::ifstream sqlFile(m_createDatabaseSqlPath);
+    if (!sqlFile.is_open())
+    {
+        SPDLOG_ERROR("Could not open SQL script file: {}", m_createDatabaseSqlPath);
+        throw ServerException("DatabaseManager", "Could not open SQL script file");
+    }
+
+    std::stringstream sqlStream;
+    sqlStream << sqlFile.rdbuf();
+    std::string sqlCommands = sqlStream.str();
+
+    sqlFile.close();
+
+    // Execute the SQL commands from the file
+    char *errMsg = nullptr;
+    int resultCode = sqlite3_exec(m_db.get(), sqlCommands.c_str(), nullptr, nullptr, &errMsg);
+    std::unique_ptr<char, decltype(&sqlite3_free)> errMsgPtr(errMsg, sqlite3_free);
+
+    checkSQLiteResult(resultCode, "Initialize database schema");
 }
 
 void DatabaseManager::checkSQLiteResult(int resultCode, std::string_view context)

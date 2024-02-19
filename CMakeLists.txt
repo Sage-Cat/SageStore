@@ -30,19 +30,14 @@ if(BUILD_SERVER OR BUILD_SERVER_TESTS)
 endif()
 
 # Documentation (if needed)
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-    add_custom_target(
-        doc ALL
-        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Generating API documentation with Doxygen"
-        VERBATIM
-    )
-endif()
+# find_package(Doxygen)
+# if(DOXYGEN_FOUND)
+#     add_custom_target(
+#         doc ALL
+#         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+#         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#         COMMENT "Generating API documentation with Doxygen"
+#         VERBATIM
+#     )
+# endif()
 
-# Compiler flags for GCC/MinGW
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(${CLIENT_NAME} PRIVATE -Wall -Wextra -Werror)
-    target_compile_options(${SERVER_NAME} PRIVATE -Wall -Wextra -Werror)
-endif()

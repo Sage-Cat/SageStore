@@ -3,149 +3,140 @@
 !define entity(x) class x << (E,#D5E1DD) >>
 
 entity("Roles") {
-  + RoleID : int
+  + id : int
   --
-  Name : string
+  name : string
 }
 
 entity("Users") {
-  + UserID : int
+  + id : int
   --
-  Username : string
-  Password : string
-  RoleID : int
+  username : string
+  password : string
+  roleId : int
 }
 
-entity("UserLogs") {
-  + LogID : int
+entity("Logs") {
+  + id : int
   --
-  UserID : int
-  Action : string
-  Timestamp : datetime
+  userId : int
+  action : string
+  timestamp : datetime
 }
 
 entity("Contacts") {
-  + ContactID : int
+  + id : int
   --
-  Name : string
-  Type : string
-  Email : string
-  Phone : string
+  name : string
+  type : string
+  email : string
+  phone : string
 }
 
 entity("ContactInfo") {
-  + ContactInfoID : int
+  + id : int
   --
-  ContactID : int
-  Name : string
-  Value : string
+  contactID : int
+  name : string
+  value : string
 }
 
 entity("Employees") {
-  + EmployeeID : int
+  + id : int
   --
-  Name : string
-  Number : string
-  Email : string
-  Address : string
+  name : string
+  number : string
+  email : string
+  address : string
 }
 
 entity("Suppliers") {
-  + SupplierID : int
+  + id : int
   --
-  Name : string
-  Number : string
-  Email : string
-  Address : string
+  name : string
+  number : string
+  email : string
+  address : string
 }
 
-entity("SupplierInfo") {
-  + SupplierInfoID : int
+entity("SuppliersProductInfo") {
+  + id : int
   --
-  SupplierID : int
-  Code : string
-  Notes : string
+  supplierID : int
+  productTypeId : int
+  code : string
 }
 
 entity("ProductInfo") {
-  + ProductrInfoID : int
+  + id : int
   --
-  ProductTypeID : int
-  Name : string
-  Value : string
+  productTypeId : int
+  name : string
+  value : string
 }
 
 entity("ProductType") {
-  + ProductTypeID : int
+  + id : int
   --
-  Code : string
-  Barcode : string
-  UKT_ZED : string
-  Name : string
-  Description : string
-  Category : string
-  LastPrice : float
-  Unit : string
-  IsImported : bool
-}
-
-entity("ProductTypeSupplierInfo") {
-  + ProductTypeSupplierInfoID : int
-  --
-  SupplierID : int
-  ProductTypeID : int
-  ProductCode : string
+  code : string
+  barcode : string
+  ukt_zed : string
+  name : string
+  description : string
+  category : string
+  lastPrice : float
+  unit : string
+  isImported : bool
 }
 
 entity("Inventory") {
-  + InventoryID : int
+  + id : int
   --
-  ProductTypeID : int
-  QuantityAvailable : int
-  EmployeeID : int
+  productTypeId : int
+  quantityAvailable : int
+  employeeId : int
 }
 
 entity("SaleOrders") {
-  + OrderID : int
+  + id : int
   --
-  Date : datetime
-  UserID : int
-  ContactID : int
-  EmployeeID : int
-  Status : string
-  OrderInfoID : int
+  date : datetime
+  userId : int
+  contactId : int
+  employeeId : int
+  status : string
+  orderInfoId : int
 }
 
 entity("OrderInfo") {
-  + OrderInfoID : int
+  + id : int
   --
-  OrderID : int
-  ProductTypeID : int
-  Quantity : int
-  Price : float
+  orderId : int
+  productTypeId : int
+  quantity : int
+  price : float
 }
 
 entity("PurchaseOrders") {
-  + PurchaseOrderID : int
+  + id : int
   --
-  Date : datetime
-  UserID : int
-  SupplierID : int
-  Status : string
-  OrderInfoID : int
+  date : datetime
+  userId : int
+  supplierId : int
+  status : string
+  orderInfoId : int
 }
 
 Roles "1" -- "0..*" Users : asigned to
-Users "1" -- "0..*" UserLogs : has
+Users "1" -- "0..*" Logs : has
 Users "1" -- "0..*" SaleOrders : create
 Users "1" -- "0..*" PurchaseOrders : create
 Employees "1" -- "0..*" Inventory : own
 Contacts "1" -- "0..*" ContactInfo : has
 Contacts "1" -- "0..*" SaleOrders : buy
 ProductType "1" -- "0..*" ProductInfo
-ProductType "1" -- "0..*" SupplierInfo
-Suppliers "1" -- "0..*" SupplierInfo
-ProductType "1" -- "0..*" ProductTypeSupplierInfo : has
+ProductType "1" -- "0..*" SuppliersProductInfo
+Suppliers "1" -- "0..*" SuppliersProductInfo
 ProductType "1" -- "0..*" Inventory : stored_in
 ProductType "1" -- "0..*" OrderInfo : involved_in
 SaleOrders "1" -- "0..*" OrderInfo : consists_of

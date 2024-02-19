@@ -18,7 +18,7 @@ SageStoreServer::SageStoreServer(RepositoryManager &repositoryManager,
 
 void SageStoreServer::run()
 {
-    SPDLOG_TRACE("SageStoreServer::~run");
+    SPDLOG_TRACE("SageStoreServer::run");
     try
     {
         m_httpServer.run();

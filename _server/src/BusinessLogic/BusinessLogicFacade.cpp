@@ -35,7 +35,7 @@ void BusinessLogicFacade::executeTask(RequestData requestData, BusinessLogicCall
     }
     catch (const ServerException &ex)
     {
-        responseData.dataset[Keys::_ERROR] = {ex.what(), ex.componentName()};
+        responseData.dataset[Keys::_ERROR] = {ex.componentName(), ex.what()};
     }
     catch (const std::exception &ex)
     {

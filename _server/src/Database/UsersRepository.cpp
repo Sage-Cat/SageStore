@@ -1,5 +1,4 @@
 #include "UsersRepository.hpp"
-
 #include "SpdlogConfig.hpp"
 
 UsersRepository::UsersRepository(std::shared_ptr<DatabaseManager> dbManager)
@@ -18,28 +17,37 @@ void UsersRepository::add(const User &entity)
     SPDLOG_TRACE("UsersRepository::add");
 
     // id is autoincremented
-    executePrepared("INSERT INTO Users (Username, Password, RoleID) VALUES (?, ?, ?);",
-                    {entity.username, entity.password, entity.roleId});
+    if (entity.roleId.empty())
+    {
+        // set roleId default
+        executePrepared("INSERT INTO Users (username, password) VALUES (?, ?);",
+                        {entity.username, entity.password});
+    }
+    else
+    {
+        executePrepared("INSERT INTO Users (username, password, roleId) VALUES (?, ?, ?);",
+                        {entity.username, entity.password, entity.roleId});
+    }
 }
 
 void UsersRepository::update(const User &entity)
 {
     SPDLOG_TRACE("UsersRepository::update");
-    executePrepared("UPDATE Users SET Username = ?, Password = ?, RoleID = ? WHERE UserID = ?;",
+    executePrepared("UPDATE Users SET username = ?, password = ?, roleId = ? WHERE id = ?;",
                     {entity.username, entity.password, entity.roleId, entity.id});
 }
 
 void UsersRepository::deleteResource(const std::string &id)
 {
     SPDLOG_TRACE("UsersRepository::deleteResource | id = {}", id);
-    executePrepared("DELETE FROM Users WHERE UserID = ?;", {id});
+    executePrepared("DELETE FROM Users WHERE id = ?;", {id});
 }
 
 std::optional<User> UsersRepository::getById(const std::string &id) const
 {
     SPDLOG_TRACE("UsersRepository::getById | id = {}", id);
 
-    m_dbManager->prepareStatement("SELECT UserID, Username, Password, RoleID FROM Users WHERE UserID = ?;");
+    m_dbManager->prepareStatement("SELECT id, username, password, roleId FROM Users WHERE id = ?;");
     m_dbManager->bind(1, id);
 
     if (m_dbManager->step())
@@ -57,7 +65,7 @@ std::vector<User> UsersRepository::getAll() const
 {
     SPDLOG_TRACE("UsersRepository::getAll");
     std::vector<User> users;
-    m_dbManager->prepareStatement("SELECT UserID, Username, Password, RoleID FROM Users;");
+    m_dbManager->prepareStatement("SELECT id, username, password, roleId FROM Users;");
     while (m_dbManager->step())
     {
         if (auto user = userFromCurrentRow())
@@ -73,7 +81,7 @@ std::optional<User> UsersRepository::getByUsername(const std::string &username) 
 {
     SPDLOG_TRACE("UsersRepository::getUserByUsername | username = {}", username);
 
-    m_dbManager->prepareStatement("SELECT UserID, Username, Password, RoleID FROM Users WHERE Username = ?;");
+    m_dbManager->prepareStatement("SELECT id, username, password, roleId FROM Users WHERE username = ?;");
     m_dbManager->bind(1, username);
 
     if (m_dbManager->step())

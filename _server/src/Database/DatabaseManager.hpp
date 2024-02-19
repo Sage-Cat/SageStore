@@ -9,7 +9,7 @@
 class DatabaseManager
 {
 public:
-    explicit DatabaseManager(std::string_view dbPath);
+    explicit DatabaseManager(std::string_view dbPath, std::string_view createDatabaseSqlPath);
     ~DatabaseManager() = default;
 
     bool open();
@@ -24,10 +24,12 @@ public:
     void finalizeStatement();
 
 private:
+    void initializeDatabaseSchema();
     void checkSQLiteResult(int resultCode, std::string_view context);
 
 private:
     std::string m_dbPath;
+    std::string m_createDatabaseSqlPath;
     std::unique_ptr<sqlite3, decltype(&sqlite3_close)> m_db{nullptr, sqlite3_close};
     std::unique_ptr<sqlite3_stmt, decltype(&sqlite3_finalize)> m_stmt{nullptr, sqlite3_finalize};
 };
