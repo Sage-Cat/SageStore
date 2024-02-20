@@ -15,7 +15,6 @@ public:
     void run();
 
 private:
-    // Store references to the injected dependencies.
     RepositoryManager &m_repositoryManager;
     BusinessLogicFacade &m_businessLogicFacade;
     HttpServer &m_httpServer;
