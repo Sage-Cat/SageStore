@@ -44,6 +44,7 @@
       - [Result](#result)
       - [User](#user)
       - [Role](#role)
+      - [](#)
   - [REST API](#rest-api)
     - [Config](#config)
     - [Endpoints](#endpoints)
@@ -53,14 +54,8 @@
       - [Management](#management)
       - [Analytics](#analytics)
       - [Logs](#logs)
-  - [Practices and Methodologies](#practices-and-methodologies)
-  - [Development Phase](#development-phase)
-    - [Environment Setup](#environment-setup)
   - [Deployment Phase](#deployment-phase)
-    - [Preparation](#preparation)
-  - [Post-launch](#post-launch)
   - [Executive Summary](#executive-summary)
-  - [Risk Management](#risk-management)
   - [Quality Assurance Plans](#quality-assurance-plans)
     - [Testing Phases](#testing-phases)
   - [Compliance and Regulations](#compliance-and-regulations)
@@ -333,6 +328,8 @@ If error is empty, it means that operation was successful.
 | id   | { "0" }             |
 | name | { "Administrator" } |
 
+####
+
 ## REST API
 
 Below you could find spesification for different RESTful API request-response. 
@@ -429,40 +426,13 @@ About arrays: Request or Response is array of entities if it's specified as `arr
 | `PUT`    | `/logs/{logId}` | Log data | Edited log's id | Edit a specific log   |
 | `DELETE` | `/logs/{logId}` | -        | Result          | Delete a specific log |
 
-
-## Practices and Methodologies
-
-Will be soon
-
-## Development Phase
-
-### Environment Setup
-
-- Prepare the development, staging, and production environments.
-
-Will be soon
-
 ## Deployment Phase
 
-### Preparation
-
-- Conduct a final full-scale test.
-
-Will be soon
-
-## Post-launch
-
-- Performance Tuning
-
-Will be soon
+Still in development
 
 ## Executive Summary
 
-The aim of this project is to develop a comprehensive software solution addressing varied modules including Sales, Inventory, and Analytics.
-
-## Risk Management
-
-Will be soon
+The aim of this project is to develop a comprehensive software solution for small Enterprises, that are specialized on selling goods (like shops).
 
 ## Quality Assurance Plans
 
@@ -484,4 +454,5 @@ Will be soon
 | 09/10/2023 | 1.3     | Created Client and Server base Architectural Designs              | Pavlenko Volodymyr |
 | 09/10/2023 | 1.4     | Created REST API design. Updated Server schema                    | Pavlenko Volodymyr |
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
-| 2/04/2024  | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
+| 04/02/2024 | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
+| 20/02/2024 | 3.1     | REST revision. Finishing docs structure                           | Pavlenko Volodymyr |

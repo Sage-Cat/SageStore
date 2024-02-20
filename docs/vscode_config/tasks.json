@@ -17,7 +17,7 @@
   ],
   "tasks": [
     {
-      "label": "clean-build-folder",
+      "label": "remove-build-folder",
       "type": "shell",
       "command": "powershell.exe",
       "args": [
@@ -64,10 +64,10 @@
       "problemMatcher": []
     },
     {
-      "label": "clean-and-rebuild",
+      "label": "clean-rebuild",
       "dependsOrder": "sequence",
       "dependsOn": [
-        "clean-build-folder",
+        "remove-build-folder",
         "conan-install",
         "cmake-configure-debug",
         "cmake-build-debug"

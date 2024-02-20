@@ -8,34 +8,30 @@ package "SageStore Server" {
     [Serializers] as S 
     [BusinessLogicFacade] as BLF 
     [BusinessModules] as BM 
-    [Mediators] as M 
+    [RepositoriesManager] as RM
     [DatabaseManager] as DM
     [Repositories] as R  
 
     SSS -down-> HS 
     SSS -down-> BLF 
-    SSS -down-> DM
+    SSS -down-> RM
 
-    HS -right-> BLF : "executeTask"
-    HS <-right- BLF : "callback"
+    HS -down-> HT
+    HT -down-> S 
 
-    HS "1"-down->"1..*" HT
-    HT "1"-down->"1" S 
+    BLF -down-> BM
+    HT <.> BLF : "request-response"
 
-    BLF "1"-down->"1..*" BM
+    RM -down-> R 
+    R -down-> DM
 
-    DM "1"-down->"1..*" R 
+    BM .> RM : "read/write"
 
-    BM -right-> M
-    BM <-right- M 
-    M -right-> R 
-    M <-right- R
+    note "Repository Pattern" as RepoNote1
+    RepoNote1 .. R
 
-    note "Mediator Pattern" as MediatorNote
-    MediatorNote .. M
-
-    note "Repository Pattern" as RepoNote
-    RepoNote .. R
+    note "Facade Pattern" as RepoNote2
+    RepoNote2 .. BLF
 }
 
 @enduml
