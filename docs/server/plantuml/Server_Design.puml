@@ -25,7 +25,7 @@ package "SageStore Server" {
     RM -down-> R 
     R -down-> DM
 
-    BM .> RM : "read/write"
+    BM .> R : "read/write"
 
     note "Repository Pattern" as RepoNote1
     RepoNote1 .. R

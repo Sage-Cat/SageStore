@@ -3,8 +3,8 @@
 ## Comprehensive Documentation for Design, Development, and Deployment Phases
 
 - **Prepared by:** Volodymyr Pavlenko
-- **Date:** October 10, 2023
-- **Version:** 2.0
+- **Date:** February 20, 2024
+- **Version:** 3.1
 
 ---
 
@@ -17,12 +17,12 @@
   - [Project Time Borders](#project-time-borders)
   - [Project Objectives](#project-objectives)
   - [Timeline and Milestones](#timeline-and-milestones)
+  - [Tech Stack](#tech-stack)
+    - [Tools and Libraries](#tools-and-libraries)
   - [Feature Breakdown](#feature-breakdown)
   - [User Stories](#user-stories)
     - [User Stories for Administrator](#user-stories-for-administrator)
     - [User Stories for User](#user-stories-for-user)
-  - [Tech Stack](#tech-stack)
-    - [Tools and Libraries](#tools-and-libraries)
   - [Database](#database)
     - [Table Name: Roles](#table-name-roles)
     - [Database schema](#database-schema)
@@ -105,6 +105,28 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 ---
 
+## Tech Stack
+
+### Tools and Libraries
+
+| Category             | Tool/Library            | Reason/Notes                                                   |
+| -------------------- | ----------------------- | -------------------------------------------------------------- |
+| Programming Language | C++20                   | Modern C++ standard, good support for features and performance |
+| GUI Framework        | Qt 6.5                  | Rich set of features, cross-platform support                   |
+| Database             | SQLite                  | Lightweight, sufficient for small-to-medium projects           |
+| Documentation        | Doxygen                 | Generate code documentation                                    |
+| Profiling            | gprof, orbit            | To be decided based on performance needs                       |
+| Data Serialization   | nlohmann/json           | Easy to use, well-maintained                                   |
+| Concurrency          | Boost.Asio/QtConcurrent | Both are good options depending on specific needs              |
+| Installer            | NSIS/Inno Setup         | Script-driven, customizable                                    |
+| Dependency Manager   | Conan                   | Popular in C++, cross-platform support                         |
+| Version Control      | Git/Gitlab              | Industry standard for source code management                   |
+| IDE                  | Qt Creator/VS Code      | Qt Creator for GUI, VS Code for general coding (Optional)      |
+| Communication        | Telegram                | For project updates, client communication                      |
+| CI/CD                | Jenkins                 | Learning purpose, automating build and test processes          |
+
+---
+
 ## Feature Breakdown
 
 | **Module**     | **Submodule**            | **Functionality**                                     | **Additional Features**                                                                    |
@@ -169,46 +191,26 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - As a User, I want to add, view, edit, and delete employee, supplier, and customer profiles to manage relationships.
 - As a User, I want to view customer and user activity logs to monitor system usage.
 
-## Tech Stack
-
-### Tools and Libraries
-
-| Category             | Tool/Library       | Reason/Notes                                                   |
-| -------------------- | ------------------ | -------------------------------------------------------------- |
-| Programming Language | C++20              | Modern C++ standard, good support for features and performance |
-| GUI Framework        | Qt 6.5             | Rich set of features, cross-platform support                   |
-| Database             | SQLite             | Lightweight, sufficient for small-to-medium projects           |
-| Documentation        | Doxygen            | Generate code documentation                                    |
-| Profiling            | -                  | To be decided based on performance needs                       |
-| Data Serialization   | nlohmann/json      | Easy to use, well-maintained                                   |
-| Concurrency          | C++20/QtConcurrent | Both are good options depending on specific needs              |
-| Installer            | NSIS/Inno Setup    | Script-driven, customizable                                    |
-| Dependency Manager   | Conan              | Popular in C++, cross-platform support                         |
-| Version Control      | Git/Gitlab         | Industry standard for source code management                   |
-| IDE                  | Qt Creator/VS Code | Qt Creator for GUI, VS Code for general coding (Optional)      |
-| Communication        | Telegram           | For project updates, client communication                      |
-| CI/CD                | Jenkins            | Learning purpose, automating build and test processes          |
-
 ## Database
 
 ### Table Name: Roles
 
-| Table Name              | Fields                                                            | Primary Key               | Foreign Key                          | Notes                                |
-| ----------------------- | ----------------------------------------------------------------- | ------------------------- | ------------------------------------ | ------------------------------------ |
-| Roles                   | RoleID, Name                                                      | RoleID                    | -                                    | User roles for access control        |
-| Users                   | UserID, Username, Password, RoleID                                | UserID                    | RoleID                               | User information                     |
-| UserLogs                | LogID, UserID, Action, Timestamp                                  | LogID                     | UserID                               |
-| Contacts                | ContactID, Name, Type, Email, Phone                               | ContactID                 | -                                    | Consolidates Customers and Suppliers |
-| ContactInfo             | ContactInfoID, ContactID, Name, Value                             | ContactInfoID             | ContactID                            |
-| Employees               | EmployeeID, Name, Number, Email, Address                          | EmployeeID                | -                                    | Employee details                     |
-| Suppliers               | SupplierID, Name, Number, Email, Address                          | SupplierID                | -                                    | Supplier details                     |
-| Companies               | CompanyID, Name, Number, Email, Address                           | SupplierID                | -                                    | Supplier details                     |
-| ProductType             | ProductTypeID, CatalogueCode, Barcode, ...                        | ProductTypeID             | -                                    | Product type details                 |
-| ProductTypeSupplierInfo | ProductTypeSupplierInfoID, ProductTypeID, ...                     | ProductTypeSupplierInfoID | SupplierID                           | Supplier info for product types      |
-| Inventory               | InventoryID, ProductTypeID, QuantityAvailable, EmployeeID         | InventoryID               | ProductTypeID, EmployeeID, CompanyID | Current products inventory           |
-| SaleOrders              | OrderID, Date, UserID, ContactID, EmployeeID, Status, OrderInfoID | OrderID                   | UserID, CustomerID, OrderInfoID      | Manages sales orders                 |
-| OrderInfo               | OrderInfoID, OrderID, ProductTypeID, Quantity, Price              | OrderInfoID               | OrderID, ProductTypeID               | Details of each order                |
-| PurchaseOrders          | PurchaseOrderID, Date, UserID, SupplierID, Status, OrderInfoID    | PurchaseOrderID           | UserID, SupplierID, OrderInfoID      | Manages purchase orders              |
+| Table Name           | Fields                                                                                               | Primary Key | Foreign Key               | Notes                                |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | ----------- | ------------------------- | ------------------------------------ |
+| Roles                | id (int), name (string)                                                                              | id          | -                         | User roles for access control        |
+| Users                | id (int), username (string), password (string), roleId (int)                                         | id          | roleId                    | User information                     |
+| Logs                 | id (int), userId (int), action (string), timestamp (datetime)                                        | id          | userId                    | User logs                            |
+| Contacts             | id (int), name (string), type (string), email (string), phone (string)                               | id          | -                         | Consolidates customers and suppliers |
+| ContactInfo          | id (int), contactID (int), name (string), value (string)                                             | id          | contactID                 |
+| Employees            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Employee details                     |
+| Suppliers            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Supplier details                     |
+| SuppliersProductInfo | id (int), supplierID (int), productTypeId (int), code (string)                                       | id          | supplierID                | Supplier info for product types      |
+| ProductInfo          | id (int), productTypeId (int), name (string), value (string)                                         | id          | productTypeId             |
+| ProductType          | id (int), code (string), barcode (string), ukt_zed (string), name (string), description (string),... | id          | -                         | Product type details                 |
+| Inventory            | id (int), productTypeId (int), quantityAvailable (int), employeeId (int)                             | id          | productTypeId, employeeId | Current products inventory           |
+| SaleOrders           | id (int), date (datetime), userId (int), contactId (int), employeeId (int), status (string),...      | id          | userId, contactId         | Manages sales orders                 |
+| OrderInfo            | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
+| PurchaseOrders       | id (int), date (datetime), userId (int), supplierId (int), status (string),...                       | id          | userId, supplierId        | Manages purchase orders              |
 
 ### Database schema
 
