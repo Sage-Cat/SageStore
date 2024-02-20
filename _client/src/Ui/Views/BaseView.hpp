@@ -7,7 +7,7 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
-#include "Views/ViewStyles.hpp"
+#include "Ui/Views/ViewStyles.hpp"
 
 class BaseView : public QWidget
 {

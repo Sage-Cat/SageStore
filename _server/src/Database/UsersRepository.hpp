@@ -6,7 +6,7 @@
 
 #include "IRepository.hpp"
 #include "DatabaseManager.hpp"
-#include "Entities\User.hpp"
+#include "Entities/User.hpp"
 
 class UsersRepository : public IRepository<User>
 {

@@ -1,5 +1,5 @@
 #include "BaseView.hpp"
-#include "Views/ViewStyles.hpp"
+#include "Ui/Views/ViewStyles.hpp"
 
 BaseView::BaseView(QWidget *parent) : QWidget(parent)
 {

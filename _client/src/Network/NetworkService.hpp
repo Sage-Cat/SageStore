@@ -14,9 +14,6 @@
 /**
  * @class NetworkService
  * @brief Manages network operations using Qt's network capabilities.
- *
- * This class handles all network operations and data serialization
- * using a provided IDataSerializer implementation.
  */
 class NetworkService : public QObject
 {
@@ -44,13 +41,13 @@ public:
      * @brief Updates the API base URL used for network requests.
      * @param apiUrl The new API base URL.
      */
-    void updateApiUrl(const QString &apiUrl);
+    void setApiUrl(const QString &apiUrl);
 
     /**
      * @brief Updates serializer
      * @param unique unique ptr to IDataSerializer object
      */
-    void updateSerializer(std::unique_ptr<IDataSerializer> serializer);
+    void setSerializer(std::unique_ptr<IDataSerializer> serializer);
 
 signals:
     /**

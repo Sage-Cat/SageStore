@@ -63,13 +63,13 @@ void NetworkService::onNetworkReply(QString endpoint, QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void NetworkService::updateApiUrl(const QString &apiUrl)
+void NetworkService::setApiUrl(const QString &apiUrl)
 {
-    SPDLOG_TRACE("NetworkService::updateApiUrl");
+    SPDLOG_TRACE("NetworkService::setApiUrl");
     m_apiUrl = apiUrl;
 }
 
-void NetworkService::updateSerializer(std::unique_ptr<IDataSerializer> serializer)
+void NetworkService::setSerializer(std::unique_ptr<IDataSerializer> serializer)
 {
     m_serializer = std::move(serializer);
 }

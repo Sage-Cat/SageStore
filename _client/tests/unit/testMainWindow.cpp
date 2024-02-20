@@ -2,7 +2,7 @@
 
 #include <QApplication>
 
-#include "MainWindow.hpp"
+#include "Ui/MainWindow.hpp"
 
 #include "SpdlogConfig.hpp"
 

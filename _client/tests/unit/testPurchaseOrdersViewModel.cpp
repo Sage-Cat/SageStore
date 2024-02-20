@@ -3,7 +3,7 @@
 
 #include <QApplication>
 
-#include "ViewModels/PurchaseOrdersViewModel.hpp"
+#include "Ui/ViewModels/PurchaseOrdersViewModel.hpp"
 #include "SpdlogConfig.hpp"
 
 class PurchaseOrdersViewModelTest : public ::testing::Test

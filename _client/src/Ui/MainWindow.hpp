@@ -6,10 +6,10 @@
 #include <QMenuBar>
 #include <QMenu>
 
-#include "Views/Actions.hpp"
-#include "Views/ViewStyles.hpp"
+#include "Ui/Views/Actions.hpp"
+#include "Ui/Views/ViewStyles.hpp"
 
-class MainWindow : public QMainWindow 
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -28,7 +28,7 @@ protected:
     // override resizeEvent
     void resizeEvent(QResizeEvent *event) override;
 
-    QMenu* createModuleMenu(const QString& menuTitle, const std::vector<Actions::Types>& names);
+    QMenu *createModuleMenu(const QString &menuTitle, const std::vector<Actions::Types> &names);
 
 private:
     // stack view
