@@ -6,6 +6,7 @@
 #include "DataTypes.hpp"
 
 class NetworkService;
+enum class Method;
 
 /**
  * @class ApiManager
@@ -15,12 +16,13 @@ class ApiManager : public QObject
 {
     Q_OBJECT
 
-    using ResponseHandler = std::function<void(const Dataset &)>;
+    using ResponseHandler = std::function<void(Method method, const Dataset &)>;
 
 public:
-    ApiManager(QString serverApiUrl);
+    ApiManager(NetworkService &networkService);
     ~ApiManager();
 
+public slots: // for UI
     void loginUser(const QString &username, const QString &password);
     void registerUser(const QString &username, const QString &password);
 
@@ -36,15 +38,17 @@ signals:
     // Error handling
     void errorOccurred(const QString &errorMessage);
 
-private slots:
-    void handleResponse(const QString &endpoint, const Dataset &dataset);
-    void handleError(const QString &errorMessage);
-
-private: // handlers for server's response
-    void handleLoginResponse(const Dataset &dataset);
-    void handleRegistrationResponse(const Dataset &dataset);
+private slots: // for NetworkService
+    void handleResponse(const QString &endpoint, Method method, const Dataset &dataset);
 
 private:
-    NetworkService *m_networkService;
+    void handleError(const QString &errorMessage);
+
+    // specific handlers
+    void handleLoginResponse(Method method, const Dataset &dataset);
+    void handleRegistrationResponse(Method method, const Dataset &dataset);
+
+private:
+    NetworkService &m_networkService;
     QMap<QString, ResponseHandler> m_responseHandlers;
 };

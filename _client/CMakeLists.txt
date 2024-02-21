@@ -2,6 +2,7 @@ project(${CLIENT_NAME})
 
 set(CLIENT_SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(CLIENT_BUILD_DIR "${CMAKE_BINARY_DIR}/_client")
+set(CLIENT_TESTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -17,11 +18,13 @@ find_package(Qt6Quick REQUIRED)
 find_package(spdlog REQUIRED)
 
 set(NETWORK_SOURCES
+    ${CLIENT_SOURCES_DIR}/Network/ApiManager.cpp
     ${CLIENT_SOURCES_DIR}/Network/NetworkService.cpp
     ${CLIENT_SOURCES_DIR}/Network/JsonSerializer.cpp
 )
 
 set(UI_SOURCES
+    ${CLIENT_SOURCES_DIR}/Ui/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/Ui/MainWindow.cpp
 
     # Models
@@ -45,8 +48,6 @@ set(UI_SOURCES
 set(MAIN_SOURCES
     ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
-    ${CLIENT_SOURCES_DIR}/UiManager.cpp
-    ${CLIENT_SOURCES_DIR}/ApiManager.cpp
     ${CLIENT_SOURCES_DIR}/Utils.cpp
 )
 
@@ -60,7 +61,7 @@ set(ALL_CLIENT_SOURCES
 # Adding main code and tests
 add_subdirectory(src)
 
-if(BUILD_CLIENT_TESTS)
+if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()

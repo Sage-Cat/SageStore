@@ -2,7 +2,7 @@
 set(RESOURCE_FILES "")
 
 # Create client executable
-add_executable(${CLIENT_NAME} ${ALL_CLIENT_SOURCES} ${RESOURCE_FILES} ${COMMON_SOURCES})
+add_executable(${CLIENT_NAME} ${ALL_CLIENT_SOURCES} ${RESOURCE_FILES})
 
 # Include directories
 target_include_directories(${CLIENT_NAME} PUBLIC ${CLIENT_SOURCES_DIR})

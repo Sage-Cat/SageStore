@@ -7,7 +7,7 @@ NetworkService::NetworkService(QObject *parent)
     SPDLOG_TRACE("NetworkService::NetworkService");
 }
 
-void NetworkService::sendRequest(QString endpoint, QNetworkAccessManager::Operation operation, const Dataset &dataset)
+void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset)
 {
     SPDLOG_TRACE("NetworkService::sendRequest");
 
@@ -25,12 +25,12 @@ void NetworkService::sendRequest(QString endpoint, QNetworkAccessManager::Operat
     QNetworkReply *reply = nullptr;
     const auto serializedData = m_serializer->serialize(dataset);
     SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT sent data: {}", serializedData.toStdString());
-    switch (operation)
+    switch (method)
     {
-    case QNetworkAccessManager::GetOperation:
+    case Method::GET:
         reply = m_manager->get(request);
         break;
-    case QNetworkAccessManager::PostOperation:
+    case Method::POST:
         reply = m_manager->post(request, serializedData);
         break;
     default:
@@ -40,12 +40,15 @@ void NetworkService::sendRequest(QString endpoint, QNetworkAccessManager::Operat
 
     if (reply)
     {
-        connect(reply, &QNetworkReply::finished, this, [this, endpoint = std::move(endpoint), reply]()
-                { this->onNetworkReply(std::move(endpoint), reply); });
+        connect(reply, &QNetworkReply::finished, this,
+                [this, endpoint = std::move(endpoint), method, reply]
+                {
+                    this->onNetworkReply(endpoint, method, reply);
+                });
     }
 }
 
-void NetworkService::onNetworkReply(QString endpoint, QNetworkReply *reply)
+void NetworkService::onNetworkReply(const QString &endpoint, Method method, QNetworkReply *reply)
 {
     SPDLOG_TRACE("NetworkService::onNetworkReply");
 
@@ -54,7 +57,7 @@ void NetworkService::onNetworkReply(QString endpoint, QNetworkReply *reply)
         QByteArray responseData = reply->readAll();
         SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT received data: {}", responseData.toStdString());
         Dataset dataset = m_serializer->deserialize(responseData);
-        emit responseReceived(endpoint, dataset);
+        emit responseReceived(endpoint, method, dataset);
     }
     else
     {

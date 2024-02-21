@@ -1,14 +1,19 @@
 #pragma once
 
+#include <concepts>
 #include <variant>
-
-#include <QLayout>
-#include <QWidget>
 #include <QVector>
+#include <QWidget>
+#include <QLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace Utils
 {
-    template <typename LayoutType>
-        requires std::is_base_of_v<QLayout, LayoutType>
+    template <typename T>
+    concept LayoutCompatible = std::is_base_of_v<QLayout, T>;
+
+    template <LayoutCompatible LayoutType>
     LayoutType *createLayout(QWidget *parent, const QVector<std::variant<QWidget *, QLayout *>> &items);
+
 } // namespace Utils

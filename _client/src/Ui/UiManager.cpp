@@ -1,6 +1,6 @@
 #include "UiManager.hpp"
 
-#include "ApiManager.hpp"
+#include "Network/ApiManager.hpp"
 
 #include "Ui/MainWindow.hpp"
 #include "Ui/Dialogs/DialogManager.hpp"

@@ -6,15 +6,14 @@
 
 #include "LoginDialog.hpp"
 #include "RegistrationDialog.hpp"
-#include "ApiManager.hpp"
+#include "Network/ApiManager.hpp"
 
 /**
  * @class DialogManager
  * This class manages all dialogs in client: initializes them
  * and control their behavior
  */
-class
-    DialogManager final : public QObject
+class DialogManager final : public QObject
 {
     Q_OBJECT
 

@@ -11,6 +11,14 @@
 #include "DataTypes.hpp"
 #include "IDataSerializer.hpp"
 
+enum class Method
+{
+    GET = QNetworkAccessManager::Operation::GetOperation,
+    POST = QNetworkAccessManager::Operation::PostOperation,
+    PUT = QNetworkAccessManager::Operation::PutOperation,
+    DELETE = QNetworkAccessManager::Operation::DeleteOperation
+};
+
 /**
  * @class NetworkService
  * @brief Manages network operations using Qt's network capabilities.
@@ -20,51 +28,20 @@ class NetworkService : public QObject
     Q_OBJECT
 
 public:
-    /**
-     * @brief Constructs a NetworkService object.
-     * @param parent Parent QObject, typically nullptr.
-     */
     explicit NetworkService(QObject *parent = nullptr);
-
-    /**
-     * @brief Sends a network request to a specific endpoint.
-     * @param endpoint The specific API endpoint for the request.
-     * @param operation Type of network operation (GET, POST, etc.).
-     * @param dataset Data to be sent in the request.
-     */
-    void sendRequest(
-        QString endpoint,
-        QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation,
-        const Dataset &dataset = Dataset());
-
-    /**
-     * @brief Updates the API base URL used for network requests.
-     * @param apiUrl The new API base URL.
-     */
+    void sendRequest(QString endpoint, Method method = Method::GET, const Dataset &dataset = Dataset());
     void setApiUrl(const QString &apiUrl);
-
-    /**
-     * @brief Updates serializer
-     * @param unique unique ptr to IDataSerializer object
-     */
     void setSerializer(std::unique_ptr<IDataSerializer> serializer);
 
 signals:
-    /**
-     * @brief Signal emitted with deserialized response data.
-     * @param dataset deserialized response data as a QString.
-     */
-    void responseReceived(const QString &endpoint, const Dataset &dataset);
+    void responseReceived(const QString &endpoint, Method method, const Dataset &dataset);
 
 private slots:
-    /**
-     * @brief Slot to handle network responses.
-     * @param reply Network reply object from the request.
-     */
-    void onNetworkReply(QString endpoint, QNetworkReply *reply);
+
+    void onNetworkReply(const QString &endpoint, Method method, QNetworkReply *reply);
 
 private:
-    std::unique_ptr<IDataSerializer> m_serializer; ///< Object for handling serialization.
-    QNetworkAccessManager *m_manager;              ///< Manager for network requests.
+    std::unique_ptr<IDataSerializer> m_serializer;
+    QNetworkAccessManager *m_manager;
     QString m_apiUrl;
 };
