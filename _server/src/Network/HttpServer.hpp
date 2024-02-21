@@ -10,7 +10,7 @@
  *
  * This class sets up a listening TCP socket on a specified address and port. It accepts incoming
  * connections and creates HttpTransaction objects for handling each connection, leveraging the
- * BusinessLogicFacade for processing requests.
+ * BusinessLogic for processing requests.
  */
 class HttpServer
 {
@@ -18,7 +18,7 @@ public:
     using ExecuteBusinessTaskCallback = std::function<void(RequestData, BusinessLogicCallback)>;
 
     /**
-     * @brief Constructs an HttpServer with a given address, port, and reference to BusinessLogicFacade.
+     * @brief Constructs an HttpServer with a given address, port, and reference to BusinessLogic.
      *
      * @param address The IP address on which the server will listen.
      * @param port The port number on which the server will listen.

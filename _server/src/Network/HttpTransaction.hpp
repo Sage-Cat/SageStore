@@ -13,6 +13,14 @@ class IDataSerializer;
  */
 class HttpTransaction : public std::enable_shared_from_this<HttpTransaction>
 {
+    enum EndpointSegments : size_t
+    {
+        Root,
+        Module,
+        Submodule,
+        ResourceId
+    };
+
 public:
     using PostBusinessTaskCallback = std::function<void(RequestData, BusinessLogicCallback)>;
 
@@ -30,6 +38,9 @@ private:
     void handle_request();
     void do_response(ResponseData data);
     void do_close();
+
+private:
+    std::vector<std::string> parseEndpoint(const std::string &endpoint) const;
 
 private:
     const unsigned long long m_id;

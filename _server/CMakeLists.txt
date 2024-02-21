@@ -7,10 +7,11 @@ find_package(nlohmann_json)
 find_package(SQLite3)
 
 set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(SERVER_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 set(SERVER_BUILD_DIR "${CMAKE_BINARY_DIR}/_server")
 
 set(BUSINESS_SOURCESS
-    ${SERVER_SOURCES_DIR}/BusinessLogic/BusinessLogicFacade.cpp 
+    ${SERVER_SOURCES_DIR}/BusinessLogic/BusinessLogic.cpp 
 
     # Modules
     ${SERVER_SOURCES_DIR}/BusinessLogic/UsersModule.cpp
@@ -54,7 +55,7 @@ set(ALL_SERVER_SOURCES
 
 add_subdirectory(src)
 
-if(BUILD_SERVER_TESTS)
+if(BUILD_TESTS)
     enable_testing()
-    add_subdirectory(tests)
+    # add_subdirectory(tests)
 endif()

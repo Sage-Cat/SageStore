@@ -3,25 +3,25 @@
 #include "Database/DatabaseManager.hpp"
 #include "Database/RepositoryManager.hpp"
 #include "Network/HttpServer.hpp"
-#include "BusinessLogic/BusinessLogicFacade.hpp"
+#include "BusinessLogic\BusinessLogic.hpp"
 
 #include "SpdlogConfig.hpp"
 
 int main()
 {
-    SpdlogConfig::init();
+    SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreServer started");
 
     const std::string SERVER_ADDRESS{"127.0.0.1"};
     const unsigned short SERVER_PORT{8001};
 
     RepositoryManager repositoryManager(std::make_shared<DatabaseManager>(DB_PATH, CREATE_DB_SQL_FILE_PATH));
-    BusinessLogicFacade businessLogicFacade(repositoryManager);
+    BusinessLogic businessLogicFacade(repositoryManager);
     HttpServer httpServer(
         SERVER_ADDRESS,
         SERVER_PORT,
         std::bind(
-            &BusinessLogicFacade::executeTask,
+            &BusinessLogic::executeTask,
             &businessLogicFacade,
             std::placeholders::_1,
             std::placeholders::_2));

@@ -1,5 +1,5 @@
 # Create server executable
-add_executable(${SERVER_NAME} ${ALL_SERVER_SOURCES} ${COMMON_SOURCES})
+add_executable(${SERVER_NAME} ${ALL_SERVER_SOURCES})
 
 # Include directories
 target_include_directories(${SERVER_NAME} PUBLIC ${SERVER_SOURCES_DIR})

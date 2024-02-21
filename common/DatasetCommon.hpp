@@ -2,19 +2,19 @@
 
 namespace Keys
 {
-    constexpr char _ERROR[] = "error";
+    inline constexpr char _ERROR[] = "error";
 
     namespace User
     {
-        constexpr char ID[] = "id";
-        constexpr char USERNAME[] = "username";
-        constexpr char PASSWORD[] = "password";
-        constexpr char ROLE_ID[] = "roleId";
+        inline constexpr char ID[] = "id";
+        inline constexpr char USERNAME[] = "username";
+        inline constexpr char PASSWORD[] = "password";
+        inline constexpr char ROLE_ID[] = "roleId";
     }
 
     namespace Role
     {
-        constexpr char ID[] = "id";
-        constexpr char NAME[] = "name";
+        inline constexpr char ID[] = "id";
+        inline constexpr char NAME[] = "name";
     }
 }

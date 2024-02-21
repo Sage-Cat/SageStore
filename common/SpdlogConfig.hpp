@@ -18,5 +18,10 @@ namespace SpdlogConfig
         Off = SPDLOG_LEVEL_OFF
     };
 
-    void init(LogLevel level = LogLevel::Trace);
+    template <LogLevel level>
+    inline void init()
+    {
+        spdlog::default_logger()->set_level(static_cast<spdlog::level::level_enum>(level));
+        spdlog::set_pattern("[%t] [%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
+    }
 }

@@ -1,8 +1,3 @@
-# Create a static library from the Client source files
-add_library(ServerTestLib STATIC ${ALL_SERVER_SOURCES} ${COMMON_SOURCES})
-target_include_directories(ServerTestLib PUBLIC ${CLIENT_SOURCES_DIR})
-target_link_libraries(ServerTestLib spdlog::spdlog)
-
 find_package(GTest REQUIRED)
 
 # Define test sources
@@ -13,7 +8,7 @@ foreach(testSrc ${TEST_SOURCES})
     get_filename_component(testName ${testSrc} NAME_WE)
     set(testExecutable "${testName}")
 
-    add_executable(${testExecutable} ${testSrc} ${COMMON_SOURCES})
+    add_executable(${testExecutable} ${testSrc})
 
     target_include_directories(${testExecutable} PUBLIC ${SERVER_SOURCES_DIR})
 

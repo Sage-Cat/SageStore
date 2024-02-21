@@ -8,11 +8,11 @@
 class RepositoryManager;
 class UsersModule;
 
-class BusinessLogicFacade
+class BusinessLogic
 {
 public:
-    BusinessLogicFacade(RepositoryManager &repositoryManager);
-    ~BusinessLogicFacade();
+    BusinessLogic(RepositoryManager &repositoryManager);
+    ~BusinessLogic();
 
     void executeTask(RequestData requestData, BusinessLogicCallback callback);
 

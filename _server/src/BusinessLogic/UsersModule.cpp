@@ -1,6 +1,8 @@
 #include "UsersModule.hpp"
 
 #include "ServerException.hpp"
+
+#include "Database/RepositoryManager.hpp"
 #include "Database/UsersRepository.hpp"
 #include "Database/RolesRepository.hpp"
 
@@ -9,12 +11,12 @@
 
 #define _M "UsersModule"
 
-UsersModule::UsersModule(std::shared_ptr<UsersRepository> usersRepository,
-                         std::shared_ptr<RolesRepository> rolesRepository)
-    : m_usersRepository(std::move(usersRepository)),
-      m_rolesRepository(std::move(rolesRepository))
+UsersModule::UsersModule(RepositoryManager &repositoryManager)
 {
     SPDLOG_TRACE("UsersModule::UsersModule");
+
+    m_usersRepository = std::move(repositoryManager.getUsersRepository());
+    m_rolesRepository = std::move(repositoryManager.getRolesRepository());
 }
 
 UsersModule::~UsersModule()

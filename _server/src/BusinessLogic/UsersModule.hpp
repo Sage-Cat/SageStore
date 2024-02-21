@@ -6,14 +6,14 @@
 #include "IBusinessModule.hpp"
 #include "DataSpecs.hpp"
 
+class RepositoryManager;
 class UsersRepository;
 class RolesRepository;
 
 class UsersModule : public IBusinessModule
 {
 public:
-    UsersModule(std::shared_ptr<UsersRepository> usersRepository,
-                std::shared_ptr<RolesRepository> rolesRepository);
+    UsersModule(RepositoryManager &repositoryManager);
     virtual ~UsersModule() override;
 
     virtual ResponseData executeTask(const RequestData &requestData) override;
