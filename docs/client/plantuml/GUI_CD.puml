@@ -2,6 +2,7 @@
 
 class SageStoreClient {
     -m_uiManager: UiManager
+    ...
 }
 
 class UiManager {
@@ -35,26 +36,26 @@ class DialogManager {
 class LoginDialog implements BaseDialog {
 }
 
-class PurchaseOrdersModel implements IModel {
+class ConcreteModel implements IModel {
 }
 
-class PurchaseOrdersViewModel implements IViewModel {
+class ConcreteViewModel implements IViewModel {
 }
 
-class PurchaseOrdersView implements BaseView {
+class ConcreteView implements BaseView {
 }
 
-SageStoreClient "manages"-->  UiManager
+SageStoreClient -->  UiManager
 
-UiManager "manages"-->  PurchaseOrdersModel
-UiManager "manages" -->  PurchaseOrdersViewModel
-UiManager "manages" -->  PurchaseOrdersView
+UiManager -->  ConcreteModel
+UiManager  -->  ConcreteViewModel
+UiManager  -->  ConcreteView
 UiManager -[hidden]right- IViewModel
 UiManager -[hidden]right- IModel
 UiManager -[hidden]right- BaseView
-UiManager "manages" --> DialogManager
+UiManager  --> DialogManager
 
-DialogManager "manages" --> LoginDialog
+DialogManager  --> LoginDialog
 DialogManager -[hidden]left- BaseDialog
 
 @enduml

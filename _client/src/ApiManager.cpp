@@ -1,27 +1,34 @@
 #include "ApiManager.hpp"
 
-#include "ApiConstants.hpp"
-#include "NetworkService.hpp"
-#include "JsonSerializer.hpp"
+#include "Network/Endpoints.hpp"
+#include "Network/NetworkService.hpp"
+#include "Network/JsonSerializer.hpp"
 
 #include "DatasetCommon.hpp"
 #include "SpdlogConfig.hpp"
 
-ApiManager::ApiManager(QObject *parent)
-    : QObject(parent)
+ApiManager::ApiManager(QString serverApiUrl)
+    : m_networkService(new NetworkService(this))
 {
     SPDLOG_TRACE("ApiManager::ApiManager");
 
-    setupNetworkService();
+    // setup network service
+    m_networkService->setApiUrl(std::move(serverApiUrl));
+    m_networkService->setSerializer(std::make_unique<JsonSerializer>());
+    connect(m_networkService, &NetworkService::responseReceived,
+            this, &ApiManager::handleResponse);
+
+    // setup handlers for responses
     setupHandlers();
+}
+
+ApiManager::~ApiManager()
+{
+    SPDLOG_TRACE("ApiManager::~ApiManager");
 }
 
 void ApiManager::setupNetworkService()
 {
-    m_networkService = new NetworkService(this);
-    m_networkService->updateApiUrl(Api::API_URL);
-    m_networkService->updateSerializer(std::make_unique<JsonSerializer>());
-    connect(m_networkService, &NetworkService::responseReceived, this, &ApiManager::handleResponse);
 }
 
 void ApiManager::loginUser(const QString &username, const QString &password)
@@ -35,7 +42,7 @@ void ApiManager::loginUser(const QString &username, const QString &password)
     dataset["username"] = {username};
     dataset["password"] = {password};
     m_networkService->sendRequest(
-        Api::Endpoints::Users::LOGIN,
+        Endpoints::Users::LOGIN,
         QNetworkAccessManager::Operation::PostOperation,
         dataset);
 }
@@ -49,7 +56,7 @@ void ApiManager::registerUser(const QString &username, const QString &password)
     dataset["password"] = {password};
 
     m_networkService->sendRequest(
-        Api::Endpoints::Users::REGISTER,
+        Endpoints::Users::REGISTER,
         QNetworkAccessManager::Operation::PostOperation,
         dataset);
 }
@@ -57,9 +64,9 @@ void ApiManager::registerUser(const QString &username, const QString &password)
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
-    m_responseHandlers[Api::Endpoints::Users::LOGIN] = [this](const Dataset &dataset)
+    m_responseHandlers[Endpoints::Users::LOGIN] = [this](const Dataset &dataset)
     { handleLoginResponse(dataset); };
-    m_responseHandlers[Api::Endpoints::Users::REGISTER] = [this](const Dataset &dataset)
+    m_responseHandlers[Endpoints::Users::REGISTER] = [this](const Dataset &dataset)
     { handleRegistrationResponse(dataset); };
 }
 

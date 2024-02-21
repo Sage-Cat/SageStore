@@ -1,6 +1,7 @@
 #include "DialogManager.hpp"
 
-DialogManager::DialogManager(ApiManager *apiManager) : m_apiManager(apiManager)
+DialogManager::DialogManager(ApiManager &apiManager)
+    : m_apiManager(apiManager)
 {
     initDialogs();
     setupApiConnections();
@@ -23,12 +24,12 @@ void DialogManager::setupApiConnections()
 {
     // Login
     connect(m_loginDialog, &LoginDialog::loginAttempted,
-            m_apiManager, &ApiManager::loginUser);
+            &m_apiManager, &ApiManager::loginUser);
 
     // Registrations
     connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
-            m_apiManager, &ApiManager::registerUser);
-    connect(m_apiManager, &ApiManager::registerSuccess,
+            &m_apiManager, &ApiManager::registerUser);
+    connect(&m_apiManager, &ApiManager::registerSuccess,
             m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
 }
 

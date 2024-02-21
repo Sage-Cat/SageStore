@@ -8,20 +8,25 @@
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-  - [Project Overview](#project-overview)
-  - [Objectives](#objectives)
-  - [Features](#features)
-- [Technologies Used](#technologies-used)
-  - [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgments](#acknowledgments)
+- [SageStore - ERP System for Small-to-Medium Enterprises](#sagestore---erp-system-for-small-to-medium-enterprises)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+    - [Project Overview](#project-overview)
+    - [Objectives](#objectives)
+    - [Features](#features)
+  - [Technologies Used](#technologies-used)
+    - [Tech Stack](#tech-stack)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Preparing cetificates for network connectivity](#preparing-cetificates-for-network-connectivity)
+  - [Testing](#testing)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
+  - [Acknowledgments](#acknowledgments)
+  - [Project Team](#project-team)
+  - [Project Objectives, Milestones, Feature Breakdown, User Stories, Tech Stack, Database, Architecture Design](#project-objectives-milestones-feature-breakdown-user-stories-tech-stack-database-architecture-design)
 
 ---
 
@@ -173,7 +178,7 @@ Project Link: [https://github.com/Sage-Cat/SageStore](https://github.com/Sage-Ca
 
 | Team Member        | Role                     | Primary Responsibilities                    |
 | ------------------ | ------------------------ | ------------------------------------------- |
-| Volodymyr Pavlenko | PM/Tech Lead & Architect | Project planning, architecture design, etc. |
+| Volodymyr Pavlenko | Tech lead | Project planning, architecture design, etc. |
 | Plotskykh Danylo   | Backend developer        |                                             |
 | Max Kozak          | SQL & C++ Developer      |                                             |
 

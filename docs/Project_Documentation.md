@@ -3,8 +3,8 @@
 ## Comprehensive Documentation for Design, Development, and Deployment Phases
 
 - **Prepared by:** Volodymyr Pavlenko
-- **Date:** October 10, 2023
-- **Version:** 2.0
+- **Date:** February 20, 2024
+- **Version:** 3.1
 
 ---
 
@@ -17,12 +17,12 @@
   - [Project Time Borders](#project-time-borders)
   - [Project Objectives](#project-objectives)
   - [Timeline and Milestones](#timeline-and-milestones)
+  - [Tech Stack](#tech-stack)
+    - [Tools and Libraries](#tools-and-libraries)
   - [Feature Breakdown](#feature-breakdown)
   - [User Stories](#user-stories)
     - [User Stories for Administrator](#user-stories-for-administrator)
     - [User Stories for User](#user-stories-for-user)
-  - [Tech Stack](#tech-stack)
-    - [Tools and Libraries](#tools-and-libraries)
   - [Database](#database)
     - [Table Name: Roles](#table-name-roles)
     - [Database schema](#database-schema)
@@ -44,6 +44,7 @@
       - [Result](#result)
       - [User](#user)
       - [Role](#role)
+      - [](#)
   - [REST API](#rest-api)
     - [Config](#config)
     - [Endpoints](#endpoints)
@@ -53,14 +54,8 @@
       - [Management](#management)
       - [Analytics](#analytics)
       - [Logs](#logs)
-  - [Practices and Methodologies](#practices-and-methodologies)
-  - [Development Phase](#development-phase)
-    - [Environment Setup](#environment-setup)
   - [Deployment Phase](#deployment-phase)
-    - [Preparation](#preparation)
-  - [Post-launch](#post-launch)
   - [Executive Summary](#executive-summary)
-  - [Risk Management](#risk-management)
   - [Quality Assurance Plans](#quality-assurance-plans)
     - [Testing Phases](#testing-phases)
   - [Compliance and Regulations](#compliance-and-regulations)
@@ -107,6 +102,28 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 | Backend Development (Advanced Features)  | June 28, 2024    | Working Backend for Advanced Features                     | 17                     |
 | Testing                                  | July 30, 2024    | Complete bug fixes                                        | 19                     |
 | User Testing and Feedback                | July 31, 2024    | User feedback and final adjustments                       | 19                     |
+
+---
+
+## Tech Stack
+
+### Tools and Libraries
+
+| Category             | Tool/Library            | Reason/Notes                                                   |
+| -------------------- | ----------------------- | -------------------------------------------------------------- |
+| Programming Language | C++20                   | Modern C++ standard, good support for features and performance |
+| GUI Framework        | Qt 6.5                  | Rich set of features, cross-platform support                   |
+| Database             | SQLite                  | Lightweight, sufficient for small-to-medium projects           |
+| Documentation        | Doxygen                 | Generate code documentation                                    |
+| Profiling            | gprof, orbit            | To be decided based on performance needs                       |
+| Data Serialization   | nlohmann/json           | Easy to use, well-maintained                                   |
+| Concurrency          | Boost.Asio/QtConcurrent | Both are good options depending on specific needs              |
+| Installer            | NSIS/Inno Setup         | Script-driven, customizable                                    |
+| Dependency Manager   | Conan                   | Popular in C++, cross-platform support                         |
+| Version Control      | Git/Gitlab              | Industry standard for source code management                   |
+| IDE                  | Qt Creator/VS Code      | Qt Creator for GUI, VS Code for general coding (Optional)      |
+| Communication        | Telegram                | For project updates, client communication                      |
+| CI/CD                | Jenkins                 | Learning purpose, automating build and test processes          |
 
 ---
 
@@ -174,46 +191,26 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - As a User, I want to add, view, edit, and delete employee, supplier, and customer profiles to manage relationships.
 - As a User, I want to view customer and user activity logs to monitor system usage.
 
-## Tech Stack
-
-### Tools and Libraries
-
-| Category             | Tool/Library       | Reason/Notes                                                   |
-| -------------------- | ------------------ | -------------------------------------------------------------- |
-| Programming Language | C++20              | Modern C++ standard, good support for features and performance |
-| GUI Framework        | Qt 6.5             | Rich set of features, cross-platform support                   |
-| Database             | SQLite             | Lightweight, sufficient for small-to-medium projects           |
-| Documentation        | Doxygen            | Generate code documentation                                    |
-| Profiling            | -                  | To be decided based on performance needs                       |
-| Data Serialization   | nlohmann/json      | Easy to use, well-maintained                                   |
-| Concurrency          | C++20/QtConcurrent | Both are good options depending on specific needs              |
-| Installer            | NSIS/Inno Setup    | Script-driven, customizable                                    |
-| Dependency Manager   | Conan              | Popular in C++, cross-platform support                         |
-| Version Control      | Git/Gitlab         | Industry standard for source code management                   |
-| IDE                  | Qt Creator/VS Code | Qt Creator for GUI, VS Code for general coding (Optional)      |
-| Communication        | Telegram           | For project updates, client communication                      |
-| CI/CD                | Jenkins            | Learning purpose, automating build and test processes          |
-
 ## Database
 
 ### Table Name: Roles
 
-| Table Name              | Fields                                                            | Primary Key               | Foreign Key                          | Notes                                |
-| ----------------------- | ----------------------------------------------------------------- | ------------------------- | ------------------------------------ | ------------------------------------ |
-| Roles                   | RoleID, Name                                                      | RoleID                    | -                                    | User roles for access control        |
-| Users                   | UserID, Username, Password, RoleID                                | UserID                    | RoleID                               | User information                     |
-| UserLogs                | LogID, UserID, Action, Timestamp                                  | LogID                     | UserID                               |
-| Contacts                | ContactID, Name, Type, Email, Phone                               | ContactID                 | -                                    | Consolidates Customers and Suppliers |
-| ContactInfo             | ContactInfoID, ContactID, Name, Value                             | ContactInfoID             | ContactID                            |
-| Employees               | EmployeeID, Name, Number, Email, Address                          | EmployeeID                | -                                    | Employee details                     |
-| Suppliers               | SupplierID, Name, Number, Email, Address                          | SupplierID                | -                                    | Supplier details                     |
-| Companies               | CompanyID, Name, Number, Email, Address                           | SupplierID                | -                                    | Supplier details                     |
-| ProductType             | ProductTypeID, CatalogueCode, Barcode, ...                        | ProductTypeID             | -                                    | Product type details                 |
-| ProductTypeSupplierInfo | ProductTypeSupplierInfoID, ProductTypeID, ...                     | ProductTypeSupplierInfoID | SupplierID                           | Supplier info for product types      |
-| Inventory               | InventoryID, ProductTypeID, QuantityAvailable, EmployeeID         | InventoryID               | ProductTypeID, EmployeeID, CompanyID | Current products inventory           |
-| SaleOrders              | OrderID, Date, UserID, ContactID, EmployeeID, Status, OrderInfoID | OrderID                   | UserID, CustomerID, OrderInfoID      | Manages sales orders                 |
-| OrderInfo               | OrderInfoID, OrderID, ProductTypeID, Quantity, Price              | OrderInfoID               | OrderID, ProductTypeID               | Details of each order                |
-| PurchaseOrders          | PurchaseOrderID, Date, UserID, SupplierID, Status, OrderInfoID    | PurchaseOrderID           | UserID, SupplierID, OrderInfoID      | Manages purchase orders              |
+| Table Name           | Fields                                                                                               | Primary Key | Foreign Key               | Notes                                |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | ----------- | ------------------------- | ------------------------------------ |
+| Roles                | id (int), name (string)                                                                              | id          | -                         | User roles for access control        |
+| Users                | id (int), username (string), password (string), roleId (int)                                         | id          | roleId                    | User information                     |
+| Logs                 | id (int), userId (int), action (string), timestamp (datetime)                                        | id          | userId                    | User logs                            |
+| Contacts             | id (int), name (string), type (string), email (string), phone (string)                               | id          | -                         | Consolidates customers and suppliers |
+| ContactInfo          | id (int), contactID (int), name (string), value (string)                                             | id          | contactID                 |
+| Employees            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Employee details                     |
+| Suppliers            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Supplier details                     |
+| SuppliersProductInfo | id (int), supplierID (int), productTypeId (int), code (string)                                       | id          | supplierID                | Supplier info for product types      |
+| ProductInfo          | id (int), productTypeId (int), name (string), value (string)                                         | id          | productTypeId             |
+| ProductType          | id (int), code (string), barcode (string), ukt_zed (string), name (string), description (string),... | id          | -                         | Product type details                 |
+| Inventory            | id (int), productTypeId (int), quantityAvailable (int), employeeId (int)                             | id          | productTypeId, employeeId | Current products inventory           |
+| SaleOrders           | id (int), date (datetime), userId (int), contactId (int), employeeId (int), status (string),...      | id          | userId, contactId         | Manages sales orders                 |
+| OrderInfo            | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
+| PurchaseOrders       | id (int), date (datetime), userId (int), supplierId (int), status (string),...                       | id          | userId, supplierId        | Manages purchase orders              |
 
 ### Database schema
 
@@ -333,6 +330,8 @@ If error is empty, it means that operation was successful.
 | id   | { "0" }             |
 | name | { "Administrator" } |
 
+####
+
 ## REST API
 
 Below you could find spesification for different RESTful API request-response. 
@@ -429,40 +428,13 @@ About arrays: Request or Response is array of entities if it's specified as `arr
 | `PUT`    | `/logs/{logId}` | Log data | Edited log's id | Edit a specific log   |
 | `DELETE` | `/logs/{logId}` | -        | Result          | Delete a specific log |
 
-
-## Practices and Methodologies
-
-Will be soon
-
-## Development Phase
-
-### Environment Setup
-
-- Prepare the development, staging, and production environments.
-
-Will be soon
-
 ## Deployment Phase
 
-### Preparation
-
-- Conduct a final full-scale test.
-
-Will be soon
-
-## Post-launch
-
-- Performance Tuning
-
-Will be soon
+Still in development
 
 ## Executive Summary
 
-The aim of this project is to develop a comprehensive software solution addressing varied modules including Sales, Inventory, and Analytics.
-
-## Risk Management
-
-Will be soon
+The aim of this project is to develop a comprehensive software solution for small Enterprises, that are specialized on selling goods (like shops).
 
 ## Quality Assurance Plans
 
@@ -484,4 +456,5 @@ Will be soon
 | 09/10/2023 | 1.3     | Created Client and Server base Architectural Designs              | Pavlenko Volodymyr |
 | 09/10/2023 | 1.4     | Created REST API design. Updated Server schema                    | Pavlenko Volodymyr |
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
-| 2/04/2024  | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
+| 04/02/2024 | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
+| 20/02/2024 | 3.1     | REST revision. Finishing docs structure                           | Pavlenko Volodymyr |
