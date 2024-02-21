@@ -31,6 +31,12 @@ void NetworkService::sendRequest(const QString &endpoint, QNetworkAccessManager:
     case QNetworkAccessManager::PostOperation:
         m_manager->post(request, m_serializer->serialize(dataset));
         break;
+    case QNetworkAccessManager::PutOperation:
+        m_manager->put(request, m_serializer->serialize(dataset));
+        break;
+    case QNetworkAccessManager::DeleteOperation:
+        m_manager->deleteResource(request);
+        break;
         // TODO: implement for PUT and DELETE too
     }
 }

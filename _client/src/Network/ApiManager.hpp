@@ -111,6 +111,14 @@ signals:
      */
     void registerFailed(const QString &errorMessage);
 
+    void setRoleSuccess();
+
+    void setRoleFailed(const QString &errorMessage);
+
+    void getRoleSuccess();
+
+    void deleteRoleSuccess();
+
 private slots:
     /**
      * @brief Hadles response by calling m_responseHandlers
@@ -140,6 +148,16 @@ private:
      * @param dataset The data set received in response to a registration API call.
      */
     void handleRegistrationResponse(const Dataset &dataset);
+    /**
+     * @brief Specifically handles responses related to set new role attempts.
+     *
+     * @param dataset The data set received in response to a new role API call.
+     */
+    void handleSetNewRoleResponse(const Dataset &dataset);
+
+    void handleGetRoleResponse(const Dataset &dataset);
+
+    void handleDeleteRoleResponse(const Dataset &dataset);
 
 private:
     NetworkService *m_networkService;                  ///< Pointer to the network service used for API calls.
