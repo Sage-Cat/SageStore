@@ -13,20 +13,19 @@
  * This class manages all dialogs in client: initializes them
  * and control their behavior
  */
-class DialogManager final : public QObject
+class DialogManager : public QObject
 {
     Q_OBJECT
 
-protected:
 public:
     DialogManager(ApiManager &apiManager);
     ~DialogManager();
 
-    void showErrorMessageBox(const QString &message);
+    virtual void showErrorMessageBox(const QString &message);
 
     // custom dialogs
-    void showLoginDialog();
-    void showRegistrationDialog();
+    virtual void showLoginDialog();
+    virtual void showRegistrationDialog();
 
 private:
     void initDialogs();

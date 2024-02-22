@@ -21,6 +21,9 @@ UiManager::UiManager(QApplication &app, ApiManager &apiClient) noexcept
 UiManager::~UiManager()
 {
     SPDLOG_TRACE("UiManager::~UiManager");
+
+    delete m_mainWindow;
+    delete m_dialogManager;
 }
 
 void UiManager::init()
@@ -58,10 +61,6 @@ void UiManager::initViews()
 void UiManager::setupApiConnections()
 {
     SPDLOG_TRACE("UiManager::setupApiConnections");
-
-    // Error handling
-    connect(&m_apiManager, &ApiManager::errorOccurred,
-            m_dialogManager, &DialogManager::showErrorMessageBox);
 }
 
 void UiManager::setupMVVMConnections()

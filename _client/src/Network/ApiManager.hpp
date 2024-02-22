@@ -22,14 +22,14 @@ public:
     ApiManager(NetworkService &networkService);
     ~ApiManager();
 
-public slots: // for UI
-    void loginUser(const QString &username, const QString &password);
-    void registerUser(const QString &username, const QString &password);
+public slots:
+    // for UI
+    virtual void loginUser(const QString &username, const QString &password);
+    virtual void registerUser(const QString &username, const QString &password);
 
-private:
-    void init();
-    void setupNetworkService();
-    void setupHandlers();
+protected slots:
+    // for NetworkService
+    virtual void handleResponse(const QString &endpoint, Method method, const Dataset &dataset);
 
 signals:
     void loginSuccess(const QString &id, const QString &roleId);
@@ -38,13 +38,12 @@ signals:
     // Error handling
     void errorOccurred(const QString &errorMessage);
 
-private slots: // for NetworkService
-    void handleResponse(const QString &endpoint, Method method, const Dataset &dataset);
-
 private:
-    void handleError(const QString &errorMessage);
+    void init();
+    void setupHandlers();
 
-    // specific handlers
+    // handlers
+    void handleError(const QString &errorMessage);
     void handleLoginResponse(Method method, const Dataset &dataset);
     void handleRegistrationResponse(Method method, const Dataset &dataset);
 

@@ -25,10 +25,6 @@ ApiManager::~ApiManager()
     SPDLOG_TRACE("ApiManager::~ApiManager");
 }
 
-void ApiManager::setupNetworkService()
-{
-}
-
 void ApiManager::loginUser(const QString &username, const QString &password)
 {
     SPDLOG_TRACE(

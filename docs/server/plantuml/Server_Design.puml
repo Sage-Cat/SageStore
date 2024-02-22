@@ -6,7 +6,7 @@ package "SageStore Server" {
     [HttpServer] as HS 
     [HttpTransaction] as HT 
     [Serializers] as S 
-    [BusinessLogicFacade] as BLF 
+    [BusinessLogic] as BLF 
     [BusinessModules] as BM 
     [RepositoriesManager] as RM
     [DatabaseManager] as DM

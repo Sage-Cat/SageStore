@@ -9,10 +9,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Locate Qt packages
-find_package(Qt6Core REQUIRED)
-find_package(Qt6Widgets REQUIRED)
-find_package(Qt6Gui REQUIRED)
-find_package(Qt6Quick REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network)
+
 
 # Locate conan packages
 find_package(spdlog REQUIRED)
@@ -46,7 +44,6 @@ set(UI_SOURCES
 )
 
 set(MAIN_SOURCES
-    ${CLIENT_SOURCES_DIR}/main.cpp
     ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
     ${CLIENT_SOURCES_DIR}/Utils.cpp
 )
@@ -56,12 +53,14 @@ set(ALL_CLIENT_SOURCES
     ${NETWORK_SOURCES}
     ${UI_SOURCES}
     ${MAIN_SOURCES}
+    ${CLIENT_SOURCES_DIR}/main.cpp
 )
 
 # Adding main code and tests
-add_subdirectory(src)
+if (BUILD_CLIENT)
+    add_subdirectory(src)
+endif()
 
 if(BUILD_TESTS)
-    enable_testing()
     add_subdirectory(tests)
 endif()

@@ -53,9 +53,10 @@ set(ALL_SERVER_SOURCES
     ${MAIN_SOURCES}
 )
 
-add_subdirectory(src)
+if (BUILD_SERVER)
+    add_subdirectory(src)
+endif()
 
 if(BUILD_TESTS)
-    enable_testing()
     # add_subdirectory(tests)
 endif()

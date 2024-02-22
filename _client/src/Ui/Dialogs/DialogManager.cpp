@@ -22,6 +22,10 @@ void DialogManager::initDialogs()
 
 void DialogManager::setupApiConnections()
 {
+    // Error handling
+    connect(&m_apiManager, &ApiManager::errorOccurred,
+            this, &DialogManager::showErrorMessageBox);
+
     // Login
     connect(m_loginDialog, &LoginDialog::loginAttempted,
             &m_apiManager, &ApiManager::loginUser);
