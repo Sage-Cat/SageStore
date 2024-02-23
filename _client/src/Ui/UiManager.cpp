@@ -12,10 +12,6 @@ UiManager::UiManager(QApplication &app, ApiManager &apiClient) noexcept
       m_apiManager(apiClient)
 {
     SPDLOG_TRACE("UiManager::UiManager");
-
-    init();
-    setupMVVMConnections();
-    setupApiConnections();
 }
 
 UiManager::~UiManager()
@@ -31,11 +27,18 @@ void UiManager::init()
     SPDLOG_TRACE("UiManager::init");
 
     m_mainWindow = new MainWindow();
+    m_mainWindow->init();
+
     m_dialogManager = new DialogManager(m_apiManager);
+    m_dialogManager->init();
 
     initModels();
     initViewModels();
     initViews();
+
+    // setup connections
+    setupMVVMConnections();
+    setupApiConnections();
 }
 
 void UiManager::startUiProcess()

@@ -7,10 +7,7 @@ const int WINDOW_HEIGHT = 800;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-{   
-    init();
-    setupUI();  
-    setupMenu();
+{
 }
 
 void MainWindow::init()
@@ -22,9 +19,13 @@ void MainWindow::init()
     // add status bar
     m_statusBar = new QStatusBar(this);
     this->setStatusBar(m_statusBar);
+
+    // setup connections
+    setupUi();
+    setupMenu();
 }
 
-void MainWindow::setupUI()
+void MainWindow::setupUi()
 {
     // set size and at fullscreen
     this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);

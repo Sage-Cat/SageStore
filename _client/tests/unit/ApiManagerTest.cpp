@@ -11,17 +11,19 @@ class ApiManagerTest : public QObject
     NetworkServiceMock *networkServiceMock;
     ApiManager *apiManager;
 
-private slots:
-    void initTestCase()
+public:
+    ApiManagerTest()
     {
         networkServiceMock = new NetworkServiceMock;
         apiManager = new ApiManager(*networkServiceMock);
     }
 
-    void cleanupTestCase()
+    ~ApiManagerTest()
     {
         delete apiManager;
     }
+
+private slots:
 
     void testSuccessfulLogin()
     {
@@ -32,7 +34,7 @@ private slots:
 
     void testSuccessfulRegistration()
     {
-        QSignalSpy registrationSuccessSpy(apiManager, &ApiManager::registerSuccess);
+        QSignalSpy registrationSuccessSpy(apiManager, &ApiManager::registrationSuccess);
         apiManager->registerUser("testUser", "testPassword");
         QCOMPARE(registrationSuccessSpy.count(), 1);
     }

@@ -33,7 +33,7 @@ protected slots:
 
 signals:
     void loginSuccess(const QString &id, const QString &roleId);
-    void registerSuccess();
+    void registrationSuccess();
 
     // Error handling
     void errorOccurred(const QString &errorMessage);

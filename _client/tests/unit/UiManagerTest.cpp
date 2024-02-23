@@ -2,9 +2,7 @@
 #include <QSignalSpy>
 #include <QApplication>
 
-#include "Ui/MainWindow.hpp"
-#include "Ui/Dialogs/DialogManager.hpp"
-
+#include "Ui/UiManager.hpp"
 #include "UiManagerWrapper.hpp"
 
 #include "ApiManagerMock.hpp"
@@ -14,30 +12,31 @@ class UiManagerTest : public QObject
 {
     Q_OBJECT
 
+    UiManager *uiManager;
+
     QApplication &app;
     NetworkServiceMock *networkServiceMock;
     ApiManagerMock *apiManagerMock;
-    UiManagerWrapper *uiManager;
 
 public:
-    UiManagerTest(QApplication &app) : app(app) {}
-
-private slots:
-    void initTestCase()
+    UiManagerTest(QApplication &app) : app(app)
     {
         networkServiceMock = new NetworkServiceMock;
         apiManagerMock = new ApiManagerMock(*networkServiceMock);
+
         uiManager = new UiManagerWrapper(app, *apiManagerMock);
+        uiManager->init();
     }
 
-    void cleanupTestCase()
+    ~UiManagerTest()
     {
         delete uiManager;
         delete apiManagerMock;
         delete networkServiceMock;
     }
 
-    void testSomeMVVMConnection()
+private slots:
+    void testSomeConnection()
     {
         QVERIFY(true);
     }

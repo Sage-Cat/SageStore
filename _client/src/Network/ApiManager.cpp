@@ -115,5 +115,5 @@ void ApiManager::handleLoginResponse(Method, const Dataset &dataset)
 void ApiManager::handleRegistrationResponse(Method, const Dataset &)
 {
     SPDLOG_TRACE("ApiManager::handleRegisterResponse");
-    emit registerSuccess();
+    emit registrationSuccess();
 }

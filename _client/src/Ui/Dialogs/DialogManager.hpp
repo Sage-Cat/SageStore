@@ -19,23 +19,30 @@ class DialogManager : public QObject
 
 public:
     DialogManager(ApiManager &apiManager);
-    ~DialogManager();
+    virtual ~DialogManager();
 
-    virtual void showErrorMessageBox(const QString &message);
+    void init();
 
-    // custom dialogs
-    virtual void showLoginDialog();
-    virtual void showRegistrationDialog();
+    // show dialogs
+    void showLoginDialog();
+    void showRegistrationDialog();
+    void showErrorDialog(const QString &message);
 
-private:
-    void initDialogs();
+    QMessageBox *messageDialog() const;
+
+protected:
+    virtual void initDialogs();
     void setupApiConnections();
     void setupDialogsConnections();
+
+    void showMessage(const QString &title, const QString &message, QMessageBox::Icon type);
 
 private:
     ApiManager &m_apiManager;
 
+protected:
     // dialogs
     LoginDialog *m_loginDialog;
     RegistrationDialog *m_registrationDialog;
+    QMessageBox *m_messageDialog;
 };

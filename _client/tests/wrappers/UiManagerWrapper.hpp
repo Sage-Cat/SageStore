@@ -2,7 +2,7 @@
 
 #include "Ui/UiManager.hpp"
 
-#include "DialogManagerMock.hpp"
+// TODO: implement mock for DialogManager and MainWindow
 
 class QApplication;
 class ApiManager;
@@ -12,13 +12,5 @@ class UiManagerWrapper : public UiManager
 public:
     UiManagerWrapper(QApplication &app, ApiManager &apiManager) : UiManager(app, apiManager)
     {
-    }
-
-    void init() override
-    {
-        UiManager::init();
-
-        delete m_dialogManager;
-        m_dialogManager = new DialogManagerMock(m_apiManager);
     }
 };

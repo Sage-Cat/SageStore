@@ -10,13 +10,19 @@ public:
     explicit ApiManagerMock(NetworkService &networkService) : ApiManager(networkService){};
 
 public slots:
-    void loginUser(const QString &username, const QString &password)
+    void loginUser(const QString &username, const QString &password) override
     {
         emit loginSuccess(0, 0);
     }
 
-    void registerUser(const QString &username, const QString &password)
+    void registerUser(const QString &username, const QString &password) override
     {
-        emit registerSuccess();
+        emit registrationSuccess();
+    }
+
+    void emitError(const QString &errorMessage)
+    {
+        emit errorOccurred(errorMessage);
     }
 };
+

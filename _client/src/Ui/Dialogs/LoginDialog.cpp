@@ -15,6 +15,14 @@ LoginDialog::LoginDialog(BaseDialog *parent) : BaseDialog(parent)
     setupConnections();
 }
 
+void LoginDialog::showWithPresetData(const QString &username, const QString &password)
+{
+    SPDLOG_TRACE("LoginDialog::showWithPresetData | user: {} | password: {}", username.toStdString(), password.toStdString());
+    m_usernameField->setText(username);
+    m_passwordField->setText(password);
+    show();
+}
+
 void LoginDialog::initFields()
 {
     SPDLOG_TRACE("LoginDialog::initFields");

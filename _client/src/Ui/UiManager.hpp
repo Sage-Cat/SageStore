@@ -25,10 +25,8 @@ public:
     explicit UiManager(QApplication &app, ApiManager &apiClient) noexcept;
     virtual ~UiManager() noexcept override;
 
-    void startUiProcess();
-
-protected:
     virtual void init();
+    void startUiProcess();
 
 private:
     void initModels();

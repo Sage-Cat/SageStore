@@ -17,6 +17,10 @@ option(BUILD_TESTS "Build tests for client and server." OFF)
 set(COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
 include_directories(${COMMON_DIR})
 
+if(BUILD_TESTS)
+    enable_testing()
+endif()
+
 # Conditionally include sub-projects
 if(BUILD_CLIENT OR BUILD_TESTS)
     add_subdirectory(_client)
@@ -24,10 +28,6 @@ endif()
 
 if(BUILD_SERVER OR BUILD_TESTS)
     add_subdirectory(_server)
-endif()
-
-if(BUILD_TESTS)
-    enable_testing()
 endif()
 
 # Documentation (if needed)

@@ -19,6 +19,8 @@ class LoginDialog : public BaseDialog
 public:
     explicit LoginDialog(BaseDialog *parent = nullptr);
 
+    virtual void showWithPresetData(const QString &username, const QString &password);
+
 signals:
     void loginAttempted(const QString &username, const QString &password);
     void registrationRequested();
@@ -29,7 +31,7 @@ private:
     void setupLayout();
     void setupConnections();
 
-private slots:
+protected slots:
     void onLoginClicked();
     void onRegisterLinkClicked();
 
