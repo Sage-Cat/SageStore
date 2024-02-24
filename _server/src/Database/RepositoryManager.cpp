@@ -1,19 +1,17 @@
 #include "RepositoryManager.hpp"
 
-#include "DatabaseManager.hpp"
-
 #include "UsersRepository.hpp"
 #include "RolesRepository.hpp"
 
 #include "SpdlogConfig.hpp"
 
-RepositoryManager::RepositoryManager(std::shared_ptr<DatabaseManager> dbManager)
+RepositoryManager::RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
 {
     SPDLOG_TRACE("RepositoryManager::RepositoryManager");
 }
 
-std::shared_ptr<UsersRepository> RepositoryManager::getUsersRepository()
+auto RepositoryManager::getUsersRepository() -> std::shared_ptr<UsersRepository>
 {
     SPDLOG_TRACE("RepositoryManager::getUsersRepository");
     if (!m_usersRepository)
@@ -23,7 +21,7 @@ std::shared_ptr<UsersRepository> RepositoryManager::getUsersRepository()
     return m_usersRepository;
 }
 
-std::shared_ptr<RolesRepository> RepositoryManager::getRolesRepository()
+auto RepositoryManager::getRolesRepository() -> std::shared_ptr<RolesRepository>
 {
     SPDLOG_TRACE("RepositoryManager::getRolesRepository");
     if (!m_rolesRepository)

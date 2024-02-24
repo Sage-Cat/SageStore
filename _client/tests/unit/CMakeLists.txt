@@ -1,5 +1,3 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network Test)
-
 # ------------------------- APIMANAGER -------------------------
 set(TEST_API_MANAGER_SOURCES
     ${CLIENT_UNIT_TESTS_DIR}/ApiManagerTest.cpp
@@ -13,8 +11,8 @@ target_link_libraries(ApiManagerTest
     Qt6::Network 
     spdlog::spdlog
 )
-message(STATUS "Adding test: ApiManagerTest")
-add_test(NAME ApiManagerTest COMMAND ApiManagerTest)
+message(STATUS "Adding unit test: ApiManagerTest")
+add_test(NAME Unit_ApiManagerTest COMMAND ApiManagerTest)
 
 
 # ------------------------- UIMANAGER -------------------------
@@ -34,8 +32,8 @@ target_link_libraries(UiManagerTest
     Qt6::Network 
     spdlog::spdlog
 )
-message(STATUS "Adding test: UiManagerTest")
-add_test(NAME UiManagerTest COMMAND UiManagerTest)
+message(STATUS "Adding unit test: UiManagerTest")
+add_test(NAME Unit_UiManagerTest COMMAND UiManagerTest)
 
 
 # ------------------------- DIALOGMANAGER -------------------------
@@ -55,5 +53,5 @@ target_link_libraries(DialogManagerTest
     Qt6::Network 
     spdlog::spdlog
 )
-message(STATUS "Adding test: DialogManagerTest")
-add_test(NAME DialogManagerTest COMMAND DialogManagerTest)
+message(STATUS "Adding unit test: DialogManagerTest")
+add_test(NAME Unit_DialogManagerTest COMMAND DialogManagerTest)

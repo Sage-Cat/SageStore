@@ -7,6 +7,7 @@
 
 #include "IDataSerializer.hpp"
 
+#include "Endpoints.hpp"
 #include "SpdlogConfig.hpp"
 
 HttpTransaction::HttpTransaction(unsigned long long id,
@@ -75,13 +76,13 @@ void HttpTransaction::handle_request()
             beast::buffers_to_string(m_request.body().data()));
 
         rd = RequestData{
-            .module = segments[Module],
-            .submodule = segments[Submodule],
+            .module = segments[Endpoints::Segments::MODULE],
+            .submodule = segments[Endpoints::Segments::SUBMODULE],
             .method = m_request.method_string(),
             .resourceId = "",
             .dataset = std::move(dataset)};
 
-        if (segments[Root] != "api")
+        if (segments[Endpoints::Segments::ROOT] != "api")
         {
             SPDLOG_ERROR("[Transaction ID: {}] - HttpSession::handle_request error: Not an API request, expected /api endpoint", m_id);
             return;
@@ -90,7 +91,7 @@ void HttpTransaction::handle_request()
         // if we have resourceId
         if (segments.size() > 3)
         {
-            rd.resourceId = segments[ResourceId];
+            rd.resourceId = segments[Endpoints::Segments::RESOURCE_ID];
         }
     }
     else

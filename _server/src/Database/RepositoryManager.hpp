@@ -1,21 +1,23 @@
 #pragma once
 
 #include <memory>
+#include <type_traits>
 
-class DatabaseManager;
+#include "IDatabaseManager.hpp"
+
 class UsersRepository;
 class RolesRepository;
 
 class RepositoryManager
 {
 public:
-    explicit RepositoryManager(std::shared_ptr<DatabaseManager> dbManager);
+    explicit RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager);
 
-    std::shared_ptr<UsersRepository> getUsersRepository();
-    std::shared_ptr<RolesRepository> getRolesRepository();
+    [[nodiscard]] auto getUsersRepository() -> std::shared_ptr<UsersRepository>;
+    [[nodiscard]] auto getRolesRepository() -> std::shared_ptr<RolesRepository>;
 
 private:
-    std::shared_ptr<DatabaseManager> m_dbManager;
+    std::shared_ptr<IDatabaseManager> m_dbManager;
 
     // Repositories
     std::shared_ptr<UsersRepository> m_usersRepository;

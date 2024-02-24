@@ -9,7 +9,7 @@ package "SageStore Server" {
     [BusinessLogic] as BLF 
     [BusinessModules] as BM 
     [RepositoriesManager] as RM
-    [DatabaseManager] as DM
+    [SqliteDatabaseManager] as DM
     [Repositories] as R  
 
     SSS -down-> HS 

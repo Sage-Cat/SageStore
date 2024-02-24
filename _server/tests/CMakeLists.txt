@@ -1,8 +1,7 @@
-set(SERVER_UNIT_TESTS_DIR "${SERVER_TESTS_DIR}/unit")
+find_package(GTest REQUIRED)
 
-# Create a static library from the Client source files
-add_library(ServerTestLib STATIC ${ALL_SERVER_SOURCES})
-target_include_directories(ServerTestLib PUBLIC ${SERVER_SOURCES_DIR})
-target_link_libraries(ServerTestLib spdlog::spdlog)
+set(SERVER_COMPONENT_TESTS_DIR "${SERVER_TESTS_DIR}/component")
+set(SERVER_TEST_MOCKS_DIR "${SERVER_TESTS_DIR}/mocks")
+set(SERVER_TEST_WRAPPERS_DIR "${SERVER_TESTS_DIR}/wrappers")
 
-add_subdirectory(unit)
+add_subdirectory(component)

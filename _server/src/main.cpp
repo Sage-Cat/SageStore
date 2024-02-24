@@ -1,6 +1,6 @@
 #include "SageStoreServer.hpp"
 
-#include "Database/DatabaseManager.hpp"
+#include "Database/SqliteDatabaseManager.hpp"
 #include "Database/RepositoryManager.hpp"
 #include "Network/HttpServer.hpp"
 #include "BusinessLogic\BusinessLogic.hpp"
@@ -15,7 +15,7 @@ int main()
     const std::string SERVER_ADDRESS{"127.0.0.1"};
     const unsigned short SERVER_PORT{8001};
 
-    RepositoryManager repositoryManager(std::make_shared<DatabaseManager>(DB_PATH, CREATE_DB_SQL_FILE_PATH));
+    RepositoryManager repositoryManager(std::make_shared<SqliteDatabaseManager>(DB_PATH, CREATE_DB_SQL_FILE_PATH));
     BusinessLogic businessLogicFacade(repositoryManager);
     HttpServer httpServer(
         SERVER_ADDRESS,

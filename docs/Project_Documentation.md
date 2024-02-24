@@ -271,7 +271,7 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 **SageStoreServer**
 
-- **Responsibilities**: Initializes the application, orchestrates the startup process, and manages the lifecycle of various components such as APIFacade, BusinessLogic, DatabaseManager, and Mediator.
+- **Responsibilities**: Initializes the application, orchestrates the startup process, and manages the lifecycle of various components such as APIFacade, BusinessLogic, SqliteDatabaseManager, and Mediator.
 - **Purpose**: Functions as the central control unit of the application, coordinating high-level operations and ensuring smooth interaction across different layers for a cohesive system behavior.
 
 **BusinessLogic**
@@ -279,14 +279,14 @@ The server architecture for the SageStore Management System aims to provide a ro
 - **Responsibilities**: Implements the core business rules and functionalities of the system. It is structured into modules, with examples including UserRolesModule and LogsModule, to encapsulate specific business scenarios.
 - **Purpose**: Enables a modular and extensible design that simplifies the addition, modification, or removal of functionalities, thereby enhancing the system's adaptability to changing business requirements.
 
-**DatabaseManager**
+**SqliteDatabaseManager**
 
 - **Responsibilities**: Provides an abstraction layer for database interactions, offering a clean API for CRUD operations and more complex queries. It includes specific repositories like UserRolesRepository and LogsRepository.
 - **Purpose**: Separates the business logic from data access concerns, allowing for flexibility in changing database technologies or schemas without impacting the business logic layer.
 
 **Mediator**
 
-- **Responsibilities**: Acts as a communication hub between different parts of the application, particularly between BusinessLogic modules and their corresponding repositories in the DatabaseManager. It ensures that modules can interact with each other without direct dependencies.
+- **Responsibilities**: Acts as a communication hub between different parts of the application, particularly between BusinessLogic modules and their corresponding repositories in the SqliteDatabaseManager. It ensures that modules can interact with each other without direct dependencies.
 - **Purpose**: Reduces coupling between components, making the system more maintainable and scalable. By facilitating indirect interactions, it simplifies module integration and enhances the system's overall modularity.
 
 ## Dataset specification

@@ -1,10 +1,10 @@
 project(${SERVER_NAME})
 
 # Locate conan packages
-find_package(Boost)
+find_package(Boost REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(SQLite3 REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(nlohmann_json)
-find_package(SQLite3)
 
 set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(SERVER_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
@@ -19,8 +19,7 @@ set(BUSINESS_SOURCESS
 
 set(DATABASE_SOURCES
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
-    ${SERVER_SOURCES_DIR}/Database/DatabaseManager.cpp
-    ${SERVER_SOURCES_DIR}/Database/UsersRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
 
     # Repositories
     ${SERVER_SOURCES_DIR}/Database/UsersRepository.cpp

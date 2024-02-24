@@ -5,13 +5,13 @@
 #include <vector>
 
 #include "IRepository.hpp"
-#include "DatabaseManager.hpp"
+#include "IDatabaseManager.hpp"
 #include "Entities/Role.hpp"
 
 class RolesRepository : public IRepository<Role>
 {
 public:
-    explicit RolesRepository(std::shared_ptr<DatabaseManager> dbManager);
+    explicit RolesRepository(std::shared_ptr<IDatabaseManager> dbManager);
     virtual ~RolesRepository() override;
 
     void add(const Role &entity) override;
@@ -21,9 +21,8 @@ public:
     std::vector<Role> getAll() const override;
 
 private:
-    void executePrepared(const std::string &query, const std::vector<std::string> &params) const;
-    std::optional<Role> roleFromCurrentRow() const;
+    Role roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const;
 
 private:
-    std::shared_ptr<DatabaseManager> m_dbManager;
+    std::shared_ptr<IDatabaseManager> m_dbManager;
 };
