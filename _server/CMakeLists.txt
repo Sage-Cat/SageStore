@@ -10,7 +10,7 @@ set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(SERVER_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 set(SERVER_BUILD_DIR "${CMAKE_BINARY_DIR}/_server")
 
-set(BUSINESS_SOURCESS
+set(BUSINESS_SOURCES
     ${SERVER_SOURCES_DIR}/BusinessLogic/BusinessLogic.cpp 
 
     # Modules
@@ -24,32 +24,26 @@ set(DATABASE_SOURCES
     # Repositories
     ${SERVER_SOURCES_DIR}/Database/UsersRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RolesRepository.cpp
-
-    # Entities
-    ${SERVER_SOURCES_DIR}/Database/Entities/User.hpp
-    ${SERVER_SOURCES_DIR}/Database/Entities/Role.hpp
 )
 
 set(NETWORK_SOURCES
     ${SERVER_SOURCES_DIR}/Network/HttpServer.cpp 
     ${SERVER_SOURCES_DIR}/Network/HttpTransaction.cpp 
     ${SERVER_SOURCES_DIR}/Network/JsonSerializer.cpp
-    
-    ${SERVER_SOURCES_DIR}/Network/NetworkCommon.hpp
 )
 
 set(MAIN_SOURCES
-    ${SERVER_SOURCES_DIR}/main.cpp
     ${SERVER_SOURCES_DIR}/SageStoreServer.cpp
     ${SERVER_SOURCES_DIR}/ServerException.cpp
 )
 
 # All server sources
 set(ALL_SERVER_SOURCES
-    ${BUSINESS_SOURCESS}
+    ${BUSINESS_SOURCES}
     ${DATABASE_SOURCES}
     ${NETWORK_SOURCES}
     ${MAIN_SOURCES}
+    ${SERVER_SOURCES_DIR}/main.cpp
 )
 
 if (BUILD_SERVER)
@@ -57,5 +51,5 @@ if (BUILD_SERVER)
 endif()
 
 if(BUILD_TESTS)
-    # add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()

@@ -1,9 +1,13 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "BusinessLogic.hpp"
+#include <vector>
+
+#include "BusinessLogic/BusinessLogic.hpp"
 #include "RepositoryManagerMock.hpp"
-#include "UsersRepositoryMock.hpp"
+#include "RepositoryMock.hpp"
+
+#include "SpdlogConfig.hpp"
 
 using ::testing::_;
 using ::testing::Return;
@@ -11,42 +15,52 @@ using ::testing::Return;
 class BusinessLogicTest : public ::testing::Test
 {
 protected:
-    RepositoryManagerMock *repositoryManagerMock;
-    BusinessLogic *businessLogic;
+    std::unique_ptr<BusinessLogic> businessLogic;
+
+    std::shared_ptr<RepositoryManagerMock> repositoryManagerMock;
+    std::shared_ptr<RepositoryMock<User>> usersRepositoryMock;
+    std::shared_ptr<RepositoryMock<Role>> rolesRepositoryMock;
 
     BusinessLogicTest()
+        : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
+          usersRepositoryMock(std::make_shared<RepositoryMock<User>>())
     {
-        repositoryManagerMock = new RepositoryManagerMock;
-        businessLogic = new BusinessLogic(repositoryManagerMock);
     }
 
-    virtual ~BusinessLogicTest()
+    void SetUp() override
     {
-        delete businessLogic;
+        EXPECT_CALL(*repositoryManagerMock, getUsersRepository())
+            .WillRepeatedly(Return(usersRepositoryMock));
+        EXPECT_CALL(*repositoryManagerMock, getRolesRepository())
+            .WillRepeatedly(Return(rolesRepositoryMock));
+
+        businessLogic = std::make_unique<BusinessLogic>(*repositoryManagerMock);
     }
 };
 
-TEST_F(BusinessLogicTest, ExecuteTask_UsersModule_Success)
+TEST_F(BusinessLogicTest, UsersModule_LoginUser)
 {
-    // Prepare the mock users repository
-    auto usersRepoMock = std::make_shared<UsersRepositoryMock>(nullptr); // No SqliteDatabaseManager needed
-    EXPECT_CALL(repoManagerMock, getUsersRepository())
-        .WillOnce(Return(usersRepoMock));
+    constexpr char CORRECT_USERNAME[] = "username1";
+    constexpr char CORRECT_PASSWORD[] = "password1";
+
+    RequestData requestData{
+        .module = "users",
+        .submodule = "login",
+        .method = "POST",
+        .resourceId = "",
+        .dataset = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
+                    {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
 
     // Set expectations on the UsersRepositoryMock
-    User testUser{"userId", "testUsername"};
-    EXPECT_CALL(*usersRepoMock, getByUsername(_))
-        .WillOnce(Return(std::make_optional(testUser)));
-
-    // Prepare requestData
-    RequestData requestData{"users", /* other fields */};
+    std::vector<User> expectedUsers{User("", CORRECT_USERNAME, CORRECT_PASSWORD, "")};
+    EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
+        .WillOnce(Return(expectedUsers));
 
     // Prepare the callback and its expectation
     bool callbackInvoked = false;
     auto callback = [&callbackInvoked](const ResponseData &responseData)
     {
         callbackInvoked = true;
-        // Validate the response data
         ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
     };
 
@@ -59,6 +73,7 @@ TEST_F(BusinessLogicTest, ExecuteTask_UsersModule_Success)
 
 int main(int argc, char **argv)
 {
+    SpdlogConfig::init<SpdlogConfig::LogLevel::Off>();
     ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }

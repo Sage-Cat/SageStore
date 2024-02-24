@@ -1,6 +1,8 @@
 #include "RolesRepository.hpp"
 #include "SpdlogConfig.hpp"
 
+#include "Entities/Role.hpp"
+
 inline constexpr int ID = 0;
 inline constexpr int NAME = 1;
 
@@ -36,31 +38,28 @@ void RolesRepository::deleteResource(const std::string &id)
     m_dbManager->executeQuery(query, {id});
 }
 
-std::optional<Role> RolesRepository::getById(const std::string &id) const
+std::vector<Role> RolesRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
-    SPDLOG_TRACE("RolesRepository::getById | id = {}", id);
-    const std::string query = "SELECT id, name FROM Roles WHERE id = ?;";
-    auto result = m_dbManager->executeQuery(query, {id});
+    SPDLOG_TRACE("RolesRepository::getByField | {} = {}", fieldName, value);
+    std::vector<Role> roles;
 
-    if (result && result->next())
-    {
-        return roleFromCurrentRow(result);
-    }
+    const std::string query = "SELECT id, name FROM Roles WHERE " + fieldName + " = ?;";
+    auto result = m_dbManager->executeQuery(query, {value});
+    while (result && result->next())
+        roles.emplace_back(roleFromCurrentRow(result));
 
-    return std::nullopt;
+    return roles;
 }
 
 std::vector<Role> RolesRepository::getAll() const
 {
     SPDLOG_TRACE("RolesRepository::getAll");
     std::vector<Role> roles;
+
     const std::string query = "SELECT id, name FROM Roles;";
     auto result = m_dbManager->executeQuery(query, {});
-
     while (result && result->next())
-    {
         roles.emplace_back(roleFromCurrentRow(result));
-    }
 
     return roles;
 }

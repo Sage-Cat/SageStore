@@ -6,7 +6,8 @@
 
 #include "IRepository.hpp"
 #include "IDatabaseManager.hpp"
-#include "Entities/User.hpp"
+
+class User;
 
 class UsersRepository : public IRepository<User>
 {
@@ -17,10 +18,8 @@ public:
     void add(const User &entity) override;
     void update(const User &entity) override;
     void deleteResource(const std::string &id) override;
-    std::optional<User> getById(const std::string &id) const override;
+    std::vector<User> getByField(const std::string &fieldName, const std::string &value) const override;
     std::vector<User> getAll() const override;
-
-    virtual std::optional<User> getByUsername(const std::string &username) const;
 
 private:
     User userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const;

@@ -1,6 +1,8 @@
 #include "UsersRepository.hpp"
 #include "SpdlogConfig.hpp"
 
+#include "Entities/User.hpp"
+
 inline constexpr int ID = 0;
 inline constexpr int USERNAME = 1;
 inline constexpr int PASSWORD = 2;
@@ -47,41 +49,30 @@ void UsersRepository::deleteResource(const std::string &id)
     m_dbManager->executeQuery(query, params);
 }
 
-std::optional<User> UsersRepository::getById(const std::string &id) const
+std::vector<User> UsersRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
-    SPDLOG_TRACE("UsersRepository::getById | id = {}", id);
-    const std::string query = "SELECT id, username, password, roleId FROM Users WHERE id = ?;";
-    auto result = m_dbManager->executeQuery(query, {id});
-
-    if (result && result->next())
-        return userFromCurrentRow(result);
-
-    return std::nullopt;
-}
-
-std::vector<User> UsersRepository::getAll() const
-{
-    SPDLOG_TRACE("UsersRepository::getAll");
+    SPDLOG_TRACE("UsersRepository::getByField | {} = {}", fieldName, value);
     std::vector<User> users;
-    const std::string query = "SELECT id, username, password, roleId FROM Users;";
-    auto result = m_dbManager->executeQuery(query, {});
 
+    const std::string query = "SELECT id, username, password, roleId FROM Users WHERE " + fieldName + " = ?;";
+    auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
         users.emplace_back(userFromCurrentRow(result));
 
     return users;
 }
 
-std::optional<User> UsersRepository::getByUsername(const std::string &username) const
+std::vector<User> UsersRepository::getAll() const
 {
-    SPDLOG_TRACE("UsersRepository::getUserByUsername | username = {}", username);
-    const std::string query = "SELECT id, username, password, roleId FROM Users WHERE username = ?;";
-    auto result = m_dbManager->executeQuery(query, {username});
+    SPDLOG_TRACE("UsersRepository::getAll");
+    std::vector<User> users;
 
-    if (result && result->next())
-        return userFromCurrentRow(result);
+    const std::string query = "SELECT id, username, password, roleId FROM Users;";
+    auto result = m_dbManager->executeQuery(query, {});
+    while (result && result->next())
+        users.emplace_back(userFromCurrentRow(result));
 
-    return std::nullopt;
+    return users;
 }
 
 User UsersRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const

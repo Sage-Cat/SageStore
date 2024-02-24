@@ -8,8 +8,9 @@ class ApiManagerTest : public QObject
 {
     Q_OBJECT
 
-    NetworkServiceMock *networkServiceMock;
     ApiManager *apiManager;
+
+    NetworkServiceMock *networkServiceMock;
 
 public:
     ApiManagerTest()

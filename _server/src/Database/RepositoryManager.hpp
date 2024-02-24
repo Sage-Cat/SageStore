@@ -4,22 +4,23 @@
 #include <type_traits>
 
 #include "IDatabaseManager.hpp"
+#include "IRepository.hpp"
 
-class UsersRepository;
-class RolesRepository;
+class User;
+class Role;
 
 class RepositoryManager
 {
 public:
     explicit RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager);
 
-    [[nodiscard]] auto getUsersRepository() -> std::shared_ptr<UsersRepository>;
-    [[nodiscard]] auto getRolesRepository() -> std::shared_ptr<RolesRepository>;
+    [[nodiscard]] virtual auto getUsersRepository() -> std::shared_ptr<IRepository<User>>;
+    [[nodiscard]] virtual auto getRolesRepository() -> std::shared_ptr<IRepository<Role>>;
 
 private:
     std::shared_ptr<IDatabaseManager> m_dbManager;
 
     // Repositories
-    std::shared_ptr<UsersRepository> m_usersRepository;
-    std::shared_ptr<RolesRepository> m_rolesRepository;
+    std::shared_ptr<IRepository<User>> m_usersRepository;
+    std::shared_ptr<IRepository<Role>> m_rolesRepository;
 };

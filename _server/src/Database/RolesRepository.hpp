@@ -6,7 +6,8 @@
 
 #include "IRepository.hpp"
 #include "IDatabaseManager.hpp"
-#include "Entities/Role.hpp"
+
+class Role;
 
 class RolesRepository : public IRepository<Role>
 {
@@ -17,7 +18,7 @@ public:
     void add(const Role &entity) override;
     void update(const Role &entity) override;
     void deleteResource(const std::string &id) override;
-    std::optional<Role> getById(const std::string &id) const override;
+    std::vector<Role> getByField(const std::string &fieldName, const std::string &value) const override;
     std::vector<Role> getAll() const override;
 
 private:

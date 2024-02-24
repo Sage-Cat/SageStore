@@ -4,7 +4,7 @@
 #include "ServerException.hpp"
 #include "Network/NetworkCommon.hpp"
 
-#include "DatasetCommon.hpp"
+#include "DataCommon.hpp"
 #include "SpdlogConfig.hpp"
 
 BusinessLogic::BusinessLogic(RepositoryManager &repositoryManager)

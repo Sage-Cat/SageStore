@@ -11,7 +11,7 @@ RepositoryManager::RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager
     SPDLOG_TRACE("RepositoryManager::RepositoryManager");
 }
 
-auto RepositoryManager::getUsersRepository() -> std::shared_ptr<UsersRepository>
+auto RepositoryManager::getUsersRepository() -> std::shared_ptr<IRepository<User>>
 {
     SPDLOG_TRACE("RepositoryManager::getUsersRepository");
     if (!m_usersRepository)
@@ -21,7 +21,7 @@ auto RepositoryManager::getUsersRepository() -> std::shared_ptr<UsersRepository>
     return m_usersRepository;
 }
 
-auto RepositoryManager::getRolesRepository() -> std::shared_ptr<RolesRepository>
+auto RepositoryManager::getRolesRepository() -> std::shared_ptr<IRepository<Role>>
 {
     SPDLOG_TRACE("RepositoryManager::getRolesRepository");
     if (!m_rolesRepository)

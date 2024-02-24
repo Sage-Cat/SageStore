@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DatasetCommon.hpp"
+#include "DataCommon.hpp"
 #include "DataSpecs.hpp"
 
 class IEntity
