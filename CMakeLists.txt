@@ -10,22 +10,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Options to build different components
 option(BUILD_CLIENT "Build the client application." OFF)
-option(BUILD_CLIENT_TESTS "Build the client tests." OFF)
 option(BUILD_SERVER "Build the server application." OFF)
-option(BUILD_SERVER_TESTS "Build the server tests." OFF)
+option(BUILD_TESTS "Build tests for client and server." OFF)
 
 # Common includes and sources
 set(COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
 include_directories(${COMMON_DIR})
 
-set(COMMON_SOURCES "${COMMON_DIR}/SpdlogConfig.cpp")
+if(BUILD_TESTS)
+    enable_testing()
+endif()
 
 # Conditionally include sub-projects
-if(BUILD_CLIENT OR BUILD_CLIENT_TESTS)
+if(BUILD_CLIENT OR BUILD_TESTS)
     add_subdirectory(_client)
 endif()
 
-if(BUILD_SERVER OR BUILD_SERVER_TESTS)
+if(BUILD_SERVER OR BUILD_TESTS)
     add_subdirectory(_server)
 endif()
 

@@ -6,38 +6,43 @@
 
 #include "LoginDialog.hpp"
 #include "RegistrationDialog.hpp"
-#include "ApiManager.hpp"
+#include "Network/ApiManager.hpp"
 
 /**
  * @class DialogManager
  * This class manages all dialogs in client: initializes them
  * and control their behavior
  */
-class
-    DialogManager final : public QObject
+class DialogManager : public QObject
 {
     Q_OBJECT
 
-protected:
 public:
     DialogManager(ApiManager &apiManager);
-    ~DialogManager();
+    virtual ~DialogManager();
 
-    void showErrorMessageBox(const QString &message);
+    void init();
 
-    // custom dialogs
+    // show dialogs
     void showLoginDialog();
     void showRegistrationDialog();
+    void showErrorDialog(const QString &message);
 
-private:
-    void initDialogs();
+    QMessageBox *messageDialog() const;
+
+protected:
+    virtual void initDialogs();
     void setupApiConnections();
     void setupDialogsConnections();
+
+    void showMessage(const QString &title, const QString &message, QMessageBox::Icon type);
 
 private:
     ApiManager &m_apiManager;
 
+protected:
     // dialogs
     LoginDialog *m_loginDialog;
     RegistrationDialog *m_registrationDialog;
+    QMessageBox *m_messageDialog;
 };

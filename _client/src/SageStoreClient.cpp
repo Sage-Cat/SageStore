@@ -1,7 +1,7 @@
 #include "SageStoreClient.hpp"
 
-#include "ApiManager.hpp"
-#include "UiManager.hpp"
+#include "Network/ApiManager.hpp"
+#include "Ui/UiManager.hpp"
 
 #include "SpdlogConfig.hpp"
 

@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include "DatasetCommon.hpp"
+#include "IEntity.hpp"
 
-class User
+class User : public IEntity
 {
 public:
     std::string
@@ -16,7 +16,7 @@ public:
     User(std::string id, std::string username, std::string password, std::string roleId)
         : id(std::move(id)), username(std::move(username)), password(std::move(password)), roleId(std::move(roleId)) {}
 
-    Dataset &operator>>(Dataset &dataset)
+    Dataset &operator>>(Dataset &dataset) override
     {
         dataset[Keys::User::ID].push_back(id.empty() ? "" : id);
         dataset[Keys::User::USERNAME].push_back(username.empty() ? "" : username);

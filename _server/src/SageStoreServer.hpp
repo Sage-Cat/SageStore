@@ -1,14 +1,14 @@
 #pragma once
 
 class RepositoryManager;
-class BusinessLogicFacade;
+class BusinessLogic;
 class HttpServer;
 
 class SageStoreServer
 {
 public:
     SageStoreServer(RepositoryManager &repositoryManager,
-                    BusinessLogicFacade &businessLogicFacade,
+                    BusinessLogic &businessLogicFacade,
                     HttpServer &httpServer);
     ~SageStoreServer() = default;
 
@@ -16,6 +16,6 @@ public:
 
 private:
     RepositoryManager &m_repositoryManager;
-    BusinessLogicFacade &m_businessLogicFacade;
+    BusinessLogic &m_businessLogicFacade;
     HttpServer &m_httpServer;
 };

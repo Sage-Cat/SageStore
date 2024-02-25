@@ -1,13 +1,13 @@
 #include "SageStoreServer.hpp"
 
 #include "Database/RepositoryManager.hpp"
-#include "BusinessLogic/BusinessLogicFacade.hpp"
+#include "BusinessLogic\BusinessLogic.hpp"
 #include "Network/HttpServer.hpp"
 
 #include "SpdlogConfig.hpp"
 
 SageStoreServer::SageStoreServer(RepositoryManager &repositoryManager,
-                                 BusinessLogicFacade &businessLogicFacade,
+                                 BusinessLogic &businessLogicFacade,
                                  HttpServer &httpServer)
     : m_repositoryManager(repositoryManager),
       m_businessLogicFacade(businessLogicFacade),

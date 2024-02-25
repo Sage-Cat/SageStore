@@ -1,6 +1,6 @@
 #include "UiManager.hpp"
 
-#include "ApiManager.hpp"
+#include "Network/ApiManager.hpp"
 
 #include "Ui/MainWindow.hpp"
 #include "Ui/Dialogs/DialogManager.hpp"
@@ -12,15 +12,14 @@ UiManager::UiManager(QApplication &app, ApiManager &apiClient) noexcept
       m_apiManager(apiClient)
 {
     SPDLOG_TRACE("UiManager::UiManager");
-
-    init();
-    setupMVVMConnections();
-    setupApiConnections();
 }
 
 UiManager::~UiManager()
 {
     SPDLOG_TRACE("UiManager::~UiManager");
+
+    delete m_mainWindow;
+    delete m_dialogManager;
 }
 
 void UiManager::init()
@@ -28,11 +27,18 @@ void UiManager::init()
     SPDLOG_TRACE("UiManager::init");
 
     m_mainWindow = new MainWindow();
+    m_mainWindow->init();
+
     m_dialogManager = new DialogManager(m_apiManager);
+    m_dialogManager->init();
 
     initModels();
     initViewModels();
     initViews();
+
+    // setup connections
+    setupMVVMConnections();
+    setupApiConnections();
 }
 
 void UiManager::startUiProcess()
@@ -58,10 +64,6 @@ void UiManager::initViews()
 void UiManager::setupApiConnections()
 {
     SPDLOG_TRACE("UiManager::setupApiConnections");
-
-    // Error handling
-    connect(&m_apiManager, &ApiManager::errorOccurred,
-            m_dialogManager, &DialogManager::showErrorMessageBox);
 }
 
 void UiManager::setupMVVMConnections()

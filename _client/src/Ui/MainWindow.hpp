@@ -15,14 +15,12 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    virtual ~MainWindow();
+
+    void init();
 
 protected:
-    // setup window
-    void init();
-    // setup UI
-    void setupUI();
-
+    void setupUi();
     void setupMenu();
 
     // override resizeEvent

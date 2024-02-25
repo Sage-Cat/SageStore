@@ -1,7 +1,12 @@
 #include "RolesRepository.hpp"
 #include "SpdlogConfig.hpp"
 
-RolesRepository::RolesRepository(std::shared_ptr<DatabaseManager> dbManager)
+#include "Entities/Role.hpp"
+
+inline constexpr int ID = 0;
+inline constexpr int NAME = 1;
+
+RolesRepository::RolesRepository(std::shared_ptr<IDatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
 {
     SPDLOG_TRACE("RolesRepository::RolesRepository");
@@ -15,70 +20,53 @@ RolesRepository::~RolesRepository()
 void RolesRepository::add(const Role &entity)
 {
     SPDLOG_TRACE("RolesRepository::add");
-
-    // id is autoincremented
-    executePrepared("INSERT INTO Roles (name) VALUES (?);",
-                    {entity.name});
+    const std::string query = "INSERT INTO Roles (name) VALUES (?);";
+    m_dbManager->executeQuery(query, {entity.name});
 }
 
 void RolesRepository::update(const Role &entity)
 {
     SPDLOG_TRACE("RolesRepository::update");
-    executePrepared("UPDATE Roles SET name = ? WHERE id = ?;",
-                    {entity.name, entity.id});
+    const std::string query = "UPDATE Roles SET name = ? WHERE id = ?;";
+    m_dbManager->executeQuery(query, {entity.name, entity.id});
 }
 
 void RolesRepository::deleteResource(const std::string &id)
 {
     SPDLOG_TRACE("RolesRepository::deleteResource | id = {}", id);
-    executePrepared("DELETE FROM Roles WHERE id = ?;", {id});
+    const std::string query = "DELETE FROM Roles WHERE id = ?;";
+    m_dbManager->executeQuery(query, {id});
 }
 
-std::optional<Role> RolesRepository::getById(const std::string &id) const
+std::vector<Role> RolesRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
-    SPDLOG_TRACE("RolesRepository::getById | id = {}", id);
-    m_dbManager->prepareStatement("SELECT id, name FROM Roles WHERE id = ?;");
-    m_dbManager->bind(1, id);
-    if (m_dbManager->step())
-    {
-        auto role = roleFromCurrentRow();
-        m_dbManager->finalizeStatement();
-        return role;
-    }
-    m_dbManager->finalizeStatement();
-    return std::nullopt;
+    SPDLOG_TRACE("RolesRepository::getByField | {} = {}", fieldName, value);
+    std::vector<Role> roles;
+
+    const std::string query = "SELECT id, name FROM Roles WHERE " + fieldName + " = ?;";
+    auto result = m_dbManager->executeQuery(query, {value});
+    while (result && result->next())
+        roles.emplace_back(roleFromCurrentRow(result));
+
+    return roles;
 }
 
 std::vector<Role> RolesRepository::getAll() const
 {
     SPDLOG_TRACE("RolesRepository::getAll");
     std::vector<Role> roles;
-    m_dbManager->prepareStatement("SELECT id, name FROM Roles;");
-    while (m_dbManager->step())
-    {
-        if (auto role = roleFromCurrentRow())
-        {
-            roles.push_back(*role);
-        }
-    }
-    m_dbManager->finalizeStatement();
+
+    const std::string query = "SELECT id, name FROM Roles;";
+    auto result = m_dbManager->executeQuery(query, {});
+    while (result && result->next())
+        roles.emplace_back(roleFromCurrentRow(result));
+
     return roles;
 }
 
-void RolesRepository::executePrepared(const std::string &query, const std::vector<std::string> &params) const
+Role RolesRepository::roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    m_dbManager->prepareStatement(query);
-    for (size_t i = 0; i < params.size(); ++i)
-    {
-        m_dbManager->bind(static_cast<int>(i + 1), params[i]);
-    }
-    m_dbManager->step();
-    m_dbManager->finalizeStatement();
-}
-
-std::optional<Role> RolesRepository::roleFromCurrentRow() const
-{
-    return Role{
-        m_dbManager->columnText(0),
-        m_dbManager->columnText(1)};
+    return Role(
+        queryResult->getString(ID),
+        queryResult->getString(NAME));
 }

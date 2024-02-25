@@ -7,6 +7,7 @@
 
 #include "IDataSerializer.hpp"
 
+#include "Endpoints.hpp"
 #include "SpdlogConfig.hpp"
 
 HttpTransaction::HttpTransaction(unsigned long long id,
@@ -58,16 +59,9 @@ void HttpTransaction::handle_request()
     SPDLOG_INFO("[Transaction ID: {}] - Received a request", m_id);
 
     // Parse request
-    const auto target = std::string(m_request.target());
-    std::vector<std::string> segments;
-    boost::split(segments, target, boost::is_any_of("/"), boost::token_compress_on);
+    auto segments = parseEndpoint(m_request.target());
 
-    // Trunc all ""
-    segments.erase(std::remove_if(segments.begin(), segments.end(),
-                                  [](const std::string &s)
-                                  { return s.empty(); }),
-                   segments.end());
-
+    // Check for valid
     if (m_request.body().size() != 0)
     {
         auto bodyStr = beast::buffers_to_string(m_request.body().data());
@@ -75,23 +69,34 @@ void HttpTransaction::handle_request()
     }
 
     // Prepare RequestData
-    RequestData requestData;
-    requestData.method = std::string(m_request.method_string());
-    const std::string root = segments[0];
-    requestData.module = segments[1];
-    requestData.submodule = segments[2];
-    requestData.dataset = m_serializer->deserialize(
-        beast::buffers_to_string(m_request.body().data()));
-
-    if (root != "api")
+    RequestData rd;
+    if (segments.size() >= 3)
     {
-        SPDLOG_ERROR("[Transaction ID: {}] - HttpSession::handle_request error: Not an API request, expected /api endpoint", m_id);
-        return;
+        auto dataset = m_serializer->deserialize(
+            beast::buffers_to_string(m_request.body().data()));
+
+        rd = RequestData{
+            .module = segments[Endpoints::Segments::MODULE],
+            .submodule = segments[Endpoints::Segments::SUBMODULE],
+            .method = m_request.method_string(),
+            .resourceId = "",
+            .dataset = std::move(dataset)};
+
+        if (segments[Endpoints::Segments::ROOT] != "api")
+        {
+            SPDLOG_ERROR("[Transaction ID: {}] - HttpSession::handle_request error: Not an API request, expected /api endpoint", m_id);
+            return;
+        }
+
+        // if we have resourceId
+        if (segments.size() > 3)
+        {
+            rd.resourceId = segments[Endpoints::Segments::RESOURCE_ID];
+        }
     }
-
-    if (requestData.module.empty() || requestData.submodule.empty())
+    else
     {
-        SPDLOG_ERROR("[Transaction ID: {}] - HttpSession::handle_request error: Module or submodule not specified", m_id);
+        SPDLOG_ERROR("[Transaction ID: {}] - HttpSession::handle_request error: got invalid endpoint format", m_id);
         return;
     }
 
@@ -101,7 +106,7 @@ void HttpTransaction::handle_request()
     };
 
     // Post some task to be executed
-    m_postBusinessTaskCallback(std::move(requestData), std::move(callback));
+    m_postBusinessTaskCallback(std::move(rd), std::move(callback));
 }
 
 void HttpTransaction::do_response(ResponseData data)
@@ -142,4 +147,15 @@ void HttpTransaction::do_close()
         SPDLOG_ERROR("[Transaction ID: {}] - Shutdown error: {}", m_id, ec.message());
     }
     // Transaction is automatically restored by itself without Server participation
+}
+
+std::vector<std::string> HttpTransaction::parseEndpoint(const std::string &endpoint) const
+{
+    std::vector<std::string> segments;
+    boost::split(segments, endpoint, boost::is_any_of("/"), boost::token_compress_on);
+    segments.erase(std::remove_if(segments.begin(), segments.end(), [](const std::string &s)
+                                  { return s.empty(); }),
+                   segments.end());
+
+    return segments;
 }

@@ -1,20 +1,23 @@
 #include "UsersModule.hpp"
 
 #include "ServerException.hpp"
-#include "Database/UsersRepository.hpp"
-#include "Database/RolesRepository.hpp"
 
-#include "DatasetCommon.hpp"
+#include "Database/RepositoryManager.hpp"
+
+#include "Database/Entities/User.hpp"
+#include "Database/Entities/Role.hpp"
+
+#include "DataCommon.hpp"
 #include "SpdlogConfig.hpp"
 
 #define _M "UsersModule"
 
-UsersModule::UsersModule(std::shared_ptr<UsersRepository> usersRepository,
-                         std::shared_ptr<RolesRepository> rolesRepository)
-    : m_usersRepository(std::move(usersRepository)),
-      m_rolesRepository(std::move(rolesRepository))
+UsersModule::UsersModule(RepositoryManager &repositoryManager)
 {
     SPDLOG_TRACE("UsersModule::UsersModule");
+
+    m_usersRepository = std::move(repositoryManager.getUsersRepository());
+    m_rolesRepository = std::move(repositoryManager.getRolesRepository());
 }
 
 UsersModule::~UsersModule()
@@ -62,11 +65,11 @@ ResponseData UsersModule::loginUser(const Dataset &request)
     }
 
     // get user by username from repository
-    auto userOpt = m_usersRepository->getByUsername(clientUsername);
+    auto usersVec = m_usersRepository->getByField(Keys::User::USERNAME, clientUsername);
 
-    if (userOpt.has_value())
+    if (!usersVec.empty())
     {
-        User user = userOpt.value();
+        User &user = usersVec.front();
         if (user.password == clientPassword)
         {
             SPDLOG_INFO("UsersModule::loginUser | SUCCESS");
@@ -105,17 +108,17 @@ ResponseData UsersModule::registerUser(const Dataset &request)
     }
 
     // get user by username from repository
-    auto userOpt = m_usersRepository->getByUsername(clientUsername);
+    auto usersVec = m_usersRepository->getByField(Keys::User::USERNAME, clientUsername);
 
-    if (!userOpt.has_value())
+    if (usersVec.empty())
     {
         m_usersRepository->add(User("", clientUsername, clientPassword, ""));
         SPDLOG_INFO("UsersModule::registerUser | new user `{}` is registered", clientUsername);
     }
     else
     {
-        SPDLOG_WARN("UsersModule::registerUser | user with such name already exists");
-        throw ServerException(_M, "User with this name already exists");
+        SPDLOG_WARN("UsersModule::registerUser | user with such username already exists");
+        throw ServerException(_M, "User with this username already exists");
     }
 
     return response;

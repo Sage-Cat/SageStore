@@ -3,8 +3,10 @@
 #include <QApplication>
 #include <QThread>
 
-#include "ApiManager.hpp"
-#include "UiManager.hpp"
+#include "Network/ApiManager.hpp"
+#include "Network/NetworkService.hpp"
+#include "Network/JsonSerializer.hpp"
+#include "Ui/UiManager.hpp"
 
 #include "SpdlogConfig.hpp"
 
@@ -14,17 +16,22 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    SpdlogConfig::init();
+    SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
 
     // Networking
-    ApiManager apiManager(SERVER_API_URL);
+    NetworkService networkService;
+    networkService.setApiUrl(SERVER_API_URL);
+    networkService.setSerializer(std::make_unique<JsonSerializer>());
+    ApiManager apiManager(networkService);
     QThread apiManagerThread;
     apiManager.moveToThread(&apiManagerThread);
+    networkService.moveToThread(&apiManagerThread);
     apiManagerThread.start();
 
     // Ui
     UiManager uiManager(app, apiManager);
+    uiManager.init();
 
     // Orchestrator
     SageStoreClient client(apiManager, uiManager);

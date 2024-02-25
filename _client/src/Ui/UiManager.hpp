@@ -23,19 +23,19 @@ class UiManager : public QObject
 
 public:
     explicit UiManager(QApplication &app, ApiManager &apiClient) noexcept;
-    ~UiManager() noexcept override;
+    virtual ~UiManager() noexcept override;
 
+    virtual void init();
     void startUiProcess();
 
 private:
-    void init();
     void initModels();
     void initViewModels();
     void initViews();
     void setupApiConnections();
     void setupMVVMConnections();
 
-private:
+protected:
     QApplication &m_app;
 
     // Network

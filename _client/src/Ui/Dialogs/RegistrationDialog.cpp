@@ -15,6 +15,14 @@ RegistrationDialog::RegistrationDialog(BaseDialog *parent) : BaseDialog(parent)
     setupConnections();
 }
 
+void RegistrationDialog::showWithPresetData(const QString &username, const QString &password)
+{
+    SPDLOG_TRACE("RegistrationDialog::showWithPresetData | user: {} | password: {}", username.toStdString(), password.toStdString());
+    m_usernameField->setText(username);
+    m_passwordField->setText(password);
+    show();
+}
+
 void RegistrationDialog::onRegistrationSuccess()
 {
     SPDLOG_TRACE("RegistrationDialog::onRegistrationSuccess");

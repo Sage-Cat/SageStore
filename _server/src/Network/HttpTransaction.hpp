@@ -32,6 +32,9 @@ private:
     void do_close();
 
 private:
+    std::vector<std::string> parseEndpoint(const std::string &endpoint) const;
+
+private:
     const unsigned long long m_id;
     beast::tcp_stream m_stream;
     std::unique_ptr<IDataSerializer> m_serializer;
