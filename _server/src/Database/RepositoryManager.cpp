@@ -9,6 +9,13 @@ RepositoryManager::RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager
     : m_dbManager(std::move(dbManager))
 {
     SPDLOG_TRACE("RepositoryManager::RepositoryManager");
+
+    m_dbManager->open();
+}
+
+RepositoryManager::~RepositoryManager()
+{
+    m_dbManager->close();
 }
 
 auto RepositoryManager::getUsersRepository() -> std::shared_ptr<IRepository<User>>

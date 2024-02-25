@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 
     // Ui
     UiManager uiManager(app, apiManager);
+    uiManager.init();
 
     // Orchestrator
     SageStoreClient client(apiManager, uiManager);

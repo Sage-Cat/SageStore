@@ -12,7 +12,6 @@ HttpServer::HttpServer(const std::string &address, unsigned short port, ExecuteB
       m_executeBusinessTaskCallback(std::move(callback))
 {
     SPDLOG_TRACE("HttpServer::HttpServer");
-    SPDLOG_INFO("HttpServer set listen to address: {}, port: {}", address, port);
     try
     {
         do_accept();

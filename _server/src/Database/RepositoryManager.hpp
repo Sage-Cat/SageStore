@@ -13,6 +13,7 @@ class RepositoryManager
 {
 public:
     explicit RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager);
+    ~RepositoryManager();
 
     [[nodiscard]] virtual auto getUsersRepository() -> std::shared_ptr<IRepository<User>>;
     [[nodiscard]] virtual auto getRolesRepository() -> std::shared_ptr<IRepository<Role>>;
