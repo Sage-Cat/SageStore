@@ -54,7 +54,7 @@ void BaseView::setupUi()
 }
 
 // Function to add widgets to a layout
-template<typename Layout, class = std::enable_if_t<is_QHBoxLayout_QVBoxLayout>>
+template<typename Layout, class>
 Layout* BaseView::createBoxLayout(QVector<QWidget*> widgets, QWidget* parent) {
     // Here, you can add more conditions or checks as needed
     if (true) {
