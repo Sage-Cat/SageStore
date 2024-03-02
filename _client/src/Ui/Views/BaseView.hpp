@@ -18,27 +18,9 @@ public:
     BaseView(QWidget *parent = nullptr);
     virtual ~BaseView();
 
-    //Methods with buttons
-    void addButton(QPushButton* buttonToAdd);
-    void addButton(const std::vector<QPushButton*> buttonsToAdd);
+    template<typename Layout, class = std::enable_if_t<is_QHBoxLayout_QVBoxLayout>>
+    Layout* createBoxLayout(QVector<QWidget*> widgets, QWidget* parent = nullptr);
 
-    void removeButton(QPushButton* buttonToRemove);
-    void removeButton(const std::vector<QPushButton*> buttonsToRemove);
-
-    void setButtonLayout(QHBoxLayout* buttonlayout);
-    void setButtonLayout(QGroupBox* buttonGroupBox);
-    const QLayout* getButtonLayout();
-
-    //Methods with dataTable
-    //void setDataTable(QTableWidget* dataTable);
-    const QTableWidget* getDataTable();
-
-    //Methods with AdditionalInfo
-    void setStatus(const char* status);
-    QLabel* getStatus();
-
-    //Methods with UnderSpace
-    void addUnderSpace();
 protected:
     // setup
     virtual void setupUi();
@@ -49,8 +31,8 @@ protected:
     QHBoxLayout *m_additionalInfo;
 
     //GroupBoxes
-    QGroupBox *buttonGroupBox;
-    QGroupBox *infoGroupBox;
+    //QGroupBox *m_buttonGroupBox;
+    //QGroupBox *m_infoGroupBox;
 
     // buttons
     QPushButton *m_addButton;
@@ -62,4 +44,8 @@ protected:
 
     // label
     QLabel *m_status;
+
+    //spacerItems
+    QSpacerItem* m_buttonRowSpacerItem;
+    QSpacerItem* m_additionalInfoSpacerItem;
 };
