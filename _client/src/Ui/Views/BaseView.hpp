@@ -30,10 +30,6 @@ protected:
     QHBoxLayout *m_buttonRow;
     QHBoxLayout *m_additionalInfo;
 
-    //GroupBoxes
-    //QGroupBox *m_buttonGroupBox;
-    //QGroupBox *m_infoGroupBox;
-
     // buttons
     QPushButton *m_addButton;
     QPushButton *m_deleteButton;

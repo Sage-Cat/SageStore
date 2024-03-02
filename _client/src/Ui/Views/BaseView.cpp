@@ -19,15 +19,15 @@ void BaseView::setupUi()
     m_deleteButton = new QPushButton("Delete", this);
     m_editButton = new QPushButton("Edit", this);
 
-    // Create a row layout for buttons
-    m_buttonRow = createBoxLayout<QHBoxLayout>({m_addButton, m_deleteButton, m_editButton});
-
     // Create spacer item for the button layout
     m_buttonRowSpacerItem = new QSpacerItem(
         ViewsStyles::ButtonsSpacer::WIDTH,
         ViewsStyles::ButtonsSpacer::HEIGHT,
         QSizePolicy::Expanding,
         QSizePolicy::Fixed);
+
+    // Create a row layout for buttons and add spacer item
+    m_buttonRow = createBoxLayout<QHBoxLayout>({m_addButton, m_deleteButton, m_editButton});
     m_buttonRow->addSpacerItem(m_buttonRowSpacerItem);
 
     // Add the button layout to the main layout
@@ -53,10 +53,9 @@ void BaseView::setupUi()
     m_mainLayout->addLayout(m_additionalInfo);
 }
 
-// Function to add widgets to a layout
+// Function to create layout with existed widgets
 template<typename Layout, class>
 Layout* BaseView::createBoxLayout(QVector<QWidget*> widgets, QWidget* parent) {
-    // Here, you can add more conditions or checks as needed
     if (true) {
         Layout* layout = new Layout(parent);
         for (auto widget : widgets)
