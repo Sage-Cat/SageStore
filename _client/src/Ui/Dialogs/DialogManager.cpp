@@ -14,6 +14,7 @@ DialogManager::~DialogManager()
     delete m_loginDialog;
     delete m_registrationDialog;
     delete m_messageDialog;
+    m_messageDialog->addButton(QMessageBox::Ok);
 }
 
 void DialogManager::init()
@@ -99,6 +100,5 @@ void DialogManager::showMessage(const QString &title, const QString &message, QM
     m_messageDialog->setIcon(type);
     m_messageDialog->setWindowTitle(title);
     m_messageDialog->setText(message);
-    m_messageDialog->addButton(QMessageBox::Ok);
     m_messageDialog->exec();
 }
