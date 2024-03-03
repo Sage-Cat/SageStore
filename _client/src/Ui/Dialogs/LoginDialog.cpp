@@ -88,7 +88,9 @@ void LoginDialog::setupConnections()
 void LoginDialog::onLoginClicked()
 {
     SPDLOG_TRACE("LoginDialog::onLoginClicked | Username: {}", m_usernameField->text().toStdString());
-    emit loginAttempted(m_usernameField->text(), m_passwordField->text());
+
+    QByteArray hashedPassword = QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256);
+    emit loginAttempted(m_usernameField->text(), hashedPassword);
 }
 
 void LoginDialog::onRegisterLinkClicked()
