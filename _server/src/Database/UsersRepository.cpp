@@ -3,10 +3,13 @@
 
 #include "Entities/User.hpp"
 
-inline constexpr int ID = 0;
-inline constexpr int USERNAME = 1;
-inline constexpr int PASSWORD = 2;
-inline constexpr int ROLE_ID = 3;
+namespace
+{
+    inline constexpr int ID = 0;
+    inline constexpr int USERNAME = 1;
+    inline constexpr int PASSWORD = 2;
+    inline constexpr int ROLE_ID = 3;
+}
 
 UsersRepository::UsersRepository(std::shared_ptr<IDatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
