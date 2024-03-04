@@ -14,7 +14,6 @@ DialogManager::~DialogManager()
     delete m_loginDialog;
     delete m_registrationDialog;
     delete m_messageDialog;
-    m_messageDialog->addButton(QMessageBox::Ok);
 }
 
 void DialogManager::init()
