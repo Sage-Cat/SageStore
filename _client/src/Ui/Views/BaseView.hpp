@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QSpacerItem>
 #include "Ui/Views/ViewStyles.hpp"
+#include "src/Utils.hpp"
 
 class BaseView : public QWidget
 {
@@ -17,9 +18,6 @@ class BaseView : public QWidget
 public:
     BaseView(QWidget *parent = nullptr);
     virtual ~BaseView();
-
-    template<typename Layout, class = std::enable_if_t<is_QHBoxLayout_QVBoxLayout>>
-    Layout* createBoxLayout(QVector<QWidget*> widgets, QWidget* parent = nullptr);
 
 protected:
     // setup
