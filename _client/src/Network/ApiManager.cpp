@@ -171,10 +171,10 @@ void ApiManager::handleRegistrationResponse(Method, const Dataset &)
     emit registrationSuccess();
 }
 
-void ApiManager::handleRolesResponse(Method, const Dataset &)
+void ApiManager::handleRolesResponse(Method, const Dataset &dataset)
 {
     SPDLOG_TRACE("ApiManager::handleRoleResponse");
-    emit getRoleSuccess();
+    (!dataset[Keys::Role::NAME].empty()) ? emit getRoleSuccess() : emit handleError("ApiManager::handleRolesResponse | empty id or roleId");
 }
 
 void ApiManager::handleSetRoleResponse(Method, const Dataset &dataset)
