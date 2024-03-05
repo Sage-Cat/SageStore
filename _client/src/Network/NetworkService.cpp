@@ -33,6 +33,12 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
     case Method::POST:
         reply = m_manager->post(request, serializedData);
         break;
+    case Method::PUT:
+        reply = m_manager->put(request, serializedData);
+        break;
+    case Method::DELETES:
+        reply = m_manager->deleteResource(request);
+        break;
     default:
         SPDLOG_ERROR("NetworkService::sendRequest unexpected switch(operation) occurred.");
         return;

@@ -55,6 +55,51 @@ void ApiManager::registerUser(const QString &username, const QString &password)
         dataset);
 }
 
+void ApiManager::getRole()
+{
+    SPDLOG_TRACE("ApiManager::getRole");
+
+    m_networkService.sendRequest(
+        Endpoints::Users::ROLES,
+        Method::GET);
+}
+
+void ApiManager::postNewRole(const QString &newRole)
+{
+    SPDLOG_TRACE("ApiManager::postRole");
+    Dataset dataset;
+    dataset["newRole"] = {newRole};
+
+    m_networkService.sendRequest(
+        Endpoints::Users::ROLES,
+        Method::POST,
+        dataset);
+}
+
+void ApiManager::editRole(const QString &edit_role, const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::editRole");
+    Dataset dataset;
+    dataset["editRole"] = {edit_role};
+
+    m_networkService.sendRequest(
+        QString(Endpoints::Users::ROLES) + "/" + id,
+        Method::PUT,
+        dataset);
+}
+
+void ApiManager::deleteRole(const QString &delete_role, const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::daleteRole");
+    Dataset dataset;
+    dataset["detelerole"] = {delete_role};
+
+    m_networkService.sendRequest(
+        QString(Endpoints::Users::ROLES) + "/" + id,
+        Method::DELETES,
+        dataset);
+}
+
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
@@ -62,6 +107,14 @@ void ApiManager::setupHandlers()
     { handleLoginResponse(method, dataset); };
     m_responseHandlers[Endpoints::Users::REGISTER] = [this](Method method, const Dataset &dataset)
     { handleRegistrationResponse(method, dataset); };
+    m_responseHandlers[Endpoints::Users::ROLES] = [this](Method method, const Dataset &dataset)
+    { handleRolesResponse(method, dataset); };
+    m_responseHandlers[Endpoints::Users::ROLES] = [this](Method method, const Dataset &dataset)
+    { handleSetRoleResponse(method, dataset); };
+    m_responseHandlers[Endpoints::Users::ROLES] = [this](Method method, const Dataset &dataset)
+    { handleEditRoleResponse(method, dataset); };
+    m_responseHandlers[Endpoints::Users::ROLES] = [this](Method method, const Dataset &dataset)
+    { handleDeleteRoleResponse(method, dataset); };
 }
 
 void ApiManager::handleResponse(const QString &endpoint, Method method, const Dataset &dataset)
@@ -116,4 +169,28 @@ void ApiManager::handleRegistrationResponse(Method, const Dataset &)
 {
     SPDLOG_TRACE("ApiManager::handleRegisterResponse");
     emit registrationSuccess();
+}
+
+void ApiManager::handleRolesResponse(Method, const Dataset &)
+{
+    SPDLOG_TRACE("ApiManager::handleRoleResponse");
+    emit getRoleSuccess();
+}
+
+void ApiManager::handleSetRoleResponse(Method, const Dataset &dataset)
+{
+    SPDLOG_TRACE("ApiManager::handleRoleResponse");
+    (!dataset[Keys::Role::ID].empty()) ? emit setRoleSuccess() : emit handleError("ApiManager::handleSetRoleResponse | empty id or roleId");
+}
+
+void ApiManager::handleEditRoleResponse(Method, const Dataset &dataset)
+{
+    SPDLOG_TRACE("ApiManager::handleEditRoleResponse");
+    (!dataset[Keys::Role::ID].empty()) ? emit editRoleSuccess() : emit handleError("ApiManager::handleEditRoleResponse | empty id or roleId");
+}
+
+void ApiManager::handleDeleteRoleResponse(Method, const Dataset &)
+{
+    SPDLOG_TRACE("ApiManager::handleDeleteRoleResponse");
+    emit deleteRoleSuccess();
 }

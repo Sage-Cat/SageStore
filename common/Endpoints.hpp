@@ -15,5 +15,6 @@ namespace Endpoints
         inline constexpr char USERS_PREFIX[] = "/users";
         inline constexpr char LOGIN[] = "/users/login";
         inline constexpr char REGISTER[] = "/users/register";
+        inline constexpr char ROLES[] = "/users/roles";
     }
 }
