@@ -8,33 +8,28 @@ class SageStorePkg(ConanFile):
 
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
+    requires = [
+        "spdlog/1.12.0",
+        "nlohmann_json/3.11.2",
+        "gtest/1.14.0",
+        "sqlite3/3.45.1"
+    ]
     default_options = {
         "shared": False,
         "boost/*:without_test": True,
         "sqlite3/*:threadsafe": 2
     }
 
-    def requirements(self): 
-        self.requires("spdlog/1.12.0")
-        self.requires("nlohmann_json/3.11.2")
-        if not IS_BOOST_INSTASLLED_HANDLY():
-            self.requires("boost/1.82.0") #Not needed if installed handly
-        self.requires("gtest/1.14.0")
-        self.requires("sqlite3/3.45.1")
+    def requirements(self):
+        if not self.is_boost_installed_manually():
+            self.requires("boost/1.82.0")
 
-# Check is Boost installed handly
-def IS_BOOST_INSTASLLED_HANDLY():
-    IS_BOOST_INSTALLED = False
-    
-    # Check BOOST_ROOT
-    if "BOOST_ROOT" in os.environ:
-        IS_BOOST_INSTALLED = True
+    def is_boost_installed_manually(self):
+        return "BOOST_ROOT" in os.environ
 
-    # Check BOOST in PATH
-    path_list = os.environ.get('PATH', '').split(';')
-    for path in path_list:
-        if 'boost' in path.lower():
-            IS_BOOST_INSTALLED = True
-            break
-    
-    return IS_BOOST_INSTALLED
+    def package_info(self):
+        if self.is_boost_installed_manually():
+            boost_root = os.environ['BOOST_ROOT']
+            self.cpp_info.includedirs = [os.path.join(boost_root, "include")]
+            self.cpp_info.libdirs = [os.path.join(boost_root, "lib")]
+            self.env_info.BOOST_ROOT = boost_root

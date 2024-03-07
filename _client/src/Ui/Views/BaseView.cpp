@@ -6,7 +6,27 @@ BaseView::BaseView(QWidget *parent) : QWidget(parent)
     setupUi(); // Call function to set up the user interface
 }
 
-BaseView::~BaseView() {}
+BaseView::~BaseView() {
+    // Layouts
+    delete m_mainLayout;
+    delete m_buttonRow;
+    delete m_additionalInfo;
+
+   // buttons
+    delete m_addButton;
+    delete m_deleteButton;
+    delete m_editButton;
+
+    // data table
+    delete m_dataTable;
+
+    // label
+    delete m_status;
+
+    //spacerItems
+    delete m_buttonRowSpacerItem;
+    delete m_additionalInfoSpacerItem;
+}
 
 void BaseView::setupUi()
 {
@@ -41,5 +61,5 @@ void BaseView::setupUi()
 
     // Set up the main layout
     m_mainLayout = Utils::createLayout<QVBoxLayout>(this, {m_buttonRow, m_dataTable, m_additionalInfo});
-    this -> setLayout(m_mainLayout);
+    this->setLayout(m_mainLayout);
 }

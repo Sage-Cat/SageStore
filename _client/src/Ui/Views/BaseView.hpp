@@ -9,7 +9,7 @@
 #include <QLabel>
 #include <QSpacerItem>
 #include "Ui/Views/ViewStyles.hpp"
-#include "../../Utils.hpp"
+#include "Utils.hpp"
 
 class BaseView : public QWidget
 {
