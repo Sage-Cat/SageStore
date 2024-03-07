@@ -5,10 +5,23 @@ add_executable(${SERVER_NAME} ${ALL_SERVER_SOURCES})
 target_include_directories(${SERVER_NAME} PUBLIC ${SERVER_SOURCES_DIR})
 
 # Link libs
+if(TARGET Boost::boost)     #Check is Boost installed handly
+    target_link_libraries(
+        ${SERVER_NAME}
+        PUBLIC
+        Boost::boost
+    )
+else()
+    target_link_libraries(
+        ${SERVER_NAME}
+        PUBLIC
+        boost::boost
+    )
+endif()
+
 target_link_libraries(
     ${SERVER_NAME} 
     PUBLIC
-    boost::boost 
     spdlog::spdlog 
     nlohmann_json::nlohmann_json
     SQLite::SQLite3
