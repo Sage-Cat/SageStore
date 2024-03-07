@@ -100,9 +100,8 @@ void RegistrationDialog::setupConnections()
 void RegistrationDialog::onRegisterClicked()
 {
     SPDLOG_TRACE("RegistrationDialog::onRegisterClicked | Username: {}", m_usernameField->text().toStdString());
-
     if (m_passwordField->text() == m_confirmPasswordField->text())
-        emit registrationAttempted(m_usernameField->text(), m_passwordField->text());
+        emit registrationAttempted(m_usernameField->text(), QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256));
     else
         emit requestErrorMessageBox(tr("Passwords do not match"));
 }

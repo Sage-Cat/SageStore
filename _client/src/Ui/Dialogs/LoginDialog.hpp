@@ -3,7 +3,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
-
+#include <QCryptographicHash>
 #include "Utils.hpp"
 
 #include "BaseDialog.hpp"

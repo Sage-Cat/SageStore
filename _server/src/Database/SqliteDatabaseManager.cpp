@@ -119,8 +119,16 @@ public:
             }
         }
 
-        SPDLOG_TRACE("Statement prepared and parameters bound successfully.");
-        return std::make_shared<SqliteQueryResult>(stmtRaw);
+        auto queryResult = std::make_shared<SqliteQueryResult>(stmtRaw);
+
+        // For non-select query we just make step and return nullptr
+        if (!isSelectQuery(query))
+        {
+            queryResult->next();
+            queryResult.reset(); // nullptr
+        }
+
+        return queryResult;
     }
 
     bool initializeDatabaseSchema()
@@ -148,6 +156,11 @@ public:
 
         SPDLOG_INFO("Database schema initialized successfully");
         return true;
+    }
+
+    bool isSelectQuery(std::string_view query)
+    {
+        return query.find("SELECT") == 0 || query.find("select") == 0;
     }
 };
 

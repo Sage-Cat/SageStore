@@ -63,7 +63,7 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
         callbackInvoked = true;
         ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
     };
-https: // github.com/Sage-Cat/SageStore/pull/25
+
     // Execute the task
     businessLogic->executeTask(requestData, callback);
 
