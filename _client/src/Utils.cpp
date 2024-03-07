@@ -4,7 +4,7 @@ namespace Utils
 {
 
     template <LayoutCompatible LayoutType>
-    LayoutType *createLayout(QWidget *parent, const QVector<std::variant<QWidget *, QLayout *>> &items)
+    LayoutType *createLayout(QWidget *parent, const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &items)
     {
         auto *layout = new LayoutType(parent);
         for (const auto &item : items)
@@ -16,6 +16,8 @@ namespace Utils
                     layout->addWidget(arg);
                 } else if constexpr (std::is_same_v<T, QLayout*>) {
                     layout->addLayout(arg);
+                }else if constexpr (std::is_same_v<T, QLayoutItem*>) {
+                    layout->addItem(arg);
                 } },
                        item);
         }
@@ -23,7 +25,7 @@ namespace Utils
     }
 
     // Explicit template instantiations
-    template QVBoxLayout *createLayout<QVBoxLayout>(QWidget *, const QVector<std::variant<QWidget *, QLayout *>> &);
-    template QHBoxLayout *createLayout<QHBoxLayout>(QWidget *, const QVector<std::variant<QWidget *, QLayout *>> &);
+    template QVBoxLayout *createLayout<QVBoxLayout>(QWidget *, const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &);
+    template QHBoxLayout *createLayout<QHBoxLayout>(QWidget *, const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &);
 
 } // namespace Utils
