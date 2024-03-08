@@ -40,6 +40,10 @@ protected:
 private:
     ApiManager &m_apiManager;
 
+private slots:
+    void onLoginSuccess();
+    void onRegistrationSuccess();
+
 protected:
     // dialogs
     LoginDialog *m_loginDialog;

@@ -21,6 +21,9 @@ public:
 
     virtual void showWithPresetData(const QString &username, const QString &password);
 
+    const QString getUsername();
+    const QString getPassword();
+
 signals:
     void registrationAttempted(const QString &username, const QString &password);
     void requestErrorMessageBox(const QString &errorMessage);
