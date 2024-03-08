@@ -7,22 +7,6 @@ BaseView::BaseView(QWidget *parent) : QWidget(parent)
 }
 
 BaseView::~BaseView() {
-    // Layouts
-    delete m_mainLayout;
-    delete m_buttonRow;
-    delete m_additionalInfo;
-
-   // buttons
-    delete m_addButton;
-    delete m_deleteButton;
-    delete m_editButton;
-
-    // data table
-    delete m_dataTable;
-
-    // label
-    delete m_status;
-
     //spacerItems
     delete m_buttonRowSpacerItem;
     delete m_additionalInfoSpacerItem;
@@ -49,7 +33,7 @@ void BaseView::setupUi()
     m_dataTable = new QTableWidget(this);
 
     // Create a status label and spacer item for additional info
-    m_status = new QLabel("Status: ready");
+    m_status = new QLabel("Status: ready", this);
     m_additionalInfoSpacerItem = new QSpacerItem(
         ViewsStyles::ButtonsSpacer::WIDTH,
         ViewsStyles::ButtonsSpacer::HEIGHT,
