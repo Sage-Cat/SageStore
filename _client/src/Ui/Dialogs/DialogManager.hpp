@@ -40,7 +40,7 @@ protected:
 private:
     ApiManager &m_apiManager;
 
-public slots:
+private slots:
     void onLoginSuccess();
     void onRegistrationSuccess();
 

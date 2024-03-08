@@ -21,6 +21,9 @@ public:
 
     virtual void showWithPresetData(const QString &username, const QString &password);
 
+    const QString getUsername();
+    const QString getPassword();
+
 signals:
     void registrationAttempted(const QString &username, const QString &password);
     void requestErrorMessageBox(const QString &errorMessage);
@@ -40,11 +43,9 @@ protected slots:
     void onRegisterClicked();
     void onLoginLinkClicked();
 
-public:
+private:
     QLineEdit *m_usernameField;
     QLineEdit *m_passwordField;
-
-private:
     QLineEdit *m_confirmPasswordField;
     QPushButton *m_registerButton;
     QLabel *m_loginLink;

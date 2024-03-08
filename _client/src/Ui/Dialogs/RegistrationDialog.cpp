@@ -111,3 +111,13 @@ void RegistrationDialog::onLoginLinkClicked()
     SPDLOG_TRACE("RegistrationDialog::onLoginLinkClicked");
     emit loginRequested();
 }
+
+const QString RegistrationDialog::getUsername()
+{
+    return m_usernameField->text();
+}
+
+const QString RegistrationDialog::getPassword()
+{
+    return m_passwordField->text();
+}

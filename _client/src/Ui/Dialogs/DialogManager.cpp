@@ -113,8 +113,6 @@ void DialogManager::onLoginSuccess()
 void DialogManager::onRegistrationSuccess()
 {
     m_registrationDialog->hide();
-    m_loginDialog->m_usernameField->setText(m_registrationDialog->m_usernameField->text());
-    m_loginDialog->m_passwordField->setText(m_registrationDialog->m_passwordField->text());
-    m_loginDialog->show();
+    m_loginDialog->showWithPresetData(m_registrationDialog->getUsername(), m_registrationDialog->getPassword());
     showMessage(tr("Message"), tr("Resistrarion successfull"), QMessageBox::Information);
 }
