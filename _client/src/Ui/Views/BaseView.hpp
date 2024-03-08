@@ -7,7 +7,9 @@
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
+
 #include "Ui/Views/ViewStyles.hpp"
+#include "Utils.hpp"
 
 class BaseView : public QWidget
 {
@@ -34,11 +36,10 @@ protected:
     // data table
     QTableWidget *m_dataTable;
 
-    // additional space
-    QSpacerItem *m_additionalButtonSpace;
-    QSpacerItem *m_additionalUnderTableSpace;
-    QSpacerItem *m_additionalUnderStatusSpace;
-
     // label
     QLabel *m_status;
+
+    //spacerItems
+    QSpacerItem* m_buttonRowSpacerItem;
+    QSpacerItem* m_additionalInfoSpacerItem;
 };

@@ -8,7 +8,7 @@ target_include_directories(${SERVER_NAME} PUBLIC ${SERVER_SOURCES_DIR})
 target_link_libraries(
     ${SERVER_NAME} 
     PUBLIC
-    boost::boost 
+    boost_common
     spdlog::spdlog 
     nlohmann_json::nlohmann_json
     SQLite::SQLite3

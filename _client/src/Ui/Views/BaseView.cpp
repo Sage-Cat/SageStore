@@ -3,64 +3,47 @@
 
 BaseView::BaseView(QWidget *parent) : QWidget(parent)
 {
-    setupUi();
+    setupUi(); // Call function to set up the user interface
 }
 
-BaseView::~BaseView() {}
+BaseView::~BaseView() {
+    //spacerItems
+    delete m_buttonRowSpacerItem;
+    delete m_additionalInfoSpacerItem;
+}
 
 void BaseView::setupUi()
 {
-    // set main layout
-    m_mainLayout = new QVBoxLayout(this);
-    this->setLayout(m_mainLayout);
-
-    //  add buttons to button layout
-    m_buttonRow = new QHBoxLayout;
+    // Create buttons
     m_addButton = new QPushButton("Add", this);
     m_deleteButton = new QPushButton("Delete", this);
     m_editButton = new QPushButton("Edit", this);
 
-    m_buttonRow->addWidget(m_addButton);
-    m_buttonRow->addWidget(m_editButton);
-    m_buttonRow->addWidget(m_deleteButton);
-
-    // add spacer to button layout
-    m_additionalButtonSpace = new QSpacerItem(
+    // Create spacer item for the button layout
+    m_buttonRowSpacerItem = new QSpacerItem(
         ViewsStyles::ButtonsSpacer::WIDTH,
         ViewsStyles::ButtonsSpacer::HEIGHT,
         QSizePolicy::Expanding,
         QSizePolicy::Fixed);
-    m_buttonRow->addSpacerItem(m_additionalButtonSpace);
 
-    // add button layout to main layout
-    m_mainLayout->addLayout(m_buttonRow);
+    // Create a row layout for buttons and add spacer item
+    m_buttonRow = Utils::createLayout<QHBoxLayout>(this, {m_addButton, m_deleteButton, m_editButton, m_buttonRowSpacerItem});
 
-    // add data table to main layout
+    // Create a data table and add it to the main layout
     m_dataTable = new QTableWidget(this);
-    m_mainLayout->addWidget(m_dataTable);
 
-    // add label to additional info
-    m_status = new QLabel("Status: Ready", this);
-    m_additionalInfo = new QHBoxLayout;
-    m_additionalInfo->addWidget(m_status);
-
-    // add additional space under table in main layout
-    m_additionalUnderTableSpace = new QSpacerItem(
-        ViewsStyles::UnderTableSpacer::WIDTH,
-        ViewsStyles::UnderTableSpacer::HEIGHT,
-        QSizePolicy::Expanding,
-        QSizePolicy::Minimum);
-    m_mainLayout->addSpacerItem(m_additionalUnderTableSpace);
-
-    // add additional info in main layout
-    m_mainLayout->addLayout(m_additionalInfo);
-
-    // add additional space under unfo
-
-    m_additionalUnderStatusSpace = new QSpacerItem(
-        ViewsStyles::UnderStatusbarSpacer::WIDTH,
-        ViewsStyles::UnderStatusbarSpacer::HEIGHT,
+    // Create a status label and spacer item for additional info
+    m_status = new QLabel("Status: ready", this);
+    m_additionalInfoSpacerItem = new QSpacerItem(
+        ViewsStyles::ButtonsSpacer::WIDTH,
+        ViewsStyles::ButtonsSpacer::HEIGHT,
         QSizePolicy::Expanding,
         QSizePolicy::Fixed);
-    m_mainLayout->addSpacerItem(m_additionalUnderStatusSpace);
+
+    // Create additional info layout with m_status and additionalInfoSpacerItem
+    m_additionalInfo = Utils::createLayout<QHBoxLayout>(this, {m_status, m_additionalInfoSpacerItem});
+
+    // Set up the main layout
+    m_mainLayout = Utils::createLayout<QVBoxLayout>(this, {m_buttonRow, m_dataTable, m_additionalInfo});
+    this->setLayout(m_mainLayout);
 }

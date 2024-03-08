@@ -1,10 +1,21 @@
 project(${SERVER_NAME})
 
 # Locate conan packages
-find_package(Boost REQUIRED)
+
 find_package(nlohmann_json REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(spdlog REQUIRED)
+
+find_package(Boost QUIET)
+
+# Check if the Conan-provided
+if(TARGET Boost::boost)
+    add_library(boost_common ALIAS Boost::boost)
+elseif(TARGET boost::boost)
+    add_library(boost_common ALIAS boost::boost)
+else()
+    message(FATAL_ERROR "Boost not found")
+endif()
 
 set(SERVER_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(SERVER_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)

@@ -14,6 +14,6 @@ namespace Utils
     concept LayoutCompatible = std::is_base_of_v<QLayout, T>;
 
     template <LayoutCompatible LayoutType>
-    LayoutType *createLayout(QWidget *parent, const QVector<std::variant<QWidget *, QLayout *>> &items);
+    LayoutType *createLayout(QWidget *parent, const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &items);
 
 } // namespace Utils
