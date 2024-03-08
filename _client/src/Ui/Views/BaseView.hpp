@@ -1,13 +1,13 @@
 #pragma once
 
 #include <QWidget>
-#include <QGroupBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QTableWidget>
 #include <QLabel>
 #include <QSpacerItem>
+
 #include "Ui/Views/ViewStyles.hpp"
 #include "Utils.hpp"
 

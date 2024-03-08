@@ -23,7 +23,7 @@ endif()
 target_link_libraries(
     ${SERVER_NAME} 
     PUBLIC
-    boost_common # Use the aliased target name
+    boost_common
     spdlog::spdlog 
     nlohmann_json::nlohmann_json
     SQLite::SQLite3
