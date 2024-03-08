@@ -35,9 +35,11 @@ protected slots:
     void onLoginClicked();
     void onRegisterLinkClicked();
 
-private:
+public:
     QLineEdit *m_usernameField;
     QLineEdit *m_passwordField;
+
+private:
     QPushButton *m_loginButton;
     QLabel *m_registerLink;
 };

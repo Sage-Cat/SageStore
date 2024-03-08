@@ -64,12 +64,14 @@ void DialogManager::setupApiConnections()
     // Login
     connect(m_loginDialog, &LoginDialog::loginAttempted,
             &m_apiManager, &ApiManager::loginUser);
+    connect(&m_apiManager, &ApiManager::loginSuccess,
+            this, &DialogManager::onLoginSuccess);
 
     // Registrations
     connect(m_registrationDialog, &RegistrationDialog::registrationAttempted,
             &m_apiManager, &ApiManager::registerUser);
     connect(&m_apiManager, &ApiManager::registrationSuccess,
-            m_registrationDialog, [this]() { /* TODO: smart login (right after success registration) */ });
+            this, &DialogManager::onRegistrationSuccess);
 }
 
 void DialogManager::setupDialogsConnections()
@@ -100,4 +102,19 @@ void DialogManager::showMessage(const QString &title, const QString &message, QM
     m_messageDialog->setWindowTitle(title);
     m_messageDialog->setText(message);
     m_messageDialog->exec();
+}
+
+void DialogManager::onLoginSuccess()
+{
+    m_loginDialog->hide();
+    showMessage(tr("Message"), tr("Login successfull"), QMessageBox::Information);
+}
+
+void DialogManager::onRegistrationSuccess()
+{
+    m_registrationDialog->hide();
+    m_loginDialog->m_usernameField->setText(m_registrationDialog->m_usernameField->text());
+    m_loginDialog->m_passwordField->setText(m_registrationDialog->m_passwordField->text());
+    m_loginDialog->show();
+    showMessage(tr("Message"), tr("Resistrarion successfull"), QMessageBox::Information);
 }
