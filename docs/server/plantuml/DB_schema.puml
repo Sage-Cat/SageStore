@@ -80,10 +80,8 @@ entity("ProductType") {
   --
   code : string
   barcode : string
-  ukt_zed : string
   name : string
   description : string
-  category : string
   lastPrice : float
   unit : string
   isImported : bool
@@ -105,10 +103,10 @@ entity("SaleOrders") {
   contactId : int
   employeeId : int
   status : string
-  orderInfoId : int
 }
 
-entity("OrderInfo") {
+
+entity("SalesOrderRecords") {
   + id : int
   --
   orderId : int
@@ -124,7 +122,15 @@ entity("PurchaseOrders") {
   userId : int
   supplierId : int
   status : string
-  orderInfoId : int
+}
+
+entity("PurchaseOrderRecords") {
+  + id : int
+  --
+  orderId : int
+  productTypeId : int
+  quantity : int
+  price : float
 }
 
 Roles "1" -- "0..*" Users : asigned to
@@ -138,7 +144,8 @@ ProductType "1" -- "0..*" ProductInfo
 ProductType "1" -- "0..*" SuppliersProductInfo
 Suppliers "1" -- "0..*" SuppliersProductInfo
 ProductType "1" -- "0..*" Inventory : stored_in
-ProductType "1" -- "0..*" OrderInfo : involved_in
-SaleOrders "1" -- "0..*" OrderInfo : consists_of
-PurchaseOrders "1" -- "0..*" OrderInfo : consists_of
+ProductType "1" -- "0..*" SalesOrderRecords : involved_in
+SaleOrders "1" -- "0..*" SalesOrderRecords : consists_of
+ProductType "1" -- "0..*" PurchaseOrderRecords : involved_in
+PurchaseOrders "1" -- "0..*" PurchaseOrderRecords : consists_of
 @enduml

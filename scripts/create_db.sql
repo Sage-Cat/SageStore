@@ -81,10 +81,8 @@ CREATE TABLE ProductType (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   code VARCHAR(50),
   barcode VARCHAR(50),
-  ukt_zed VARCHAR(50),
   name VARCHAR(100),
   description TEXT,
-  category VARCHAR(50),
   lastPrice FLOAT,
   unit VARCHAR(20),
   isImported BOOLEAN
@@ -108,15 +106,13 @@ CREATE TABLE SaleOrders (
   contactId INTEGER,
   employeeId INTEGER,
   status VARCHAR(50),
-  orderInfoId INTEGER,
   FOREIGN KEY (userId) REFERENCES Users(id),
   FOREIGN KEY (contactId) REFERENCES Contacts(id),
-  FOREIGN KEY (employeeId) REFERENCES Employees(id),
-  FOREIGN KEY (orderInfoId) REFERENCES OrderInfo(id)
+  FOREIGN KEY (employeeId) REFERENCES Employees(id)
 );
 
--- Create OrderInfo table
-CREATE TABLE OrderInfo (
+-- Create SalesOrderRecords table
+CREATE TABLE SalesOrderRecords (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   orderId INTEGER,
   productTypeId INTEGER,
@@ -133,12 +129,20 @@ CREATE TABLE PurchaseOrders (
   userId INTEGER,
   supplierId INTEGER,
   status VARCHAR(50),
-  orderInfoId INTEGER,
   FOREIGN KEY (userId) REFERENCES Users(id),
-  FOREIGN KEY (supplierId) REFERENCES Suppliers(id),
-  FOREIGN KEY (orderInfoId) REFERENCES OrderInfo(id)
+  FOREIGN KEY (supplierId) REFERENCES Suppliers(id)
 );
 
+-- Create PurchaseOrderRecords table
+CREATE TABLE PurchaseOrderRecords (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  orderId INTEGER,
+  productTypeId INTEGER,
+  quantity INTEGER,
+  price FLOAT,
+  FOREIGN KEY (orderId) REFERENCES PurchaseOrders(id),
+  FOREIGN KEY (productTypeId) REFERENCES ProductType(id)
+);
 
 
 ------------------------- INITIAL SETUP ------------------------------------
@@ -147,7 +151,7 @@ INSERT INTO Roles (name) VALUES ('user');
 INSERT INTO Roles (name) VALUES ('admin');
 
 -- Insert default user with roleId pointing to the default role
-INSERT INTO Users (username, password, roleId) VALUES ('admin', 'admin123', 1); -- Assuming 'admin' is the default admin user
+INSERT INTO Users (username, password, roleId) VALUES ('admin', 'admin123', 1); 
 
 -- Insert default employee
 INSERT INTO Employees (name, number, email, address) VALUES ('John Doe', '123456789', 'john@example.com', '123 Main St');
@@ -156,20 +160,23 @@ INSERT INTO Employees (name, number, email, address) VALUES ('John Doe', '123456
 INSERT INTO Suppliers (name, number, email, address) VALUES ('Default Supplier', '987654321', 'supplier@example.com', '456 Elm St');
 
 -- Insert default product type
-INSERT INTO ProductType (code, barcode, ukt_zed, name, description, category, lastPrice, unit, isImported) 
-VALUES ('DEFAULT', '000000000000', 'DEFAULT', 'Default Product', 'Default product description', 'Default category', 0.0, 'unit', 0);
+INSERT INTO ProductType (code, barcode, name, description, lastPrice, unit, isImported) 
+VALUES ('DEFAULT', '000000000000', 'Default Product', 'Default product description', 0.0, 'unit', 0);
 
 -- Insert default inventory
-INSERT INTO Inventory (productTypeId, quantityAvailable, employeeId) VALUES (1, 0, 1); -- Assuming the default product type id is 1 and employee id is 1
+INSERT INTO Inventory (productTypeId, quantityAvailable, employeeId) VALUES (1, 0, 1); 
 
 -- Insert default contact
 INSERT INTO Contacts (name, type, email, phone) VALUES ('Default Contact', 'Customer', 'contact@example.com', '123-456-7890');
 
 -- Insert default sale order
-INSERT INTO SaleOrders (date, userId, contactId, employeeId, status, orderInfoId) VALUES ('2024-02-19', 1, 1, 1, 'Pending', 1); -- Assuming the default user id, contact id, and employee id are 1
+INSERT INTO SaleOrders (date, userId, contactId, employeeId, status) VALUES ('2024-02-19', 1, 1, 1, 'Pending'); -- Assuming the default user id, contact id, and employee id are 1
 
--- Insert default order info
-INSERT INTO OrderInfo (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); -- Assuming the default sale order id and product type id are 1
+-- Insert default sales order record
+INSERT INTO SalesOrderRecords (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); 
 
 -- Insert default purchase order
-INSERT INTO PurchaseOrders (date, userId, supplierId, status, orderInfoId) VALUES ('2024-02-19', 1, 1, 'Pending', 1); -- Assuming the default user id and supplier id are 1
+INSERT INTO PurchaseOrders (date, userId, supplierId, status) VALUES ('2024-02-19', 1, 1, 'Pending'); 
+
+-- Insert default purchase order record
+INSERT INTO PurchaseOrderRecords (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); -Assuming the default purchase order id is 1 and product type id is 1
