@@ -166,9 +166,14 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 **Purchase Module**
 
+- As a User, I want to see list of all orders sorted by newer.
+- As a User, I want to be able to open order by double-clicking on it.
+- As a User, I want to see list of order records.
+- As a User, I want to be able to add/edit/delete order's records.
+- As a User, I want to be able to modify sellers and customers for concrete order.
+- As a User, I want to see product description when I put a mouse on the product.
 - As a User, I want to generate PDFs for 2.5\*4 barcodes so they can be printed and attached to products.
 - As a User, I want to auto-generate barcodes for new Product Types to streamline the inventory process.
-- As a User, I want to view and attach incoming invoices to Purchase Orders to verify received goods.
 
 **Sale Module**
 
@@ -488,3 +493,4 @@ The aim of this project is to develop a comprehensive software solution for smal
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
 | 04/02/2024 | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
 | 20/02/2024 | 3.1     | REST revision. Finishing docs structure                           | Pavlenko Volodymyr |
+| 20/02/2024 | 3.2     | Add Purchase spesific docs                                        | Pavlenko Volodymyr |
