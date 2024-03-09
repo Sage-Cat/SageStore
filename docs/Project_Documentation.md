@@ -44,11 +44,13 @@
       - [Result](#result)
       - [User](#user)
       - [Role](#role)
-      - [](#)
+      - [PurchaseOrder](#purchaseorder)
+      - [PurchaseOrderRecord](#purchaseorderrecord)
   - [REST API](#rest-api)
     - [Config](#config)
     - [Endpoints](#endpoints)
       - [Users](#users)
+      - [Purchase](#purchase)
       - [Sales](#sales)
       - [Inventory](#inventory)
       - [Management](#management)
@@ -164,9 +166,14 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 **Purchase Module**
 
+- As a User, I want to see list of all orders sorted by newer.
+- As a User, I want to be able to open order by double-clicking on it.
+- As a User, I want to see list of order records.
+- As a User, I want to be able to add/edit/delete order's records.
+- As a User, I want to be able to modify sellers and customers for concrete order.
+- As a User, I want to see product description when I put a mouse on the product.
 - As a User, I want to generate PDFs for 2.5\*4 barcodes so they can be printed and attached to products.
 - As a User, I want to auto-generate barcodes for new Product Types to streamline the inventory process.
-- As a User, I want to view and attach incoming invoices to Purchase Orders to verify received goods.
 
 **Sale Module**
 
@@ -214,7 +221,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 ### Database schema
 
-![Database Schema](Database_schema.png)
+![Database Schema](DB_schema.png)
 
 ## Architecture Design
 
@@ -264,30 +271,24 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 #### Architecture Layers and Components
 
-**APIFacade**
-
-- **Responsibilities**: Acts as a gateway for the system, exposing RESTful APIs and RPC Endpoints to frontend clients and external systems.
-- **Purpose**: Facilitates scalability and maintainability by abstracting the server-side complexities from the client-side, ensuring a decoupled architecture that simplifies client interactions.
-
 **SageStoreServer**
 
-- **Responsibilities**: Initializes the application, orchestrates the startup process, and manages the lifecycle of various components such as APIFacade, BusinessLogic, SqliteDatabaseManager, and Mediator.
-- **Purpose**: Functions as the central control unit of the application, coordinating high-level operations and ensuring smooth interaction across different layers for a cohesive system behavior.
+- **Responsibilities**: Initializes the application, orchestrates the startup process.
+- **Purpose**: Functions as the central control unit of the application.
+
+**Network**
+
+- **Responsibilities**: Acts as a gateway for the system, exposing RESTful APIs and RPC Endpoints to clients.
+- **Purpose**: Implement async request-response using simple transaction model.
 
 **BusinessLogic**
 
-- **Responsibilities**: Implements the core business rules and functionalities of the system. It is structured into modules, with examples including UserRolesModule and LogsModule, to encapsulate specific business scenarios.
-- **Purpose**: Enables a modular and extensible design that simplifies the addition, modification, or removal of functionalities, thereby enhancing the system's adaptability to changing business requirements.
+- **Responsibilities**: Implements the core business rules and functionalities of the system. It is structured into modules, with examples including UserRolesModule and LogsModule.
+- **Purpose**: Enables a modular and extensible design that simplifies the addition, modification, or removal of functionalities.
 
-**SqliteDatabaseManager**
-
-- **Responsibilities**: Provides an abstraction layer for database interactions, offering a clean API for CRUD operations and more complex queries. It includes specific repositories like UserRolesRepository and LogsRepository.
-- **Purpose**: Separates the business logic from data access concerns, allowing for flexibility in changing database technologies or schemas without impacting the business logic layer.
-
-**Mediator**
-
-- **Responsibilities**: Acts as a communication hub between different parts of the application, particularly between BusinessLogic modules and their corresponding repositories in the SqliteDatabaseManager. It ensures that modules can interact with each other without direct dependencies.
-- **Purpose**: Reduces coupling between components, making the system more maintainable and scalable. By facilitating indirect interactions, it simplifies module integration and enhances the system's overall modularity.
+**RepositoriesManager**
+- **Responsibilities**: Provides access to the repositories.
+- **Purpose**: Abstracts business logic from repositories lifetime management.
 
 ## Dataset specification
 
@@ -310,11 +311,11 @@ If some key is not specified, it has `{ "" }` value as a placeholder for the lis
 
 #### Result
 
-If error is empty, it means that operation was successful.
+If error key exists, it mean that error occured (even if message is empty).
 
 | Key   | Value  |
 | ----- | ------ |
-| error | { "" } |
+| error | { "error description" } |
 
 #### User
 | Key      | Value            |
@@ -330,7 +331,28 @@ If error is empty, it means that operation was successful.
 | id   | { "0" }             |
 | name | { "Administrator" } |
 
-####
+#### PurchaseOrder
+| Key         | Value                     |
+| ----------- | ------------------------- |
+| id          | { "0" }                   |
+| date        | { "YYYY-MM-DD HH:MM:SS" } |
+| user_id     | { "1" }                   |
+| supplier_id | { "2" }                   |
+| status      | { "READY" }               |
+
+#### PurchaseOrderRecord
+| Key         | Value                               |
+| ----------- | ----------------------------------- |
+| id          | { "0" }                             |
+| orderId     | { "0" }                             |
+| code        | { "123123" }                        |
+| name        | { "Product1" }                      |
+| quantity    | { "1" }                             |
+| unit        | { "шт." }                           |
+| price       | { "123.10" }                        |
+| barcode     | { "123123" }                        |
+| description | { "Some long product description" } |
+| isImported  | { "True" }                          |
 
 ## REST API
 
@@ -372,6 +394,19 @@ About arrays: Request or Response is array of entities if it's specified as `arr
 | `POST`   | `/users/roles`          | Role                     | Result           | Add a new role (Admin only)           |
 | `PUT`    | `/users/roles/{roleId}` | Role                     | Result           | Edit a specific role (Admin only)     |
 | `DELETE` | `/users/roles/{roleId}` | -                        | Result           | Delete a specific role (Admin only)   |
+
+#### Purchase
+
+| Method   | Endpoint                       | Request             | Response                   | Description                       |
+| -------- | ------------------------------ | ------------------- | -------------------------- | --------------------------------- |
+| `GET`    | `/purchase`                    | -                   | array<PurchaseOrder>       | Fetch all purchases records       |
+| `POST`   | `/purchase`                    | PurchaseOrder       | Result                     | Add a new purchase                |
+| `PUT`    | `/purchase/{purchaseId}`       | PurchaseOrder       | Result                     | Edit a specific purchase          |
+| `DELETE` | `/purchase/{purchaseId}`       | -                   | Result                     | Delete a specific purchase        |
+| `GET`    | `/purchase_order/{purchaseId}` | PurchaseOrderRecord | array<PurchaseOrderRecord> | Fetch the list of order's records |
+| `POST`   | `/purchase_order/{purchaseId}` | -                   | Result                     | Add new record to list            |
+| `PUT`    | `/purchase_order/{purchaseId}` | PurchaseOrderRecord | Result                     | Edit a specific record            |
+| `DELETE` | `/purchase_order/{purchaseId}` | -                   | Result                     | Delete a specific record          |
 
 #### Sales
 
@@ -458,3 +493,4 @@ The aim of this project is to develop a comprehensive software solution for smal
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
 | 04/02/2024 | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
 | 20/02/2024 | 3.1     | REST revision. Finishing docs structure                           | Pavlenko Volodymyr |
+| 20/02/2024 | 3.2     | Add Purchase spesific docs                                        | Pavlenko Volodymyr |
