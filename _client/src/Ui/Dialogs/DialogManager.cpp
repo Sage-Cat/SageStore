@@ -106,12 +106,14 @@ void DialogManager::showMessage(const QString &title, const QString &message, QM
 
 void DialogManager::onLoginSuccess()
 {
+    SPDLOG_TRACE("DialogManager::onLoginSuccess");
     m_loginDialog->hide();
     showMessage(tr("Message"), tr("Login successfull"), QMessageBox::Information);
 }
 
 void DialogManager::onRegistrationSuccess()
 {
+    SPDLOG_TRACE("DialogManager::onRegistrationSuccess");
     m_registrationDialog->hide();
     m_loginDialog->showWithPresetData(m_registrationDialog->getUsername(), m_registrationDialog->getPassword());
     showMessage(tr("Message"), tr("Resistrarion successfull"), QMessageBox::Information);
