@@ -28,8 +28,8 @@ public slots:
     virtual void registerUser(const QString &username, const QString &password);
     virtual void getRole();
     virtual void postNewRole(const QString &newRole);
-    virtual void editRole(const QString &edit_role, const QString &id);
-    virtual void deleteRole(const QString &delete_role, const QString &id);
+    virtual void editRole(const QString &id, const QString &role_name);
+    virtual void deleteRole(const QString &id);
 protected slots:
     // for NetworkService
     virtual void
@@ -39,9 +39,7 @@ signals:
     void loginSuccess(const QString &id, const QString &roleId);
     void registrationSuccess();
     void getRoleSuccess();
-    void setRoleSuccess();
-    void editRoleSuccess();
-    void deleteRoleSuccess();
+    void roleSuccess();
     // Error handling
     void errorOccurred(const QString &errorMessage);
 
@@ -53,10 +51,9 @@ private:
     void handleError(const QString &errorMessage);
     void handleLoginResponse(Method method, const Dataset &dataset);
     void handleRegistrationResponse(Method method, const Dataset &dataset);
+    void handleRoles(Method method, const Dataset &dataset);
+    void handleGetRolesResponse(Method method, const Dataset &dataset);
     void handleRolesResponse(Method method, const Dataset &dataset);
-    void handleSetRoleResponse(Method method, const Dataset &dataset);
-    void handleEditRoleResponse(Method method, const Dataset &dataset);
-    void handleDeleteRoleResponse(Method method, const Dataset &dataset);
 
 private:
     NetworkService &m_networkService;
