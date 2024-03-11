@@ -15,6 +15,13 @@ LoginDialog::LoginDialog(BaseDialog *parent) : BaseDialog(parent)
     setupConnections();
 }
 
+LoginDialog::~LoginDialog()
+{
+    delete labelLayout;
+    delete lineLayout;
+    delete inputLayout;  
+}
+
 void LoginDialog::showWithPresetData(const QString &username, const QString &password)
 {
     SPDLOG_TRACE("LoginDialog::showWithPresetData | user: {} | password: {}", username.toStdString(), password.toStdString());
@@ -54,15 +61,13 @@ void LoginDialog::setupLayout()
     QLabel *m_usernameLable = new QLabel(tr("Username"));
     QLabel *m_passwordLable = new QLabel(tr("Password"));
 
-    auto *labelLayout = Utils::createLayout<QVBoxLayout>(this,
-                                                         {m_usernameLable, m_passwordLable});
+    labelLayout = Utils::createLayout<QVBoxLayout>({m_usernameLable, m_passwordLable});
 
     ///> Layout for lines
-    auto *lineLayout = Utils::createLayout<QVBoxLayout>(this,
-                                                        {m_usernameField, m_passwordField});
+    lineLayout = Utils::createLayout<QVBoxLayout>({m_usernameField, m_passwordField});
 
     ///> Layout for labels and lines
-    auto *inputLayout = Utils::createLayout<QHBoxLayout>(this, {labelLayout, lineLayout});
+    inputLayout = Utils::createLayout<QHBoxLayout>({labelLayout, lineLayout});
 
     mainLayout->addLayout(inputLayout);
 
