@@ -42,27 +42,28 @@ private slots:
 
     void testSuccessfulGetRole()
     {
-        QSignalSpy getSuccessSpy(apiManager, &ApiManager::getRoleSuccess);
-        apiManager->getRole();
+        QSignalSpy getSuccessSpy(apiManager, &ApiManager::rolesList);
+        apiManager->getRoleList();
         QCOMPARE(getSuccessSpy.count(), 1);
     }
 
     void testSuccessfulAddRole()
     {
-        QSignalSpy addSuccwssSpy(apiManager, &ApiManager::roleSuccess);
-        apiManager->postNewRole("newRole");
+        QSignalSpy addSuccwssSpy(apiManager, &ApiManager::newRoleCreated);
+        apiManager->createNewRole("newRole");
         QCOMPARE(addSuccwssSpy.count(), 1);
     }
 
     void testSuccessfulEditRoles()
     {
-        QSignalSpy editSuccessSSpy(apiManager, &ApiManager::roleSuccess);
+        QSignalSpy editSuccessSSpy(apiManager, &ApiManager::roleEdited);
         apiManager->editRole("0", "role");
         QCOMPARE(editSuccessSSpy.count(), 1);
     }
+
     void testSuccessfulDeleteRole()
     {
-        QSignalSpy deleteSuccessSpy(apiManager, &ApiManager::roleSuccess);
+        QSignalSpy deleteSuccessSpy(apiManager, &ApiManager::roleDeleted);
         apiManager->deleteRole("0");
         QCOMPARE(deleteSuccessSpy.count(), 1);
     }

@@ -36,7 +36,7 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
     case Method::PUT:
         reply = m_manager->put(request, serializedData);
         break;
-    case Method::DELETES:
+    case Method::DEL:
         reply = m_manager->deleteResource(request);
         break;
     default:

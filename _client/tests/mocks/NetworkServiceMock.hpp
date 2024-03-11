@@ -28,7 +28,7 @@ public:
             serverResponse = {{Keys::User::ROLE_ID, {"0"}}};
         else if (endpoint.contains(Endpoints::Users::ROLES) != std::string::npos && method == Method::PUT)
             serverResponse = {{}};
-        else if (endpoint.contains(Endpoints::Users::ROLES) != std::string::npos && method == Method::DELETES)
+        else if (endpoint.contains(Endpoints::Users::ROLES) != std::string::npos && method == Method::DEL)
             serverResponse = {{}};
         emit responseReceived(endpoint, method, serverResponse);
     }

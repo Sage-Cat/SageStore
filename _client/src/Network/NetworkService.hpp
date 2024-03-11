@@ -16,7 +16,7 @@ enum class Method
     GET = QNetworkAccessManager::Operation::GetOperation,
     POST = QNetworkAccessManager::Operation::PostOperation,
     PUT = QNetworkAccessManager::Operation::PutOperation,
-    DELETES = QNetworkAccessManager::Operation::DeleteOperation
+    DEL = QNetworkAccessManager::Operation::DeleteOperation
 };
 
 /**
