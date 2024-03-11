@@ -9,10 +9,11 @@ class SageStorePkg(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     requires = [
+        "qt/6.6.2",
         "spdlog/1.12.0",
         "nlohmann_json/3.11.2",
         "gtest/1.14.0",
-        "sqlite3/3.45.1"
+        "sqlite3/3.45.0"
     ]
     default_options = {
         "shared": False,

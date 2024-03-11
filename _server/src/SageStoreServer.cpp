@@ -1,7 +1,7 @@
 #include "SageStoreServer.hpp"
 
 #include "Database/RepositoryManager.hpp"
-#include "BusinessLogic\BusinessLogic.hpp"
+#include "BusinessLogic/BusinessLogic.hpp"
 #include "Network/HttpServer.hpp"
 
 #include "SpdlogConfig.hpp"
