@@ -25,13 +25,3 @@ public slots:
         emit errorOccurred(errorMessage);
     }
 };
-
-// virtual void getRole();
-// virtual void postNewRole(const QString &newRole);
-// virtual void editRole(const QString &edit_role, const QString &id);
-// virtual void deleteRole(const QString &delete_role, const QString &id);
-
-// void
-// void
-// void
-// void

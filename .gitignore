@@ -4,5 +4,3 @@ build/
 CMakeLists.txt.user
 CMakeUserPresets.json
 docs/doxygen_generated
-.gitignore
-server/test/unit
