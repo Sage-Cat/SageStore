@@ -5,7 +5,6 @@ namespace Utils
 
     template <LayoutCompatible LayoutType>
     LayoutType *createLayout(const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &items, QWidget *parent)
-    //remove parent
     //remove QLayout (not now) 
     {
         auto *layout = new LayoutType(parent);

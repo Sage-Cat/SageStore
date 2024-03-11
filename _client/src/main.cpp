@@ -15,7 +15,7 @@ const QString SERVER_API_URL{"http://127.0.0.1:8001/api"};
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    BaseView temp;
+    
     SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
 
