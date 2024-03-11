@@ -3,7 +3,7 @@
 #include "Database/SqliteDatabaseManager.hpp"
 #include "Database/RepositoryManager.hpp"
 #include "Network/HttpServer.hpp"
-#include "BusinessLogic\BusinessLogic.hpp"
+#include "BusinessLogic/BusinessLogic.hpp"
 
 #include "SpdlogConfig.hpp"
 
