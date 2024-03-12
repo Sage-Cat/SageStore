@@ -4,8 +4,7 @@ namespace Utils
 {
 
     template <LayoutCompatible LayoutType>
-    LayoutType *createLayout(const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &items, QWidget *parent)
-    //remove QLayout (not now) 
+    LayoutType *createLayout(const QVector<std::variant<QWidget *, QLayout *, QLayoutItem*>> &items, QWidget *parent) 
     {
         auto *layout = new LayoutType(parent);
         for (const auto &item : items)
