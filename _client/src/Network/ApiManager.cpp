@@ -193,11 +193,27 @@ void ApiManager::handleRoleList(const Dataset &dataset)
     QVector<Role> roleVector;
     auto idList = dataset[Keys::Role::ID];
     auto nameList = dataset[Keys::Role::NAME];
-    for (auto i = idList.cbegin(), j = nameList.cbegin(); i != idList.cend(); i++, j++)
+    for (auto id = idList.cbegin(), name = nameList.cbegin(); id != idList.cend(); id++, name++)
     {
-        qDebug() << "id - " << *i << ", name - " << *j;
-        Role role(((i)->isEmpty() ? "" : *i), ((j)->isEmpty() ? "" : *j));
-        roleVector.emplace_back(role);
+        Role *role;
+        QString strId = "", strName = "";
+        if (!(id->isEmpty() && name->isEmpty()))
+        {
+            role = new Role(*id, *name);
+        }
+        else if (id->isEmpty())
+        {
+            role = new Role(strId, *name);
+        }
+        else if (name->isEmpty())
+        {
+            role = new Role(*id, strName);
+        }
+        else
+        {
+            role = new Role(strId, strName);
+        }
+        roleVector.emplace_back(*role);
     }
     emit rolesList(std::move(roleVector));
 }

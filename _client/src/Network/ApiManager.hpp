@@ -5,20 +5,10 @@
 #include <QVector>
 
 #include "DataTypes.hpp"
+#include "Entities/Role.hpp"
 
 class NetworkService;
 enum class Method;
-
-struct Role
-{
-    QString id;
-    QString name;
-    Role() = default;
-    Role(QString id, QString name) : id{id},
-                                     name{name}
-    {
-    }
-};
 
 /**
  * @class ApiManager
@@ -44,8 +34,7 @@ public slots:
     virtual void deleteRole(const QString &id);
 protected slots:
     // for NetworkService
-    virtual void
-    handleResponse(const QString &endpoint, Method method, const Dataset &dataset);
+    virtual void handleResponse(const QString &endpoint, Method method, const Dataset &dataset);
 
 signals:
     void loginSuccess(const QString &id, const QString &roleId);

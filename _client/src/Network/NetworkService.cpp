@@ -17,7 +17,6 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
         return;
     }
     QUrl fullUrl{m_apiUrl + endpoint + "/" + resource_id};
-    // (resource_id == "") ? fullUrl = m_apiUrl + endpoint : fullUrl = m_apiUrl + endpoint + "/" + resource_id;
     QNetworkRequest request(fullUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
