@@ -146,7 +146,7 @@ void ApiManager::handleRoles(Method method, const Dataset &dataset)
         handleRoleList(dataset);
         break;
     case Method::POST:
-        emit newRoleCreated();
+        emit roleCreated();
         break;
     case Method::PUT:
         emit roleEdited();
@@ -214,6 +214,6 @@ void ApiManager::handleRoleList(const Dataset &dataset)
     }
     else
     {
-        handleError("dataset doesen't contains ID or NAME");
+        handleError("dataset doesn't contains ID or NAME");
     }
 }

@@ -27,10 +27,10 @@ public:
             serverResponse = {{Keys::Role::ID, {"1", "2", "3"}}, {Keys::Role::NAME, {"adm", "asd", "Asdf"}}};
         else if (endpoint == Endpoints::Users::ROLES && method == Method::POST)
             serverResponse = {{Keys::User::ROLE_ID, {"0"}}};
-        else if (endpoint.contains(Endpoints::Users::ROLES) != std::string::npos && method == Method::PUT)
+        else if (endpoint == Endpoints::Users::ROLES && method == Method::PUT)
             serverResponse = {{}};
-        else if (endpoint.contains(Endpoints::Users::ROLES) != std::string::npos && method == Method::DEL)
+        else if (endpoint == Endpoints::Users::ROLES && method == Method::DEL)
             serverResponse = {{}};
         emit responseReceived(endpoint, method, serverResponse);
     }
-};
+}

@@ -49,7 +49,7 @@ private slots:
 
     void testSuccessfulAddRole()
     {
-        QSignalSpy addSuccwssSpy(apiManager, &ApiManager::newRoleCreated);
+        QSignalSpy addSuccwssSpy(apiManager, &ApiManager::roleCreated);
         apiManager->createNewRole("newRole");
         QCOMPARE(addSuccwssSpy.count(), 1);
     }

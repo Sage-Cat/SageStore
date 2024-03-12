@@ -40,7 +40,7 @@ signals:
     void loginSuccess(const QString &id, const QString &roleId);
     void registrationSuccess();
     void rolesList(const QVector<Role> &roleList);
-    void newRoleCreated();
+    void roleCreated();
     void roleEdited();
     void roleDeleted();
     // Error handling
