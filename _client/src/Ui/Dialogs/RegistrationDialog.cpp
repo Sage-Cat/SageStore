@@ -15,6 +15,13 @@ RegistrationDialog::RegistrationDialog(BaseDialog *parent) : BaseDialog(parent)
     setupConnections();
 }
 
+RegistrationDialog::~RegistrationDialog()
+{
+    delete labelLayout;
+    delete lineLayout;
+    delete inputLayout;
+}
+
 void RegistrationDialog::showWithPresetData(const QString &username, const QString &password)
 {
     SPDLOG_TRACE("RegistrationDialog::showWithPresetData | user: {} | password: {}", username.toStdString(), password.toStdString());
@@ -66,15 +73,13 @@ void RegistrationDialog::setupLayout()
     QLabel *m_passwordLable = new QLabel(tr("Password"));
     QLabel *m_confirmPasswordLable = new QLabel(tr("Confirm password"));
 
-    auto *labelLayout = Utils::createLayout<QVBoxLayout>(this,
-                                                         {m_usernameLable, m_passwordLable, m_confirmPasswordLable});
+    labelLayout = Utils::createLayout<QVBoxLayout>({m_usernameLable, m_passwordLable, m_confirmPasswordLable});
 
     ///> Layout for lines
-    auto *lineLayout = Utils::createLayout<QVBoxLayout>(this,
-                                                        {m_usernameField, m_passwordField, m_confirmPasswordField});
+    lineLayout = Utils::createLayout<QVBoxLayout>({m_usernameField, m_passwordField, m_confirmPasswordField});
 
     ///> Layout for labels and lines
-    auto *inputLayout = Utils::createLayout<QHBoxLayout>(this, {labelLayout, lineLayout});
+    inputLayout = Utils::createLayout<QHBoxLayout>({labelLayout, lineLayout});
 
     mainLayout->addLayout(inputLayout);
 

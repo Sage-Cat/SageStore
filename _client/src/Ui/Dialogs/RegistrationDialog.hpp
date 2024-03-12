@@ -18,7 +18,8 @@ class RegistrationDialog : public BaseDialog
 
 public:
     explicit RegistrationDialog(BaseDialog *parent = nullptr);
-
+    virtual ~RegistrationDialog();
+    
     virtual void showWithPresetData(const QString &username, const QString &password);
 
     const QString getUsername();
@@ -49,4 +50,8 @@ private:
     QLineEdit *m_confirmPasswordField;
     QPushButton *m_registerButton;
     QLabel *m_loginLink;
+
+    QVBoxLayout *labelLayout;
+    QVBoxLayout *lineLayout;
+    QHBoxLayout *inputLayout;
 };

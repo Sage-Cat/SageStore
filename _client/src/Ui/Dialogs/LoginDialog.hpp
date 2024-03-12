@@ -18,6 +18,7 @@ class LoginDialog : public BaseDialog
 
 public:
     explicit LoginDialog(BaseDialog *parent = nullptr);
+    ~LoginDialog();
 
     virtual void showWithPresetData(const QString &username, const QString &password);
 
@@ -40,4 +41,8 @@ private:
     QLineEdit *m_passwordField;
     QPushButton *m_loginButton;
     QLabel *m_registerLink;
+
+    QVBoxLayout *labelLayout;
+    QVBoxLayout *lineLayout;
+    QHBoxLayout *inputLayout;
 };

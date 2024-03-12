@@ -7,7 +7,7 @@
 #include "Network/NetworkService.hpp"
 #include "Network/JsonSerializer.hpp"
 #include "Ui/UiManager.hpp"
-
+#include "Ui/Views/BaseView.hpp"
 #include "SpdlogConfig.hpp"
 
 const QString SERVER_API_URL{"http://127.0.0.1:8001/api"};
@@ -15,7 +15,7 @@ const QString SERVER_API_URL{"http://127.0.0.1:8001/api"};
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
+    
     SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
 
@@ -44,6 +44,6 @@ int main(int argc, char *argv[])
                          apiManagerThread.wait();
                          SPDLOG_INFO("SageStoreClient finished with code=0");
                      });
-
+    
     return app.exec();
 }
