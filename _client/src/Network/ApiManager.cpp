@@ -92,12 +92,11 @@ void ApiManager::editRole(const QString &id, const QString &roleName)
 void ApiManager::deleteRole(const QString &id)
 {
     SPDLOG_TRACE("ApiManager::deleteRole");
-    Dataset dataset;
 
     m_networkService.sendRequest(
         Endpoints::Users::ROLES,
         Method::DEL,
-        dataset,
+        {},
         id);
 }
 
@@ -188,30 +187,29 @@ void ApiManager::handleRegistrationResponse(Method, const Dataset &)
 
 void ApiManager::handleRoleList(const Dataset &dataset)
 {
-    QVector<Role> roleVector;
-    auto idList = dataset[Keys::Role::ID];
-    auto nameList = dataset[Keys::Role::NAME];
-    for (auto id = idList.cbegin(), name = nameList.cbegin(); id != idList.cend(); id++, name++)
+    try
     {
-        Role *role;
-        QString strId = "", strName = "";
-        if (!(id->isEmpty() && name->isEmpty()))
+        QVector<Role> roles;
+
+        const auto &idList = dataset[Keys::Role::ID];
+        const auto &nameList = dataset[Keys::Role::NAME];
+
+        if (idList.size() != nameList.size())
         {
-            role = new Role(*id, *name);
+            throw std::runtime_error("ID list and Name list have different sizes.");
         }
-        else if (id->isEmpty())
+
+        roles.reserve(idList.size());
+
+        for (int i = 0; i < idList.size(); ++i)
         {
-            role = new Role(strId, *name);
+            roles.push_back(Role(idList[i], nameList[i]));
         }
-        else if (name->isEmpty())
-        {
-            role = new Role(*id, strName);
-        }
-        else
-        {
-            role = new Role(strId, strName);
-        }
-        roleVector.emplace_back(*role);
+
+        emit rolesList(roles);
     }
-    emit rolesList(std::move(roleVector));
+    catch (const std::exception &e)
+    {
+        handleError(e.what());
+    }
 }
