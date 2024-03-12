@@ -7,6 +7,8 @@
 #include "DataCommon.hpp"
 #include "SpdlogConfig.hpp"
 
+#include <qDebug>
+
 ApiManager::ApiManager(NetworkService &networkService)
     : m_networkService(networkService)
 {
@@ -80,24 +82,25 @@ void ApiManager::editRole(const QString &id, const QString &roleName)
 {
     SPDLOG_TRACE("ApiManager::editRole");
     Dataset dataset;
-    dataset["editRole"] = {roleName};
-    dataset["id"] = {id};
+    dataset["roleName"] = {roleName};
 
     m_networkService.sendRequest(
-        QString(Endpoints::Users::ROLES) + "/" + id,
+        Endpoints::Users::ROLES,
         Method::PUT,
-        dataset);
+        dataset,
+        id);
 }
 
 void ApiManager::deleteRole(const QString &id)
 {
     SPDLOG_TRACE("ApiManager::deleteRole");
     Dataset dataset;
-    dataset["id"] = {id};
+
     m_networkService.sendRequest(
-        QString(Endpoints::Users::ROLES) + "/" + id,
+        Endpoints::Users::ROLES,
         Method::DEL,
-        dataset);
+        dataset,
+        id);
 }
 
 void ApiManager::setupHandlers()
@@ -114,17 +117,8 @@ void ApiManager::setupHandlers()
 void ApiManager::handleResponse(const QString &endpoint, Method method, const Dataset &dataset)
 {
     SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
-    // auto handler = m_responseHandlers.find(endpoint);
-    QMap<QString, ApiManager::ResponseHandler>::const_iterator handler = m_responseHandlers.cend();
-    for (auto pair = m_responseHandlers.cbegin(); pair != m_responseHandlers.cend(); pair++)
-    {
-        if (endpoint.indexOf(pair.key(), 0, Qt::CaseInsensitive) != -1)
-        {
-            handler = pair;
-        }
-    }
-
-    if (handler != m_responseHandlers.cend())
+    auto handler = m_responseHandlers.find(endpoint);
+    if (handler != m_responseHandlers.end())
     {
         QString errorMsg{};
         if (dataset.contains(Keys::_ERROR))
@@ -152,7 +146,7 @@ void ApiManager::handleRoles(Method method, const Dataset &dataset)
     switch (method)
     {
     case Method::GET:
-        emit rolesList(dataset);
+        handleRoleList(dataset);
         break;
     case Method::POST:
         emit newRoleCreated();
@@ -192,4 +186,18 @@ void ApiManager::handleRegistrationResponse(Method, const Dataset &)
 {
     SPDLOG_TRACE("ApiManager::handleRegisterResponse");
     emit registrationSuccess();
+}
+
+void ApiManager::handleRoleList(const Dataset &dataset)
+{
+    QVector<Role> roleVector;
+    auto idList = dataset[Keys::Role::ID];
+    auto nameList = dataset[Keys::Role::NAME];
+    for (auto i = idList.cbegin(), j = nameList.cbegin(); i != idList.cend(); i++, j++)
+    {
+        qDebug() << "id - " << *i << ", name - " << *j;
+        Role role(((i)->isEmpty() ? "" : *i), ((j)->isEmpty() ? "" : *j));
+        roleVector.emplace_back(role);
+    }
+    emit rolesList(std::move(roleVector));
 }

@@ -7,7 +7,7 @@ NetworkService::NetworkService(QObject *parent)
     SPDLOG_TRACE("NetworkService::NetworkService");
 }
 
-void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset)
+void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset, const QString &resource_id)
 {
     SPDLOG_TRACE("NetworkService::sendRequest");
 
@@ -16,8 +16,8 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
         SPDLOG_ERROR("NetworkService::sendRequest serializer was not set");
         return;
     }
-
-    QUrl fullUrl(m_apiUrl + endpoint);
+    QUrl fullUrl{m_apiUrl + endpoint + "/" + resource_id};
+    // (resource_id == "") ? fullUrl = m_apiUrl + endpoint : fullUrl = m_apiUrl + endpoint + "/" + resource_id;
     QNetworkRequest request(fullUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);

@@ -2,11 +2,23 @@
 
 #include <QObject>
 #include <QMap>
+#include <QVector>
 
 #include "DataTypes.hpp"
 
 class NetworkService;
 enum class Method;
+
+struct Role
+{
+    QString id;
+    QString name;
+    Role() = default;
+    Role(QString id, QString name) : id{id},
+                                     name{name}
+    {
+    }
+};
 
 /**
  * @class ApiManager
@@ -38,7 +50,7 @@ protected slots:
 signals:
     void loginSuccess(const QString &id, const QString &roleId);
     void registrationSuccess();
-    void rolesList(const Dataset &dataset);
+    void rolesList(const QVector<Role> &roleList);
     void newRoleCreated();
     void roleEdited();
     void roleDeleted();
@@ -54,6 +66,7 @@ private:
     void handleLoginResponse(Method method, const Dataset &dataset);
     void handleRegistrationResponse(Method method, const Dataset &dataset);
     void handleRoles(Method method, const Dataset &dataset);
+    void handleRoleList(const Dataset &dataset);
 
 private:
     NetworkService &m_networkService;

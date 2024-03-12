@@ -32,7 +32,8 @@ public:
     virtual void sendRequest(
         QString endpoint,
         Method method = Method::GET,
-        const Dataset &dataset = Dataset());
+        const Dataset &dataset = Dataset(),
+        const QString &resource_id = "");
     void setApiUrl(const QString &apiUrl);
     void setSerializer(std::unique_ptr<IDataSerializer> serializer);
 
