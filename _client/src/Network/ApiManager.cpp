@@ -7,8 +7,6 @@
 #include "DataCommon.hpp"
 #include "SpdlogConfig.hpp"
 
-#include <qDebug>
-
 ApiManager::ApiManager(NetworkService &networkService)
     : m_networkService(networkService)
 {
