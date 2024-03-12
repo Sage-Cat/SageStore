@@ -68,7 +68,7 @@ void ApiManager::createNewRole(const QString &roleName)
 {
     SPDLOG_TRACE("ApiManager::postRole");
     Dataset dataset;
-    dataset["roleName"] = {roleName};
+    dataset[Keys::Role::NAME] = {roleName};
 
     m_networkService.sendRequest(
         Endpoints::Users::ROLES,
@@ -80,7 +80,7 @@ void ApiManager::editRole(const QString &id, const QString &roleName)
 {
     SPDLOG_TRACE("ApiManager::editRole");
     Dataset dataset;
-    dataset["roleName"] = {roleName};
+    dataset[Keys::Role::NAME] = {roleName};
 
     m_networkService.sendRequest(
         Endpoints::Users::ROLES,
@@ -187,29 +187,33 @@ void ApiManager::handleRegistrationResponse(Method, const Dataset &)
 
 void ApiManager::handleRoleList(const Dataset &dataset)
 {
-    try
+    SPDLOG_TRACE("ApiManager::handleRoleList");
+
+    if (dataset.contains(Keys::Role::ID) && dataset.contains(Keys::Role::NAME))
     {
         QVector<Role> roles;
 
-        const auto &idList = dataset[Keys::Role::ID];
-        const auto &nameList = dataset[Keys::Role::NAME];
+        const auto &idList = dataset.value(Keys::Role::ID);
+        const auto &nameList = dataset.value(Keys::Role::NAME);
 
-        if (idList.size() != nameList.size())
+        if (idList.size() == nameList.size())
         {
-            throw std::runtime_error("ID list and Name list have different sizes.");
+            roles.reserve(idList.size());
+
+            for (int i = 0; i < idList.size(); ++i)
+            {
+                roles.push_back(Role(idList[i], nameList[i]));
+            }
+
+            emit rolesList(roles);
         }
-
-        roles.reserve(idList.size());
-
-        for (int i = 0; i < idList.size(); ++i)
+        else
         {
-            roles.push_back(Role(idList[i], nameList[i]));
+            handleError("ID list and Name list have different sizes.");
         }
-
-        emit rolesList(roles);
     }
-    catch (const std::exception &e)
+    else
     {
-        handleError(e.what());
+        handleError("dataset doesen't contains ID or NAME");
     }
 }
