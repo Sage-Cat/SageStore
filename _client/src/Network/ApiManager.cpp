@@ -66,19 +66,24 @@ void ApiManager::setupHandlers()
 
 void ApiManager::handleResponse(const QString &endpoint, Method method, const Dataset &dataset)
 {
-    SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
+       SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
 
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
     {
-        QString errorMsg{};
         if (dataset.contains(Keys::_ERROR))
-            errorMsg = dataset[Keys::_ERROR].front();
-
-        if (errorMsg.isEmpty())
-            handler.value()(method, dataset);
+        {
+            const QStringList& errorMessages = dataset[Keys::_ERROR];
+            for (const QString& errorMsg : errorMessages)
+            {
+                if (!errorMsg.isEmpty())
+                    handleError(errorMsg);
+            }
+        }
         else
-            handleError(errorMsg);
+        {
+            handler.value()(method, dataset);
+        }
     }
     else
     {
