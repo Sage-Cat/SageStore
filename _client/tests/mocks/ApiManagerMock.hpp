@@ -25,4 +25,3 @@ public slots:
         emit errorOccurred(errorMessage);
     }
 };
-

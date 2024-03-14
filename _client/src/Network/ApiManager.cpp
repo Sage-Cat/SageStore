@@ -55,6 +55,51 @@ void ApiManager::registerUser(const QString &username, const QString &password)
         dataset);
 }
 
+void ApiManager::getRoleList()
+{
+    SPDLOG_TRACE("ApiManager::getRole");
+
+    m_networkService.sendRequest(
+        Endpoints::Users::ROLES,
+        Method::GET);
+}
+
+void ApiManager::createNewRole(const QString &roleName)
+{
+    SPDLOG_TRACE("ApiManager::postRole");
+    Dataset dataset;
+    dataset[Keys::Role::NAME] = {roleName};
+
+    m_networkService.sendRequest(
+        Endpoints::Users::ROLES,
+        Method::POST,
+        dataset);
+}
+
+void ApiManager::editRole(const QString &id, const QString &roleName)
+{
+    SPDLOG_TRACE("ApiManager::editRole");
+    Dataset dataset;
+    dataset[Keys::Role::NAME] = {roleName};
+
+    m_networkService.sendRequest(
+        Endpoints::Users::ROLES,
+        Method::PUT,
+        dataset,
+        id);
+}
+
+void ApiManager::deleteRole(const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::deleteRole");
+
+    m_networkService.sendRequest(
+        Endpoints::Users::ROLES,
+        Method::DEL,
+        {},
+        id);
+}
+
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
@@ -62,12 +107,13 @@ void ApiManager::setupHandlers()
     { handleLoginResponse(method, dataset); };
     m_responseHandlers[Endpoints::Users::REGISTER] = [this](Method method, const Dataset &dataset)
     { handleRegistrationResponse(method, dataset); };
+    m_responseHandlers[Endpoints::Users::ROLES] = [this](Method method, const Dataset &dataset)
+    { handleRoles(method, dataset); };
 }
 
 void ApiManager::handleResponse(const QString &endpoint, Method method, const Dataset &dataset)
 {
     SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
-
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
     {
@@ -90,6 +136,27 @@ void ApiManager::handleError(const QString &errorMessage)
 {
     SPDLOG_TRACE("ApiManager::handleError | {}", errorMessage.toStdString());
     emit errorOccurred(errorMessage);
+}
+
+void ApiManager::handleRoles(Method method, const Dataset &dataset)
+{
+    switch (method)
+    {
+    case Method::GET:
+        handleRoleList(dataset);
+        break;
+    case Method::POST:
+        emit roleCreated();
+        break;
+    case Method::PUT:
+        emit roleEdited();
+        break;
+    case Method::DEL:
+        emit roleDeleted();
+        break;
+    default:
+        break;
+    }
 }
 
 void ApiManager::handleLoginResponse(Method, const Dataset &dataset)
@@ -116,4 +183,37 @@ void ApiManager::handleRegistrationResponse(Method, const Dataset &)
 {
     SPDLOG_TRACE("ApiManager::handleRegisterResponse");
     emit registrationSuccess();
+}
+
+void ApiManager::handleRoleList(const Dataset &dataset)
+{
+    SPDLOG_TRACE("ApiManager::handleRoleList");
+
+    if (dataset.contains(Keys::Role::ID) && dataset.contains(Keys::Role::NAME))
+    {
+        QVector<Role> roles;
+
+        const auto &idList = dataset.value(Keys::Role::ID);
+        const auto &nameList = dataset.value(Keys::Role::NAME);
+
+        if (idList.size() == nameList.size())
+        {
+            roles.reserve(idList.size());
+
+            for (int i = 0; i < idList.size(); ++i)
+            {
+                roles.push_back(Role(idList[i], nameList[i]));
+            }
+
+            emit rolesList(roles);
+        }
+        else
+        {
+            handleError("ID list and Name list have different sizes.");
+        }
+    }
+    else
+    {
+        handleError("dataset doesn't contains ID or NAME");
+    }
 }

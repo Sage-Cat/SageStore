@@ -7,7 +7,7 @@ NetworkService::NetworkService(QObject *parent)
     SPDLOG_TRACE("NetworkService::NetworkService");
 }
 
-void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset)
+void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset, const QString &resource_id)
 {
     SPDLOG_TRACE("NetworkService::sendRequest");
 
@@ -16,8 +16,7 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
         SPDLOG_ERROR("NetworkService::sendRequest serializer was not set");
         return;
     }
-
-    QUrl fullUrl(m_apiUrl + endpoint);
+    QUrl fullUrl{m_apiUrl + endpoint + "/" + resource_id};
     QNetworkRequest request(fullUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
@@ -32,6 +31,12 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
         break;
     case Method::POST:
         reply = m_manager->post(request, serializedData);
+        break;
+    case Method::PUT:
+        reply = m_manager->put(request, serializedData);
+        break;
+    case Method::DEL:
+        reply = m_manager->deleteResource(request);
         break;
     default:
         SPDLOG_ERROR("NetworkService::sendRequest unexpected switch(operation) occurred.");

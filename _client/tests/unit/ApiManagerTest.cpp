@@ -39,6 +39,34 @@ private slots:
         apiManager->registerUser("testUser", "testPassword");
         QCOMPARE(registrationSuccessSpy.count(), 1);
     }
+
+    void testSuccessfulGetRole()
+    {
+        QSignalSpy getSuccessSpy(apiManager, &ApiManager::rolesList);
+        apiManager->getRoleList();
+        QCOMPARE(getSuccessSpy.count(), 1);
+    }
+
+    void testSuccessfulAddRole()
+    {
+        QSignalSpy addSuccwssSpy(apiManager, &ApiManager::roleCreated);
+        apiManager->createNewRole("newRole");
+        QCOMPARE(addSuccwssSpy.count(), 1);
+    }
+
+    void testSuccessfulEditRoles()
+    {
+        QSignalSpy editSuccessSSpy(apiManager, &ApiManager::roleEdited);
+        apiManager->editRole("0", "role");
+        QCOMPARE(editSuccessSSpy.count(), 1);
+    }
+
+    void testSuccessfulDeleteRole()
+    {
+        QSignalSpy deleteSuccessSpy(apiManager, &ApiManager::roleDeleted);
+        apiManager->deleteRole("0");
+        QCOMPARE(deleteSuccessSpy.count(), 1);
+    }
 };
 
 QTEST_MAIN(ApiManagerTest)

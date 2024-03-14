@@ -16,7 +16,7 @@ enum class Method
     GET = QNetworkAccessManager::Operation::GetOperation,
     POST = QNetworkAccessManager::Operation::PostOperation,
     PUT = QNetworkAccessManager::Operation::PutOperation,
-    DELETE = QNetworkAccessManager::Operation::DeleteOperation
+    DEL = QNetworkAccessManager::Operation::DeleteOperation
 };
 
 /**
@@ -32,7 +32,8 @@ public:
     virtual void sendRequest(
         QString endpoint,
         Method method = Method::GET,
-        const Dataset &dataset = Dataset());
+        const Dataset &dataset = Dataset(),
+        const QString &resource_id = "");
     void setApiUrl(const QString &apiUrl);
     void setSerializer(std::unique_ptr<IDataSerializer> serializer);
 

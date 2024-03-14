@@ -14,7 +14,8 @@ public:
     void sendRequest(
         QString endpoint,
         Method method = Method::GET,
-        const Dataset &dataset = Dataset()) override
+        const Dataset &dataset = Dataset(),
+        const QString &resource_id = "") override
     {
         Dataset serverResponse{{Keys::_ERROR, {"Error message"}}};
 
@@ -22,7 +23,14 @@ public:
             serverResponse = {{Keys::User::ID, {"0"}}, {Keys::User::ROLE_ID, {"0"}}};
         else if (endpoint == Endpoints::Users::REGISTER && method == Method::POST)
             serverResponse = {};
-
+        else if (endpoint == Endpoints::Users::ROLES && method == Method::GET)
+            serverResponse = {{Keys::Role::ID, {"1", "2", "3"}}, {Keys::Role::NAME, {"adm", "asd", "Asdf"}}};
+        else if (endpoint == Endpoints::Users::ROLES && method == Method::POST)
+            serverResponse = {{Keys::User::ROLE_ID, {"0"}}};
+        else if (endpoint == Endpoints::Users::ROLES && method == Method::PUT)
+            serverResponse = {{}};
+        else if (endpoint == Endpoints::Users::ROLES && method == Method::DEL)
+            serverResponse = {{}};
         emit responseReceived(endpoint, method, serverResponse);
     }
-};
+}
