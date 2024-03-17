@@ -23,9 +23,6 @@
   - [User Stories](#user-stories)
     - [User Stories for Administrator](#user-stories-for-administrator)
     - [User Stories for User](#user-stories-for-user)
-  - [Database](#database)
-    - [Table Name: Roles](#table-name-roles)
-    - [Database schema](#database-schema)
   - [Architecture Design](#architecture-design)
     - [Client](#client)
       - [Client Design](#client-design)
@@ -38,6 +35,9 @@
       - [Server Design](#server-design)
       - [Overview](#overview)
       - [Architecture Layers and Components](#architecture-layers-and-components)
+  - [Database](#database)
+    - [Table Name: Roles](#table-name-roles)
+    - [Database schema](#database-schema)
   - [Dataset specification](#dataset-specification)
     - [Components](#components-1)
     - [Entities](#entities)
@@ -198,31 +198,6 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 - As a User, I want to add, view, edit, and delete employee, supplier, and customer profiles to manage relationships.
 - As a User, I want to view customer and user activity logs to monitor system usage.
 
-## Database
-
-### Table Name: Roles
-
-| Table Name           | Fields                                                                                               | Primary Key | Foreign Key               | Notes                                |
-| -------------------- | ---------------------------------------------------------------------------------------------------- | ----------- | ------------------------- | ------------------------------------ |
-| Roles                | id (int), name (string)                                                                              | id          | -                         | User roles for access control        |
-| Users                | id (int), username (string), password (string), roleId (int)                                         | id          | roleId                    | User information                     |
-| Logs                 | id (int), userId (int), action (string), timestamp (datetime)                                        | id          | userId                    | User logs                            |
-| Contacts             | id (int), name (string), type (string), email (string), phone (string)                               | id          | -                         | Consolidates customers and suppliers |
-| ContactInfo          | id (int), contactID (int), name (string), value (string)                                             | id          | contactID                 |
-| Employees            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Employee details                     |
-| Suppliers            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Supplier details                     |
-| SuppliersProductInfo | id (int), supplierID (int), productTypeId (int), code (string)                                       | id          | supplierID                | Supplier info for product types      |
-| ProductInfo          | id (int), productTypeId (int), name (string), value (string)                                         | id          | productTypeId             |
-| ProductType          | id (int), code (string), barcode (string), ukt_zed (string), name (string), description (string),... | id          | -                         | Product type details                 |
-| Inventory            | id (int), productTypeId (int), quantityAvailable (int), employeeId (int)                             | id          | productTypeId, employeeId | Current products inventory           |
-| SaleOrders           | id (int), date (datetime), userId (int), contactId (int), employeeId (int), status (string),...      | id          | userId, contactId         | Manages sales orders                 |
-| OrderInfo            | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
-| PurchaseOrders       | id (int), date (datetime), userId (int), supplierId (int), status (string),...                       | id          | userId, supplierId        | Manages purchase orders              |
-
-### Database schema
-
-![Database Schema](DB_schema.png)
-
 ## Architecture Design
 
 ### Client
@@ -263,7 +238,7 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 
 #### Server Design
 
-![Server Design](Server_Design.png)
+![Server Design](server/Server_Design.png)
 
 #### Overview
 
@@ -290,6 +265,31 @@ The server architecture for the SageStore Management System aims to provide a ro
 - **Responsibilities**: Provides access to the repositories.
 - **Purpose**: Abstracts business logic from repositories lifetime management.
 
+## Database
+
+### Table Name: Roles
+
+| Table Name           | Fields                                                                                               | Primary Key | Foreign Key               | Notes                                |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | ----------- | ------------------------- | ------------------------------------ |
+| Roles                | id (int), name (string)                                                                              | id          | -                         | User roles for access control        |
+| Users                | id (int), username (string), password (string), roleId (int)                                         | id          | roleId                    | User information                     |
+| Logs                 | id (int), userId (int), action (string), timestamp (datetime)                                        | id          | userId                    | User logs                            |
+| Contacts             | id (int), name (string), type (string), email (string), phone (string)                               | id          | -                         | Consolidates customers and suppliers |
+| ContactInfo          | id (int), contactID (int), name (string), value (string)                                             | id          | contactID                 |
+| Employees            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Employee details                     |
+| Suppliers            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Supplier details                     |
+| SuppliersProductInfo | id (int), supplierID (int), productTypeId (int), code (string)                                       | id          | supplierID                | Supplier info for product types      |
+| ProductInfo          | id (int), productTypeId (int), name (string), value (string)                                         | id          | productTypeId             |
+| ProductType          | id (int), code (string), barcode (string), ukt_zed (string), name (string), description (string),... | id          | -                         | Product type details                 |
+| Inventory            | id (int), productTypeId (int), quantityAvailable (int), employeeId (int)                             | id          | productTypeId, employeeId | Current products inventory           |
+| SaleOrders           | id (int), date (datetime), userId (int), contactId (int), employeeId (int), status (string),...      | id          | userId, contactId         | Manages sales orders                 |
+| OrderInfo            | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
+| PurchaseOrders       | id (int), date (datetime), userId (int), supplierId (int), status (string),...                       | id          | userId, supplierId        | Manages purchase orders              |
+
+### Database schema
+
+![Database Schema](server/DB_schema.png)
+
 ## Dataset specification
 
 The `Dataset` structure in our application is designed to efficiently handle tabled data, particularly for communication over a network using formats like JSON or XML. The structure is defined as follows:
@@ -313,8 +313,8 @@ If some key is not specified, it has `{ "" }` value as a placeholder for the lis
 
 If error key exists, it mean that error occured (even if message is empty).
 
-| Key   | Value  |
-| ----- | ------ |
+| Key   | Value                   |
+| ----- | ----------------------- |
 | error | { "error description" } |
 
 #### User
@@ -397,16 +397,16 @@ About arrays: Request or Response is array of entities if it's specified as `arr
 
 #### Purchase
 
-| Method   | Endpoint                       | Request             | Response                   | Description                       |
-| -------- | ------------------------------ | ------------------- | -------------------------- | --------------------------------- |
-| `GET`    | `/purchase`                    | -                   | array<PurchaseOrder>       | Fetch all purchases records       |
-| `POST`   | `/purchase`                    | PurchaseOrder       | Result                     | Add a new purchase                |
-| `PUT`    | `/purchase/{purchaseId}`       | PurchaseOrder       | Result                     | Edit a specific purchase          |
-| `DELETE` | `/purchase/{purchaseId}`       | -                   | Result                     | Delete a specific purchase        |
-| `GET`    | `/purchase_order/{purchaseId}` | PurchaseOrderRecord | array<PurchaseOrderRecord> | Fetch the list of order's records |
-| `POST`   | `/purchase_order/{purchaseId}` | -                   | Result                     | Add new record to list            |
-| `PUT`    | `/purchase_order/{purchaseId}` | PurchaseOrderRecord | Result                     | Edit a specific record            |
-| `DELETE` | `/purchase_order/{purchaseId}` | -                   | Result                     | Delete a specific record          |
+| Method   | Endpoint                                   | Request             | Response                   | Description                       |
+| -------- | ------------------------------------------ | ------------------- | -------------------------- | --------------------------------- |
+| `GET`    | `/purchase/`                               | -                   | array<PurchaseOrder>       | Fetch all purchases records       |
+| `POST`   | `/purchase/`                               | PurchaseOrder       | Result                     | Add a new purchase                |
+| `PUT`    | `/purchase/{purchaseId}`                   | PurchaseOrder       | Result                     | Edit a specific purchase          |
+| `DELETE` | `/purchase/{purchaseId}`                   | -                   | Result                     | Delete a specific purchase        |
+| `GET`    | `/purchase/{purchaseId}`                   | PurchaseOrderRecord | array<PurchaseOrderRecord> | Fetch the list of order's records |
+| `POST`   | `/purchase/{purchaseId}`                   | -                   | Result                     | Add new record to list            |
+| `PUT`    | `/purchase/{purchaseId}/{purchaseOrderId}` | PurchaseOrderRecord | Result                     | Edit a specific record            |
+| `DELETE` | `/purchase/{purchaseId}/{purchaseOrderId}` | -                   | Result                     | Delete a specific record          |
 
 #### Sales
 
