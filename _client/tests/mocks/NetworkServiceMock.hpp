@@ -33,4 +33,4 @@ public:
             serverResponse = {{}};
         emit responseReceived(endpoint, method, serverResponse);
     }
-}
+};
