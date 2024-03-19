@@ -1,0 +1,70 @@
+version: 2.1
+
+jobs:
+  clone_repo:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+
+  install_prerequisites:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Install system dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python3-pip
+            sudo apt-get install -y python3-pip gcc g++ cmake make git libgl-dev libgl1-mesa-dev
+      - run:
+          name: Install Conan
+          command: |
+            pip3 install conan  # Use pip3 to ensure Python 3's pip is used
+      - run:
+          name: Setup Conan
+          command: |
+            conan profile detect 
+      - run:
+          name: Install Conan dependencies
+          command: |
+            conan install . --output-folder=build --build=missing -s compiler.cppstd=20
+
+  build_project:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Run CMake with presets and build the project
+          command: |
+            cd build
+            cmake .. --preset conan-debug -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
+            cmake --build .
+
+  run_tests:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Run tests using ctest
+          command: |
+            cd build
+            ctest --verbose
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - clone_repo
+      - install_prerequisites:
+          requires:
+            - clone_repo
+      - build_project:
+          requires:
+            - install_prerequisites
+      - run_tests:
+          requires:
+            - build_project
