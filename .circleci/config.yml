@@ -17,7 +17,7 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y python3-pip
-            sudo apt-get install -y python3-pip gcc g++ cmake make git libgl-dev libgl1-mesa-dev
+            sudo apt-get install -y python3-pip gcc g++ cmake make git libgl-dev libgl1-mesa-dev xkb-data
       - run:
           name: Install Conan
           command: |
