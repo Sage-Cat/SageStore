@@ -98,6 +98,11 @@ _Check conanfile.py if you need versions of specific libs, that were used_
    ```
    conan install . --output-folder=build --build=missing
    ```
+
+   Or if your conan have sudo rights:
+   ```
+   conan install . --output-folder=build --build=missing -c tools.system.package_manager:mode=install
+   ```
  
 3. Go to build folder and run cmake with presets
 
