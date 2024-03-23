@@ -72,19 +72,10 @@ void ApiManager::handleResponse(const QString &endpoint, Method method, const Da
     if (handler != m_responseHandlers.end())
     {
         QString errorMsg{};
-        if (dataset.contains(Keys::_ERROR))
-        {
-             const QStringList& errorData = dataset[Keys::_ERROR];
-            if (errorData.size() >= 2) {
-                QString componentName = errorData[0];
-                QString errorMessage = errorData[1];
-                errorMsg = componentName + "\n" + errorMessage;
-            }
-            else {
-                errorMsg = "Unknown error format";
-            }
+        if (dataset.contains(Keys::_ERROR)) {
+            for(const auto &errorData : dataset[Keys::_ERROR])
+            errorMsg += errorData + "\n";    
         }
-
         if (errorMsg.isEmpty())
             handler.value()(method, dataset);
         else
