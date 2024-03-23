@@ -66,24 +66,29 @@ void ApiManager::setupHandlers()
 
 void ApiManager::handleResponse(const QString &endpoint, Method method, const Dataset &dataset)
 {
-       SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
+  SPDLOG_DEBUG("ApiManager::handleResponse for endpoint={}", endpoint.toStdString());
 
     auto handler = m_responseHandlers.find(endpoint);
     if (handler != m_responseHandlers.end())
     {
+        QString errorMsg{};
         if (dataset.contains(Keys::_ERROR))
         {
-            const QStringList& errorMessages = dataset[Keys::_ERROR];
-            for (const QString& errorMsg : errorMessages)
-            {
-                if (!errorMsg.isEmpty())
-                    handleError(errorMsg);
+             const QStringList& errorData = dataset[Keys::_ERROR];
+            if (errorData.size() >= 2) {
+                QString componentName = errorData[0];
+                QString errorMessage = errorData[1];
+                errorMsg = componentName + "\n" + errorMessage;
+            }
+            else {
+                errorMsg = "Unknown error format";
             }
         }
-        else
-        {
+
+        if (errorMsg.isEmpty())
             handler.value()(method, dataset);
-        }
+        else
+            handleError(errorMsg);
     }
     else
     {
