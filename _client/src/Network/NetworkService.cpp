@@ -1,21 +1,21 @@
 #include "NetworkService.hpp"
 #include "SpdlogConfig.hpp"
 
-NetworkService::NetworkService(const ServerUrl &serverUrl, std::unique_ptr<IDataSerializer> serializer)
+NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr<IDataSerializer> serializer)
     : m_manager(new QNetworkAccessManager(this))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
 
-    m_serverUrl.setScheme(serverUrl.scheme);
-    m_serverUrl.setHost(serverUrl.address);
-    m_serverUrl.setPort(serverUrl.port);
+    m_serverUrl.setScheme(serverConfig.scheme);
+    m_serverUrl.setHost(serverConfig.address);
+    m_serverUrl.setPort(serverConfig.port);
 
     m_serializer = std::move(serializer);
 }
 
 void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset, const QString &resource_id)
 {
-    QString serverPath; 
+    QString endpointSuffix; 
     QNetworkReply *reply = nullptr;
     
     SPDLOG_TRACE("NetworkService::sendRequest");
@@ -28,13 +28,13 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
 
     if (resource_id == "")
     {
-        serverPath = endpoint;
+        endpointSuffix = endpoint;
     }
     else
     {
-        serverPath = endpoint + "/" + resource_id;
+        endpointSuffix = endpoint + "/" + resource_id;
     }
-    m_serverUrl.setPath(serverPath);
+    m_serverUrl.setPath(endpointSuffix);
 
     QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
