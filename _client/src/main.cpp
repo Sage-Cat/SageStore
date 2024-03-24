@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
     SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
 
-    const NetworkService::server_url_t serverUrl = { SERVER_SCHEME, 
-                                                     SERVER_ADDR, 
-                                                     SERVER_PORT };
+    const NetworkService::ServerUrl serverUrl = { SERVER_SCHEME, 
+                                                  SERVER_ADDR, 
+                                                  SERVER_PORT };
     NetworkService networkService(serverUrl, std::make_unique<JsonSerializer>());
 
     ApiManager apiManager(networkService);

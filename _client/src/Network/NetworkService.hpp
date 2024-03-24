@@ -33,9 +33,9 @@ public:
         QString scheme;
         QString address;
         int     port;
-    } server_url_t;
+    } ServerUrl;
 
-    explicit NetworkService(const server_url_t &serverUrl,
+    explicit NetworkService(const ServerUrl &serverUrl,
                             std::unique_ptr<IDataSerializer> serializer);
 
     virtual void sendRequest(QString endpoint,

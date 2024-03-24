@@ -1,7 +1,7 @@
 #include "NetworkService.hpp"
 #include "SpdlogConfig.hpp"
 
-NetworkService::NetworkService(const server_url_t &serverUrl, std::unique_ptr<IDataSerializer> serializer)
+NetworkService::NetworkService(const ServerUrl &serverUrl, std::unique_ptr<IDataSerializer> serializer)
     : m_manager(new QNetworkAccessManager(this))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
