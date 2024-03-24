@@ -12,9 +12,9 @@ namespace Endpoints
 
     namespace Users
     {
-        inline constexpr char USERS_PREFIX[] = "/users";
-        inline constexpr char LOGIN[] = "/users/login";
-        inline constexpr char REGISTER[] = "/users/register";
-        inline constexpr char ROLES[] = "/users/roles";
+        inline constexpr char USERS_PREFIX[] = "/api/users";
+        inline constexpr char LOGIN[] = "/api/users/login";
+        inline constexpr char REGISTER[] = "/api/users/register";
+        inline constexpr char ROLES[] = "/api/users/roles";
     }
 }

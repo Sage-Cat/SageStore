@@ -28,14 +28,20 @@ class NetworkService : public QObject
     Q_OBJECT
 
 public:
-    explicit NetworkService(QObject *parent = nullptr);
-    virtual void sendRequest(
-        QString endpoint,
-        Method method = Method::GET,
-        const Dataset &dataset = Dataset(),
-        const QString &resource_id = "");
-    void setApiUrl(const QString &apiUrl);
-    void setSerializer(std::unique_ptr<IDataSerializer> serializer);
+    typedef struct
+    {
+        QString scheme;
+        QString address;
+        int     port;
+    } server_url_t;
+
+    explicit NetworkService(const server_url_t &serverUrl,
+                            std::unique_ptr<IDataSerializer> serializer);
+
+    virtual void sendRequest(QString endpoint,
+                             Method method = Method::GET,
+                             const Dataset &dataset = Dataset(),
+                             const QString &resource_id = "");
 
 signals:
     void responseReceived(const QString &endpoint, Method method, const Dataset &dataset);
@@ -44,7 +50,7 @@ private slots:
     void onNetworkReply(const QString &endpoint, Method method, QNetworkReply *reply);
 
 private:
-    std::unique_ptr<IDataSerializer> m_serializer;
     QNetworkAccessManager *m_manager;
-    QString m_apiUrl;
+    QUrl m_serverUrl;
+    std::unique_ptr<IDataSerializer> m_serializer;
 };
