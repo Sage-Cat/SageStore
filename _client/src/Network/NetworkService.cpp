@@ -2,15 +2,13 @@
 #include "SpdlogConfig.hpp"
 
 NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr<IDataSerializer> serializer)
-    : m_manager(new QNetworkAccessManager(this))
+    : m_manager(new QNetworkAccessManager(this)), m_serializer(std::move(serializer))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
 
     m_serverUrl.setScheme(serverConfig.scheme);
     m_serverUrl.setHost(serverConfig.address);
     m_serverUrl.setPort(serverConfig.port);
-
-    m_serializer = std::move(serializer);
 }
 
 void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset, const QString &resource_id)
