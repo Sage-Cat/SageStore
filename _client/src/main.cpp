@@ -10,7 +10,9 @@
 #include "Ui/Views/BaseView.hpp"
 #include "SpdlogConfig.hpp"
 
-const QString SERVER_API_URL{"http://127.0.0.1:8001/api"};
+inline constexpr char ENDPOINT_SCHEME[] = "http";
+inline constexpr char ENDPOINT_ADDR[]   = "127.0.0.1";
+inline constexpr int  ENDPOINT_PORT     = 8001;
 
 int main(int argc, char *argv[])
 {
@@ -19,11 +21,13 @@ int main(int argc, char *argv[])
     SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
 
-    // Networking
-    NetworkService networkService;
-    networkService.setApiUrl(SERVER_API_URL);
-    networkService.setSerializer(std::make_unique<JsonSerializer>());
+    const NetworkService::ServerConfig serverConfig{ .scheme = ENDPOINT_SCHEME, 
+                                                     .address = ENDPOINT_ADDR, 
+                                                     .port = ENDPOINT_PORT };
+    NetworkService networkService(serverConfig, std::make_unique<JsonSerializer>());
+
     ApiManager apiManager(networkService);
+
     QThread apiManagerThread;
     apiManager.moveToThread(&apiManagerThread);
     networkService.moveToThread(&apiManagerThread);

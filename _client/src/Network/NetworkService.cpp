@@ -1,14 +1,21 @@
 #include "NetworkService.hpp"
 #include "SpdlogConfig.hpp"
 
-NetworkService::NetworkService(QObject *parent)
-    : QObject(parent), m_manager(new QNetworkAccessManager(this))
+NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr<IDataSerializer> serializer)
+    : m_manager(new QNetworkAccessManager(this)), m_serializer(std::move(serializer))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
+
+    m_serverUrl.setScheme(serverConfig.scheme);
+    m_serverUrl.setHost(serverConfig.address);
+    m_serverUrl.setPort(serverConfig.port);
 }
 
 void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset, const QString &resource_id)
 {
+    QString endpointSuffix; 
+    QNetworkReply *reply = nullptr;
+    
     SPDLOG_TRACE("NetworkService::sendRequest");
 
     if (!m_serializer)
@@ -16,14 +23,24 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
         SPDLOG_ERROR("NetworkService::sendRequest serializer was not set");
         return;
     }
-    QUrl fullUrl{m_apiUrl + endpoint + "/" + resource_id};
-    QNetworkRequest request(fullUrl);
+
+    if (resource_id == "")
+    {
+        endpointSuffix = endpoint;
+    }
+    else
+    {
+        endpointSuffix = endpoint + "/" + resource_id;
+    }
+    m_serverUrl.setPath(endpointSuffix);
+
+    QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
 
-    QNetworkReply *reply = nullptr;
     const auto serializedData = m_serializer->serialize(dataset);
     SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT sent data: {}", serializedData.toStdString());
+    
     switch (method)
     {
     case Method::GET:
@@ -69,15 +86,4 @@ void NetworkService::onNetworkReply(const QString &endpoint, Method method, QNet
         SPDLOG_ERROR("Network request error: {}", reply->errorString().toStdString());
     }
     reply->deleteLater();
-}
-
-void NetworkService::setApiUrl(const QString &apiUrl)
-{
-    SPDLOG_TRACE("NetworkService::setApiUrl");
-    m_apiUrl = apiUrl;
-}
-
-void NetworkService::setSerializer(std::unique_ptr<IDataSerializer> serializer)
-{
-    m_serializer = std::move(serializer);
 }
