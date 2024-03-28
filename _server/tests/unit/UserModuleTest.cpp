@@ -37,9 +37,9 @@ protected:
         usersModule = std::make_unique<UsersModule>(*repositoryManagerMock);
     }
 };
-TEST_F(UserModuleTest, logUser)
-{
 
+TEST_F(UserModuleTest, loginUser)
+{
     constexpr char CORRECT_USERNAME[] = "username1";
     constexpr char CORRECT_PASSWORD[] = "password1";
 
@@ -51,18 +51,14 @@ TEST_F(UserModuleTest, logUser)
         .dataset = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
                     {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
     std::vector<User> expectedUsers{User("", CORRECT_USERNAME, CORRECT_PASSWORD, "")};
-    EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
-        .WillOnce(Return(expectedUsers));
+    EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);
-    for (size_t i = 0; i < expectedUsers.size(); i++)
-    {
-        EXPECT_EQ(response.dataset.at(Keys::User::PASSWORD).front(), expectedUsers[i].password);
-        EXPECT_EQ(response.dataset.at(Keys::User::USERNAME).front(), expectedUsers[i].username);
-    }
+    EXPECT_EQ(response.dataset.at(Keys::User::PASSWORD).front(), expectedUsers[0].password);
+    EXPECT_EQ(response.dataset.at(Keys::User::USERNAME).front(), expectedUsers[0].username);
 }
 
-TEST_F(UserModuleTest, regUser)
+TEST_F(UserModuleTest, registerUser)
 {
     constexpr char CORRECT_USERNAME[] = "username12";
     constexpr char CORRECT_PASSWORD[] = "password12";
@@ -76,8 +72,7 @@ TEST_F(UserModuleTest, regUser)
                     {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
 
     std::vector<User> expectedUsers{};
-    EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
-        .WillOnce(Return(expectedUsers));
+    EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);
     for (size_t i = 0; i < expectedUsers.size(); i++)
@@ -87,7 +82,7 @@ TEST_F(UserModuleTest, regUser)
     }
 }
 
-TEST_F(UserModuleTest, getRoles_Test)
+TEST_F(UserModuleTest, getRoles)
 {
     RequestData requestData{
         .module = "users",
@@ -97,8 +92,7 @@ TEST_F(UserModuleTest, getRoles_Test)
         .dataset = {}};
 
     std::vector<Role> expectedUsers{Role("1", "user"), Role("2", "admin")};
-    EXPECT_CALL(*rolesRepositoryMock, getAll())
-        .WillOnce(Return(expectedUsers));
+    EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);
     for (size_t i = 0; i < expectedUsers.size(); i++)
@@ -110,7 +104,7 @@ TEST_F(UserModuleTest, getRoles_Test)
     }
 }
 
-TEST_F(UserModuleTest, addRoles_Test)
+TEST_F(UserModuleTest, addRoles)
 {
     constexpr char CORRECT_ID[] = "3";
     constexpr char CORRECT_NAME[] = "adminchik";
@@ -123,17 +117,14 @@ TEST_F(UserModuleTest, addRoles_Test)
                     {Keys::Role::NAME, {CORRECT_NAME}}}};
 
     std::vector<Role> expectedUsers{Role(CORRECT_ID, CORRECT_NAME)};
-    EXPECT_CALL(*rolesRepositoryMock, add(_))
-        .WillOnce(Return());
+    EXPECT_CALL(*rolesRepositoryMock, add(_)).WillOnce(Return());
 
     ResponseData response = usersModule->executeTask(requestData);
-    for (size_t i = 0; i < expectedUsers.size(); i++)
-    {
-        EXPECT_EQ(response.dataset.at(Keys::Role::NAME).front(), expectedUsers[i].name);
-    }
+
+    EXPECT_EQ(response.dataset.at(Keys::Role::NAME).front(), expectedUsers[0].name);
 }
 
-TEST_F(UserModuleTest, editRole_test)
+TEST_F(UserModuleTest, editRole)
 {
     constexpr char CORRECT_ID[] = "3";
     constexpr char CORRECT_NAME[] = "admin3";
@@ -146,8 +137,7 @@ TEST_F(UserModuleTest, editRole_test)
                     {Keys::Role::NAME, {CORRECT_NAME}}}};
 
     std::vector<Role> expectedUsers{};
-    EXPECT_CALL(*rolesRepositoryMock, update(_))
-        .WillOnce(Return());
+    EXPECT_CALL(*rolesRepositoryMock, update(_)).WillOnce(Return());
 
     ResponseData response = usersModule->executeTask(requestData);
     for (size_t i = 0; i < expectedUsers.size(); i++)
@@ -157,7 +147,7 @@ TEST_F(UserModuleTest, editRole_test)
     }
 }
 
-TEST_F(UserModuleTest, delete_test)
+TEST_F(UserModuleTest, deleteRoles)
 {
     constexpr char CORRECT_ID[] = "4";
     constexpr char CORRECT_NAME[] = "admin4";
@@ -170,8 +160,7 @@ TEST_F(UserModuleTest, delete_test)
                     {Keys::Role::NAME, {CORRECT_NAME}}}};
 
     std::vector<Role> expectedUsers{};
-    EXPECT_CALL(*rolesRepositoryMock, deleteResource(_))
-        .WillOnce(Return());
+    EXPECT_CALL(*rolesRepositoryMock, deleteResource(_)).WillOnce(Return());
 
     ResponseData response = usersModule->executeTask(requestData);
 }
