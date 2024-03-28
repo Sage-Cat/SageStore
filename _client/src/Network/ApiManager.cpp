@@ -77,8 +77,8 @@ void ApiManager::handleResponse(const QString &endpoint, Method method, const Da
             {
                 errorMsg += errorData + "\n";   
             }
-             
         }
+        
         if (errorMsg.isEmpty())
         {
             handler.value()(method, dataset);
