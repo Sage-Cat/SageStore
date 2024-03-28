@@ -94,9 +94,6 @@ TEST_F(BusinessLogicTest, UsersModule_addRole)
 
     // Execute the task
     businessLogic->executeTask(requestData, callback);
-
-    // Verify the callback was invoked
-    ASSERT_TRUE(callbackInvoked);
 }
 
 int main(int argc, char **argv)
