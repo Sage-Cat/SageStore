@@ -118,13 +118,23 @@ void ApiManager::handleResponse(const QString &endpoint, Method method, const Da
     if (handler != m_responseHandlers.end())
     {
         QString errorMsg{};
-        if (dataset.contains(Keys::_ERROR))
-            errorMsg = dataset[Keys::_ERROR].front();
-
+        if (dataset.contains(Keys::_ERROR)) 
+        {
+            for(const auto &errorData : dataset[Keys::_ERROR])
+            {
+                errorMsg += errorData + "\n";   
+            }
+        }
+        
         if (errorMsg.isEmpty())
+        {
             handler.value()(method, dataset);
+        }    
         else
+        {
             handleError(errorMsg);
+        }
+            
     }
     else
     {
