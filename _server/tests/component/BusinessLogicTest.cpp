@@ -23,7 +23,8 @@ protected:
 
     BusinessLogicTest()
         : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
-          usersRepositoryMock(std::make_shared<RepositoryMock<User>>())
+          usersRepositoryMock(std::make_shared<RepositoryMock<User>>()),
+          rolesRepositoryMock(std::make_shared<RepositoryMock<Role>>())
     {
     }
 
@@ -56,6 +57,33 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
         .WillOnce(Return(expectedUsers));
 
+    // Prepare the callback and its expectation
+    bool callbackInvoked = false;
+    auto callback = [&callbackInvoked](const ResponseData &responseData)
+    {
+        callbackInvoked = true;
+        ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
+    };
+
+    // Execute the task
+    businessLogic->executeTask(requestData, callback);
+
+    // Verify the callback was invoked
+    ASSERT_TRUE(callbackInvoked);
+}
+
+TEST_F(BusinessLogicTest, UsersModule_addRole)
+{
+    RequestData requestData{
+        .module = "users",
+        .submodule = "roles",
+        .method = "GET",
+        .resourceId = "",
+        .dataset = {}};
+
+    std::vector<Role> expectedUsers{};
+    EXPECT_CALL(*rolesRepositoryMock, getAll())
+        .WillOnce(Return(expectedUsers));
     // Prepare the callback and its expectation
     bool callbackInvoked = false;
     auto callback = [&callbackInvoked](const ResponseData &responseData)

@@ -52,19 +52,6 @@ void UsersRepository::deleteResource(const std::string &id)
     m_dbManager->executeQuery(query, params);
 }
 
-std::vector<User> UsersRepository::getByField(const std::string &fieldName, const std::string &value) const
-{
-    SPDLOG_TRACE("UsersRepository::getByField | {} = {}", fieldName, value);
-    std::vector<User> users;
-
-    const std::string query = "SELECT id, username, password, roleId FROM Users WHERE " + fieldName + " = ?;";
-    auto result = m_dbManager->executeQuery(query, {value});
-    while (result && result->next())
-        users.emplace_back(userFromCurrentRow(result));
-
-    return users;
-}
-
 std::vector<User> UsersRepository::getAll() const
 {
     SPDLOG_TRACE("UsersRepository::getAll");
@@ -85,4 +72,16 @@ User UsersRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &qu
         queryResult->getString(USERNAME),
         queryResult->getString(PASSWORD),
         queryResult->getString(ROLE_ID));
+}
+std::vector<User> UsersRepository::getByField(const std::string &fieldName, const std::string &value) const
+{
+    SPDLOG_TRACE("UsersRepository::getByField | {} = {}", fieldName, value);
+    std::vector<User> users;
+
+    const std::string query = "SELECT id, username, password, roleId FROM Users WHERE " + fieldName + " = ?;";
+    auto result = m_dbManager->executeQuery(query, {value});
+    while (result && result->next())
+        users.emplace_back(userFromCurrentRow(result));
+
+    return users;
 }
