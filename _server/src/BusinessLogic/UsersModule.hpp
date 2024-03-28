@@ -24,6 +24,11 @@ private:
     ResponseData loginUser(const Dataset &request);
     ResponseData registerUser(const Dataset &request);
 
+    ResponseData getRoles();
+    ResponseData addNewRole(const Dataset &request);
+    ResponseData updateRoles(const Dataset &request, const std::string &resourseId);
+    ResponseData deleteRole(const std::string &resourseId);
+
 private:
     std::shared_ptr<IRepository<User>> m_usersRepository;
     std::shared_ptr<IRepository<Role>> m_rolesRepository;
