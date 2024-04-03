@@ -182,7 +182,7 @@ ResponseData UsersModule::addNewRole(const Dataset &request)
         SPDLOG_WARN("UsersModule::addNewRole username or password does not exit");
         throw ServerException(_M, "Server got no username or password in Dataset");
     }
-    auto usersVec = m_usersRepository->getByField(Keys::Role::NAME, roleName);
+    auto usersVec = m_rolesRepository->getByField(Keys::Role::NAME, roleName);
     if (usersVec.empty())
     {
         m_rolesRepository->add(Role("", roleName));
