@@ -116,12 +116,12 @@ TEST_F(UserModuleTest, addRoles)
         .dataset = {{Keys::Role::ID, {CORRECT_ID}},
                     {Keys::Role::NAME, {CORRECT_NAME}}}};
 
-    std::vector<Role> expectedUsers{Role(CORRECT_ID, CORRECT_NAME)};
+    std::vector<Role> expectedUsers{};
+    EXPECT_CALL(*rolesRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
     EXPECT_CALL(*rolesRepositoryMock, add(_)).WillOnce(Return());
-
     ResponseData response = usersModule->executeTask(requestData);
 
-    EXPECT_EQ(response.dataset.at(Keys::Role::NAME).front(), expectedUsers[0].name);
+    EXPECT_EQ(response.dataset.at(Keys::Role::NAME).front(), requestData.dataset.at(Keys::Role::NAME).front());
 }
 
 TEST_F(UserModuleTest, editRole)
@@ -134,17 +134,13 @@ TEST_F(UserModuleTest, editRole)
         .method = "PUT",
         .resourceId = "3",
         .dataset = {{Keys::Role::ID, {CORRECT_ID}},
-                    {Keys::Role::NAME, {CORRECT_NAME}}}};
+                    {Keys::Role::NAME, {"admin12"}}}};
 
-    std::vector<Role> expectedUsers{};
+    std::vector<Role> expectedUsers{Role(CORRECT_ID, CORRECT_NAME)};
     EXPECT_CALL(*rolesRepositoryMock, update(_)).WillOnce(Return());
 
     ResponseData response = usersModule->executeTask(requestData);
-    for (size_t i = 0; i < expectedUsers.size(); i++)
-    {
-        EXPECT_EQ(response.dataset.at(Keys::Role::ID).front(), expectedUsers[i].id);
-        EXPECT_EQ(response.dataset.at(Keys::Role::NAME).front(), expectedUsers[i].name);
-    }
+    EXPECT_EQ(response.dataset.at(Keys::Role::ID).front(), expectedUsers[0].id);
 }
 
 TEST_F(UserModuleTest, deleteRoles)
@@ -159,10 +155,11 @@ TEST_F(UserModuleTest, deleteRoles)
         .dataset = {{Keys::Role::ID, {CORRECT_ID}},
                     {Keys::Role::NAME, {CORRECT_NAME}}}};
 
-    std::vector<Role> expectedUsers{};
+    std::vector<Role> expectedUsers{Role(CORRECT_ID, CORRECT_NAME)};
     EXPECT_CALL(*rolesRepositoryMock, deleteResource(_)).WillOnce(Return());
 
     ResponseData response = usersModule->executeTask(requestData);
+    EXPECT_EQ(response.dataset.at(Keys::Role::ID).front(), expectedUsers[0].id);
 }
 
 int main(int argc, char **argv)

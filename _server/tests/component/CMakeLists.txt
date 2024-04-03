@@ -1,6 +1,6 @@
 # ------------------------- BUSINESSLOGIC -------------------------
 set(TEST_BUSINESS_LOGIC_SOURCES
-    ${SERVER_COMPONENT_TESTS_DIR}/BusinessLogicTest.cpp
+    ${SERVER_COMPONENT_TESTS}/BusinessLogicTest.cpp
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
@@ -12,7 +12,7 @@ add_executable(BusinessLogicTest ${TEST_BUSINESS_LOGIC_SOURCES})
 
 target_include_directories(BusinessLogicTest PUBLIC
     ${SERVER_SOURCES_DIR}
-    ${SERVER_TEST_MOCKS_DIR} 
+    ${SERVER_TEST_MOCKS} 
 )
 
 target_link_libraries(BusinessLogicTest 
