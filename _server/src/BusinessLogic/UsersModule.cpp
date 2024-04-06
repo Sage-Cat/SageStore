@@ -154,7 +154,7 @@ ResponseData UsersModule::getRoles()
     {
         response.dataset[Keys::Role::ID] = {""};
         response.dataset[Keys::Role::NAME] = {""};
-        SPDLOG_WARN("UsersModule::getRoles | array of roles are empty");
+        SPDLOG_WARN("UsersModule::getRoles | array of roles is empty");
     }
     else
     {
