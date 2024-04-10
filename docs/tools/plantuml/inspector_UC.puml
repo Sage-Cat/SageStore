@@ -1,0 +1,33 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Developer as "Developer"
+
+package "Inspector Application" {
+    package "UI / Local web-server " {
+        usecase "Send login request" as U1
+        usecase "View all users in database" as U2
+    }
+
+    package "HTTP client" {
+        usecase "Send POST login request" as C1
+        usecase "Send GET login request / retrieve data" as C2
+    }
+}
+
+actor "SageStoreServer" as SSS 
+
+'Define relationships
+Developer --> U1
+Developer --> U2 
+
+U1 --> C1  
+U2 --> C2
+
+C1 <..> SSS : request-response
+
+C2 <..> SSS : request-response
+
+@enduml
