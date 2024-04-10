@@ -1,5 +1,5 @@
 # ------------------------- UNIT -------------------------
-set(SERVER_UNIT_TESTS
+set(SERVER_UNIT_TESTS_SOURCE
     ${SERVER_TESTS_DIR}/unit/UserModuleTest.cpp
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
@@ -8,11 +8,11 @@ set(SERVER_UNIT_TESTS
     ${SERVER_SOURCES_DIR}/Database/RolesRepository.cpp
 )
 
-add_executable(UsersModuleTest ${SERVER_UNIT_TESTS})
+add_executable(UsersModuleTest ${SERVER_UNIT_TESTS_SOURCE})
 
 target_include_directories(UsersModuleTest PUBLIC
     ${SERVER_SOURCES_DIR}
-    ${SERVER_TEST_MOCKS} 
+    ${SERVER_TEST_MOCKS_DIR} 
 )
 
 target_link_libraries(UsersModuleTest 
