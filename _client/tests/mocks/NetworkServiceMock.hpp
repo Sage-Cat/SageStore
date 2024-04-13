@@ -7,7 +7,7 @@
 class NetworkServiceMock : public NetworkService
 {
 public:
-    NetworkServiceMock()
+    NetworkServiceMock() : NetworkService(NetworkService::ServerConfig(), nullptr)
     {
     }
 
