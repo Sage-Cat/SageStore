@@ -86,7 +86,7 @@ void DialogManager::setupDialogsConnections()
             });
 
     // Registration
-    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this, showErrorDialog);
+    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this, &DialogManager::showErrorDialog);
     connect(m_registrationDialog, &RegistrationDialog::loginRequested,
             [this]()
             {
