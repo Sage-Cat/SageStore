@@ -25,8 +25,7 @@
   - [License](#license)
   - [Contact](#contact)
   - [Acknowledgments](#acknowledgments)
-  - [Project Team](#project-team)
-  - [Project Objectives, Milestones, Feature Breakdown, User Stories, Tech Stack, Database, Architecture Design](#project-objectives-milestones-feature-breakdown-user-stories-tech-stack-database-architecture-design)
+  - [Detailed project documentation](#detailed-project-documentation)
 
 ---
 
@@ -154,7 +153,7 @@ ctest --verbose
 
 ## Contributing
 
-If you would like to contribute to this project, please fork the repository and submit a pull request.
+All contributing rules you can find in [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ---
 
@@ -179,16 +178,6 @@ Project Link: [https://github.com/Sage-Cat/SageStore](https://github.com/Sage-Ca
 
 ---
 
-## Project Team
-
-| Team Member        | Role                     | Primary Responsibilities                    |
-| ------------------ | ------------------------ | ------------------------------------------- |
-| Volodymyr Pavlenko | Tech lead | Project planning, architecture design, etc. |
-| Plotskykh Danylo   | Backend developer        |                                             |
-| Max Kozak          | SQL & C++ Developer      |                                             |
-
----
-
-## Project Objectives, Milestones, Feature Breakdown, User Stories, Tech Stack, Database, Architecture Design
+## Detailed project documentation
 
 Please refer to the [Project Documentation](docs/Project_Documentation.md) for detailed information.
