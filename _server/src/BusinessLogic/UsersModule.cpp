@@ -38,6 +38,25 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
     {
         response = registerUser(requestData.dataset);
     }
+    else if (requestData.submodule == "roles")
+    {
+        if (requestData.method == "GET")
+        {
+            response = getRoles();
+        }
+        else if (requestData.method == "POST")
+        {
+            response = addNewRole(requestData.dataset);
+        }
+        else if (requestData.method == "PUT")
+        {
+            response = updateRoles(requestData.dataset, requestData.resourceId);
+        }
+        else if (requestData.method == "DEL")
+        {
+            response = deleteRole(requestData.resourceId);
+        }
+    }
     else
     {
         SPDLOG_ERROR("UsersModule::executeTask Unrecognized task: " + requestData.submodule + "/" + requestData.method);
@@ -67,7 +86,12 @@ ResponseData UsersModule::loginUser(const Dataset &request)
     // get user by username from repository
     auto usersVec = m_usersRepository->getByField(Keys::User::USERNAME, clientUsername);
 
-    if (!usersVec.empty())
+    if (usersVec.empty())
+    {
+        SPDLOG_WARN("UsersModule::loginUser | user does not exist");
+        throw ServerException(_M, "User with such username does not exist");
+    }
+    else
     {
         User &user = usersVec.front();
         if (user.password == clientPassword)
@@ -81,11 +105,6 @@ ResponseData UsersModule::loginUser(const Dataset &request)
             throw ServerException(_M, "Wrong password");
         }
     }
-    else
-    {
-        SPDLOG_WARN("UsersModule::loginUser | user does not exist");
-        throw ServerException(_M, "User with such username does not exist");
-    }
 
     return response;
 }
@@ -94,7 +113,6 @@ ResponseData UsersModule::registerUser(const Dataset &request)
 {
     SPDLOG_TRACE("UsersModule::registerUser");
     ResponseData response;
-
     std::string clientUsername{}, clientPassword{};
     try
     {
@@ -114,6 +132,8 @@ ResponseData UsersModule::registerUser(const Dataset &request)
     {
         m_usersRepository->add(User("", clientUsername, clientPassword, ""));
         SPDLOG_INFO("UsersModule::registerUser | new user `{}` is registered", clientUsername);
+        response.dataset[Keys::User::USERNAME] = {clientUsername};
+        response.dataset[Keys::User::PASSWORD] = {clientPassword};
     }
     else
     {
@@ -121,5 +141,94 @@ ResponseData UsersModule::registerUser(const Dataset &request)
         throw ServerException(_M, "User with this username already exists");
     }
 
+    return response;
+}
+
+ResponseData UsersModule::getRoles()
+{
+    SPDLOG_TRACE("UsersModule::getRole");
+    ResponseData response;
+    auto rolesVec = m_rolesRepository->getAll();
+
+    if (rolesVec.empty())
+    {
+        response.dataset[Keys::Role::ID] = {""};
+        response.dataset[Keys::Role::NAME] = {""};
+        SPDLOG_WARN("UsersModule::getRoles | array of roles is empty");
+    }
+    else
+    {
+        for (auto i = rolesVec.cbegin(); i != rolesVec.cend(); i++)
+        {
+            response.dataset[Keys::Role::ID].emplace_back(i->id);
+            response.dataset[Keys::Role::NAME].emplace_back(i->name);
+        }
+    }
+
+    return response;
+}
+
+ResponseData UsersModule::addNewRole(const Dataset &request)
+{
+    SPDLOG_TRACE("UsersModule::addRoles");
+    ResponseData response;
+    std::string roleName{};
+    try
+    {
+        roleName = request.at(Keys::Role::NAME).front();
+    }
+    catch (const std::out_of_range &e)
+    {
+        SPDLOG_WARN("UsersModule::addNewRole username or password does not exit");
+        throw ServerException(_M, "Server got no username or password in Dataset");
+    }
+    auto usersVec = m_rolesRepository->getByField(Keys::Role::NAME, roleName);
+    if (usersVec.empty())
+    {
+        m_rolesRepository->add(Role(roleName));
+        SPDLOG_INFO("UsersModule::registerUser | new role `{}` is added", roleName);
+        response.dataset[Keys::Role::NAME] = {roleName};
+    }
+    else
+    {
+        throw ServerException(_M, "Server got no username or password in Dataset");
+    }
+    return response;
+}
+
+ResponseData UsersModule::updateRoles(const Dataset &request, const std::string &resourseId)
+{
+    ResponseData response;
+    SPDLOG_TRACE("UsersModule::updateRoles");
+    if (resourseId.empty())
+    {
+        throw ServerException(_M, "resourseId is emtpy");
+    }
+
+    std::string roleName{};
+    try
+    {
+        roleName = request.at(Keys::Role::NAME).front();
+    }
+    catch (std::out_of_range &e)
+    {
+        SPDLOG_WARN("UsersModule::updateRole role name does not exit");
+        throw ServerException(_M, "Server got no role name in Dataset");
+    }
+    m_rolesRepository->update(Role(resourseId, roleName));
+    response.dataset[Keys::Role::ID] = {resourseId};
+    return response;
+}
+
+ResponseData UsersModule::deleteRole(const std::string &resourseId)
+{
+    SPDLOG_TRACE("UsersModule::deleteRole");
+    if (resourseId.empty())
+    {
+        throw ServerException(_M, "resourseId is emtpy");
+    }
+    ResponseData response;
+    m_rolesRepository->deleteResource(resourseId);
+    response.dataset[Keys::Role::ID] = {resourseId};
     return response;
 }
