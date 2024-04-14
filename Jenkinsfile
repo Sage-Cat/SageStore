@@ -1,8 +1,9 @@
 pipeline {
     agent any
     environment {
-        PATH = "/home/sagecat/Qt/6.5.3/gcc_64/bin:/var/lib/jenkins/.local/bin:${env.PATH}"
-        QT_QPA_PLATFORM = "offscreen" // Ensures Qt uses the offscreen platform, useful for headless environments
+        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
+        LD_LIBRARY_PATH = "/var/lib/jenkins/.conan2/p/icu4ea64724a76de/p/lib:/var/lib/jenkins/.conan2/p/md4cbe5ef51cc4864/p/lib:${env.LD_LIBRARY_PATH}"
+        QT_QPA_PLATFORM = "offscreen" 
     }
     stages {
         stage('Checkout') {
@@ -29,7 +30,7 @@ pipeline {
                 sh '''
                     mkdir -p build
                     cd build
-                    cmake .. --preset conan-release -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_CLIENT_TESTS=ON -DBUILD_SERVER_TESTS=ON
+                    cmake .. --preset conan-release -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
                 '''
             }
         }
@@ -52,7 +53,6 @@ pipeline {
     }
     post {
         always {
-            // Clean up by stopping any background processes if needed
             sh 'killall Xvfb || true'
         }
     }
