@@ -69,6 +69,7 @@ void ApiManager::createNewRole(const QString &roleName)
     SPDLOG_TRACE("ApiManager::postRole");
     Dataset dataset;
     dataset[Keys::Role::NAME] = {roleName};
+    dataset[Keys::Role::ID] = {};
 
     m_networkService.sendRequest(
         Endpoints::Users::ROLES,

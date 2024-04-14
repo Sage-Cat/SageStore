@@ -13,6 +13,7 @@ public:
 
     Role(std::string id, std::string name)
         : id(std::move(id)), name(std::move(name)) {}
+    explicit Role(std::string name) : name(std::move(name)) {}
 
     Dataset &operator>>(Dataset &dataset) override
     {
