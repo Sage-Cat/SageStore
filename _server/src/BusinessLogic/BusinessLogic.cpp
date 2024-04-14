@@ -1,6 +1,6 @@
-#include "BusinessLogic.hpp"
+#include "BusinessLogic/BusinessLogic.hpp"
 
-#include "UsersModule.hpp"
+#include "BusinessLogic/UsersModule.hpp"
 #include "ServerException.hpp"
 #include "Network/NetworkCommon.hpp"
 

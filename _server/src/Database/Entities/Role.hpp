@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "IEntity.hpp"
+#include "Database/Entities/IEntity.hpp"
 
 class Role : public IEntity
 {

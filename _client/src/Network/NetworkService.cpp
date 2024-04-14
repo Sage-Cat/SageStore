@@ -1,4 +1,4 @@
-#include "NetworkService.hpp"
+#include "Network/NetworkService.hpp"
 #include "SpdlogConfig.hpp"
 
 NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr<IDataSerializer> serializer)

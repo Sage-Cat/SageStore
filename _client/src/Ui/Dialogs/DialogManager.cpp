@@ -1,4 +1,4 @@
-#include "DialogManager.hpp"
+#include "Ui/Dialogs/DialogManager.hpp"
 
 #include "SpdlogConfig.hpp"
 

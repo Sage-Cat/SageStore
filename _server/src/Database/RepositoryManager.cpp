@@ -1,6 +1,6 @@
-#include "RepositoryManager.hpp"
+#include "Database/RepositoryManager.hpp"
 
-#include "UsersRepository.hpp"
+#include "Database/UsersRepository.hpp"
 #include "RolesRepository.hpp"
 
 #include "SpdlogConfig.hpp"

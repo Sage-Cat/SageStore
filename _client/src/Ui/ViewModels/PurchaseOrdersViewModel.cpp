@@ -1,4 +1,4 @@
-#include "PurchaseOrdersViewModel.hpp"
+#include "Ui/ViewModels/PurchaseOrdersViewModel.hpp"
 
 #include "SpdlogConfig.hpp"
 

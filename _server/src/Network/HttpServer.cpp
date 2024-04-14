@@ -1,8 +1,8 @@
-#include "HttpServer.hpp"
+#include "Network/HttpServer.hpp"
 
 #include <boost/bind/bind.hpp>
 
-#include "JsonSerializer.hpp"
+#include "Network/JsonSerializer.hpp"
 
 #include "SpdlogConfig.hpp"
 

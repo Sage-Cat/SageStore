@@ -7,7 +7,7 @@
 #include <QList>
 #include <QStringList>
 
-#include "IDataSerializer.hpp"
+#include "Network/IDataSerializer.hpp"
 
 /**
  * @class JsonSerializer

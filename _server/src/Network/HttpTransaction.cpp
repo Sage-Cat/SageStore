@@ -1,11 +1,11 @@
-#include "HttpTransaction.hpp"
+#include "Network/HttpTransaction.hpp"
 
 #include <vector>
 #include <algorithm>
 
 #include <boost/algorithm/string.hpp>
 
-#include "IDataSerializer.hpp"
+#include "Network/IDataSerializer.hpp"
 
 #include "Endpoints.hpp"
 #include "SpdlogConfig.hpp"

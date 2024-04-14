@@ -1,7 +1,7 @@
-#include "RolesRepository.hpp"
+#include "Database/RolesRepository.hpp"
 #include "SpdlogConfig.hpp"
 
-#include "Entities/Role.hpp"
+#include "Database/Entities/Role.hpp"
 
 inline constexpr int ID = 0;
 inline constexpr int NAME = 1;

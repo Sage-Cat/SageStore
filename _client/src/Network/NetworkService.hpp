@@ -9,7 +9,7 @@
 #include <QByteArray>
 
 #include "DataTypes.hpp"
-#include "IDataSerializer.hpp"
+#include "Network/IDataSerializer.hpp"
 
 enum class Method
 {

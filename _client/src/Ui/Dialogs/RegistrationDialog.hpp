@@ -4,9 +4,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QCryptographicHash>
-#include "Utils.hpp"
+#include "src/Utils.hpp"
 
-#include "BaseDialog.hpp"
+#include "Ui/Dialogs/BaseDialog.hpp"
 
 /**
  * @class RegistrationDialog

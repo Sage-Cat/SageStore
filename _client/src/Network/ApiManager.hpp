@@ -5,7 +5,7 @@
 #include <QVector>
 
 #include "DataTypes.hpp"
-#include "Entities/Role.hpp"
+#include "Network/Entities/Role.hpp"
 
 class NetworkService;
 enum class Method;

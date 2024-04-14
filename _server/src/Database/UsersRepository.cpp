@@ -1,7 +1,7 @@
-#include "UsersRepository.hpp"
+#include "Database/UsersRepository.hpp"
 #include "SpdlogConfig.hpp"
 
-#include "Entities/User.hpp"
+#include "Database/Entities/User.hpp"
 
 namespace
 {

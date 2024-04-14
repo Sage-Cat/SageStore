@@ -1,4 +1,4 @@
-#include "BaseDialog.hpp"
+#include "Ui/Dialogs/BaseDialog.hpp"
 
 BaseDialog::BaseDialog(QDialog *parent) : QDialog(parent)
 {
