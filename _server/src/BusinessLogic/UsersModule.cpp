@@ -185,7 +185,7 @@ ResponseData UsersModule::addNewRole(const Dataset &request)
     auto usersVec = m_rolesRepository->getByField(Keys::Role::NAME, roleName);
     if (usersVec.empty())
     {
-        m_rolesRepository->add(Role("", roleName));
+        m_rolesRepository->add(Role(roleName));
         SPDLOG_INFO("UsersModule::registerUser | new role `{}` is added", roleName);
         response.dataset[Keys::Role::NAME] = {roleName};
     }
