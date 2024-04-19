@@ -1,10 +1,10 @@
 -- Create Roles table
-CREATE TABLE Roles (
+CREATE TABLE Role (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE Users (
+CREATE TABLE User (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL, 
@@ -13,7 +13,7 @@ CREATE TABLE Users (
 );
 
 -- Create Logs table
-CREATE TABLE Logs (
+CREATE TABLE Log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   userId INTEGER,
   action VARCHAR(100),
@@ -22,7 +22,7 @@ CREATE TABLE Logs (
 );
 
 -- Create Contacts table
-CREATE TABLE Contacts (
+CREATE TABLE Contact (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100),
   type VARCHAR(50),
@@ -40,7 +40,7 @@ CREATE TABLE ContactInfo (
 );
 
 -- Create Employees table
-CREATE TABLE Employees (
+CREATE TABLE Employee (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100),
   number VARCHAR(20),
@@ -49,7 +49,7 @@ CREATE TABLE Employees (
 );
 
 -- Create Suppliers table
-CREATE TABLE Suppliers (
+CREATE TABLE Supplier (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100),
   number VARCHAR(20),
@@ -99,7 +99,7 @@ CREATE TABLE Inventory (
 );
 
 -- Create SaleOrders table
-CREATE TABLE SaleOrders (
+CREATE TABLE SaleOrder (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   date DATETIME,
   userId INTEGER,
@@ -112,7 +112,7 @@ CREATE TABLE SaleOrders (
 );
 
 -- Create SalesOrderRecords table
-CREATE TABLE SalesOrderRecords (
+CREATE TABLE SalesOrderRecord (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   orderId INTEGER,
   productTypeId INTEGER,
@@ -123,7 +123,7 @@ CREATE TABLE SalesOrderRecords (
 );
 
 -- Create PurchaseOrders table
-CREATE TABLE PurchaseOrders (
+CREATE TABLE PurchaseOrder (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   date DATETIME,
   userId INTEGER,
@@ -134,7 +134,7 @@ CREATE TABLE PurchaseOrders (
 );
 
 -- Create PurchaseOrderRecords table
-CREATE TABLE PurchaseOrderRecords (
+CREATE TABLE PurchaseOrderRecord (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   orderId INTEGER,
   productTypeId INTEGER,
