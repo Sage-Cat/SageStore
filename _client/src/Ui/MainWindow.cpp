@@ -1,6 +1,6 @@
 #include "MainWindow.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;

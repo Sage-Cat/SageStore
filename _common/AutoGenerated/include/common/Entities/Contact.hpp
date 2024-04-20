@@ -5,6 +5,7 @@
 struct Contact
 {
     static constexpr const char* TABLE_NAME = "Contact";
+    
     std::string
         id,
         name,

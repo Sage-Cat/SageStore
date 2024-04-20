@@ -33,6 +33,7 @@ def generate_hpp_files(tables, output_dir):
 struct {struct_name}
 {{
     static constexpr const char* TABLE_NAME = "{table_name}";
+    
 {fields}
 }};
 '''

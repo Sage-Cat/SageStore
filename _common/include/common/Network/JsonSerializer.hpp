@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IDataSerializer.hpp"
+#include "common/Network/IDataSerializer.hpp"
 
 /**
  * @class JsonSerializer

@@ -4,8 +4,8 @@ set(SERVER_UNIT_TESTS_SOURCE
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
-    ${SERVER_SOURCES_DIR}/Database/UsersRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/RolesRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
 )
 
 add_executable(UsersModuleTest ${SERVER_UNIT_TESTS_SOURCE})
@@ -17,6 +17,7 @@ target_include_directories(UsersModuleTest PUBLIC
 
 target_link_libraries(UsersModuleTest 
     PUBLIC
+    common
     boost::boost 
     spdlog::spdlog 
     $<$<PLATFORM_ID:Windows>:Ws2_32>

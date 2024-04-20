@@ -2,10 +2,10 @@
 
 #include "UsersModule.hpp"
 #include "ServerException.hpp"
-#include "Network/NetworkCommon.hpp"
+#include "Network/NetworkGeneral.hpp"
 
-#include "DataCommon.hpp"
-#include "SpdlogConfig.hpp"
+#include "common/Keys.hpp"
+#include "common/SpdlogConfig.hpp"
 
 BusinessLogic::BusinessLogic(RepositoryManager &repositoryManager)
     : m_usersModule(std::make_unique<UsersModule>(repositoryManager))

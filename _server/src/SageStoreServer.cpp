@@ -4,7 +4,7 @@
 #include "BusinessLogic/BusinessLogic.hpp"
 #include "Network/HttpServer.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 SageStoreServer::SageStoreServer(RepositoryManager &repositoryManager,
                                  BusinessLogic &businessLogicFacade,

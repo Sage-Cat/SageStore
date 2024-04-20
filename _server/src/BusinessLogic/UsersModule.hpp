@@ -9,8 +9,9 @@
 #include "Database/IRepository.hpp"
 
 class RepositoryManager;
-class User;
-class Role;
+
+struct User;
+struct Role;
 
 class UsersModule : public IBusinessModule
 {

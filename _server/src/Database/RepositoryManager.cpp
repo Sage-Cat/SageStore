@@ -1,9 +1,9 @@
 #include "RepositoryManager.hpp"
 
-#include "UsersRepository.hpp"
-#include "RolesRepository.hpp"
+#include "UserRepository.hpp"
+#include "RoleRepository.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 RepositoryManager::RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
@@ -18,22 +18,22 @@ RepositoryManager::~RepositoryManager()
     m_dbManager->close();
 }
 
-auto RepositoryManager::getUsersRepository() -> std::shared_ptr<IRepository<User>>
+auto RepositoryManager::getUserRepository() -> std::shared_ptr<IRepository<User>>
 {
-    SPDLOG_TRACE("RepositoryManager::getUsersRepository");
+    SPDLOG_TRACE("RepositoryManager::getUserRepository");
     if (!m_usersRepository)
     {
-        m_usersRepository = std::make_shared<UsersRepository>(m_dbManager);
+        m_usersRepository = std::make_shared<UserRepository>(m_dbManager);
     }
     return m_usersRepository;
 }
 
-auto RepositoryManager::getRolesRepository() -> std::shared_ptr<IRepository<Role>>
+auto RepositoryManager::getRoleRepository() -> std::shared_ptr<IRepository<Role>>
 {
-    SPDLOG_TRACE("RepositoryManager::getRolesRepository");
+    SPDLOG_TRACE("RepositoryManager::getRoleRepository");
     if (!m_rolesRepository)
     {
-        m_rolesRepository = std::make_shared<RolesRepository>(m_dbManager);
+        m_rolesRepository = std::make_shared<RoleRepository>(m_dbManager);
     }
     return m_rolesRepository;
 }

@@ -3,7 +3,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 RegistrationDialog::RegistrationDialog(BaseDialog *parent) : BaseDialog(parent)
 {

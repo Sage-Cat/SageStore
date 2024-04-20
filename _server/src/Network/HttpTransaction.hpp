@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "NetworkCommon.hpp"
+#include "NetworkGeneral.hpp"
 #include "DataSpecs.hpp"
 
 class IDataSerializer;
