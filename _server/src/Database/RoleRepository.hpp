@@ -9,11 +9,11 @@
 
 class Role;
 
-class RolesRepository : public IRepository<Role>
+class RoleRepository : public IRepository<Role>
 {
 public:
-    explicit RolesRepository(std::shared_ptr<IDatabaseManager> dbManager);
-    virtual ~RolesRepository() override;
+    explicit RoleRepository(std::shared_ptr<IDatabaseManager> dbManager);
+    virtual ~RoleRepository() override;
 
     void add(const Role &entity) override;
     void update(const Role &entity) override;

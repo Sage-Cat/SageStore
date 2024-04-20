@@ -5,6 +5,7 @@
 struct Salesorderrecord
 {
     static constexpr const char* TABLE_NAME = "SalesOrderRecord";
+    
     std::string
         id,
         orderId,

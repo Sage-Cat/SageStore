@@ -9,11 +9,11 @@
 
 class User;
 
-class UsersRepository : public IRepository<User>
+class UserRepository : public IRepository<User>
 {
 public:
-    explicit UsersRepository(std::shared_ptr<IDatabaseManager> dbManager);
-    ~UsersRepository() override;
+    explicit UserRepository(std::shared_ptr<IDatabaseManager> dbManager);
+    ~UserRepository() override;
 
     void add(const User &entity) override;
     void update(const User &entity) override;

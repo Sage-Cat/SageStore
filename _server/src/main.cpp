@@ -5,7 +5,7 @@
 #include "Network/HttpServer.hpp"
 #include "BusinessLogic/BusinessLogic.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 int main()
 {

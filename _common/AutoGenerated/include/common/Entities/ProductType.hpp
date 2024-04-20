@@ -5,6 +5,7 @@
 struct Producttype
 {
     static constexpr const char* TABLE_NAME = "ProductType";
+    
     std::string
         id,
         code,

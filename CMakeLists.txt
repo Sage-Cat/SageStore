@@ -14,11 +14,14 @@ option(BUILD_SERVER "Build the server application." OFF)
 option(BUILD_TESTS "Build tests for client and server." OFF)
 
 # Common includes and sources
-set(COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
-include_directories(${COMMON_DIR})
+set(COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/_common")
 
 if(BUILD_TESTS)
     enable_testing()
+endif()
+
+if(BUILD_CLIENT OR BUILD_SERVER OR BUILD_TESTS)
+    add_subdirectory(_common)
 endif()
 
 if(BUILD_CLIENT OR BUILD_TESTS)

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Endpoints.hpp"
-#include "DataCommon.hpp"
+#include "common/Endpoints.hpp"
+#include "common/Keys.hpp"
 #include "Network/NetworkService.hpp"
 
 class NetworkServiceMock : public NetworkService
@@ -12,10 +12,10 @@ public:
     }
 
     void sendRequest(
-        QString endpoint,
+        std::string endpoint,
         Method method = Method::GET,
         const Dataset &dataset = Dataset(),
-        const QString &resource_id = "") override
+        const std::string &resource_id = "") override
     {
         Dataset serverResponse{{Keys::_ERROR, {"Error message"}}};
 

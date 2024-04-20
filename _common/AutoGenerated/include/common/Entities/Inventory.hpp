@@ -5,6 +5,7 @@
 struct Inventory
 {
     static constexpr const char* TABLE_NAME = "Inventory";
+    
     std::string
         id,
         productTypeId,

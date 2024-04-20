@@ -5,7 +5,7 @@
 #include "Ui/MainWindow.hpp"
 #include "Ui/Dialogs/DialogManager.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 UiManager::UiManager(QApplication &app, ApiManager &apiClient) noexcept
     : m_app(app),
