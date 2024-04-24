@@ -2,10 +2,10 @@
 #include <QSignalSpy>
 #include <QMessageBox>
 
-#include "tests/wrappers/DialogManagerWrapper.hpp"
+#include "DialogManagerWrapper.hpp"
 
-#include "tests/mocks/ApiManagerMock.hpp"
-#include "tests/mocks/NetworkServiceMock.hpp"
+#include "ApiManagerMock.hpp"
+#include "NetworkServiceMock.hpp"
 
 class DialogManagerTest : public QObject
 {

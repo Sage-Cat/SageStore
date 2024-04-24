@@ -2,9 +2,9 @@
 
 #include "Ui/Dialogs/DialogManager.hpp"
 
-#include "tests/mocks/LoginDialogMock.hpp"
-#include "tests/mocks/RegistrationDialogMock.hpp"
-#include "tests/mocks/QMessageBoxMock.hpp"
+#include "LoginDialogMock.hpp"
+#include "RegistrationDialogMock.hpp"
+#include "QMessageBoxMock.hpp"
 
 class ApiManager;
 

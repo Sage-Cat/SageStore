@@ -3,10 +3,10 @@
 #include <QApplication>
 
 #include "Ui/UiManager.hpp"
-#include "tests/wrappers/UiManagerWrapper.hpp"
+#include "UiManagerWrapper.hpp"
 
-#include "tests/mocks/ApiManagerMock.hpp"
-#include "tests/mocks/NetworkServiceMock.hpp"
+#include "ApiManagerMock.hpp"
+#include "NetworkServiceMock.hpp"
 
 class UiManagerTest : public QObject
 {
