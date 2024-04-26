@@ -18,9 +18,9 @@
     - [Tech Stack](#tech-stack)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-  - [Preparing cetificates for network connectivity](#preparing-cetificates-for-network-connectivity)
+  - [Building](#building)
   - [Testing](#testing)
+  - [Manual build process](#manual-build-process)
   - [Contributing](#contributing)
   - [License](#license)
   - [Contact](#contact)
@@ -80,43 +80,24 @@ The project aims to build an ERP system to manage core business processes for SM
 
 _Check conanfile.py if you need versions of specific libs, that were used_
 
-### Installation
+## Building
 
-> If you are using VS Code you could use my [tasks.json](docs/vscode_config/tasks.json) config file
+> If you are using VS Code you could use my [tasks.json](tools/vscode_config/tasks.json) config file
 
-1. Clone the repo
+1. Clone repo:
 
    ```
    git clone git@gitlab.com:sagecat/SageStore.git
    ```
 
-2. Install prerequisites
-
-   > You can use our VS Code config for [tasks.json](docs/vscode_config/tasks.json)
+2. Automated build:
 
    ```
-   conan install . --output-folder=build --build=missing
+   python3 build.py
    ```
+   You can also do [manual build process](#manual-build-process)
 
-   Or if your conan have sudo rights:
-   ```
-   conan install . --output-folder=build --build=missing -c tools.system.package_manager:mode=install
-   ```
- 
-3. Go to build folder and run cmake with presets
-
-   ```
-   cd build
-   cmake .. --preset conan-debug -DBUILD_CLIENT=ON -DBUILD_SERVER=ON
-   ```
-
-4. Build the project
-
-   ```
-   cmake --build .
-   ```
-
-5. Run the application
+3. Run the application
 
    ```
    # Windows
@@ -127,12 +108,6 @@ _Check conanfile.py if you need versions of specific libs, that were used_
    ./_server/SageStoreServer
    ./_client/SageStoreClient
    ```
-
-## Preparing cetificates for network connectivity
-
-```
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
-```
 
 ## Testing
 
@@ -150,6 +125,31 @@ ctest --verbose
 # or
 ./_client/unit/test_SageStoreClient
 ```
+
+## Manual build process
+1. Install conan debs
+
+   ```
+   conan install . --output-folder=build --build=missing
+   ```
+
+   Or if your conan have sudo rights:
+   ```
+   conan install . --output-folder=build --build=missing -c tools.system.package_manager:mode=install
+   ```
+ 
+2. Go to build folder and run cmake with presets
+
+   ```
+   cd build
+   cmake .. --preset conan-debug -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
+   ```
+
+3. Build the project
+
+   ```
+   cmake --build .
+   ```
 
 ## Contributing
 
