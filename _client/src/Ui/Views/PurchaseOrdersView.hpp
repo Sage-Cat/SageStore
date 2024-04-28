@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseView.hpp"
+#include "Ui/Views/BaseView.hpp"
 
 class PurchaseOrdersView : public BaseView
 {

@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include "IBusinessModule.hpp"
+#include "BusinessLogic/IBusinessModule.hpp"
 #include "DataSpecs.hpp"
 
 #include "Database/IRepository.hpp"

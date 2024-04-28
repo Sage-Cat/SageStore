@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QMessageBox>
 
-#include "LoginDialog.hpp"
-#include "RegistrationDialog.hpp"
+#include "Ui/Dialogs/LoginDialog.hpp"
+#include "Ui/Dialogs/RegistrationDialog.hpp"
 #include "Network/ApiManager.hpp"
 
 /**

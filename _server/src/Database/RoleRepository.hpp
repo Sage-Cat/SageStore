@@ -4,8 +4,8 @@
 #include <optional>
 #include <vector>
 
-#include "IRepository.hpp"
-#include "IDatabaseManager.hpp"
+#include "Database/IRepository.hpp"
+#include "Database/IDatabaseManager.hpp"
 
 class Role;
 

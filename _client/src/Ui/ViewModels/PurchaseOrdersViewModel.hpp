@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include "IViewModel.hpp"
+#include "Ui/ViewModels/IViewModel.hpp"
 
 /**
  * @brief Manages the UI rendering and interactions for the purchase View.

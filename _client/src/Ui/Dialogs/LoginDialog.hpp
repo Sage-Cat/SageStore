@@ -6,7 +6,7 @@
 #include <QCryptographicHash>
 #include "Utils.hpp"
 
-#include "BaseDialog.hpp"
+#include "Ui/Dialogs/BaseDialog.hpp"
 
 /**
  * @class LoginDialog

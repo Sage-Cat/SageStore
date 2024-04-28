@@ -1,4 +1,4 @@
-#include "MainWindow.hpp"
+#include "Ui/MainWindow.hpp"
 
 #include "common/SpdlogConfig.hpp"
 

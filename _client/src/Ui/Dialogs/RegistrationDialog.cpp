@@ -1,4 +1,4 @@
-#include "RegistrationDialog.hpp"
+#include "Ui/Dialogs/RegistrationDialog.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

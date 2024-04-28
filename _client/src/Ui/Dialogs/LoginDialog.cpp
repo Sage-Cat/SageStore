@@ -1,4 +1,4 @@
-#include "LoginDialog.hpp"
+#include "Ui/Dialogs/LoginDialog.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

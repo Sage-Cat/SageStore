@@ -1,4 +1,4 @@
-#include "UiManager.hpp"
+#include "Ui/UiManager.hpp"
 
 #include "Network/ApiManager.hpp"
 

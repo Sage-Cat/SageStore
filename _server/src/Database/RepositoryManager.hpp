@@ -3,8 +3,8 @@
 #include <memory>
 #include <type_traits>
 
-#include "IDatabaseManager.hpp"
-#include "IRepository.hpp"
+#include "Database/IDatabaseManager.hpp"
+#include "Database/IRepository.hpp"
 
 class User;
 class Role;

@@ -1,4 +1,4 @@
-#include "NetworkService.hpp"
+#include "Network/NetworkService.hpp"
 
 #include "common/SpdlogConfig.hpp"
 

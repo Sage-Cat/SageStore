@@ -1,7 +1,7 @@
 #pragma once
 
-#include "NetworkGeneral.hpp"
-#include "HttpTransaction.hpp"
+#include "Network/NetworkCommon.hpp"
+#include "Network/HttpTransaction.hpp"
 #include "DataSpecs.hpp"
 
 /**

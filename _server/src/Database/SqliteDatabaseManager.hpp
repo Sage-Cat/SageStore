@@ -3,7 +3,7 @@
 #include <string>
 #include <string_view>
 
-#include "IDatabaseManager.hpp"
+#include "Database/IDatabaseManager.hpp"
 
 class SqliteDatabaseManager : public IDatabaseManager
 {
