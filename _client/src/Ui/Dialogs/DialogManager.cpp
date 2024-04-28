@@ -1,6 +1,6 @@
 #include "Ui/Dialogs/DialogManager.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 DialogManager::DialogManager(ApiManager &apiManager)
     : m_apiManager(apiManager)

@@ -3,7 +3,7 @@
 #include "Network/ApiManager.hpp"
 #include "Ui/UiManager.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 SageStoreClient::SageStoreClient(ApiManager &apiManager, UiManager &uiManager)
     : m_apiManager(apiManager),

@@ -2,10 +2,8 @@ project(${SERVER_NAME})
 
 # Locate conan packages
 
-find_package(nlohmann_json REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(spdlog REQUIRED)
-
 find_package(Boost QUIET)
 
 # Check if the Conan-provided
@@ -33,14 +31,13 @@ set(DATABASE_SOURCES
     ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
 
     # Repositories
-    ${SERVER_SOURCES_DIR}/Database/UsersRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/RolesRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
 )
 
 set(NETWORK_SOURCES
     ${SERVER_SOURCES_DIR}/Network/HttpServer.cpp 
     ${SERVER_SOURCES_DIR}/Network/HttpTransaction.cpp 
-    ${SERVER_SOURCES_DIR}/Network/JsonSerializer.cpp
 )
 
 set(MAIN_SOURCES

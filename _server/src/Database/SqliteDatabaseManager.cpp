@@ -10,7 +10,7 @@
 #include <sqlite3.h>
 
 #include "ServerException.hpp"
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 #define _M "SqliteDatabaseManager"
 

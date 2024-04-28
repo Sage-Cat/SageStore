@@ -5,10 +5,10 @@
 
 #include "Network/ApiManager.hpp"
 #include "Network/NetworkService.hpp"
-#include "Network/JsonSerializer.hpp"
+#include "common/Network/JsonSerializer.hpp"
 #include "Ui/UiManager.hpp"
 #include "Ui/Views/BaseView.hpp"
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 inline constexpr char ENDPOINT_SCHEME[] = "http";
 inline constexpr char ENDPOINT_ADDR[]   = "127.0.0.1";

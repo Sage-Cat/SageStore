@@ -2,9 +2,9 @@
 
 #include <boost/bind/bind.hpp>
 
-#include "Network/JsonSerializer.hpp"
+#include "common/Network/JsonSerializer.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/SpdlogConfig.hpp"
 
 HttpServer::HttpServer(const std::string &address, unsigned short port, ExecuteBusinessTaskCallback callback)
     : m_ioc{1},

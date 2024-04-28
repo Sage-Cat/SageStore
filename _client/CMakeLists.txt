@@ -11,14 +11,12 @@ set(CMAKE_AUTORCC ON)
 # Locate Qt packages
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network)
 
-
 # Locate conan packages
 find_package(spdlog REQUIRED)
 
 set(NETWORK_SOURCES
     ${CLIENT_SOURCES_DIR}/Network/ApiManager.cpp
     ${CLIENT_SOURCES_DIR}/Network/NetworkService.cpp
-    ${CLIENT_SOURCES_DIR}/Network/JsonSerializer.cpp
 )
 
 set(UI_SOURCES

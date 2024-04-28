@@ -1,19 +1,19 @@
--- Create Roles table
-CREATE TABLE Roles (
+-- Create Role table
+CREATE TABLE Role (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE Users (
+CREATE TABLE User (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL, 
   roleId INTEGER DEFAULT 0,
-  FOREIGN KEY (roleId) REFERENCES Roles(id)
+  FOREIGN KEY (roleId) REFERENCES Role(id)
 );
 
 -- Create Logs table
-CREATE TABLE Logs (
+CREATE TABLE Log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   userId INTEGER,
   action VARCHAR(100),
@@ -22,7 +22,7 @@ CREATE TABLE Logs (
 );
 
 -- Create Contacts table
-CREATE TABLE Contacts (
+CREATE TABLE Contact (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100),
   type VARCHAR(50),
@@ -40,7 +40,7 @@ CREATE TABLE ContactInfo (
 );
 
 -- Create Employees table
-CREATE TABLE Employees (
+CREATE TABLE Employee (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100),
   number VARCHAR(20),
@@ -49,7 +49,7 @@ CREATE TABLE Employees (
 );
 
 -- Create Suppliers table
-CREATE TABLE Suppliers (
+CREATE TABLE Supplier (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100),
   number VARCHAR(20),
@@ -99,7 +99,7 @@ CREATE TABLE Inventory (
 );
 
 -- Create SaleOrders table
-CREATE TABLE SaleOrders (
+CREATE TABLE SaleOrder (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   date DATETIME,
   userId INTEGER,
@@ -112,7 +112,7 @@ CREATE TABLE SaleOrders (
 );
 
 -- Create SalesOrderRecords table
-CREATE TABLE SalesOrderRecords (
+CREATE TABLE SalesOrderRecord (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   orderId INTEGER,
   productTypeId INTEGER,
@@ -123,7 +123,7 @@ CREATE TABLE SalesOrderRecords (
 );
 
 -- Create PurchaseOrders table
-CREATE TABLE PurchaseOrders (
+CREATE TABLE PurchaseOrder (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   date DATETIME,
   userId INTEGER,
@@ -134,7 +134,7 @@ CREATE TABLE PurchaseOrders (
 );
 
 -- Create PurchaseOrderRecords table
-CREATE TABLE PurchaseOrderRecords (
+CREATE TABLE PurchaseOrderRecord (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   orderId INTEGER,
   productTypeId INTEGER,
@@ -147,17 +147,17 @@ CREATE TABLE PurchaseOrderRecords (
 
 ------------------------- INITIAL SETUP ------------------------------------
 -- Insert default role
-INSERT INTO Roles (name) VALUES ('user');
-INSERT INTO Roles (name) VALUES ('admin');
+INSERT INTO Role (name) VALUES ('user');
+INSERT INTO Role (name) VALUES ('admin');
 
 -- Insert default user with roleId pointing to the default role
-INSERT INTO Users (username, password, roleId) VALUES ('admin', 'admin123', 1); 
+INSERT INTO User (username, password, roleId) VALUES ('admin', 'admin123', 1); 
 
 -- Insert default employee
-INSERT INTO Employees (name, number, email, address) VALUES ('John Doe', '123456789', 'john@example.com', '123 Main St');
+INSERT INTO Employee (name, number, email, address) VALUES ('John Doe', '123456789', 'john@example.com', '123 Main St');
 
 -- Insert default supplier
-INSERT INTO Suppliers (name, number, email, address) VALUES ('Default Supplier', '987654321', 'supplier@example.com', '456 Elm St');
+INSERT INTO Supplier (name, number, email, address) VALUES ('Default Supplier', '987654321', 'supplier@example.com', '456 Elm St');
 
 -- Insert default product type
 INSERT INTO ProductType (code, barcode, name, description, lastPrice, unit, isImported) 
@@ -167,16 +167,16 @@ VALUES ('DEFAULT', '000000000000', 'Default Product', 'Default product descripti
 INSERT INTO Inventory (productTypeId, quantityAvailable, employeeId) VALUES (1, 0, 1); 
 
 -- Insert default contact
-INSERT INTO Contacts (name, type, email, phone) VALUES ('Default Contact', 'Customer', 'contact@example.com', '123-456-7890');
+INSERT INTO Contact (name, type, email, phone) VALUES ('Default Contact', 'Customer', 'contact@example.com', '123-456-7890');
 
 -- Insert default sale order
-INSERT INTO SaleOrders (date, userId, contactId, employeeId, status) VALUES ('2024-02-19', 1, 1, 1, 'Pending'); -- Assuming the default user id, contact id, and employee id are 1
+INSERT INTO SaleOrder (date, userId, contactId, employeeId, status) VALUES ('2024-02-19', 1, 1, 1, 'Pending'); -- Assuming the default user id, contact id, and employee id are 1
 
 -- Insert default sales order record
-INSERT INTO SalesOrderRecords (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); 
+INSERT INTO SalesOrderRecord (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); 
 
 -- Insert default purchase order
-INSERT INTO PurchaseOrders (date, userId, supplierId, status) VALUES ('2024-02-19', 1, 1, 'Pending'); 
+INSERT INTO PurchaseOrder (date, userId, supplierId, status) VALUES ('2024-02-19', 1, 1, 'Pending'); 
 
 -- Insert default purchase order record
-INSERT INTO PurchaseOrderRecords (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); -Assuming the default purchase order id is 1 and product type id is 1
+INSERT INTO PurchaseOrderRecord (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); -Assuming the default purchase order id is 1 and product type id is 1

@@ -9,6 +9,7 @@ target_include_directories(${CLIENT_NAME} PUBLIC ${CLIENT_SOURCES_DIR})
 
 # Link libraries 
 target_link_libraries(${CLIENT_NAME} 
+    common
     Qt6::Core 
     Qt6::Widgets 
     Qt6::Gui 

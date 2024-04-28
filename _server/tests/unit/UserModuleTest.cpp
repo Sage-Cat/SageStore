@@ -11,7 +11,8 @@
 #include "BusinessLogic/UsersModule.hpp"
 #include "ServerException.hpp"
 
-#include "SpdlogConfig.hpp"
+#include "common/Keys.hpp"
+#include "common/SpdlogConfig.hpp"
 
 using ::testing::_;
 using ::testing::Return;
@@ -29,9 +30,9 @@ protected:
           usersRepositoryMock(std::make_shared<RepositoryMock<User>>()),
           rolesRepositoryMock(std::make_shared<RepositoryMock<Role>>())
     {
-        EXPECT_CALL(*repositoryManagerMock, getUsersRepository())
+        EXPECT_CALL(*repositoryManagerMock, getUserRepository())
             .WillRepeatedly(Return(usersRepositoryMock));
-        EXPECT_CALL(*repositoryManagerMock, getRolesRepository())
+        EXPECT_CALL(*repositoryManagerMock, getRoleRepository())
             .WillRepeatedly(Return(rolesRepositoryMock));
 
         usersModule = std::make_unique<UsersModule>(*repositoryManagerMock);
@@ -50,7 +51,13 @@ TEST_F(UserModuleTest, loginUser)
         .resourceId = "",
         .dataset = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
                     {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
-    std::vector<User> expectedUsers{User("", CORRECT_USERNAME, CORRECT_PASSWORD, "")};
+
+    const User user{
+        .id = "",
+        .username = CORRECT_USERNAME,
+        .password = CORRECT_PASSWORD,
+        .roleId = ""};
+    std::vector<User> expectedUsers{user};
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);

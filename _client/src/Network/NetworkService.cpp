@@ -1,22 +1,22 @@
 #include "Network/NetworkService.hpp"
-#include "SpdlogConfig.hpp"
+
+#include "common/SpdlogConfig.hpp"
 
 NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr<IDataSerializer> serializer)
     : m_manager(new QNetworkAccessManager(this)), m_serializer(std::move(serializer))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
 
-    m_serverUrl.setScheme(serverConfig.scheme);
-    m_serverUrl.setHost(serverConfig.address);
+    m_serverUrl.setScheme(QString::fromStdString(serverConfig.scheme));
+    m_serverUrl.setHost(QString::fromStdString(serverConfig.address));
     m_serverUrl.setPort(serverConfig.port);
 }
 
-void NetworkService::sendRequest(QString endpoint, Method method, const Dataset &dataset, const QString &resource_id)
+void NetworkService::sendRequest(std::string endpoint, Method method, const Dataset &dataset, const std::string &resource_id)
 {
-    QString endpointSuffix; 
-    QNetworkReply *reply = nullptr;
-    
     SPDLOG_TRACE("NetworkService::sendRequest");
+
+    QNetworkReply *reply = nullptr;
 
     if (!m_serializer)
     {
@@ -24,21 +24,14 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
         return;
     }
 
-    if (resource_id == "")
-    {
-        endpointSuffix = endpoint;
-    }
-    else
-    {
-        endpointSuffix = endpoint + "/" + resource_id;
-    }
-    m_serverUrl.setPath(endpointSuffix);
+    const auto endpointSuffix = endpoint + (resource_id == "" ? "" : +"/" + resource_id);
+    m_serverUrl.setPath(QString::fromStdString(endpointSuffix));
 
     QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
 
-    const auto serializedData = m_serializer->serialize(dataset);
+    const auto serializedData = QByteArray::fromStdString(m_serializer->serialize(dataset));
     SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT sent data: {}", serializedData.toStdString());
     
     switch (method)
@@ -70,7 +63,7 @@ void NetworkService::sendRequest(QString endpoint, Method method, const Dataset 
     }
 }
 
-void NetworkService::onNetworkReply(const QString &endpoint, Method method, QNetworkReply *reply)
+void NetworkService::onNetworkReply(const std::string &endpoint, Method method, QNetworkReply *reply)
 {
     SPDLOG_TRACE("NetworkService::onNetworkReply");
 
@@ -78,7 +71,7 @@ void NetworkService::onNetworkReply(const QString &endpoint, Method method, QNet
     {
         QByteArray responseData = reply->readAll();
         SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT received data: {}", responseData.toStdString());
-        Dataset dataset = m_serializer->deserialize(responseData);
+        Dataset dataset = m_serializer->deserialize(responseData.toStdString());
         emit responseReceived(endpoint, method, dataset);
     }
     else

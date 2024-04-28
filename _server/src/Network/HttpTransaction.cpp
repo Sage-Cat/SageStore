@@ -5,10 +5,10 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "Network/IDataSerializer.hpp"
+#include "common/Network/IDataSerializer.hpp"
 
-#include "Endpoints.hpp"
-#include "SpdlogConfig.hpp"
+#include "common/Endpoints.hpp"
+#include "common/SpdlogConfig.hpp"
 
 HttpTransaction::HttpTransaction(unsigned long long id,
                                  boost::asio::ip::tcp::socket socket,

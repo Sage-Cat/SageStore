@@ -8,8 +8,8 @@
 #include <QUrl>
 #include <QByteArray>
 
-#include "DataTypes.hpp"
-#include "Network/IDataSerializer.hpp"
+#include "common/DataTypes.hpp"
+#include "common/Network/IDataSerializer.hpp"
 
 enum class Method
 {
@@ -30,24 +30,24 @@ class NetworkService : public QObject
 public:
     typedef struct
     {
-        QString scheme;
-        QString address;
-        int     port;
+        std::string scheme;
+        std::string address;
+        int port;
     } ServerConfig;
 
     explicit NetworkService(const ServerConfig &serverConfig,
                             std::unique_ptr<IDataSerializer> serializer);
 
-    virtual void sendRequest(QString endpoint,
+    virtual void sendRequest(std::string endpoint,
                              Method method = Method::GET,
                              const Dataset &dataset = Dataset(),
-                             const QString &resource_id = "");
+                             const std::string &resource_id = "");
 
 signals:
-    void responseReceived(const QString &endpoint, Method method, const Dataset &dataset);
+    void responseReceived(const std::string &endpoint, Method method, const Dataset &dataset);
 
 private slots:
-    void onNetworkReply(const QString &endpoint, Method method, QNetworkReply *reply);
+    void onNetworkReply(const std::string &endpoint, Method method, QNetworkReply *reply);
 
 private:
     QNetworkAccessManager *m_manager;
