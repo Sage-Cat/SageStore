@@ -2,7 +2,7 @@
 #include <QSignalSpy>
 
 #include "Network/ApiManager.hpp"
-#include "NetworkServiceMock.hpp"
+#include "mocks/NetworkServiceMock.hpp"
 
 class ApiManagerTest : public QObject
 {

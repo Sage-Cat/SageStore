@@ -2,8 +2,8 @@
 
 #include "common/SpdlogConfig.hpp"
 
-DialogManager::DialogManager(ApiManager &apiManager)
-    : m_apiManager(apiManager)
+DialogManager::DialogManager(ApiManager &apiManager, QObject *parent)
+    : QObject(parent), m_apiManager(apiManager)
 {
     SPDLOG_TRACE("DialogManager::DialogManager");
 }

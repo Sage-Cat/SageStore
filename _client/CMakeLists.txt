@@ -20,13 +20,13 @@ set(NETWORK_SOURCES
 )
 
 set(UI_SOURCES
-    ${CLIENT_SOURCES_DIR}/Ui/UiManager.cpp
     ${CLIENT_SOURCES_DIR}/Ui/MainWindow.cpp
 
     # Models
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/PurchaseOrdersViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/MainMenuActions.hpp
     
     # Dialogs
     ${CLIENT_SOURCES_DIR}/Ui/Dialogs/DialogManager.cpp
@@ -38,11 +38,9 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/Ui/Views/BaseView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/PurchaseOrdersView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/ViewStyles.hpp
-    ${CLIENT_SOURCES_DIR}/Ui/Views/Actions.hpp
 )
 
 set(MAIN_SOURCES
-    ${CLIENT_SOURCES_DIR}/SageStoreClient.cpp
     ${CLIENT_SOURCES_DIR}/Utils.cpp
 )
 

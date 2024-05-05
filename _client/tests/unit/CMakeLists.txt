@@ -4,7 +4,7 @@ set(TEST_API_MANAGER_SOURCES
     ${NETWORK_SOURCES}
 )
 add_executable(ApiManagerTest ${TEST_API_MANAGER_SOURCES})
-target_include_directories(ApiManagerTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_MOCKS_DIR})
+target_include_directories(ApiManagerTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
 target_link_libraries(ApiManagerTest 
     common
     Qt6::Test 
@@ -16,16 +16,16 @@ message(STATUS "Adding unit test: ApiManagerTest")
 add_test(NAME Unit_ApiManagerTest COMMAND ApiManagerTest)
 
 
-# ------------------------- UIMANAGER -------------------------
+# ------------------------- MAINWINDOW -------------------------
 set(TEST_UI_MANAGER_SOURCES
-    ${CLIENT_UNIT_TESTS_DIR}/UiManagerTest.cpp
+    ${CLIENT_UNIT_TESTS_DIR}/MainWindowTest.cpp
     ${NETWORK_SOURCES}
     ${UI_SOURCES}
     ${MAIN_SOURCES}
 )
-add_executable(UiManagerTest ${TEST_UI_MANAGER_SOURCES})
-target_include_directories(UiManagerTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_MOCKS_DIR} ${CLIENT_TEST_WRAPPERS_DIR})
-target_link_libraries(UiManagerTest 
+add_executable(MainWindowTest ${TEST_UI_MANAGER_SOURCES} ${CLIENT_TEST_INCLUDE_DIR}/mocks/DialogManagerMock.hpp)
+target_include_directories(MainWindowTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(MainWindowTest 
     common
     Qt6::Test 
     Qt6::Core 
@@ -34,8 +34,8 @@ target_link_libraries(UiManagerTest
     Qt6::Network 
     spdlog::spdlog
 )
-message(STATUS "Adding unit test: UiManagerTest")
-add_test(NAME Unit_UiManagerTest COMMAND UiManagerTest)
+message(STATUS "Adding unit test: MainWindowTest")
+add_test(NAME Unit_MainWindowTest COMMAND MainWindowTest)
 
 
 # ------------------------- DIALOGMANAGER -------------------------
@@ -46,7 +46,7 @@ set(TEST_UI_MANAGER_SOURCES
     ${MAIN_SOURCES}
 )
 add_executable(DialogManagerTest ${TEST_UI_MANAGER_SOURCES})
-target_include_directories(DialogManagerTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_MOCKS_DIR} ${CLIENT_TEST_WRAPPERS_DIR})
+target_include_directories(DialogManagerTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
 target_link_libraries(DialogManagerTest 
     common
     Qt6::Test 
