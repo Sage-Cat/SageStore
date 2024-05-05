@@ -1,40 +1,49 @@
 #pragma once
 
+#include <QApplication>
 #include <QMainWindow>
-#include <QStackedWidget>
+#include <QTabWidget>
 #include <QStatusBar>
 #include <QMenuBar>
-#include <QMenu>
+#include <QString>
+#include <QVector>
 
-#include "Ui/Views/Actions.hpp"
-#include "Ui/Views/ViewStyles.hpp"
+#include "MainMenuActions.hpp"
+
+class ApiManager;
+class DialogManager;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    virtual ~MainWindow();
+    explicit MainWindow(QApplication &app,
+                        ApiManager &apiClient,
+                        DialogManager &dialogManager,
+                        QWidget *parent = nullptr);
+    ~MainWindow() = default;
 
-    void init();
+    void startUiProcess();
 
-protected:
-    void setupUi();
-    void setupMenu();
-
-    // override resizeEvent
-    void resizeEvent(QResizeEvent *event) override;
-
-    QMenu *createModuleMenu(const QString &menuTitle, const std::vector<Actions::Types> &names);
+signals:
+    void menuActionTriggered(MainMenuActions::Type actionType);
 
 private:
-    // stack view
-    QStackedWidget *m_stackView;
+    void setupUi();
 
-    // status bar
+    // MainMenu
+    void setupMenu();
+    QMenu *createModuleMenu(const QString &menuTitle, const QVector<MainMenuActions::Type> &actions);
+    void handleMainMenuAction(MainMenuActions::Type actionType);
+
+private:
+    QApplication &m_app;
+    ApiManager &m_apiManager;
+    DialogManager &m_dialogManager;
+
+    // Ui
+    QTabWidget *m_tabWidget;
     QStatusBar *m_statusBar;
-
-    // menu bar
     QMenuBar *m_mainMenuBar;
 };

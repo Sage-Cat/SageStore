@@ -18,15 +18,15 @@ class DialogManager : public QObject
     Q_OBJECT
 
 public:
-    DialogManager(ApiManager &apiManager);
+    DialogManager(ApiManager &apiManager, QObject *parent = nullptr);
     virtual ~DialogManager();
 
     void init();
 
     // show dialogs
-    void showLoginDialog();
-    void showRegistrationDialog();
-    void showErrorDialog(const QString &message);
+    virtual void showLoginDialog();
+    virtual void showRegistrationDialog();
+    virtual void showErrorDialog(const QString &message);
 
     QMessageBox *messageDialog() const;
 
