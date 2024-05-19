@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "BusinessLogic/BusinessLogic.hpp"
-#include "RepositoryManagerMock.hpp"
-#include "RepositoryMock.hpp"
+#include "mocks/RepositoryManagerMock.hpp"
+#include "mocks/RepositoryMock.hpp"
 
 #include "common/Keys.hpp"
 #include "common/SpdlogConfig.hpp"
