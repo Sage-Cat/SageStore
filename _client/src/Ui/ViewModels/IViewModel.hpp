@@ -4,8 +4,7 @@
  * @interface IViewModel
  * @brief Interface for UI components.
  */
-class IViewModel
-{
+class IViewModel {
 public:
     virtual ~IViewModel() = default;
 };

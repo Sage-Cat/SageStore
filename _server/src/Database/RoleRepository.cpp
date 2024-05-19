@@ -3,7 +3,7 @@
 
 #include "common/Entities/Role.hpp"
 
-inline constexpr int ID = 0;
+inline constexpr int ID   = 0;
 inline constexpr int NAME = 1;
 
 RoleRepository::RoleRepository(std::shared_ptr<IDatabaseManager> dbManager)
@@ -12,22 +12,21 @@ RoleRepository::RoleRepository(std::shared_ptr<IDatabaseManager> dbManager)
     SPDLOG_TRACE("RoleRepository::RoleRepository");
 }
 
-RoleRepository::~RoleRepository()
-{
-    SPDLOG_TRACE("RoleRepository::~RoleRepository");
-}
+RoleRepository::~RoleRepository() { SPDLOG_TRACE("RoleRepository::~RoleRepository"); }
 
 void RoleRepository::add(const Role &entity)
 {
     SPDLOG_TRACE("RoleRepository::add");
-    const std::string query = "INSERT INTO " + std::string(Role::TABLE_NAME) + " (name) VALUES (?);";
+    const std::string query =
+        "INSERT INTO " + std::string(Role::TABLE_NAME) + " (name) VALUES (?);";
     m_dbManager->executeQuery(query, {entity.name});
 }
 
 void RoleRepository::update(const Role &entity)
 {
     SPDLOG_TRACE("RoleRepository::update");
-    const std::string query = "UPDATE " + std::string(Role::TABLE_NAME) + " SET name = ? WHERE id = ?;";
+    const std::string query =
+        "UPDATE " + std::string(Role::TABLE_NAME) + " SET name = ? WHERE id = ?;";
     m_dbManager->executeQuery(query, {entity.name, entity.id});
 }
 
@@ -38,12 +37,14 @@ void RoleRepository::deleteResource(const std::string &id)
     m_dbManager->executeQuery(query, {id});
 }
 
-std::vector<Role> RoleRepository::getByField(const std::string &fieldName, const std::string &value) const
+std::vector<Role> RoleRepository::getByField(const std::string &fieldName,
+                                             const std::string &value) const
 {
     SPDLOG_TRACE("RoleRepository::getByField | {} = {}", fieldName, value);
     std::vector<Role> roles;
 
-    const std::string query = "SELECT id, name FROM " + std::string(Role::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
+    const std::string query =
+        "SELECT id, name FROM " + std::string(Role::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
         roles.emplace_back(roleFromCurrentRow(result));
@@ -57,7 +58,7 @@ std::vector<Role> RoleRepository::getAll() const
     std::vector<Role> roles;
 
     const std::string query = "SELECT id, name FROM " + std::string(Role::TABLE_NAME) + ";";
-    auto result = m_dbManager->executeQuery(query, {});
+    auto result             = m_dbManager->executeQuery(query, {});
     while (result && result->next())
         roles.emplace_back(roleFromCurrentRow(result));
 
@@ -66,7 +67,5 @@ std::vector<Role> RoleRepository::getAll() const
 
 Role RoleRepository::roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    return Role{
-        .id = queryResult->getString(ID),
-        .name = queryResult->getString(NAME)};
+    return Role{.id = queryResult->getString(ID), .name = queryResult->getString(NAME)};
 }

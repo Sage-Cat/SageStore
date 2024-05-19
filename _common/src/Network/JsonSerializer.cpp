@@ -12,16 +12,13 @@ std::string JsonSerializer::serialize(const Dataset &dataset)
 
     json jsonObject;
 
-    if (dataset.empty())
-    {
+    if (dataset.empty()) {
         return json({}).dump();
     }
 
-    for (const auto &[key, value] : dataset)
-    {
+    for (const auto &[key, value] : dataset) {
         json jsonRow = json::array();
-        for (const auto &cell : value)
-        {
+        for (const auto &cell : value) {
             jsonRow.push_back(cell);
         }
         jsonObject[key] = jsonRow;
@@ -37,23 +34,19 @@ Dataset JsonSerializer::deserialize(const std::string &serializedData)
     Dataset dataset;
     auto jsonObject = json::parse(serializedData, nullptr, false);
 
-    if (!jsonObject.is_object())
-    {
+    if (!jsonObject.is_object()) {
         SPDLOG_ERROR("Invalid JSON document");
         return dataset;
     }
 
-    for (auto &[key, jsonRow] : jsonObject.items())
-    {
-        if (!jsonRow.is_array())
-        {
+    for (auto &[key, jsonRow] : jsonObject.items()) {
+        if (!jsonRow.is_array()) {
             SPDLOG_ERROR("Invalid JSON array for key: {}", key);
             continue;
         }
 
         Data row;
-        for (auto &cellValue : jsonRow)
-        {
+        for (auto &cellValue : jsonRow) {
             row.push_back(cellValue.get<std::string>());
         }
         dataset[key] = std::move(row);

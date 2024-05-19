@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include "IBusinessModule.hpp"
 #include "DataSpecs.hpp"
+#include "IBusinessModule.hpp"
 
 #include "Database/IRepository.hpp"
 
@@ -13,8 +13,7 @@ class RepositoryManager;
 struct User;
 struct Role;
 
-class UsersModule : public IBusinessModule
-{
+class UsersModule : public IBusinessModule {
 public:
     UsersModule(RepositoryManager &repositoryManager);
     virtual ~UsersModule() override;

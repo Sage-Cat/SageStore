@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <list>
+#include <map>
 
 #include <QObject>
 
@@ -16,10 +16,10 @@ enum class Method;
  * @class ApiManager
  * @brief Manages API calls for user authentication and registration processes.
  *
- * @attention For external communication (with UI) QString is used, but for internal (NetworkService) std::string
+ * @attention For external communication (with UI) QString is used, but for
+ * internal (NetworkService) std::string
  */
-class ApiManager : public QObject
-{
+class ApiManager : public QObject {
     Q_OBJECT
 
     using ResponseHandler = std::function<void(Method method, const Dataset &)>;

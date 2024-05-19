@@ -3,8 +3,7 @@
 #include <exception>
 #include <string>
 
-class ServerException : public std::exception
-{
+class ServerException : public std::exception {
 public:
     explicit ServerException(const std::string &componentName, const std::string &msg);
 

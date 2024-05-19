@@ -1,14 +1,13 @@
-#include <QtTest>
-#include <QSignalSpy>
 #include <QMessageBox>
+#include <QSignalSpy>
+#include <QtTest>
 
 #include "wrappers/DialogManagerWrapper.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
 #include "mocks/NetworkServiceMock.hpp"
 
-class DialogManagerTest : public QObject
-{
+class DialogManagerTest : public QObject {
     Q_OBJECT
 
     DialogManager *dialogManager;
@@ -20,7 +19,7 @@ public:
     DialogManagerTest()
     {
         networkServiceMock = new NetworkServiceMock;
-        apiManagerMock = new ApiManagerMock(*networkServiceMock);
+        apiManagerMock     = new ApiManagerMock(*networkServiceMock);
 
         dialogManager = new DialogManagerWrapper(*apiManagerMock);
         dialogManager->init();

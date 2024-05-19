@@ -8,13 +8,13 @@
 
 #include "common/SpdlogConfig.hpp"
 
-namespace
-{
-    constexpr int WINDOW_WIDTH = 1200;
-    constexpr int WINDOW_HEIGHT = 800;
-}
+namespace {
+constexpr int WINDOW_WIDTH  = 1200;
+constexpr int WINDOW_HEIGHT = 800;
+} // namespace
 
-MainWindow::MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &dialogManager, QWidget *parent)
+MainWindow::MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &dialogManager,
+                       QWidget *parent)
     : QMainWindow(parent), m_app(app), m_apiManager(apiClient), m_dialogManager(dialogManager)
 {
     m_tabWidget = new QTabWidget(this);
@@ -61,47 +61,45 @@ void MainWindow::setupUi()
 void MainWindow::setupMenu()
 {
     // File Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("File"),
-                                            {MainMenuActions::Type::SETTINGS,
-                                             MainMenuActions::Type::EXIT}));
+    m_mainMenuBar->addMenu(createModuleMenu(
+        tr("File"), {MainMenuActions::Type::SETTINGS, MainMenuActions::Type::EXIT}));
     // Purchasing Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Purchasing"),
-                                            {MainMenuActions::Type::PURCHASE_ORDERS,
-                                             MainMenuActions::Type::SUPPLIER_MANAGEMENT,
-                                             MainMenuActions::Type::GOODS_RECEIPTS}));
+    m_mainMenuBar->addMenu(
+        createModuleMenu(tr("Purchasing"), {MainMenuActions::Type::PURCHASE_ORDERS,
+                                            MainMenuActions::Type::SUPPLIER_MANAGEMENT,
+                                            MainMenuActions::Type::GOODS_RECEIPTS}));
     // Sales Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Sales"),
-                                            {MainMenuActions::Type::SALES_ORDERS,
-                                             MainMenuActions::Type::CUSTOMER_MANAGEMENT,
-                                             MainMenuActions::Type::INVOICING}));
+    m_mainMenuBar->addMenu(
+        createModuleMenu(tr("Sales"), {MainMenuActions::Type::SALES_ORDERS,
+                                       MainMenuActions::Type::CUSTOMER_MANAGEMENT,
+                                       MainMenuActions::Type::INVOICING}));
     // Inventory Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Inventory"),
-                                            {MainMenuActions::Type::PRODUCT_MANAGEMENT,
-                                             MainMenuActions::Type::SUPPLIER_PRICELIST_UPLOAD,
-                                             MainMenuActions::Type::STOCK_TRACKING}));
+    m_mainMenuBar->addMenu(
+        createModuleMenu(tr("Inventory"), {MainMenuActions::Type::PRODUCT_MANAGEMENT,
+                                           MainMenuActions::Type::SUPPLIER_PRICELIST_UPLOAD,
+                                           MainMenuActions::Type::STOCK_TRACKING}));
     // Analytics Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Analytics"),
-                                            {MainMenuActions::Type::SALES_ANALYTICS,
-                                             MainMenuActions::Type::INVENTORY_ANALYTICS}));
+    m_mainMenuBar->addMenu(
+        createModuleMenu(tr("Analytics"), {MainMenuActions::Type::SALES_ANALYTICS,
+                                           MainMenuActions::Type::INVENTORY_ANALYTICS}));
     // Users Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Users"),
-                                            {MainMenuActions::Type::USER_ROLES,
-                                             MainMenuActions::Type::USER_LOGS}));
+    m_mainMenuBar->addMenu(createModuleMenu(
+        tr("Users"), {MainMenuActions::Type::USER_ROLES, MainMenuActions::Type::USER_LOGS}));
     // Management Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(tr("Management"),
-                                            {MainMenuActions::Type::EMPLOYEES,
-                                             MainMenuActions::Type::CUSTOMERS,
-                                             MainMenuActions::Type::SUPPLIERS}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Management"), {MainMenuActions::Type::EMPLOYEES,
+                                                               MainMenuActions::Type::CUSTOMERS,
+                                                               MainMenuActions::Type::SUPPLIERS}));
 }
 
 void MainWindow::handleMainMenuAction(MainMenuActions::Type actionType)
 {
     SPDLOG_TRACE("MainWindow::setupMVVMConnections | actionType = {}",
-                 MainMenuActions::NAMES.contains(actionType) ? MainMenuActions::NAMES.at(actionType) : std::to_string(static_cast<int>(actionType)));
+                 MainMenuActions::NAMES.contains(actionType)
+                     ? MainMenuActions::NAMES.at(actionType)
+                     : std::to_string(static_cast<int>(actionType)));
 
     // Performing action based on actionType
-    switch (actionType)
-    {
+    switch (actionType) {
     case MainMenuActions::Type::EXIT:
         close();
         break;
@@ -110,14 +108,14 @@ void MainWindow::handleMainMenuAction(MainMenuActions::Type actionType)
     }
 }
 
-QMenu *MainWindow::createModuleMenu(const QString &menuTitle, const QVector<MainMenuActions::Type> &actions)
+QMenu *MainWindow::createModuleMenu(const QString &menuTitle,
+                                    const QVector<MainMenuActions::Type> &actions)
 {
     auto menu = new QMenu(menuTitle, this);
-    for (auto actionType : actions)
-    {
+    for (auto actionType : actions) {
         auto action = new QAction(MainMenuActions::NAMES.at(actionType).c_str(), menu);
-        connect(action, &QAction::triggered, [this, actionType]()
-                { handleMainMenuAction(actionType); });
+        connect(action, &QAction::triggered,
+                [this, actionType]() { handleMainMenuAction(actionType); });
         menu->addAction(action);
     }
     return menu;

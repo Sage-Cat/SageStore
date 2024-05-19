@@ -8,8 +8,7 @@
 class RepositoryManager;
 class UsersModule;
 
-class BusinessLogic
-{
+class BusinessLogic {
 public:
     BusinessLogic(RepositoryManager &repositoryManager);
     ~BusinessLogic();

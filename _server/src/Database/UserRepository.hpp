@@ -4,13 +4,12 @@
 #include <optional>
 #include <vector>
 
-#include "IRepository.hpp"
 #include "IDatabaseManager.hpp"
+#include "IRepository.hpp"
 
 class User;
 
-class UserRepository : public IRepository<User>
-{
+class UserRepository : public IRepository<User> {
 public:
     explicit UserRepository(std::shared_ptr<IDatabaseManager> dbManager);
     ~UserRepository() override;
@@ -18,7 +17,8 @@ public:
     void add(const User &entity) override;
     void update(const User &entity) override;
     void deleteResource(const std::string &id) override;
-    std::vector<User> getByField(const std::string &fieldName, const std::string &value) const override;
+    std::vector<User> getByField(const std::string &fieldName,
+                                 const std::string &value) const override;
     std::vector<User> getAll() const override;
 
 private:

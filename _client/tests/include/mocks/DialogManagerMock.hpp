@@ -2,12 +2,14 @@
 
 #include "Ui/Dialogs/DialogManager.hpp"
 
-class DialogManagerMock : public DialogManager
-{
+class DialogManagerMock : public DialogManager {
     Q_OBJECT
 
 public:
-    explicit DialogManagerMock(ApiManager &apiManager, QObject *parent = nullptr) : DialogManager(apiManager, parent) {}
+    explicit DialogManagerMock(ApiManager &apiManager, QObject *parent = nullptr)
+        : DialogManager(apiManager, parent)
+    {
+    }
 
     // show dialogs
     void showLoginDialog() override { emit showLogDialog(); }

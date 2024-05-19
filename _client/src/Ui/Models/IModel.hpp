@@ -4,8 +4,7 @@
  * @interface IModel
  * @brief Interface for models.
  */
-class IModel
-{
+class IModel {
 public:
     virtual ~IModel() = default;
 };

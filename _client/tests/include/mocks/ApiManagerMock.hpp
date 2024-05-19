@@ -4,8 +4,7 @@
 
 class NetworkService;
 
-class ApiManagerMock : public ApiManager
-{
+class ApiManagerMock : public ApiManager {
 public:
     explicit ApiManagerMock(NetworkService &networkService) : ApiManager(networkService){};
 
@@ -20,8 +19,5 @@ public slots:
         emit registrationSuccess();
     }
 
-    void emitError(const QString &errorMessage)
-    {
-        emit errorOccurred(errorMessage);
-    }
+    void emitError(const QString &errorMessage) { emit errorOccurred(errorMessage); }
 };

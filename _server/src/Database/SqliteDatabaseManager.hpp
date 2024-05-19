@@ -5,16 +5,17 @@
 
 #include "IDatabaseManager.hpp"
 
-class SqliteDatabaseManager : public IDatabaseManager
-{
+class SqliteDatabaseManager : public IDatabaseManager {
 public:
-    explicit SqliteDatabaseManager(std::string_view dbPath, std::string_view createDatabaseScriptPath);
+    explicit SqliteDatabaseManager(std::string_view dbPath,
+                                   std::string_view createDatabaseScriptPath);
     ~SqliteDatabaseManager() override;
 
     bool open() override;
     void close() override;
 
-    std::shared_ptr<IQueryResult> executeQuery(std::string_view query, const std::vector<std::string> &params) override;
+    std::shared_ptr<IQueryResult> executeQuery(std::string_view query,
+                                               const std::vector<std::string> &params) override;
 
 private:
     class Impl;

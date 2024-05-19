@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Utils.hpp"
+#include <QCryptographicHash>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QLabel>
-#include <QCryptographicHash>
-#include "Utils.hpp"
 
 #include "BaseDialog.hpp"
 
@@ -12,14 +12,13 @@
  * @class RegistrationDialog
  * @brief Represents the registration dialog in the application.
  */
-class RegistrationDialog : public BaseDialog
-{
+class RegistrationDialog : public BaseDialog {
     Q_OBJECT
 
 public:
     explicit RegistrationDialog(BaseDialog *parent = nullptr);
     virtual ~RegistrationDialog();
-    
+
     virtual void showWithPresetData(const QString &username, const QString &password);
 
     const QString getUsername();
