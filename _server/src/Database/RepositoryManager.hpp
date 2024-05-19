@@ -9,8 +9,7 @@
 class User;
 class Role;
 
-class RepositoryManager
-{
+class RepositoryManager {
 public:
     explicit RepositoryManager(std::shared_ptr<IDatabaseManager> dbManager);
     ~RepositoryManager();

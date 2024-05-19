@@ -1,18 +1,18 @@
-#include <QtTest>
-#include <QSignalSpy>
 #include <QApplication>
+#include <QSignalSpy>
+#include <QtTest>
 
 #include "Ui/MainWindow.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
-#include "mocks/NetworkServiceMock.hpp"
 #include "mocks/DialogManagerMock.hpp"
+#include "mocks/NetworkServiceMock.hpp"
 
-/* This component test performs testing of MainWindow+DialogManager (NO UI) logic block
- * It's purpose is to test main signal-slot connections between network API and UI elemets
+/* This component test performs testing of MainWindow+DialogManager (NO UI)
+ * logic block It's purpose is to test main signal-slot connections between
+ * network API and UI elemets
  */
-class MainWindowTest : public QObject
-{
+class MainWindowTest : public QObject {
     Q_OBJECT
 
     MainWindow *mainWindow;
@@ -26,8 +26,8 @@ public:
     MainWindowTest(QApplication &app) : app(app)
     {
         networkServiceMock = new NetworkServiceMock;
-        apiManagerMock = new ApiManagerMock(*networkServiceMock);
-        dialogManagerMock = new DialogManagerMock(*apiManagerMock);
+        apiManagerMock     = new ApiManagerMock(*networkServiceMock);
+        dialogManagerMock  = new DialogManagerMock(*apiManagerMock);
 
         mainWindow = new MainWindow(app, *apiManagerMock, *dialogManagerMock);
     }

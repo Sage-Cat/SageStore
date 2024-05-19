@@ -1,11 +1,10 @@
-#include <QtTest>
 #include <QSignalSpy>
+#include <QtTest>
 
 #include "Network/ApiManager.hpp"
 #include "mocks/NetworkServiceMock.hpp"
 
-class ApiManagerTest : public QObject
-{
+class ApiManagerTest : public QObject {
     Q_OBJECT
 
     ApiManager *apiManager;
@@ -16,13 +15,10 @@ public:
     ApiManagerTest()
     {
         networkServiceMock = new NetworkServiceMock;
-        apiManager = new ApiManager(*networkServiceMock);
+        apiManager         = new ApiManager(*networkServiceMock);
     }
 
-    ~ApiManagerTest()
-    {
-        delete apiManager;
-    }
+    ~ApiManagerTest() { delete apiManager; }
 
 private slots:
 

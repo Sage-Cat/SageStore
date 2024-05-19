@@ -2,8 +2,7 @@
 
 #include "common/SpdlogConfig.hpp"
 
-PurchaseOrdersViewModel::PurchaseOrdersViewModel(QObject *parent)
-    : QObject(parent)
+PurchaseOrdersViewModel::PurchaseOrdersViewModel(QObject *parent) : QObject(parent)
 {
     SPDLOG_TRACE("PurchaseOrdersViewModel::PurchaseOrdersViewModel");
 }

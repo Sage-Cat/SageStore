@@ -2,24 +2,22 @@
 
 #include <memory>
 
-#include "NetworkGeneral.hpp"
 #include "DataSpecs.hpp"
+#include "NetworkGeneral.hpp"
 
 class IDataSerializer;
 
 /**
  * @class HttpTransaction
- * @brief Manages an individual HTTP transaction, handling requests and responses over a TCP socket.
+ * @brief Manages an individual HTTP transaction, handling requests and
+ * responses over a TCP socket.
  */
-class HttpTransaction : public std::enable_shared_from_this<HttpTransaction>
-{
+class HttpTransaction : public std::enable_shared_from_this<HttpTransaction> {
 public:
     using PostBusinessTaskCallback = std::function<void(RequestData, BusinessLogicCallback)>;
 
-    HttpTransaction(unsigned long long id,
-                    tcp::socket socket,
-                    std::unique_ptr<IDataSerializer> serializer,
-                    PostBusinessTaskCallback callback);
+    HttpTransaction(unsigned long long id, tcp::socket socket,
+                    std::unique_ptr<IDataSerializer> serializer, PostBusinessTaskCallback callback);
 
     ~HttpTransaction();
 

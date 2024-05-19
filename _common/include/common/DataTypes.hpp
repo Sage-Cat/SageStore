@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
 #include <list>
+#include <string>
 #include <unordered_map>
 
-using Data = std::list<std::string>;
+using Data    = std::list<std::string>;
 using Dataset = std::unordered_map<std::string, Data>;

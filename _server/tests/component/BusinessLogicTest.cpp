@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <vector>
 
@@ -13,8 +13,7 @@
 using ::testing::_;
 using ::testing::Return;
 
-class BusinessLogicTest : public ::testing::Test
-{
+class BusinessLogicTest : public ::testing::Test {
 protected:
     std::unique_ptr<BusinessLogic> businessLogic;
 
@@ -45,28 +44,22 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
     constexpr char CORRECT_USERNAME[] = "username1";
     constexpr char CORRECT_PASSWORD[] = "password1";
 
-    RequestData requestData{
-        .module = "users",
-        .submodule = "login",
-        .method = "POST",
-        .resourceId = "",
-        .dataset = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
-                    {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
+    RequestData requestData{.module     = "users",
+                            .submodule  = "login",
+                            .method     = "POST",
+                            .resourceId = "",
+                            .dataset    = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
+                                           {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
 
     // Set expectations on the UserRepositoryMock
     const User user{
-        .id = "",
-        .username = CORRECT_USERNAME,
-        .password = CORRECT_PASSWORD,
-        .roleId = ""};
+        .id = "", .username = CORRECT_USERNAME, .password = CORRECT_PASSWORD, .roleId = ""};
     std::vector<User> expectedUsers{user};
-    EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
-        .WillOnce(Return(expectedUsers));
+    EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     // Prepare the callback and its expectation
     bool callbackInvoked = false;
-    auto callback = [&callbackInvoked](const ResponseData &responseData)
-    {
+    auto callback        = [&callbackInvoked](const ResponseData &responseData) {
         callbackInvoked = true;
         ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
     };
@@ -81,19 +74,13 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
 TEST_F(BusinessLogicTest, UsersModule_addRole)
 {
     RequestData requestData{
-        .module = "users",
-        .submodule = "roles",
-        .method = "GET",
-        .resourceId = "",
-        .dataset = {}};
+        .module = "users", .submodule = "roles", .method = "GET", .resourceId = "", .dataset = {}};
 
     std::vector<Role> expectedUsers{};
-    EXPECT_CALL(*rolesRepositoryMock, getAll())
-        .WillOnce(Return(expectedUsers));
+    EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
     // Prepare the callback and its expectation
     bool callbackInvoked = false;
-    auto callback = [&callbackInvoked](const ResponseData &responseData)
-    {
+    auto callback        = [&callbackInvoked](const ResponseData &responseData) {
         callbackInvoked = true;
         ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
     };

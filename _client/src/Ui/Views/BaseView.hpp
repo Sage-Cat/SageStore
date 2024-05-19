@@ -1,18 +1,17 @@
 #pragma once
 
-#include <QWidget>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QPushButton>
-#include <QTableWidget>
 #include <QLabel>
+#include <QPushButton>
 #include <QSpacerItem>
+#include <QTableWidget>
+#include <QVBoxLayout>
+#include <QWidget>
 
 #include "Ui/Views/ViewStyles.hpp"
 #include "Utils.hpp"
 
-class BaseView : public QWidget
-{
+class BaseView : public QWidget {
     Q_OBJECT
 
 public:
@@ -39,7 +38,7 @@ protected:
     // label
     QLabel *m_status;
 
-    //spacerItems
-    QSpacerItem* m_buttonRowSpacerItem;
-    QSpacerItem* m_additionalInfoSpacerItem;
+    // spacerItems
+    QSpacerItem *m_buttonRowSpacerItem;
+    QSpacerItem *m_additionalInfoSpacerItem;
 };

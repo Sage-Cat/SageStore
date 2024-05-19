@@ -7,8 +7,7 @@
 /**
  * @brief Manages the UI rendering and interactions for the purchase View.
  */
-class PurchaseOrdersViewModel : public QObject, public IViewModel
-{
+class PurchaseOrdersViewModel : public QObject, public IViewModel {
     Q_OBJECT
 
 public:

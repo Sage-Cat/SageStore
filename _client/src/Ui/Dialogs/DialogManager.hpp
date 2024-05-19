@@ -1,20 +1,19 @@
 #pragma once
 
-#include <QString>
-#include <QObject>
 #include <QMessageBox>
+#include <QObject>
+#include <QString>
 
 #include "LoginDialog.hpp"
-#include "RegistrationDialog.hpp"
 #include "Network/ApiManager.hpp"
+#include "RegistrationDialog.hpp"
 
 /**
  * @class DialogManager
  * This class manages all dialogs in client: initializes them
  * and control their behavior
  */
-class DialogManager : public QObject
-{
+class DialogManager : public QObject {
     Q_OBJECT
 
 public:

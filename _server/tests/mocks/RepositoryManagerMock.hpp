@@ -2,16 +2,15 @@
 
 #include <memory>
 
-#include "DatabaseManagerMock.hpp"
 #include "Database/RepositoryManager.hpp"
+#include "DatabaseManagerMock.hpp"
 
-#include "common/Entities/User.hpp"
 #include "common/Entities/Role.hpp"
+#include "common/Entities/User.hpp"
 
 class SqliteDatabaseManager;
 
-class RepositoryManagerMock : public RepositoryManager
-{
+class RepositoryManagerMock : public RepositoryManager {
 public:
     RepositoryManagerMock() : RepositoryManager(std::make_shared<DatabaseManagerMock>()) {}
 

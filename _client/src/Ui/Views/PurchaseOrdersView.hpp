@@ -2,6 +2,4 @@
 
 #include "BaseView.hpp"
 
-class PurchaseOrdersView : public BaseView
-{
-};
+class PurchaseOrdersView : public BaseView {};

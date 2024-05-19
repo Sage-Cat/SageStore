@@ -18,7 +18,6 @@ def parse_sql_file(file_path):
         tables[table] = field_names
     return tables
 
-
 def clean_directory(directory):
     if directory.exists():
         shutil.rmtree(directory)
@@ -30,17 +29,16 @@ def generate_hpp_files(tables, output_dir):
 
 #include <string>
 
-struct {struct_name}
-{{
-    static constexpr const char* TABLE_NAME = "{table_name}";
-    
-{fields}
+struct {struct_name} {{
+    static constexpr const char *TABLE_NAME = "{table_name}";
+
+    std::string {fields};
 }};
 '''
     filenames = []
-    
+
     for table, fields in tables.items():
-        field_str = '    std::string\n        ' + ',\n        '.join(fields) + ';'
+        field_str = ', '.join(fields)
         struct_name = table.capitalize()
         # Use the Path object to handle file paths
         hpp_filename = Path(output_dir) / f"{table}.hpp"
@@ -48,7 +46,7 @@ struct {struct_name}
         hpp_content = template.format(struct_name=struct_name, fields=field_str, table_name=table)
         hpp_filename.write_text(hpp_content, encoding='utf-8')  # Ensure encoding is specified
         filenames.append(hpp_filename.name)
-    
+
     return filenames
 
 def main():
@@ -58,7 +56,7 @@ def main():
     parser.add_argument('outputdir', type=Path, help='The directory to output the HPP files. The directory will be cleaned if it exists.')
 
     args = parser.parse_args()
-    
+
     clean_directory(args.outputdir)
     tables = parse_sql_file(args.sqlfile)
     generated_files = generate_hpp_files(tables, args.outputdir)

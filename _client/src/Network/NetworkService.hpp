@@ -2,34 +2,31 @@
 
 #include <memory>
 
-#include <QObject>
+#include <QByteArray>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QObject>
 #include <QUrl>
-#include <QByteArray>
 
 #include "common/DataTypes.hpp"
 #include "common/Network/IDataSerializer.hpp"
 
-enum class Method
-{
-    GET = QNetworkAccessManager::Operation::GetOperation,
+enum class Method {
+    GET  = QNetworkAccessManager::Operation::GetOperation,
     POST = QNetworkAccessManager::Operation::PostOperation,
-    PUT = QNetworkAccessManager::Operation::PutOperation,
-    DEL = QNetworkAccessManager::Operation::DeleteOperation
+    PUT  = QNetworkAccessManager::Operation::PutOperation,
+    DEL  = QNetworkAccessManager::Operation::DeleteOperation
 };
 
 /**
  * @class NetworkService
  * @brief Manages network operations using Qt's network capabilities.
  */
-class NetworkService : public QObject
-{
+class NetworkService : public QObject {
     Q_OBJECT
 
 public:
-    typedef struct
-    {
+    typedef struct {
         std::string scheme;
         std::string address;
         int port;
@@ -38,9 +35,8 @@ public:
     explicit NetworkService(const ServerConfig &serverConfig,
                             std::unique_ptr<IDataSerializer> serializer);
 
-    virtual void sendRequest(std::string endpoint,
-                             Method method = Method::GET,
-                             const Dataset &dataset = Dataset(),
+    virtual void sendRequest(std::string endpoint, Method method = Method::GET,
+                             const Dataset &dataset         = Dataset(),
                              const std::string &resource_id = "");
 
 signals:
