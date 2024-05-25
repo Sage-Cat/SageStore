@@ -31,10 +31,7 @@ void RegistrationDialog::showWithPresetData(const QString &username, const QStri
     show();
 }
 
-void RegistrationDialog::onRegistrationSuccess()
-{
-    SPDLOG_TRACE("RegistrationDialog::onRegistrationSuccess");
-}
+void RegistrationDialog::onuserAdded() { SPDLOG_TRACE("RegistrationDialog::onuserAdded"); }
 
 void RegistrationDialog::onRegistrationFailure()
 {
@@ -111,8 +108,12 @@ void RegistrationDialog::onRegisterClicked()
                  m_usernameField->text().toStdString());
     if (m_passwordField->text() == m_confirmPasswordField->text())
         emit registrationAttempted(
-            m_usernameField->text(),
-            QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256));
+            User{.id       = {},
+                 .username = m_usernameField->text().toStdString(),
+                 .password = QCryptographicHash::hash(m_passwordField->text().toUtf8(),
+                                                      QCryptographicHash::Sha256)
+                                 .toStdString(),
+                 .roleId = {}});
     else
         emit requestErrorMessageBox(tr("Passwords do not match"));
 }

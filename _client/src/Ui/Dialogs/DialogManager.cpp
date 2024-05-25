@@ -63,9 +63,8 @@ void DialogManager::setupApiConnections()
 
     // Registrations
     connect(m_registrationDialog, &RegistrationDialog::registrationAttempted, &m_apiManager,
-            &ApiManager::registerUser);
-    connect(&m_apiManager, &ApiManager::registrationSuccess, this,
-            &DialogManager::onRegistrationSuccess);
+            &ApiManager::addUser);
+    connect(&m_apiManager, &ApiManager::userAdded, this, &DialogManager::onuserAdded);
 }
 
 void DialogManager::setupDialogsConnections()
@@ -104,9 +103,9 @@ void DialogManager::onLoginSuccess()
     showMessage(tr("Message"), tr("Login successfull"), QMessageBox::Information);
 }
 
-void DialogManager::onRegistrationSuccess()
+void DialogManager::onuserAdded()
 {
-    SPDLOG_TRACE("DialogManager::onRegistrationSuccess");
+    SPDLOG_TRACE("DialogManager::onuserAdded");
     m_registrationDialog->hide();
     m_loginDialog->showWithPresetData(m_registrationDialog->getUsername(),
                                       m_registrationDialog->getPassword());

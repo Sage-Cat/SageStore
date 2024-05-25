@@ -14,10 +14,7 @@ public slots:
         emit loginSuccess(0, 0);
     }
 
-    void registerUser(const QString &username, const QString &password) override
-    {
-        emit registrationSuccess();
-    }
+    void addUser(const User &user) override { emit userAdded(); }
 
     void emitError(const QString &errorMessage) { emit errorOccurred(errorMessage); }
 };

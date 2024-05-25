@@ -41,7 +41,7 @@ private:
 
 private slots:
     void onLoginSuccess();
-    void onRegistrationSuccess();
+    void onuserAdded();
 
 protected:
     // dialogs
