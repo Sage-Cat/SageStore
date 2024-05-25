@@ -8,6 +8,8 @@
 
 #include "BaseDialog.hpp"
 
+#include "common/Entities/User.hpp"
+
 /**
  * @class RegistrationDialog
  * @brief Represents the registration dialog in the application.
@@ -25,12 +27,12 @@ public:
     const QString getPassword();
 
 signals:
-    void registrationAttempted(const QString &username, const QString &password);
+    void registrationAttempted(const User &user);
     void requestErrorMessageBox(const QString &errorMessage);
     void loginRequested();
 
 public slots:
-    void onRegistrationSuccess();
+    void onuserAdded();
     void onRegistrationFailure();
 
 private:

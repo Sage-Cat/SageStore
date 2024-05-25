@@ -2,9 +2,12 @@
 
 #include "Ui/Dialogs/RegistrationDialog.hpp"
 
+#include "common/Entities/User.hpp"
+
 class RegistrationDialogMock : public RegistrationDialog {
     void showWithPresetData(const QString &username, const QString &password) override
     {
-        emit registrationAttempted(username, password);
+        emit registrationAttempted(User{
+            .username = username.toStdString(), .password = password.toStdString(), .roleId = "0"});
     }
 };

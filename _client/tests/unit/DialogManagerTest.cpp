@@ -42,7 +42,7 @@ private slots:
 
     void testRegistrationRoutine()
     {
-        QSignalSpy registrationAttemptedSpy(apiManagerMock, &ApiManager::registrationSuccess);
+        QSignalSpy registrationAttemptedSpy(apiManagerMock, &ApiManager::userAdded);
         dialogManager->showRegistrationDialog();
         QCOMPARE(registrationAttemptedSpy.count(), 1);
     }

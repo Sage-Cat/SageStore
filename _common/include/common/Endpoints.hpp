@@ -9,9 +9,8 @@ inline constexpr int RESOURCE_ID = 3;
 }; // namespace Segments
 
 namespace Users {
-inline constexpr char USERS_PREFIX[] = "/api/users";
 inline constexpr char LOGIN[]        = "/api/users/login";
-inline constexpr char REGISTER[]     = "/api/users/register";
+inline constexpr char USERS[]        = "/api/users/users";
 inline constexpr char ROLES[]        = "/api/users/roles";
 } // namespace Users
 } // namespace Endpoints
