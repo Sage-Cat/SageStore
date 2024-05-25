@@ -15,14 +15,15 @@ public:
         Dataset serverResponse{{Keys::_ERROR, {"Error message"}}};
 
         if (endpoint == Endpoints::Users::LOGIN && method == Method::POST)
-            serverResponse = {{Keys::User::ID, {"0"}}, {Keys::User::ROLE_ID, {"0"}}};
+            serverResponse = {{Common::Entities::User::ID_KEY, {"0"}},
+                              {Common::Entities::User::ROLE_ID_KEY, {"0"}}};
         else if (endpoint == Endpoints::Users::REGISTER && method == Method::POST)
             serverResponse = {};
         else if (endpoint == Endpoints::Users::ROLES && method == Method::GET)
-            serverResponse = {{Keys::Role::ID, {"1", "2", "3"}},
-                              {Keys::Role::NAME, {"adm", "asd", "Asdf"}}};
+            serverResponse = {{Common::Entities::Role::ID_KEY, {"1", "2", "3"}},
+                              {Common::Entities::Role::NAME_KEY, {"adm", "asd", "Asdf"}}};
         else if (endpoint == Endpoints::Users::ROLES && method == Method::POST)
-            serverResponse = {{Keys::User::ROLE_ID, {"0"}}};
+            serverResponse = {{Common::Entities::User::ROLE_ID_KEY, {"0"}}};
         else if (endpoint == Endpoints::Users::ROLES && method == Method::PUT)
             serverResponse = {{}};
         else if (endpoint == Endpoints::Users::ROLES && method == Method::DEL)

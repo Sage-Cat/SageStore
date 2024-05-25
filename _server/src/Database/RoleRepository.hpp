@@ -7,22 +7,23 @@
 #include "IDatabaseManager.hpp"
 #include "IRepository.hpp"
 
-class Role;
+#include "common/Entities/Role.hpp"
 
-class RoleRepository : public IRepository<Role> {
+class RoleRepository : public IRepository<Common::Entities::Role> {
 public:
     explicit RoleRepository(std::shared_ptr<IDatabaseManager> dbManager);
     virtual ~RoleRepository() override;
 
-    void add(const Role &entity) override;
-    void update(const Role &entity) override;
+    void add(const Common::Entities::Role &entity) override;
+    void update(const Common::Entities::Role &entity) override;
     void deleteResource(const std::string &id) override;
-    std::vector<Role> getByField(const std::string &fieldName,
-                                 const std::string &value) const override;
-    std::vector<Role> getAll() const override;
+    std::vector<Common::Entities::Role> getByField(const std::string &fieldName,
+                                                   const std::string &value) const override;
+    std::vector<Common::Entities::Role> getAll() const override;
 
 private:
-    Role roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const;
+    Common::Entities::Role
+    roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const;
 
 private:
     std::shared_ptr<IDatabaseManager> m_dbManager;

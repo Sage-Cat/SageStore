@@ -2,8 +2,23 @@
 
 #include <string>
 
-struct Purchaseorder {
-    static constexpr const char *TABLE_NAME = "PurchaseOrder";
+namespace Common {
+namespace Entities {
 
-    std::string id, date, userId, supplierId, status;
+struct PurchaseOrder {
+    static constexpr const char *TABLE_NAME      = "PurchaseOrder";
+    static constexpr const char *ID_KEY          = "id";
+    static constexpr const char *DATE_KEY        = "date";
+    static constexpr const char *USER_ID_KEY     = "userId";
+    static constexpr const char *SUPPLIER_ID_KEY = "supplierId";
+    static constexpr const char *STATUS_KEY      = "status";
+
+    std::string id{};
+    std::string date{};
+    std::string userId{};
+    std::string supplierId{};
+    std::string status{};
 };
+
+} // namespace Entities
+} // namespace Common

@@ -21,13 +21,13 @@ class UsersModuleTest : public ::testing::Test {
 protected:
     std::unique_ptr<UsersModule> usersModule;
     std::shared_ptr<RepositoryManagerMock> repositoryManagerMock;
-    std::shared_ptr<RepositoryMock<User>> usersRepositoryMock;
-    std::shared_ptr<RepositoryMock<Role>> rolesRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::User>> usersRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::Role>> rolesRepositoryMock;
 
     UsersModuleTest()
         : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
-          usersRepositoryMock(std::make_shared<RepositoryMock<User>>()),
-          rolesRepositoryMock(std::make_shared<RepositoryMock<Role>>())
+          usersRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::User>>()),
+          rolesRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::Role>>())
     {
         EXPECT_CALL(*repositoryManagerMock, getUserRepository())
             .WillRepeatedly(Return(usersRepositoryMock));
@@ -43,21 +43,23 @@ TEST_F(UsersModuleTest, loginUser)
     const std::string CORRECT_USERNAME = "username1";
     const std::string CORRECT_PASSWORD = "password1";
 
-    RequestData requestData{.module     = "users",
-                            .submodule  = "login",
-                            .method     = "POST",
-                            .resourceId = "",
-                            .dataset    = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
-                                           {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
+    RequestData requestData{
+        .module     = "users",
+        .submodule  = "login",
+        .method     = "POST",
+        .resourceId = "",
+        .dataset    = {{Common::Entities::User::USERNAME_KEY, {CORRECT_USERNAME}},
+                       {Common::Entities::User::PASSWORD_KEY, {CORRECT_PASSWORD}}}};
 
-    const User user{
+    const Common::Entities::User user{
         .id = "1", .username = CORRECT_USERNAME, .password = CORRECT_PASSWORD, .roleId = "role1"};
-    std::vector<User> expectedUsers{user};
+    std::vector<Common::Entities::User> expectedUsers{user};
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);
-    EXPECT_EQ(response.dataset.at(Keys::User::ID).front(), expectedUsers[0].id);
-    EXPECT_EQ(response.dataset.at(Keys::User::ROLE_ID).front(), expectedUsers[0].roleId);
+    EXPECT_EQ(response.dataset.at(Common::Entities::User::ID_KEY).front(), expectedUsers[0].id);
+    EXPECT_EQ(response.dataset.at(Common::Entities::User::ROLE_ID_KEY).front(),
+              expectedUsers[0].roleId);
 }
 
 TEST_F(UsersModuleTest, getUsers)
@@ -65,21 +67,21 @@ TEST_F(UsersModuleTest, getUsers)
     RequestData requestData{
         .module = "users", .submodule = "users", .method = "GET", .resourceId = "", .dataset = {}};
 
-    std::vector<User> expectedUsers{User{"1", "user1", "pass1", "role1"},
-                                    User{"2", "user2", "pass2", "role2"}};
+    std::vector<Common::Entities::User> expectedUsers{Common::Entities::User{"1", "user1", "pass1", "role1"},
+                                    Common::Entities::User{"2", "user2", "pass2", "role2"}};
     EXPECT_CALL(*usersRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);
     for (size_t i = 0; i < expectedUsers.size(); i++) {
-        auto it_id = response.dataset.at(Keys::User::ID).begin();
+        auto it_id = response.dataset.at(Common::Entities::User::ID_KEY).begin();
         std::advance(it_id, i);
         EXPECT_EQ(*it_id, expectedUsers[i].id);
 
-        auto it_username = response.dataset.at(Keys::User::USERNAME).begin();
+        auto it_username = response.dataset.at(Common::Entities::User::USERNAME_KEY).begin();
         std::advance(it_username, i);
         EXPECT_EQ(*it_username, expectedUsers[i].username);
 
-        auto it_roleId = response.dataset.at(Keys::User::ROLE_ID).begin();
+        auto it_roleId = response.dataset.at(Common::Entities::User::ROLE_ID_KEY).begin();
         std::advance(it_roleId, i);
         EXPECT_EQ(*it_roleId, expectedUsers[i].roleId);
     }
@@ -95,11 +97,11 @@ TEST_F(UsersModuleTest, addUser)
                             .submodule  = "users",
                             .method     = "POST",
                             .resourceId = "",
-                            .dataset    = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
-                                           {Keys::User::PASSWORD, {CORRECT_PASSWORD}},
-                                           {Keys::User::ROLE_ID, {CORRECT_ROLE_ID}}}};
+                            .dataset = {{Common::Entities::User::USERNAME_KEY, {CORRECT_USERNAME}},
+                                        {Common::Entities::User::PASSWORD_KEY, {CORRECT_PASSWORD}},
+                                        {Common::Entities::User::ROLE_ID_KEY, {CORRECT_ROLE_ID}}}};
 
-    std::vector<User> expectedUsers{};
+    std::vector<Common::Entities::User> expectedUsers{};
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
     EXPECT_CALL(*usersRepositoryMock, add(_)).WillOnce(Return());
 
@@ -117,9 +119,9 @@ TEST_F(UsersModuleTest, updateUser)
                             .submodule  = "users",
                             .method     = "PUT",
                             .resourceId = USER_ID,
-                            .dataset    = {{Keys::User::USERNAME, {NEW_USERNAME}},
-                                           {Keys::User::PASSWORD, {NEW_PASSWORD}},
-                                           {Keys::User::ROLE_ID, {NEW_ROLE_ID}}}};
+                            .dataset    = {{Common::Entities::User::USERNAME_KEY, {NEW_USERNAME}},
+                                           {Common::Entities::User::PASSWORD_KEY, {NEW_PASSWORD}},
+                                           {Common::Entities::User::ROLE_ID_KEY, {NEW_ROLE_ID}}}};
 
     EXPECT_CALL(*usersRepositoryMock, update(_)).WillOnce(Return());
 
@@ -146,16 +148,18 @@ TEST_F(UsersModuleTest, getRoles)
     RequestData requestData{
         .module = "users", .submodule = "roles", .method = "GET", .resourceId = "", .dataset = {}};
 
-    std::vector<Role> expectedRoles{Role("1", "user"), Role("2", "admin")};
+    std::vector<Common::Entities::Role> expectedRoles{
+        Common::Entities::Role{.id = "1", .name = "user"},
+        Common::Entities::Role{.id = "2", .name = "admin"}};
     EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedRoles));
 
     ResponseData response = usersModule->executeTask(requestData);
     for (size_t i = 0; i < expectedRoles.size(); i++) {
-        auto it_roleId = response.dataset.at(Keys::Role::ID).begin();
+        auto it_roleId = response.dataset.at(Common::Entities::Role::ID_KEY).begin();
         std::advance(it_roleId, i);
         EXPECT_EQ(*it_roleId, expectedRoles[i].id);
 
-        auto it_roleName = response.dataset.at(Keys::Role::NAME).begin();
+        auto it_roleName = response.dataset.at(Common::Entities::Role::NAME_KEY).begin();
         std::advance(it_roleName, i);
         EXPECT_EQ(*it_roleName, expectedRoles[i].name);
     }
@@ -168,9 +172,9 @@ TEST_F(UsersModuleTest, addRoles)
                             .submodule  = "roles",
                             .method     = "POST",
                             .resourceId = "",
-                            .dataset    = {{Keys::Role::NAME, {CORRECT_NAME}}}};
+                            .dataset    = {{Common::Entities::Role::NAME_KEY, {CORRECT_NAME}}}};
 
-    std::vector<Role> expectedRoles{};
+    std::vector<Common::Entities::Role> expectedRoles{};
     EXPECT_CALL(*rolesRepositoryMock, getByField(_, _)).WillOnce(Return(expectedRoles));
     EXPECT_CALL(*rolesRepositoryMock, add(_)).WillOnce(Return());
 
@@ -185,7 +189,7 @@ TEST_F(UsersModuleTest, editRole)
                             .submodule  = "roles",
                             .method     = "PUT",
                             .resourceId = CORRECT_ID,
-                            .dataset    = {{Keys::Role::NAME, {NEW_NAME}}}};
+                            .dataset    = {{Common::Entities::Role::NAME_KEY, {NEW_NAME}}}};
 
     EXPECT_CALL(*rolesRepositoryMock, update(_)).WillOnce(Return());
 

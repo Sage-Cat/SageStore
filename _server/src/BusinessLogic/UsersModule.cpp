@@ -65,25 +65,26 @@ ResponseData UsersModule::loginUser(const Dataset &request)
 
     std::string clientUsername{}, clientPassword{};
     try {
-        clientUsername = request.at(Keys::User::USERNAME).front();
-        clientPassword = request.at(Keys::User::PASSWORD).front();
+        clientUsername = request.at(Common::Entities::User::USERNAME_KEY).front();
+        clientPassword = request.at(Common::Entities::User::PASSWORD_KEY).front();
     } catch (const std::out_of_range &e) {
         SPDLOG_ERROR("UsersModule::loginUser | dataset has no needed info: {}", e.what());
         throw ServerException(_M, "Server got no username or password from Client");
     }
 
     // get user by username from repository
-    auto usersVec = m_usersRepository->getByField(Keys::User::USERNAME, clientUsername);
+    auto usersVec =
+        m_usersRepository->getByField(Common::Entities::User::USERNAME_KEY, clientUsername);
 
     if (usersVec.empty()) {
         SPDLOG_WARN("UsersModule::loginUser | user does not exist");
         throw ServerException(_M, "User with such username does not exist");
     } else {
-        User &user = usersVec.front();
+        Common::Entities::User &user = usersVec.front();
         if (user.password == clientPassword) { // password is not being sent to client
             SPDLOG_INFO("UsersModule::loginUser | SUCCESS");
-            response.dataset[Keys::User::ID].push_back(user.id);
-            response.dataset[Keys::User::ROLE_ID].push_back(user.roleId);
+            response.dataset[Common::Entities::User::ID_KEY].push_back(user.id);
+            response.dataset[Common::Entities::User::ROLE_ID_KEY].push_back(user.roleId);
         } else {
             SPDLOG_WARN("UsersModule::loginUser | user entered incorrect password");
             throw ServerException(_M, "Wrong password");
@@ -103,9 +104,9 @@ ResponseData UsersModule::getUsers()
         SPDLOG_WARN("UsersModule::getUsers | array of users is empty");
     } else {
         for (const auto &user : usersVec) { // password is not being sent to client
-            response.dataset[Keys::User::ID].emplace_back(user.id);
-            response.dataset[Keys::User::USERNAME].emplace_back(user.username);
-            response.dataset[Keys::User::ROLE_ID].emplace_back(user.roleId);
+            response.dataset[Common::Entities::User::ID_KEY].emplace_back(user.id);
+            response.dataset[Common::Entities::User::USERNAME_KEY].emplace_back(user.username);
+            response.dataset[Common::Entities::User::ROLE_ID_KEY].emplace_back(user.roleId);
         }
     }
 
@@ -117,21 +118,22 @@ void UsersModule::addUser(const Dataset &request)
     SPDLOG_TRACE("UsersModule::addUser");
     std::string username, password, roleId;
     try {
-        username = request.at(Keys::User::USERNAME).front();
-        password = request.at(Keys::User::PASSWORD).front();
-        roleId   = request.at(Keys::User::ROLE_ID).front();
+        username = request.at(Common::Entities::User::USERNAME_KEY).front();
+        password = request.at(Common::Entities::User::PASSWORD_KEY).front();
+        roleId   = request.at(Common::Entities::User::ROLE_ID_KEY).front();
     } catch (const std::out_of_range &e) {
         SPDLOG_ERROR("UsersModule::addUser | Missing user data: {}", e.what());
         throw ServerException(_M, "Incomplete user data");
     }
 
-    auto usersVec = m_usersRepository->getByField(Keys::User::USERNAME, username);
+    auto usersVec = m_usersRepository->getByField(Common::Entities::User::USERNAME_KEY, username);
     if (!usersVec.empty()) {
         SPDLOG_WARN("UsersModule::addUser | User already exists");
         throw ServerException(_M, "User with this username already exists");
     }
 
-    User newUser{.id = "", .username = username, .password = password, .roleId = roleId};
+    Common::Entities::User newUser{
+        .id = "", .username = username, .password = password, .roleId = roleId};
     m_usersRepository->add(newUser);
     SPDLOG_INFO("UsersModule::addUser | New user `{}` added", username);
 }
@@ -145,15 +147,16 @@ void UsersModule::updateUser(const Dataset &request, const std::string &userId)
 
     std::string username, password, roleId;
     try {
-        username = request.at(Keys::User::USERNAME).front();
-        password = request.at(Keys::User::PASSWORD).front();
-        roleId   = request.at(Keys::User::ROLE_ID).front();
+        username = request.at(Common::Entities::User::USERNAME_KEY).front();
+        password = request.at(Common::Entities::User::PASSWORD_KEY).front();
+        roleId   = request.at(Common::Entities::User::ROLE_ID_KEY).front();
     } catch (const std::out_of_range &e) {
         SPDLOG_ERROR("UsersModule::updateUser | Missing user data: {}", e.what());
         throw ServerException(_M, "Incomplete user data");
     }
 
-    User updatedUser{.id = userId, .username = username, .password = password, .roleId = roleId};
+    Common::Entities::User updatedUser{
+        .id = userId, .username = username, .password = password, .roleId = roleId};
     m_usersRepository->update(updatedUser);
     SPDLOG_INFO("UsersModule::updateUser | User `{}` updated", username);
 }
@@ -176,13 +179,13 @@ ResponseData UsersModule::getRoles()
     auto rolesVec = m_rolesRepository->getAll();
 
     if (rolesVec.empty()) {
-        response.dataset[Keys::Role::ID]   = {""};
-        response.dataset[Keys::Role::NAME] = {""};
+        response.dataset[Common::Entities::Role::ID_KEY]   = {""};
+        response.dataset[Common::Entities::Role::NAME_KEY] = {""};
         SPDLOG_WARN("UsersModule::getRoles | array of roles is empty");
     } else {
         for (auto i = rolesVec.cbegin(); i != rolesVec.cend(); i++) {
-            response.dataset[Keys::Role::ID].emplace_back(i->id);
-            response.dataset[Keys::Role::NAME].emplace_back(i->name);
+            response.dataset[Common::Entities::Role::ID_KEY].emplace_back(i->id);
+            response.dataset[Common::Entities::Role::NAME_KEY].emplace_back(i->name);
         }
     }
 
@@ -195,14 +198,14 @@ void UsersModule::addRole(const Dataset &request)
     ResponseData response;
     std::string roleName{};
     try {
-        roleName = request.at(Keys::Role::NAME).front();
+        roleName = request.at(Common::Entities::Role::NAME_KEY).front();
     } catch (const std::out_of_range &e) {
         SPDLOG_WARN("UsersModule::addRole username or password does not exit");
         throw ServerException(_M, "Server got no username or password in Dataset");
     }
-    auto usersVec = m_rolesRepository->getByField(Keys::Role::NAME, roleName);
+    auto usersVec = m_rolesRepository->getByField(Common::Entities::Role::NAME_KEY, roleName);
     if (usersVec.empty()) {
-        const Role role{.id = "" /* autoincremented */, .name = roleName};
+        const Common::Entities::Role role{.id = "" /* autoincremented */, .name = roleName};
         m_rolesRepository->add(role);
         SPDLOG_INFO("UsersModule::registerUser | new role `{}` is added", roleName);
     } else {
@@ -219,8 +222,9 @@ void UsersModule::updateRole(const Dataset &request, const std::string &resourse
 
     std::string roleName{};
     try {
-        m_rolesRepository->update(Role{.id = {} /* autoincremented */, .name = roleName});
-        roleName = request.at(Keys::Role::NAME).front();
+        m_rolesRepository->update(
+            Common::Entities::Role{.id = {} /* autoincremented */, .name = roleName});
+        roleName = request.at(Common::Entities::Role::NAME_KEY).front();
     } catch (std::out_of_range &e) {
         SPDLOG_WARN("UsersModule::updateRole role name does not exit");
         throw ServerException(_M, "Server got no role name in Dataset");
