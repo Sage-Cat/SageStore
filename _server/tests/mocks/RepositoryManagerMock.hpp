@@ -14,6 +14,8 @@ class RepositoryManagerMock : public RepositoryManager {
 public:
     RepositoryManagerMock() : RepositoryManager(std::make_shared<DatabaseManagerMock>()) {}
 
-    MOCK_METHOD(std::shared_ptr<IRepository<User>>, getUserRepository, (), (override));
-    MOCK_METHOD(std::shared_ptr<IRepository<Role>>, getRoleRepository, (), (override));
+    MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::User>>, getUserRepository, (),
+                (override));
+    MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::Role>>, getRoleRepository, (),
+                (override));
 };

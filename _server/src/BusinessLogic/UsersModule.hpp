@@ -8,10 +8,10 @@
 
 #include "Database/IRepository.hpp"
 
-class RepositoryManager;
+#include "common/Entities/Role.hpp"
+#include "common/Entities/User.hpp"
 
-struct User;
-struct Role;
+class RepositoryManager;
 
 class UsersModule : public IBusinessModule {
 public:
@@ -34,6 +34,6 @@ private:
     void deleteRole(const std::string &resourseId);
 
 private:
-    std::shared_ptr<IRepository<User>> m_usersRepository;
-    std::shared_ptr<IRepository<Role>> m_rolesRepository;
+    std::shared_ptr<IRepository<Common::Entities::User>> m_usersRepository;
+    std::shared_ptr<IRepository<Common::Entities::Role>> m_rolesRepository;
 };

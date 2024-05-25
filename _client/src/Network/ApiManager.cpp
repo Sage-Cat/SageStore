@@ -27,8 +27,8 @@ void ApiManager::loginUser(const QString &username, const QString &password)
                  password.toStdString());
 
     Dataset dataset;
-    dataset[Keys::User::USERNAME] = {username.toStdString()};
-    dataset[Keys::User::PASSWORD] = {password.toStdString()};
+    dataset[Common::Entities::User::USERNAME_KEY] = {username.toStdString()};
+    dataset[Common::Entities::User::PASSWORD_KEY] = {password.toStdString()};
     m_networkService.sendRequest(Endpoints::Users::LOGIN, Method::POST, dataset);
 }
 
@@ -54,8 +54,8 @@ void ApiManager::createNewRole(const QString &roleName)
 {
     SPDLOG_TRACE("ApiManager::postRole");
     Dataset dataset;
-    dataset[Keys::Role::NAME] = {roleName.toStdString()};
-    dataset[Keys::Role::ID]   = {};
+    dataset[Common::Entities::Role::NAME_KEY] = {roleName.toStdString()};
+    dataset[Common::Entities::Role::ID_KEY]   = {};
 
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::POST, dataset);
 }
@@ -64,7 +64,7 @@ void ApiManager::editRole(const QString &id, const QString &roleName)
 {
     SPDLOG_TRACE("ApiManager::editRole");
     Dataset dataset;
-    dataset[Keys::Role::NAME] = {roleName.toStdString()};
+    dataset[Common::Entities::Role::NAME_KEY] = {roleName.toStdString()};
 
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::PUT, dataset, id.toStdString());
 }
@@ -143,8 +143,8 @@ void ApiManager::handleLoginResponse(Method, const Dataset &dataset)
     SPDLOG_TRACE("ApiManager::handleLoginResponse");
 
     try {
-        const auto &id_list      = dataset.at(Keys::User::ID);
-        const auto &role_id_list = dataset.at(Keys::User::ROLE_ID);
+        const auto &id_list      = dataset.at(Common::Entities::User::ID_KEY);
+        const auto &role_id_list = dataset.at(Common::Entities::User::ROLE_ID_KEY);
 
         if (id_list.empty() || role_id_list.empty()) {
             handleError("ApiManager::handleLoginResponse | empty lists");
@@ -176,25 +176,26 @@ void ApiManager::handleRolesList(const Dataset &dataset)
     SPDLOG_TRACE("ApiManager::handleRolesList");
 
     try {
-        if (!dataset.contains(Keys::Role::ID) || !dataset.contains(Keys::Role::NAME)) {
+        if (!dataset.contains(Common::Entities::Role::ID_KEY) ||
+            !dataset.contains(Common::Entities::Role::NAME_KEY)) {
             handleError("dataset doesn't contain ID or NAME lists");
             return;
         }
 
-        const auto &idList   = dataset.at(Keys::Role::ID);
-        const auto &nameList = dataset.at(Keys::Role::NAME);
+        const auto &idList   = dataset.at(Common::Entities::Role::ID_KEY);
+        const auto &nameList = dataset.at(Common::Entities::Role::NAME_KEY);
 
         if (idList.size() != nameList.size()) {
             handleError("ID and Name lists have different sizes.");
             return;
         }
 
-        std::list<Role> roles;
+        std::list<Common::Entities::Role> roles;
         auto idIt   = idList.begin();
         auto nameIt = nameList.begin();
 
         while (idIt != idList.end() && nameIt != nameList.end()) {
-            Role role{.id = *idIt, .name = *nameIt};
+            Common::Entities::Role role{.id = *idIt, .name = *nameIt};
             roles.push_back(role);
 
             ++idIt;

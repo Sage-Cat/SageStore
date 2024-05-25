@@ -18,13 +18,13 @@ protected:
     std::unique_ptr<BusinessLogic> businessLogic;
 
     std::shared_ptr<RepositoryManagerMock> repositoryManagerMock;
-    std::shared_ptr<RepositoryMock<User>> usersRepositoryMock;
-    std::shared_ptr<RepositoryMock<Role>> rolesRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::User>> usersRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::Role>> rolesRepositoryMock;
 
     BusinessLogicTest()
         : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
-          usersRepositoryMock(std::make_shared<RepositoryMock<User>>()),
-          rolesRepositoryMock(std::make_shared<RepositoryMock<Role>>())
+          usersRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::User>>()),
+          rolesRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::Role>>())
     {
     }
 
@@ -44,17 +44,18 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
     constexpr char CORRECT_USERNAME[] = "username1";
     constexpr char CORRECT_PASSWORD[] = "password1";
 
-    RequestData requestData{.module     = "users",
-                            .submodule  = "login",
-                            .method     = "POST",
-                            .resourceId = "",
-                            .dataset    = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
-                                           {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
+    RequestData requestData{
+        .module     = "users",
+        .submodule  = "login",
+        .method     = "POST",
+        .resourceId = "",
+        .dataset    = {{Common::Entities::User::USERNAME_KEY, {CORRECT_USERNAME}},
+                       {Common::Entities::User::PASSWORD_KEY, {CORRECT_PASSWORD}}}};
 
     // Set expectations on the UserRepositoryMock
-    const User user{
+    const Common::Entities::User user{
         .id = "", .username = CORRECT_USERNAME, .password = CORRECT_PASSWORD, .roleId = ""};
-    std::vector<User> expectedUsers{user};
+    std::vector<Common::Entities::User> expectedUsers{user};
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     // Prepare the callback and its expectation
@@ -76,7 +77,7 @@ TEST_F(BusinessLogicTest, UsersModule_addRole)
     RequestData requestData{
         .module = "users", .submodule = "roles", .method = "GET", .resourceId = "", .dataset = {}};
 
-    std::vector<Role> expectedUsers{};
+    std::vector<Common::Entities::Role> expectedUsers{};
     EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
     // Prepare the callback and its expectation
     bool callbackInvoked = false;

@@ -8,6 +8,7 @@
 #include "common/DataTypes.hpp"
 
 #include "common/Entities/Role.hpp"
+#include "common/Entities/User.hpp"
 
 class NetworkService;
 enum class Method;
@@ -44,7 +45,7 @@ protected slots:
 signals:
     void loginSuccess(const QString &id, const QString &roleId);
     void registrationSuccess();
-    void rolesList(const std::list<Role> &roleList);
+    void rolesList(const std::list<Common::Entities::Role> &roleList);
     void roleCreated();
     void roleEdited();
     void roleDeleted();

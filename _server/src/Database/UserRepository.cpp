@@ -1,6 +1,5 @@
 #include "UserRepository.hpp"
 
-#include "common/Entities/User.hpp"
 
 #include "common/SpdlogConfig.hpp"
 
@@ -19,10 +18,10 @@ UserRepository::UserRepository(std::shared_ptr<IDatabaseManager> dbManager)
 
 UserRepository::~UserRepository() { SPDLOG_TRACE("UserRepository::~UserRepository"); }
 
-void UserRepository::add(const User &entity)
+void UserRepository::add(const Common::Entities::User &entity)
 {
     SPDLOG_TRACE("UserRepository::add");
-    const std::string query = "INSERT INTO " + std::string(User::TABLE_NAME) +
+    const std::string query = "INSERT INTO " + std::string(Common::Entities::User::TABLE_NAME) +
                               " (username, password) " +
                               (entity.roleId.empty() ? "VALUES (?, ?);" : "VALUES (?, ?, ?);");
 
@@ -33,10 +32,10 @@ void UserRepository::add(const User &entity)
     m_dbManager->executeQuery(query, params);
 }
 
-void UserRepository::update(const User &entity)
+void UserRepository::update(const Common::Entities::User &entity)
 {
     SPDLOG_TRACE("UserRepository::update");
-    const std::string query = "UPDATE " + std::string(User::TABLE_NAME) +
+    const std::string query = "UPDATE " + std::string(Common::Entities::User::TABLE_NAME) +
                               " SET username = ?, password = ?, roleId = ? WHERE id = ?;";
     const std::vector<std::string> params = {entity.username, entity.password, entity.roleId,
                                              entity.id};
@@ -47,20 +46,22 @@ void UserRepository::update(const User &entity)
 void UserRepository::deleteResource(const std::string &id)
 {
     SPDLOG_TRACE("UserRepository::deleteResource | id = {}", id);
-    const std::string query = "DELETE FROM " + std::string(User::TABLE_NAME) + " WHERE id = ?;";
+    const std::string query =
+        "DELETE FROM " + std::string(Common::Entities::User::TABLE_NAME) + " WHERE id = ?;";
     const std::vector<std::string> params = {id};
 
     m_dbManager->executeQuery(query, params);
 }
 
-std::vector<User> UserRepository::getByField(const std::string &fieldName,
-                                             const std::string &value) const
+std::vector<Common::Entities::User> UserRepository::getByField(const std::string &fieldName,
+                                                               const std::string &value) const
 {
     SPDLOG_TRACE("UserRepository::getByField | {} = {}", fieldName, value);
-    std::vector<User> users;
+    std::vector<Common::Entities::User> users;
 
     const std::string query = "SELECT id, username, password, roleId FROM " +
-                              std::string(User::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
+                              std::string(Common::Entities::User::TABLE_NAME) + " WHERE " +
+                              fieldName + " = ?;";
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
         users.emplace_back(userFromCurrentRow(result));
@@ -68,13 +69,13 @@ std::vector<User> UserRepository::getByField(const std::string &fieldName,
     return users;
 }
 
-std::vector<User> UserRepository::getAll() const
+std::vector<Common::Entities::User> UserRepository::getAll() const
 {
     SPDLOG_TRACE("UserRepository::getAll");
-    std::vector<User> users;
+    std::vector<Common::Entities::User> users;
 
-    const std::string query =
-        "SELECT id, username, password, roleId FROM  " + std::string(User::TABLE_NAME) + " ;";
+    const std::string query = "SELECT id, username, password, roleId FROM  " +
+                              std::string(Common::Entities::User::TABLE_NAME) + " ;";
     auto result = m_dbManager->executeQuery(query, {});
     while (result && result->next())
         users.emplace_back(userFromCurrentRow(result));
@@ -82,10 +83,11 @@ std::vector<User> UserRepository::getAll() const
     return users;
 }
 
-User UserRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
+Common::Entities::User
+UserRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    return User{.id       = queryResult->getString(ID),
-                .username = queryResult->getString(USERNAME),
-                .password = queryResult->getString(PASSWORD),
-                .roleId   = queryResult->getString(ROLE_ID)};
+    return Common::Entities::User{.id       = queryResult->getString(ID),
+                                  .username = queryResult->getString(USERNAME),
+                                  .password = queryResult->getString(PASSWORD),
+                                  .roleId   = queryResult->getString(ROLE_ID)};
 }
