@@ -7,7 +7,7 @@
 class RegistrationDialogMock : public RegistrationDialog {
     void showWithPresetData(const QString &username, const QString &password) override
     {
-        emit registrationAttempted(User{
+        emit registrationAttempted(Common::Entities::User{
             .username = username.toStdString(), .password = password.toStdString(), .roleId = "0"});
     }
 };

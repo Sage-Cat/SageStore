@@ -22,5 +22,5 @@ signals:
     void showErrorDialog();
 
 protected:
-    void initDialogs() override {}
+    void setupDialogs() override {}
 };

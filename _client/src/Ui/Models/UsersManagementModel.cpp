@@ -2,9 +2,13 @@
 
 #include "Network/ApiManager.hpp"
 
+#include "common/SpdlogConfig.hpp"
+
 UsersManagementModel::UsersManagementModel(ApiManager &apiManager, QObject *parent)
     : BaseModel(parent), m_apiManager(apiManager)
 {
+    SPDLOG_TRACE("UsersManagementModel::UsersManagementModel");
+
     connect(&m_apiManager, &ApiManager::userAdded, this, &UsersManagementModel::onUserAdded);
     connect(&m_apiManager, &ApiManager::userEdited, this, &UsersManagementModel::onUserUpdated);
     connect(&m_apiManager, &ApiManager::userDeleted, this, &UsersManagementModel::onUserDeleted);
@@ -15,49 +19,88 @@ UsersManagementModel::UsersManagementModel(ApiManager &apiManager, QObject *pare
     connect(&m_apiManager, &ApiManager::roleDeleted, this, &UsersManagementModel::onRoleDeleted);
     connect(&m_apiManager, &ApiManager::rolesList, this, &UsersManagementModel::onRolesList);
 
-    connect(&m_apiManager, &ApiManager::errorOccurred, this, &UsersManagementModel::errorOccurred);
+    // Fetch data on startup
+    SPDLOG_TRACE("UsersManagementModel | On startup fetch data");
+    fetchRoles();
+    fetchUsers();
 }
 
-QVector<User> UsersManagementModel::users() const { return m_users; }
+QVector<Common::Entities::User> UsersManagementModel::users() const { return m_users; }
 
-QVector<Role> UsersManagementModel::roles() const { return m_roles; }
+QVector<Common::Entities::Role> UsersManagementModel::roles() const { return m_roles; }
 
 void UsersManagementModel::fetchUsers() { m_apiManager.getUsers(); }
 
-void UsersManagementModel::addUser(const User &user) { m_apiManager.addUser(user); }
+void UsersManagementModel::addUser(const Common::Entities::User &user)
+{
+    m_apiManager.addUser(user);
+}
 
-void UsersManagementModel::editUser(const User &user) { m_apiManager.editUser(user); }
+void UsersManagementModel::editUser(const Common::Entities::User &user)
+{
+    m_apiManager.editUser(user);
+}
 
 void UsersManagementModel::deleteUser(const QString &id) { m_apiManager.deleteUser(id); }
 
 void UsersManagementModel::fetchRoles() { m_apiManager.getRoleList(); }
 
-void UsersManagementModel::createRole(const Role &role) { m_apiManager.createRole(role); }
+void UsersManagementModel::createRole(const Common::Entities::Role &role)
+{
+    m_apiManager.createRole(role);
+}
 
-void UsersManagementModel::editRole(const Role &role) { m_apiManager.editRole(role); }
+void UsersManagementModel::editRole(const Common::Entities::Role &role)
+{
+    m_apiManager.editRole(role);
+}
 
 void UsersManagementModel::deleteRole(const QString &id) { m_apiManager.deleteRole(id); }
 
-void UsersManagementModel::onUsersList(const std::vector<User> &users)
+void UsersManagementModel::onUsersList(const std::vector<Common::Entities::User> &users)
 {
-    m_users = QVector<User>(users.begin(), users.end());
+    m_users = QVector<Common::Entities::User>(users.begin(), users.end());
     emit usersChanged();
 }
 
-void UsersManagementModel::onUserAdded() { emit userAdded(); }
-
-void UsersManagementModel::onUserUpdated() { emit userEdited(); }
-
-void UsersManagementModel::onUserDeleted() { emit userDeleted(); }
-
-void UsersManagementModel::onRolesList(const std::vector<Role> &roles)
+void UsersManagementModel::onUserAdded()
 {
-    m_roles = QVector<Role>(roles.begin(), roles.end());
+    fetchUsers();
+    userAdded();
+}
+
+void UsersManagementModel::onUserUpdated()
+{
+    fetchUsers();
+    emit userEdited();
+}
+
+void UsersManagementModel::onUserDeleted()
+{
+    fetchUsers();
+    emit userDeleted();
+}
+
+void UsersManagementModel::onRolesList(const std::vector<Common::Entities::Role> &roles)
+{
+    m_roles = QVector<Common::Entities::Role>(roles.begin(), roles.end());
     emit rolesChanged();
 }
 
-void UsersManagementModel::onRoleCreated() { emit roleCreated(); }
+void UsersManagementModel::onRoleCreated()
+{
+    fetchRoles();
+    emit roleCreated();
+}
 
-void UsersManagementModel::onRoleEdited() { emit roleEdited(); }
+void UsersManagementModel::onRoleEdited()
+{
+    fetchRoles();
+    emit roleEdited();
+}
 
-void UsersManagementModel::onRoleDeleted() { emit roleDeleted(); }
+void UsersManagementModel::onRoleDeleted()
+{
+    fetchRoles();
+    emit roleDeleted();
+}

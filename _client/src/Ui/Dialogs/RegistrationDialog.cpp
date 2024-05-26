@@ -107,13 +107,13 @@ void RegistrationDialog::onRegisterClicked()
     SPDLOG_TRACE("RegistrationDialog::onRegisterClicked | Username: {}",
                  m_usernameField->text().toStdString());
     if (m_passwordField->text() == m_confirmPasswordField->text())
-        emit registrationAttempted(
-            User{.id       = {},
-                 .username = m_usernameField->text().toStdString(),
-                 .password = QCryptographicHash::hash(m_passwordField->text().toUtf8(),
-                                                      QCryptographicHash::Sha256)
-                                 .toStdString(),
-                 .roleId = {}});
+        emit registrationAttempted(Common::Entities::User{
+            .id       = {},
+            .username = m_usernameField->text().toStdString(),
+            .password = QCryptographicHash::hash(m_passwordField->text().toUtf8(),
+                                                 QCryptographicHash::Sha256)
+                            .toStdString(),
+            .roleId = {}});
     else
         emit requestErrorMessageBox(tr("Passwords do not match"));
 }

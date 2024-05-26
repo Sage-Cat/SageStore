@@ -9,6 +9,7 @@ ApiManager::ApiManager(NetworkService &networkService) : m_networkService(networ
 {
     SPDLOG_TRACE("ApiManager::ApiManager");
 
+    connect(&m_networkService, &NetworkService::connected, this, &ApiManager::ready);
     connect(&m_networkService, &NetworkService::responseReceived, this,
             &ApiManager::handleResponse);
 
@@ -89,7 +90,7 @@ void ApiManager::editRole(const Common::Entities::Role &role)
 {
     SPDLOG_TRACE("ApiManager::editRole");
     Dataset dataset;
-    dataset[Common::Entities::Role::NAME] = {role.name};
+    dataset[Common::Entities::Role::NAME_KEY] = {role.name};
 
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::PUT, dataset, role.id);
 }
@@ -193,7 +194,7 @@ void ApiManager::handleLoginResponse(Method, const Dataset &dataset)
 
 void ApiManager::handleUsers(Method method, const Dataset &dataset)
 {
-    SPDLOG_TRACE("ApiManager::handleRegisterResponse");
+    SPDLOG_TRACE("ApiManager::handleUsers");
 
     switch (method) {
     case Method::GET:
@@ -247,7 +248,7 @@ void ApiManager::handleRolesList(const Dataset &dataset)
 
         emit rolesList(roles);
     } catch (const std::out_of_range &e) {
-        SPDLOG_ERROR("Key missing in dataset: {}", e.what());
+        SPDLOG_ERROR("handleRolesList | Key missing in dataset: {}", e.what());
         handleError("Key missing in dataset");
     }
 }
@@ -259,19 +260,16 @@ void ApiManager::handleUsersList(const Dataset &dataset)
     try {
         if (!dataset.contains(Common::Entities::User::ID_KEY) ||
             !dataset.contains(Common::Entities::User::USERNAME_KEY) ||
-            !dataset.contains(Common::Entities::User::PASSWORD_KEY) ||
             !dataset.contains(Common::Entities::User::ROLE_ID_KEY)) {
-            handleError("dataset doesn't contain required User keys");
+            handleError("Dataset doesn't contain required User keys");
             return;
         }
 
         const auto &idList       = dataset.at(Common::Entities::User::ID_KEY);
         const auto &usernameList = dataset.at(Common::Entities::User::USERNAME_KEY);
-        const auto &passwordList = dataset.at(Common::Entities::User::PASSWORD_KEY);
         const auto &roleIdList   = dataset.at(Common::Entities::User::ROLE_ID_KEY);
 
-        if (idList.size() != usernameList.size() || usernameList.size() != passwordList.size() ||
-            passwordList.size() != roleIdList.size()) {
+        if (idList.size() != usernameList.size() || usernameList.size() != roleIdList.size()) {
             handleError("User lists have different sizes.");
             return;
         }
@@ -279,24 +277,21 @@ void ApiManager::handleUsersList(const Dataset &dataset)
         std::vector<Common::Entities::User> users;
         auto idIt       = idList.begin();
         auto usernameIt = usernameList.begin();
-        auto passwordIt = passwordList.begin();
         auto roleIdIt   = roleIdList.begin();
 
         while (idIt != idList.end() && usernameIt != usernameList.end() &&
-               passwordIt != passwordList.end() && roleIdIt != roleIdList.end()) {
-            Common::Entities::User user{
-                .id = *idIt, .username = *usernameIt, .password = *passwordIt, .roleId = *roleIdIt};
+               roleIdIt != roleIdList.end()) {
+            Common::Entities::User user{.id = *idIt, .username = *usernameIt, .roleId = *roleIdIt};
             users.push_back(user);
 
             ++idIt;
             ++usernameIt;
-            ++passwordIt;
             ++roleIdIt;
         }
 
         emit usersList(users);
     } catch (const std::out_of_range &e) {
-        SPDLOG_ERROR("Key missing in dataset: {}", e.what());
+        SPDLOG_ERROR("handleUsersList | Key missing in dataset: {}", e.what());
         handleError("Key missing in dataset");
     }
 }

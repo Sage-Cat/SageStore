@@ -11,12 +11,17 @@
 #include "Ui/Views/ViewStyles.hpp"
 #include "Utils.hpp"
 
+class BaseViewModel;
+
 class BaseView : public QWidget {
     Q_OBJECT
 
 public:
-    BaseView(QWidget *parent = nullptr);
+    BaseView(BaseViewModel &viewModel, QWidget *parent = nullptr);
     virtual ~BaseView();
+
+signals:
+    void errorOccurred(const QString &errorMessage);
 
 protected:
     // setup

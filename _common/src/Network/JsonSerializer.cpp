@@ -13,7 +13,7 @@ std::string JsonSerializer::serialize(const Dataset &dataset)
     json jsonObject;
 
     if (dataset.empty()) {
-        return json({}).dump();
+        return jsonObject.dump();
     }
 
     for (const auto &[key, value] : dataset) {
@@ -34,8 +34,8 @@ Dataset JsonSerializer::deserialize(const std::string &serializedData)
     Dataset dataset;
     auto jsonObject = json::parse(serializedData, nullptr, false);
 
-    if (!jsonObject.is_object()) {
-        SPDLOG_ERROR("Invalid JSON document");
+    if (!jsonObject.is_object()) { // Just return empty if not json
+        SPDLOG_WARN("JsonSerializer | Not JSON data | Returning empty Dataset");
         return dataset;
     }
 

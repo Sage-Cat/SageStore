@@ -27,7 +27,7 @@ public:
     const QString getPassword();
 
 signals:
-    void registrationAttempted(const User &user);
+    void registrationAttempted(const Common::Entities::User &user);
     void requestErrorMessageBox(const QString &errorMessage);
     void loginRequested();
 
