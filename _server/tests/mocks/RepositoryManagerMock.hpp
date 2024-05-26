@@ -2,19 +2,20 @@
 
 #include <memory>
 
-#include "DatabaseManagerMock.hpp"
 #include "Database/RepositoryManager.hpp"
+#include "DatabaseManagerMock.hpp"
 
-#include "common/Entities/User.hpp"
 #include "common/Entities/Role.hpp"
+#include "common/Entities/User.hpp"
 
 class SqliteDatabaseManager;
 
-class RepositoryManagerMock : public RepositoryManager
-{
+class RepositoryManagerMock : public RepositoryManager {
 public:
     RepositoryManagerMock() : RepositoryManager(std::make_shared<DatabaseManagerMock>()) {}
 
-    MOCK_METHOD(std::shared_ptr<IRepository<User>>, getUserRepository, (), (override));
-    MOCK_METHOD(std::shared_ptr<IRepository<Role>>, getRoleRepository, (), (override));
+    MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::User>>, getUserRepository, (),
+                (override));
+    MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::Role>>, getRoleRepository, (),
+                (override));
 };

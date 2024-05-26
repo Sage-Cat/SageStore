@@ -6,9 +6,8 @@
  * @interface IBusinessModule
  * @brief Interface for business modules.
  */
-class IBusinessModule
-{
+class IBusinessModule {
 public:
-    virtual ~IBusinessModule() = default;
+    virtual ~IBusinessModule()                                       = default;
     virtual ResponseData executeTask(const RequestData &requestData) = 0;
 };

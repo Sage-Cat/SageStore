@@ -2,8 +2,25 @@
 
 #include "common/SpdlogConfig.hpp"
 
-NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr<IDataSerializer> serializer)
-    : m_manager(new QNetworkAccessManager(this)), m_serializer(std::move(serializer))
+std::string to_string(Method method)
+{
+    switch (method) {
+    case Method::GET:
+        return "GET";
+    case Method::POST:
+        return "POST";
+    case Method::PUT:
+        return "PUT";
+    case Method::DEL:
+        return "DEL";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+NetworkService::NetworkService(const ServerConfig &serverConfig,
+                               std::unique_ptr<IDataSerializer> serializer)
+    : m_serializer(std::move(serializer))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
 
@@ -12,14 +29,24 @@ NetworkService::NetworkService(const ServerConfig &serverConfig, std::unique_ptr
     m_serverUrl.setPort(serverConfig.port);
 }
 
-void NetworkService::sendRequest(std::string endpoint, Method method, const Dataset &dataset, const std::string &resource_id)
+void NetworkService::init()
 {
-    SPDLOG_TRACE("NetworkService::sendRequest");
+    SPDLOG_TRACE("NetworkService::init");
+    m_manager = new QNetworkAccessManager(this);
+
+    SPDLOG_TRACE("NetworkService | emit successful connetction to server");
+    emit connected();
+}
+
+void NetworkService::sendRequest(std::string endpoint, Method method, const Dataset &dataset,
+                                 const std::string &resource_id)
+{
+    SPDLOG_TRACE("NetworkService::sendRequest | endpoint = {} | method = {} | recource_id = {}",
+                 endpoint, to_string(method), resource_id);
 
     QNetworkReply *reply = nullptr;
 
-    if (!m_serializer)
-    {
+    if (!m_serializer) {
         SPDLOG_ERROR("NetworkService::sendRequest serializer was not set");
         return;
     }
@@ -29,13 +56,14 @@ void NetworkService::sendRequest(std::string endpoint, Method method, const Data
 
     QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                         QNetworkRequest::ManualRedirectPolicy);
 
     const auto serializedData = QByteArray::fromStdString(m_serializer->serialize(dataset));
-    SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT sent data: {}", serializedData.toStdString());
-    
-    switch (method)
-    {
+    SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT sent data: {}",
+                 serializedData.toStdString());
+
+    switch (method) {
     case Method::GET:
         reply = m_manager->get(request);
         break;
@@ -53,29 +81,26 @@ void NetworkService::sendRequest(std::string endpoint, Method method, const Data
         return;
     }
 
-    if (reply)
-    {
+    if (reply) {
         connect(reply, &QNetworkReply::finished, this,
-                [this, endpoint = std::move(endpoint), method, reply]
-                {
+                [this, endpoint = std::move(endpoint), method, reply] {
                     this->onNetworkReply(endpoint, method, reply);
                 });
     }
 }
 
-void NetworkService::onNetworkReply(const std::string &endpoint, Method method, QNetworkReply *reply)
+void NetworkService::onNetworkReply(const std::string &endpoint, Method method,
+                                    QNetworkReply *reply)
 {
     SPDLOG_TRACE("NetworkService::onNetworkReply");
 
-    if (reply->error() == QNetworkReply::NoError)
-    {
+    if (reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
-        SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT received data: {}", responseData.toStdString());
+        SPDLOG_DEBUG("NetworkService::onNetworkReply | CLIENT received data: {}",
+                     responseData.toStdString());
         Dataset dataset = m_serializer->deserialize(responseData.toStdString());
         emit responseReceived(endpoint, method, dataset);
-    }
-    else
-    {
+    } else {
         SPDLOG_ERROR("Network request error: {}", reply->errorString().toStdString());
     }
     reply->deleteLater();

@@ -1,9 +1,7 @@
 #include "RoleRepository.hpp"
 #include "common/SpdlogConfig.hpp"
 
-#include "common/Entities/Role.hpp"
-
-inline constexpr int ID = 0;
+inline constexpr int ID   = 0;
 inline constexpr int NAME = 1;
 
 RoleRepository::RoleRepository(std::shared_ptr<IDatabaseManager> dbManager)
@@ -12,38 +10,41 @@ RoleRepository::RoleRepository(std::shared_ptr<IDatabaseManager> dbManager)
     SPDLOG_TRACE("RoleRepository::RoleRepository");
 }
 
-RoleRepository::~RoleRepository()
-{
-    SPDLOG_TRACE("RoleRepository::~RoleRepository");
-}
+RoleRepository::~RoleRepository() { SPDLOG_TRACE("RoleRepository::~RoleRepository"); }
 
-void RoleRepository::add(const Role &entity)
+void RoleRepository::add(const Common::Entities::Role &entity)
 {
     SPDLOG_TRACE("RoleRepository::add");
-    const std::string query = "INSERT INTO " + std::string(Role::TABLE_NAME) + " (name) VALUES (?);";
+    const std::string query =
+        "INSERT INTO " + std::string(Common::Entities::Role::TABLE_NAME) + " (name) VALUES (?);";
     m_dbManager->executeQuery(query, {entity.name});
 }
 
-void RoleRepository::update(const Role &entity)
+void RoleRepository::update(const Common::Entities::Role &entity)
 {
     SPDLOG_TRACE("RoleRepository::update");
-    const std::string query = "UPDATE " + std::string(Role::TABLE_NAME) + " SET name = ? WHERE id = ?;";
+    const std::string query =
+        "UPDATE " + std::string(Common::Entities::Role::TABLE_NAME) + " SET name = ? WHERE id = ?;";
     m_dbManager->executeQuery(query, {entity.name, entity.id});
 }
 
 void RoleRepository::deleteResource(const std::string &id)
 {
     SPDLOG_TRACE("RoleRepository::deleteResource | id = {}", id);
-    const std::string query = "DELETE FROM " + std::string(Role::TABLE_NAME) + " WHERE id = ?;";
+    const std::string query =
+        "DELETE FROM " + std::string(Common::Entities::Role::TABLE_NAME) + " WHERE id = ?;";
     m_dbManager->executeQuery(query, {id});
 }
 
-std::vector<Role> RoleRepository::getByField(const std::string &fieldName, const std::string &value) const
+std::vector<Common::Entities::Role> RoleRepository::getByField(const std::string &fieldName,
+                                                               const std::string &value) const
 {
     SPDLOG_TRACE("RoleRepository::getByField | {} = {}", fieldName, value);
-    std::vector<Role> roles;
+    std::vector<Common::Entities::Role> roles;
 
-    const std::string query = "SELECT id, name FROM " + std::string(Role::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
+    const std::string query = "SELECT id, name FROM " +
+                              std::string(Common::Entities::Role::TABLE_NAME) + " WHERE " +
+                              fieldName + " = ?;";
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
         roles.emplace_back(roleFromCurrentRow(result));
@@ -51,12 +52,13 @@ std::vector<Role> RoleRepository::getByField(const std::string &fieldName, const
     return roles;
 }
 
-std::vector<Role> RoleRepository::getAll() const
+std::vector<Common::Entities::Role> RoleRepository::getAll() const
 {
     SPDLOG_TRACE("RoleRepository::getAll");
-    std::vector<Role> roles;
+    std::vector<Common::Entities::Role> roles;
 
-    const std::string query = "SELECT id, name FROM " + std::string(Role::TABLE_NAME) + ";";
+    const std::string query =
+        "SELECT id, name FROM " + std::string(Common::Entities::Role::TABLE_NAME) + ";";
     auto result = m_dbManager->executeQuery(query, {});
     while (result && result->next())
         roles.emplace_back(roleFromCurrentRow(result));
@@ -64,9 +66,9 @@ std::vector<Role> RoleRepository::getAll() const
     return roles;
 }
 
-Role RoleRepository::roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
+Common::Entities::Role
+RoleRepository::roleFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    return Role{
-        .id = queryResult->getString(ID),
-        .name = queryResult->getString(NAME)};
+    return Common::Entities::Role{.id   = queryResult->getString(ID),
+                                  .name = queryResult->getString(NAME)};
 }

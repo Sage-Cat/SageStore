@@ -1,9 +1,9 @@
 #include "SageStoreServer.hpp"
 
-#include "Database/SqliteDatabaseManager.hpp"
-#include "Database/RepositoryManager.hpp"
-#include "Network/HttpServer.hpp"
 #include "BusinessLogic/BusinessLogic.hpp"
+#include "Database/RepositoryManager.hpp"
+#include "Database/SqliteDatabaseManager.hpp"
+#include "Network/HttpServer.hpp"
 
 #include "common/SpdlogConfig.hpp"
 
@@ -15,16 +15,12 @@ int main()
     const std::string SERVER_ADDRESS{"127.0.0.1"};
     const unsigned short SERVER_PORT{8001};
 
-    RepositoryManager repositoryManager(std::make_shared<SqliteDatabaseManager>(DB_PATH, CREATE_DB_SQL_FILE_PATH));
+    RepositoryManager repositoryManager(
+        std::make_shared<SqliteDatabaseManager>(DB_PATH, CREATE_DB_SQL_FILE_PATH));
     BusinessLogic businessLogicFacade(repositoryManager);
-    HttpServer httpServer(
-        SERVER_ADDRESS,
-        SERVER_PORT,
-        std::bind(
-            &BusinessLogic::executeTask,
-            &businessLogicFacade,
-            std::placeholders::_1,
-            std::placeholders::_2));
+    HttpServer httpServer(SERVER_ADDRESS, SERVER_PORT,
+                          std::bind(&BusinessLogic::executeTask, &businessLogicFacade,
+                                    std::placeholders::_1, std::placeholders::_2));
 
     SPDLOG_INFO("Starting SageStoreServer on address: {} port: {}", SERVER_ADDRESS, SERVER_PORT);
     SageStoreServer server(repositoryManager, businessLogicFacade, httpServer);

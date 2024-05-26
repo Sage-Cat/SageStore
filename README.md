@@ -151,6 +151,12 @@ ctest --verbose
    cmake --build .
    ```
 
+4. Code formatting:
+
+   ```
+   find . -type f \( -name '*.cpp' -or -name '*.hpp' \) -exec clang-format -i {} +
+   ```
+
 ## Contributing
 
 All contributing rules you can find in [CONTRIBUTING.md](CONTRIBUTING.md)

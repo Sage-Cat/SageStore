@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Utils.hpp"
+#include <QCryptographicHash>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QLabel>
-#include <QCryptographicHash>
-#include "Utils.hpp"
 
 #include "BaseDialog.hpp"
 
@@ -12,8 +12,7 @@
  * @class LoginDialog
  * @brief Represents the authorization dialog in the application.
  */
-class LoginDialog : public BaseDialog
-{
+class LoginDialog : public BaseDialog {
     Q_OBJECT
 
 public:

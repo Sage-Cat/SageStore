@@ -1,20 +1,19 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include "IBusinessModule.hpp"
 #include "DataSpecs.hpp"
+#include "IBusinessModule.hpp"
 
 #include "Database/IRepository.hpp"
 
+#include "common/Entities/Role.hpp"
+#include "common/Entities/User.hpp"
+
 class RepositoryManager;
 
-struct User;
-struct Role;
-
-class UsersModule : public IBusinessModule
-{
+class UsersModule : public IBusinessModule {
 public:
     UsersModule(RepositoryManager &repositoryManager);
     virtual ~UsersModule() override;
@@ -23,14 +22,18 @@ public:
 
 private:
     ResponseData loginUser(const Dataset &request);
-    ResponseData registerUser(const Dataset &request);
+
+    ResponseData getUsers();
+    void addUser(const Dataset &request);
+    void editUser(const Dataset &request, const std::string &userId);
+    void deleteUser(const std::string &userId);
 
     ResponseData getRoles();
-    ResponseData addNewRole(const Dataset &request);
-    ResponseData updateRoles(const Dataset &request, const std::string &resourseId);
-    ResponseData deleteRole(const std::string &resourseId);
+    void addRole(const Dataset &request);
+    void updateRole(const Dataset &request, const std::string &resourseId);
+    void deleteRole(const std::string &resourseId);
 
 private:
-    std::shared_ptr<IRepository<User>> m_usersRepository;
-    std::shared_ptr<IRepository<Role>> m_rolesRepository;
+    std::shared_ptr<IRepository<Common::Entities::User>> m_usersRepository;
+    std::shared_ptr<IRepository<Common::Entities::Role>> m_rolesRepository;
 };

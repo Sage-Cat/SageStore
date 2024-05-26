@@ -3,8 +3,7 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
-class BaseDialog : public QDialog
-{
+class BaseDialog : public QDialog {
     Q_OBJECT
 
 public:

@@ -1,6 +1,6 @@
 # ------------------------- UNIT -------------------------
 set(SERVER_UNIT_TESTS_SOURCE
-    ${SERVER_TESTS_DIR}/unit/UserModuleTest.cpp
+    ${SERVER_TESTS_DIR}/unit/UsersModuleTest.cpp
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
@@ -12,7 +12,7 @@ add_executable(UsersModuleTest ${SERVER_UNIT_TESTS_SOURCE})
 
 target_include_directories(UsersModuleTest PUBLIC
     ${SERVER_SOURCES_DIR}
-    ${SERVER_TEST_MOCKS_DIR} 
+    ${SERVER_TESTS_DIR}
 )
 
 target_link_libraries(UsersModuleTest 
@@ -27,5 +27,5 @@ target_link_libraries(UsersModuleTest
     GTest::gmock 
     GTest::gmock_main
 )
-add_test(NAME UsersModuleTest COMMAND UsersModuleTest)
+add_test(NAME Unit_UsersModuleTest COMMAND UsersModuleTest)
 message(STATUS "Adding unit test: UsersModuleTest")

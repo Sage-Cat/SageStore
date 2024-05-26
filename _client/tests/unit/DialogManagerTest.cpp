@@ -1,26 +1,22 @@
-#include <QtTest>
-#include <QSignalSpy>
 #include <QMessageBox>
+#include <QSignalSpy>
+#include <QtTest>
 
 #include "wrappers/DialogManagerWrapper.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
-#include "mocks/NetworkServiceMock.hpp"
 
-class DialogManagerTest : public QObject
-{
+class DialogManagerTest : public QObject {
     Q_OBJECT
 
     DialogManager *dialogManager;
 
-    NetworkServiceMock *networkServiceMock;
     ApiManagerMock *apiManagerMock;
 
 public:
     DialogManagerTest()
     {
-        networkServiceMock = new NetworkServiceMock;
-        apiManagerMock = new ApiManagerMock(*networkServiceMock);
+        apiManagerMock = new ApiManagerMock();
 
         dialogManager = new DialogManagerWrapper(*apiManagerMock);
         dialogManager->init();
@@ -30,7 +26,6 @@ public:
     {
         delete dialogManager;
         delete apiManagerMock;
-        delete networkServiceMock;
     }
 
 private slots:
@@ -43,7 +38,7 @@ private slots:
 
     void testRegistrationRoutine()
     {
-        QSignalSpy registrationAttemptedSpy(apiManagerMock, &ApiManager::registrationSuccess);
+        QSignalSpy registrationAttemptedSpy(apiManagerMock, &ApiManager::userAdded);
         dialogManager->showRegistrationDialog();
         QCOMPARE(registrationAttemptedSpy.count(), 1);
     }

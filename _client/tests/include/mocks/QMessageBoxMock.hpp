@@ -2,8 +2,7 @@
 
 #include <QMessageBox>
 
-class QMessageBoxMock : public QMessageBox
-{
+class QMessageBoxMock : public QMessageBox {
     int exec() override
     {
         emit buttonClicked(nullptr);

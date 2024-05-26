@@ -2,26 +2,20 @@
 
 #include "Network/ApiManager.hpp"
 
-class NetworkService;
+#include "mocks/NetworkServiceMock.hpp"
 
-class ApiManagerMock : public ApiManager
-{
+class ApiManagerMock : public ApiManager {
 public:
-    explicit ApiManagerMock(NetworkService &networkService) : ApiManager(networkService){};
+    ApiManagerMock() : ApiManager(*(new NetworkServiceMock)) {}
 
 public slots:
-    void loginUser(const QString &username, const QString &password) override
-    {
-        emit loginSuccess(0, 0);
-    }
-
-    void registerUser(const QString &username, const QString &password) override
-    {
-        emit registrationSuccess();
-    }
-
-    void emitError(const QString &errorMessage)
-    {
-        emit errorOccurred(errorMessage);
-    }
+    void addUser(const Common::Entities::User &user) override { emit userAdded(); }
+    void editUser(const Common::Entities::User &user) override { emit userEdited(); }
+    void deleteUser(const QString &id) override { emit userDeleted(); }
+    void getUsers() override { emit usersList({}); }
+    void createRole(const Common::Entities::Role &role) override { emit roleCreated(); }
+    void editRole(const Common::Entities::Role &role) override { emit roleEdited(); }
+    void deleteRole(const QString &id) override { emit roleDeleted(); }
+    void getRoleList() override { emit rolesList({}); }
+    void emitError(const QString &errorMessage) { emit errorOccurred(errorMessage); }
 };

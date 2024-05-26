@@ -4,11 +4,9 @@ class RepositoryManager;
 class BusinessLogic;
 class HttpServer;
 
-class SageStoreServer
-{
+class SageStoreServer {
 public:
-    SageStoreServer(RepositoryManager &repositoryManager,
-                    BusinessLogic &businessLogicFacade,
+    SageStoreServer(RepositoryManager &repositoryManager, BusinessLogic &businessLogicFacade,
                     HttpServer &httpServer);
     ~SageStoreServer() = default;
 

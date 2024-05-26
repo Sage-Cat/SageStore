@@ -386,14 +386,17 @@ About arrays: Request or Response is array of entities if it's specified as `arr
 
 #### Users
 
-| Method   | Endpoint                | Request                  | Response         | Description                           |
-| -------- | ----------------------- | ------------------------ | ---------------- | ------------------------------------- |
-| `POST`   | `/users/login`          | User[username, password] | User[id, roleId] | Authenticate a user                   |
-| `POST`   | `/users/register`       | User[username, password] | Result           | Register a new user                   |
-| `GET`    | `/users/roles`          | -                        | array<Role>      | Fetch all roles for Role-based access |
-| `POST`   | `/users/roles`          | Role                     | Result           | Add a new role (Admin only)           |
-| `PUT`    | `/users/roles/{roleId}` | Role                     | Result           | Edit a specific role (Admin only)     |
-| `DELETE` | `/users/roles/{roleId}` | -                        | Result           | Delete a specific role (Admin only)   |
+| Method   | Endpoint                | Request                  | Response                      | Description                                             |
+| -------- | ----------------------- | ------------------------ | ----------------------------- | ------------------------------------------------------- |
+| `POST`   | `/users/login`          | User[username, password] | User[id, roleId]              | Authenticate a user (compare login and passoword in DB) |
+| `GET`    | `/users/users`          | -                        | array<User[id, username, id]> | Fetch all users for Role-based access                   |
+| `POST`   | `/users/users`          | User                     | Result                        | Add a new user (Admin only)                             |
+| `PUT`    | `/users/users/{userId}` | User                     | Result                        | Edit a specific user (Admin only)                       |
+| `DELETE` | `/users/users/{userId}` | -                        | Result                        | Delete a specific user (Admin only)                     |
+| `GET`    | `/users/roles`          | -                        | array<Role>                   | Fetch all roles for Role-based access                   |
+| `POST`   | `/users/roles`          | Role                     | Result                        | Add a new role (Admin only)                             |
+| `PUT`    | `/users/roles/{roleId}` | Role                     | Result                        | Edit a specific role (Admin only)                       |
+| `DELETE` | `/users/roles/{roleId}` | -                        | Result                        | Delete a specific role (Admin only)                     |
 
 #### Purchase
 

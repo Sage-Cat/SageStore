@@ -1,7 +1,7 @@
 #include "LoginDialog.hpp"
 
-#include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "common/SpdlogConfig.hpp"
 
@@ -19,12 +19,13 @@ LoginDialog::~LoginDialog()
 {
     delete labelLayout;
     delete lineLayout;
-    delete inputLayout;  
+    delete inputLayout;
 }
 
 void LoginDialog::showWithPresetData(const QString &username, const QString &password)
 {
-    SPDLOG_TRACE("LoginDialog::showWithPresetData | user: {} | password: {}", username.toStdString(), password.toStdString());
+    SPDLOG_TRACE("LoginDialog::showWithPresetData | user: {} | password: {}",
+                 username.toStdString(), password.toStdString());
     m_usernameField->setText(username);
     m_passwordField->setText(password);
     show();
@@ -43,7 +44,7 @@ void LoginDialog::initButtonsAndLinks()
 {
     SPDLOG_TRACE("LoginDialog::initButtonsAndLinks");
 
-    m_loginButton = new QPushButton(tr("Login"), this);
+    m_loginButton  = new QPushButton(tr("Login"), this);
     m_registerLink = new QLabel(tr("<a href='#'>Register</a>"), this);
 
     m_registerLink->setTextFormat(Qt::RichText);
@@ -92,9 +93,12 @@ void LoginDialog::setupConnections()
 
 void LoginDialog::onLoginClicked()
 {
-    SPDLOG_TRACE("LoginDialog::onLoginClicked | Username: {}", m_usernameField->text().toStdString());
-    
-    emit loginAttempted(m_usernameField->text(), QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256));
+    SPDLOG_TRACE("LoginDialog::onLoginClicked | Username: {}",
+                 m_usernameField->text().toStdString());
+
+    emit loginAttempted(
+        m_usernameField->text(),
+        QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256));
 }
 
 void LoginDialog::onRegisterLinkClicked()

@@ -1,25 +1,18 @@
 #pragma once
 
 #include <map>
-#include <list>
+#include <vector>
 
 #include <QObject>
 
 #include "common/DataTypes.hpp"
-
 #include "common/Entities/Role.hpp"
+#include "common/Entities/User.hpp"
 
 class NetworkService;
 enum class Method;
 
-/**
- * @class ApiManager
- * @brief Manages API calls for user authentication and registration processes.
- *
- * @attention For external communication (with UI) QString is used, but for internal (NetworkService) std::string
- */
-class ApiManager : public QObject
-{
+class ApiManager : public QObject {
     Q_OBJECT
 
     using ResponseHandler = std::function<void(Method method, const Dataset &)>;
@@ -29,12 +22,17 @@ public:
     ~ApiManager();
 
 public slots:
-    // for UI
+    // Users
     virtual void loginUser(const QString &username, const QString &password);
-    virtual void registerUser(const QString &username, const QString &password);
+    virtual void getUsers();
+    virtual void addUser(const Common::Entities::User &user);
+    virtual void editUser(const Common::Entities::User &user);
+    virtual void deleteUser(const QString &id);
+
+    // Roles
     virtual void getRoleList();
-    virtual void createNewRole(const QString &roleName);
-    virtual void editRole(const QString &id, const QString &roleName);
+    virtual void createRole(const Common::Entities::Role &role);
+    virtual void editRole(const Common::Entities::Role &role);
     virtual void deleteRole(const QString &id);
 
 protected slots:
@@ -42,9 +40,18 @@ protected slots:
     virtual void handleResponse(const std::string &endpoint, Method method, const Dataset &dataset);
 
 signals:
+    // Startup
+    void ready();
+
+    // Users
     void loginSuccess(const QString &id, const QString &roleId);
-    void registrationSuccess();
-    void rolesList(const std::list<Role> &roleList);
+    void userAdded();
+    void userEdited();
+    void userDeleted();
+    void usersList(const std::vector<Common::Entities::User> &users);
+
+    // Roles
+    void rolesList(const std::vector<Common::Entities::Role> &roleList);
     void roleCreated();
     void roleEdited();
     void roleDeleted();
@@ -59,9 +66,12 @@ private:
     // handlers
     void handleError(const std::string &errorMessage);
     void handleLoginResponse(Method method, const Dataset &dataset);
-    void handleRegistrationResponse(Method method, const Dataset &dataset);
+    void handleUsers(Method method, const Dataset &dataset);
     void handleRoles(Method method, const Dataset &dataset);
+
+private:
     void handleRolesList(const Dataset &dataset);
+    void handleUsersList(const Dataset &dataset);
 
 private:
     NetworkService &m_networkService;

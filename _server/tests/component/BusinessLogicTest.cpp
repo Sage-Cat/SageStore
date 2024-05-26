@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <vector>
 
 #include "BusinessLogic/BusinessLogic.hpp"
-#include "RepositoryManagerMock.hpp"
-#include "RepositoryMock.hpp"
+#include "mocks/RepositoryManagerMock.hpp"
+#include "mocks/RepositoryMock.hpp"
 
 #include "common/Keys.hpp"
 #include "common/SpdlogConfig.hpp"
@@ -13,19 +13,18 @@
 using ::testing::_;
 using ::testing::Return;
 
-class BusinessLogicTest : public ::testing::Test
-{
+class BusinessLogicTest : public ::testing::Test {
 protected:
     std::unique_ptr<BusinessLogic> businessLogic;
 
     std::shared_ptr<RepositoryManagerMock> repositoryManagerMock;
-    std::shared_ptr<RepositoryMock<User>> usersRepositoryMock;
-    std::shared_ptr<RepositoryMock<Role>> rolesRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::User>> usersRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::Role>> rolesRepositoryMock;
 
     BusinessLogicTest()
         : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
-          usersRepositoryMock(std::make_shared<RepositoryMock<User>>()),
-          rolesRepositoryMock(std::make_shared<RepositoryMock<Role>>())
+          usersRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::User>>()),
+          rolesRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::Role>>())
     {
     }
 
@@ -46,27 +45,22 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
     constexpr char CORRECT_PASSWORD[] = "password1";
 
     RequestData requestData{
-        .module = "users",
-        .submodule = "login",
-        .method = "POST",
+        .module     = "users",
+        .submodule  = "login",
+        .method     = "POST",
         .resourceId = "",
-        .dataset = {{Keys::User::USERNAME, {CORRECT_USERNAME}},
-                    {Keys::User::PASSWORD, {CORRECT_PASSWORD}}}};
+        .dataset    = {{Common::Entities::User::USERNAME_KEY, {CORRECT_USERNAME}},
+                       {Common::Entities::User::PASSWORD_KEY, {CORRECT_PASSWORD}}}};
 
     // Set expectations on the UserRepositoryMock
-    const User user{
-        .id = "",
-        .username = CORRECT_USERNAME,
-        .password = CORRECT_PASSWORD,
-        .roleId = ""};
-    std::vector<User> expectedUsers{user};
-    EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
-        .WillOnce(Return(expectedUsers));
+    const Common::Entities::User user{
+        .id = "", .username = CORRECT_USERNAME, .password = CORRECT_PASSWORD, .roleId = ""};
+    std::vector<Common::Entities::User> expectedUsers{user};
+    EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
     // Prepare the callback and its expectation
     bool callbackInvoked = false;
-    auto callback = [&callbackInvoked](const ResponseData &responseData)
-    {
+    auto callback        = [&callbackInvoked](const ResponseData &responseData) {
         callbackInvoked = true;
         ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
     };
@@ -81,19 +75,13 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
 TEST_F(BusinessLogicTest, UsersModule_addRole)
 {
     RequestData requestData{
-        .module = "users",
-        .submodule = "roles",
-        .method = "GET",
-        .resourceId = "",
-        .dataset = {}};
+        .module = "users", .submodule = "roles", .method = "GET", .resourceId = "", .dataset = {}};
 
-    std::vector<Role> expectedUsers{};
-    EXPECT_CALL(*rolesRepositoryMock, getAll())
-        .WillOnce(Return(expectedUsers));
+    std::vector<Common::Entities::Role> expectedUsers{};
+    EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
     // Prepare the callback and its expectation
     bool callbackInvoked = false;
-    auto callback = [&callbackInvoked](const ResponseData &responseData)
-    {
+    auto callback        = [&callbackInvoked](const ResponseData &responseData) {
         callbackInvoked = true;
         ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
     };
