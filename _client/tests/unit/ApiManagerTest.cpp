@@ -72,8 +72,8 @@ private slots:
 
     void testSuccessfulUpdateUser()
     {
-        QSignalSpy updateUserSuccessSpy(apiManager, &ApiManager::userUpdated);
-        apiManager->updateUser(User{
+        QSignalSpy updateUserSuccessSpy(apiManager, &ApiManager::userEdited);
+        apiManager->editUser(User{
             .id = "1", .username = "updatedUser", .password = "updatedPassword", .roleId = "1"});
         QCOMPARE(updateUserSuccessSpy.count(), 1);
     }

@@ -108,7 +108,7 @@ TEST_F(UsersModuleTest, addUser)
     EXPECT_NO_THROW(usersModule->executeTask(requestData));
 }
 
-TEST_F(UsersModuleTest, updateUser)
+TEST_F(UsersModuleTest, editUser)
 {
     const std::string USER_ID      = "1";
     const std::string NEW_USERNAME = "updateduser";

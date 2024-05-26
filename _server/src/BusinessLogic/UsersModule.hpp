@@ -25,7 +25,7 @@ private:
 
     ResponseData getUsers();
     void addUser(const Dataset &request);
-    void updateUser(const Dataset &request, const std::string &userId);
+    void editUser(const Dataset &request, const std::string &userId);
     void deleteUser(const std::string &userId);
 
     ResponseData getRoles();

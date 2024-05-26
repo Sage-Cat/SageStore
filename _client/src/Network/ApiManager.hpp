@@ -1,7 +1,7 @@
 #pragma once
 
-#include <list>
 #include <map>
+#include <vector>
 
 #include <QObject>
 
@@ -26,7 +26,7 @@ public slots:
     virtual void loginUser(const QString &username, const QString &password);
     virtual void getUsers();
     virtual void addUser(const Common::Entities::User &user);
-    virtual void updateUser(const Common::Entities::User &user);
+    virtual void editUser(const Common::Entities::User &user);
     virtual void deleteUser(const QString &id);
 
     // Roles
@@ -43,12 +43,12 @@ signals:
     // Users
     void loginSuccess(const QString &id, const QString &roleId);
     void userAdded();
-    void userUpdated();
+    void userEdited();
     void userDeleted();
-    void usersList(const std::list<Common::Entities::User> &users);
+    void usersList(const std::vector<Common::Entities::User> &users);
 
     // Roles
-    void rolesList(const std::list<Common::Entities::Role> &roleList);
+    void rolesList(const std::vector<Common::Entities::User> &roleList);
     void roleCreated();
     void roleEdited();
     void roleDeleted();
