@@ -151,7 +151,8 @@ INSERT INTO Role (name) VALUES ('user');
 INSERT INTO Role (name) VALUES ('admin');
 
 -- Insert default user with roleId pointing to the default role
-INSERT INTO User (username, password, roleId) VALUES ('admin', 'admin123', 1); 
+-- Password "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9" is hashed with HEX from "admin123"
+INSERT INTO User (username, password, roleId) VALUES ('admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 1); 
 
 -- Insert default employee
 INSERT INTO Employee (name, number, email, address) VALUES ('John Doe', '123456789', 'john@example.com', '123 Main St');
