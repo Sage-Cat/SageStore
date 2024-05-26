@@ -12,7 +12,7 @@ class DialogManagerWrapper : public DialogManager {
 public:
     DialogManagerWrapper(ApiManager &apiManager) : DialogManager(apiManager) {}
 
-    void initDialogs() override
+    void setupDialogs() override
     {
         m_loginDialog        = new LoginDialogMock;
         m_registrationDialog = new RegistrationDialogMock;

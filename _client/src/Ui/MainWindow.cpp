@@ -1,10 +1,11 @@
 #include "MainWindow.hpp"
 
+#include <QAction>
+#include <QMenu>
 #include <QVBoxLayout>
 
-#include "Network/ApiManager.hpp"
 #include "Ui/Dialogs/DialogManager.hpp"
-#include "Ui/Views/BaseView.hpp"
+#include "Ui/MainMenuActions.hpp"
 
 #include "common/SpdlogConfig.hpp"
 
@@ -15,13 +16,12 @@ constexpr int WINDOW_HEIGHT = 800;
 
 MainWindow::MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &dialogManager,
                        QWidget *parent)
-    : QMainWindow(parent), m_app(app), m_apiManager(apiClient), m_dialogManager(dialogManager)
+    : QMainWindow(parent), m_app(app), m_apiManager(apiClient), m_dialogManager(dialogManager),
+      m_tabWidget(new QTabWidget(this)), m_statusBar(new QStatusBar(this))
 {
-    m_tabWidget = new QTabWidget(this);
-    m_statusBar = new QStatusBar(this);
-
     setupUi();
     setupMenu();
+    setupMVVM();
 }
 
 void MainWindow::startUiProcess()
@@ -83,8 +83,9 @@ void MainWindow::setupMenu()
         createModuleMenu(tr("Analytics"), {MainMenuActions::Type::SALES_ANALYTICS,
                                            MainMenuActions::Type::INVENTORY_ANALYTICS}));
     // Users Module Menu
-    m_mainMenuBar->addMenu(createModuleMenu(
-        tr("Users"), {MainMenuActions::Type::USER_ROLES, MainMenuActions::Type::USER_LOGS}));
+    m_mainMenuBar->addMenu(createModuleMenu(tr("Users"), {MainMenuActions::Type::USERS,
+                                                          MainMenuActions::Type::USER_ROLES,
+                                                          MainMenuActions::Type::USER_LOGS}));
     // Management Module Menu
     m_mainMenuBar->addMenu(createModuleMenu(tr("Management"), {MainMenuActions::Type::EMPLOYEES,
                                                                MainMenuActions::Type::CUSTOMERS,
@@ -95,11 +96,14 @@ void MainWindow::handleMainMenuAction(MainMenuActions::Type actionType)
 {
     SPDLOG_TRACE("MainWindow::setupMVVMConnections | actionType = {}",
                  MainMenuActions::NAMES.contains(actionType)
-                     ? MainMenuActions::NAMES.at(actionType)
+                     ? MainMenuActions::NAMES.at(actionType).toStdString()
                      : std::to_string(static_cast<int>(actionType)));
 
     // Performing action based on actionType
     switch (actionType) {
+    case MainMenuActions::Type::USERS:
+        m_tabWidget->addTab(m_usersView, MainMenuActions::NAMES.at(MainMenuActions::Type::USERS));
+        break;
     case MainMenuActions::Type::EXIT:
         close();
         break;
@@ -113,10 +117,20 @@ QMenu *MainWindow::createModuleMenu(const QString &menuTitle,
 {
     auto menu = new QMenu(menuTitle, this);
     for (auto actionType : actions) {
-        auto action = new QAction(MainMenuActions::NAMES.at(actionType).c_str(), menu);
+        auto action = new QAction(MainMenuActions::NAMES.at(actionType), menu);
         connect(action, &QAction::triggered,
                 [this, actionType]() { handleMainMenuAction(actionType); });
         menu->addAction(action);
     }
     return menu;
+}
+
+void MainWindow::setupMVVM()
+{
+    // Users Management
+    m_usersManagementModel     = new UsersManagementModel(m_apiManager, this);
+    m_usersManagementViewModel = new UsersManagementViewModel(*m_usersManagementModel, this);
+    m_usersView                = new UsersView(*m_usersManagementViewModel, this);
+    connect(m_usersManagementModel, &BaseModel::errorOccurred, &m_dialogManager,
+            &DialogManager::showErrorDialog);
 }

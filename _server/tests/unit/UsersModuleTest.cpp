@@ -67,8 +67,10 @@ TEST_F(UsersModuleTest, getUsers)
     RequestData requestData{
         .module = "users", .submodule = "users", .method = "GET", .resourceId = "", .dataset = {}};
 
-    std::vector<Common::Entities::User> expectedUsers{Common::Entities::User{"1", "user1", "pass1", "role1"},
-                                    Common::Entities::User{"2", "user2", "pass2", "role2"}};
+    std::vector<Common::Entities::User> expectedUsers{
+        Common::Entities::User{"1", "user1", "pass1", "role1"},
+        Common::Entities::User{"2", "user2", "pass2", "role2"}};
+
     EXPECT_CALL(*usersRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
 
     ResponseData response = usersModule->executeTask(requestData);
@@ -134,7 +136,7 @@ TEST_F(UsersModuleTest, deleteUser)
 
     RequestData requestData{.module     = "users",
                             .submodule  = "users",
-                            .method     = "DEL",
+                            .method     = "DELETE",
                             .resourceId = USER_ID,
                             .dataset    = {}};
 
@@ -151,6 +153,7 @@ TEST_F(UsersModuleTest, getRoles)
     std::vector<Common::Entities::Role> expectedRoles{
         Common::Entities::Role{.id = "1", .name = "user"},
         Common::Entities::Role{.id = "2", .name = "admin"}};
+
     EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedRoles));
 
     ResponseData response = usersModule->executeTask(requestData);
@@ -202,7 +205,7 @@ TEST_F(UsersModuleTest, deleteRoles)
 
     RequestData requestData{.module     = "users",
                             .submodule  = "roles",
-                            .method     = "DEL",
+                            .method     = "DELETE",
                             .resourceId = CORRECT_ID,
                             .dataset    = {}};
 

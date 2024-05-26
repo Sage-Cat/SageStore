@@ -2,16 +2,18 @@
 
 #include <QObject>
 
+class BaseModel;
+
 /**
  * @interface BaseModel
  * @brief Interface for models.
  */
-class BaseModel : public QObject {
+class BaseViewModel : public QObject {
     Q_OBJECT
 
 public:
-    explicit BaseModel(QObject *parent = nullptr);
-    virtual ~BaseModel();
+    explicit BaseViewModel(BaseModel &model, QObject *parent = nullptr);
+    virtual ~BaseViewModel();
 
 signals:
     void errorOccurred(const QString &errorMessage);

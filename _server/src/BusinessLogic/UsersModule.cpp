@@ -27,6 +27,9 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
     SPDLOG_TRACE("UsersModule::executeTask");
     ResponseData response;
 
+    SPDLOG_DEBUG("UsersModule::executeTask | Submodule: {}, Method: {}", requestData.submodule,
+                 requestData.method);
+
     if (requestData.submodule == "login" && requestData.method == "POST") {
         response = loginUser(requestData.dataset);
     } else if (requestData.submodule == "users") {
@@ -36,8 +39,12 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
             addUser(requestData.dataset);
         } else if (requestData.method == "PUT") {
             editUser(requestData.dataset, requestData.resourceId);
-        } else if (requestData.method == "DEL") {
+        } else if (requestData.method == "DELETE") {
             deleteUser(requestData.resourceId);
+        } else {
+            SPDLOG_ERROR("UsersModule::executeTask | Submodule = users | Unrecognized method: {}",
+                         requestData.method);
+            throw ServerException(_M, "Unrecognized method");
         }
     } else if (requestData.submodule == "roles") {
         if (requestData.method == "GET") {
@@ -46,11 +53,15 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
             addRole(requestData.dataset);
         } else if (requestData.method == "PUT") {
             updateRole(requestData.dataset, requestData.resourceId);
-        } else if (requestData.method == "DEL") {
+        } else if (requestData.method == "DELETE") {
             deleteRole(requestData.resourceId);
+        } else {
+            SPDLOG_ERROR("UsersModule::executeTask | Submodule = users | Unrecognized method: {}",
+                         requestData.method);
+            throw ServerException(_M, "Unrecognized method");
         }
     } else {
-        SPDLOG_ERROR("UsersModule::executeTask Unrecognized task: " + requestData.submodule + "/" +
+        SPDLOG_ERROR("UsersModule::executeTask | Unrecognized task: {}/{}", requestData.submodule,
                      requestData.method);
         throw ServerException(_M, "Unrecognized task");
     }
@@ -120,7 +131,10 @@ void UsersModule::addUser(const Dataset &request)
     try {
         username = request.at(Common::Entities::User::USERNAME_KEY).front();
         password = request.at(Common::Entities::User::PASSWORD_KEY).front();
-        roleId   = request.at(Common::Entities::User::ROLE_ID_KEY).front();
+
+        // We could have no Role (it means to use default)
+        if (request.contains(Common::Entities::User::ROLE_ID_KEY))
+            request.at(Common::Entities::User::ROLE_ID_KEY);
     } catch (const std::out_of_range &e) {
         SPDLOG_ERROR("UsersModule::addUser | Missing user data: {}", e.what());
         throw ServerException(_M, "Incomplete user data");

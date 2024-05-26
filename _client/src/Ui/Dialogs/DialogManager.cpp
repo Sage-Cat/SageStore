@@ -18,9 +18,8 @@ DialogManager::~DialogManager()
 
 void DialogManager::init()
 {
-    initDialogs();
+    setupDialogs();
     setupApiConnections();
-    setupDialogsConnections();
 }
 
 void DialogManager::showLoginDialog()
@@ -43,12 +42,27 @@ void DialogManager::showErrorDialog(const QString &message)
 
 QMessageBox *DialogManager::messageDialog() const { return m_messageDialog; }
 
-void DialogManager::initDialogs()
+void DialogManager::setupDialogs()
 {
-    SPDLOG_TRACE("DialogManager::initDialogs");
+    SPDLOG_TRACE("DialogManager::setupDialogs");
     m_loginDialog        = new LoginDialog();
     m_registrationDialog = new RegistrationDialog();
     m_messageDialog      = new QMessageBox();
+
+    // --- Connnections ---
+    // Login
+    connect(m_loginDialog, &LoginDialog::registrationRequested, [this]() {
+        m_loginDialog->hide();
+        m_registrationDialog->show();
+    });
+
+    // Registration
+    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this,
+            &DialogManager::showErrorDialog);
+    connect(m_registrationDialog, &RegistrationDialog::loginRequested, [this]() {
+        m_registrationDialog->hide();
+        m_loginDialog->show();
+    });
 }
 
 void DialogManager::setupApiConnections()
@@ -64,25 +78,7 @@ void DialogManager::setupApiConnections()
     // Registrations
     connect(m_registrationDialog, &RegistrationDialog::registrationAttempted, &m_apiManager,
             &ApiManager::addUser);
-    connect(&m_apiManager, &ApiManager::userAdded, this, &DialogManager::onuserAdded);
-}
-
-void DialogManager::setupDialogsConnections()
-{
-    SPDLOG_TRACE("DialogManager::setupDialogsConnections");
-    // Login
-    connect(m_loginDialog, &LoginDialog::registrationRequested, [this]() {
-        m_loginDialog->hide();
-        m_registrationDialog->show();
-    });
-
-    // Registration
-    connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this,
-            &DialogManager::showErrorDialog);
-    connect(m_registrationDialog, &RegistrationDialog::loginRequested, [this]() {
-        m_registrationDialog->hide();
-        m_loginDialog->show();
-    });
+    connect(&m_apiManager, &ApiManager::userAdded, this, &DialogManager::onUserAdded);
 }
 
 void DialogManager::showMessage(const QString &title, const QString &message,
@@ -103,9 +99,9 @@ void DialogManager::onLoginSuccess()
     showMessage(tr("Message"), tr("Login successfull"), QMessageBox::Information);
 }
 
-void DialogManager::onuserAdded()
+void DialogManager::onUserAdded()
 {
-    SPDLOG_TRACE("DialogManager::onuserAdded");
+    SPDLOG_TRACE("DialogManager::onUserAdded");
     m_registrationDialog->hide();
     m_loginDialog->showWithPresetData(m_registrationDialog->getUsername(),
                                       m_registrationDialog->getPassword());

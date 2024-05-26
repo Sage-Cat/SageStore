@@ -37,14 +37,14 @@ private slots:
     void testSuccessfulAddRole()
     {
         QSignalSpy addSuccessSpy(apiManager, &ApiManager::roleCreated);
-        apiManager->createRole(Role{.name = "testName"});
+        apiManager->createRole(Common::Entities::Role{.name = "testName"});
         QCOMPARE(addSuccessSpy.count(), 1);
     }
 
     void testSuccessfulEditRoles()
     {
         QSignalSpy editSuccessSpy(apiManager, &ApiManager::roleEdited);
-        apiManager->editRole(Role{.id = "0", .name = "testName"});
+        apiManager->editRole(Common::Entities::Role{.id = "0", .name = "testName"});
         QCOMPARE(editSuccessSpy.count(), 1);
     }
 
@@ -65,15 +65,15 @@ private slots:
     void testSuccessfulAddUser()
     {
         QSignalSpy addUserSuccessSpy(apiManager, &ApiManager::userAdded);
-        apiManager->addUser(
-            User{.id = "1", .username = "newUser", .password = "newPassword", .roleId = "1"});
+        apiManager->addUser(Common::Entities::User{
+            .id = "1", .username = "newUser", .password = "newPassword", .roleId = "1"});
         QCOMPARE(addUserSuccessSpy.count(), 1);
     }
 
     void testSuccessfulUpdateUser()
     {
         QSignalSpy updateUserSuccessSpy(apiManager, &ApiManager::userEdited);
-        apiManager->editUser(User{
+        apiManager->editUser(Common::Entities::User{
             .id = "1", .username = "updatedUser", .password = "updatedPassword", .roleId = "1"});
         QCOMPARE(updateUserSuccessSpy.count(), 1);
     }
