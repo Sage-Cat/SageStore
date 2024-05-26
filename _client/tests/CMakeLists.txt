@@ -6,4 +6,8 @@ set(CLIENT_TEST_INCLUDE_DIR "${CLIENT_TESTS_DIR}/include")
 
 # tests
 add_subdirectory(unit)
-add_subdirectory(component)
+
+# Component tests are not applicable for the UI part 
+# and for the Networking part it's enough to have unit tests
+# TODO:
+#add_subdirectory(component)

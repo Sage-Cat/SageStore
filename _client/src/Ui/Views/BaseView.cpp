@@ -1,24 +1,21 @@
 #include "BaseView.hpp"
 #include "Ui/Views/ViewStyles.hpp"
 
-BaseView::BaseView(QWidget *parent) : QWidget(parent)
+#include "Ui/ViewModels/BaseViewModel.hpp"
+
+#include "common/SpdlogConfig.hpp"
+
+BaseView::BaseView(BaseViewModel &viewModel, QWidget *parent) : QWidget(parent)
 {
-    setupUi(); // Call function to set up the user interface
+    setupUi();
+    connect(this, &BaseView::errorOccurred, &viewModel, &BaseViewModel::errorOccurred);
 }
 
-BaseView::~BaseView()
-{
-    // spacerItems
-    delete m_buttonRowSpacerItem;
-    delete m_additionalInfoSpacerItem;
-
-    // layouts
-    delete m_buttonRow;
-    delete m_additionalInfo;
-}
+BaseView::~BaseView() {}
 
 void BaseView::setupUi()
 {
+    SPDLOG_TRACE("BaseView::setupUi");
     // Create buttons
     m_addButton    = new QPushButton("Add", this);
     m_deleteButton = new QPushButton("Delete", this);

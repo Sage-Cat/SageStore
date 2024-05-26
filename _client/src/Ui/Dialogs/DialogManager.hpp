@@ -22,17 +22,17 @@ public:
 
     void init();
 
+    QMessageBox *messageDialog() const;
+
+public slots:
     // show dialogs
     virtual void showLoginDialog();
     virtual void showRegistrationDialog();
     virtual void showErrorDialog(const QString &message);
 
-    QMessageBox *messageDialog() const;
-
 protected:
-    virtual void initDialogs();
+    virtual void setupDialogs();
     void setupApiConnections();
-    void setupDialogsConnections();
 
     void showMessage(const QString &title, const QString &message, QMessageBox::Icon type);
 
@@ -41,7 +41,7 @@ private:
 
 private slots:
     void onLoginSuccess();
-    void onuserAdded();
+    void onUserAdded();
 
 protected:
     // dialogs

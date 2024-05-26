@@ -17,6 +17,7 @@ enum class Method {
     PUT  = QNetworkAccessManager::Operation::PutOperation,
     DEL  = QNetworkAccessManager::Operation::DeleteOperation
 };
+std::string to_string(Method method);
 
 /**
  * @class NetworkService
@@ -35,12 +36,15 @@ public:
     explicit NetworkService(const ServerConfig &serverConfig,
                             std::unique_ptr<IDataSerializer> serializer);
 
+    void init();
+
     virtual void sendRequest(std::string endpoint, Method method = Method::GET,
                              const Dataset &dataset         = Dataset(),
                              const std::string &resource_id = "");
 
 signals:
     void responseReceived(const std::string &endpoint, Method method, const Dataset &dataset);
+    void connected();
 
 private slots:
     void onNetworkReply(const std::string &endpoint, Method method, QNetworkReply *reply);

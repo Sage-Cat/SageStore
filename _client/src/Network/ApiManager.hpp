@@ -40,6 +40,9 @@ protected slots:
     virtual void handleResponse(const std::string &endpoint, Method method, const Dataset &dataset);
 
 signals:
+    // Startup
+    void ready();
+
     // Users
     void loginSuccess(const QString &id, const QString &roleId);
     void userAdded();
@@ -48,7 +51,7 @@ signals:
     void usersList(const std::vector<Common::Entities::User> &users);
 
     // Roles
-    void rolesList(const std::vector<Common::Entities::User> &roleList);
+    void rolesList(const std::vector<Common::Entities::Role> &roleList);
     void roleCreated();
     void roleEdited();
     void roleDeleted();

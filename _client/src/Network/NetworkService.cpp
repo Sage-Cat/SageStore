@@ -2,9 +2,25 @@
 
 #include "common/SpdlogConfig.hpp"
 
+std::string to_string(Method method)
+{
+    switch (method) {
+    case Method::GET:
+        return "GET";
+    case Method::POST:
+        return "POST";
+    case Method::PUT:
+        return "PUT";
+    case Method::DEL:
+        return "DEL";
+    default:
+        return "UNKNOWN";
+    }
+}
+
 NetworkService::NetworkService(const ServerConfig &serverConfig,
                                std::unique_ptr<IDataSerializer> serializer)
-    : m_manager(new QNetworkAccessManager(this)), m_serializer(std::move(serializer))
+    : m_serializer(std::move(serializer))
 {
     SPDLOG_TRACE("NetworkService::NetworkService");
 
@@ -13,10 +29,20 @@ NetworkService::NetworkService(const ServerConfig &serverConfig,
     m_serverUrl.setPort(serverConfig.port);
 }
 
+void NetworkService::init()
+{
+    SPDLOG_TRACE("NetworkService::init");
+    m_manager = new QNetworkAccessManager(this);
+
+    SPDLOG_TRACE("NetworkService | emit successful connetction to server");
+    emit connected();
+}
+
 void NetworkService::sendRequest(std::string endpoint, Method method, const Dataset &dataset,
                                  const std::string &resource_id)
 {
-    SPDLOG_TRACE("NetworkService::sendRequest");
+    SPDLOG_TRACE("NetworkService::sendRequest | endpoint = {} | method = {} | recource_id = {}",
+                 endpoint, to_string(method), resource_id);
 
     QNetworkReply *reply = nullptr;
 

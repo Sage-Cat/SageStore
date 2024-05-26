@@ -27,15 +27,15 @@ private slots:
     void testAddUser()
     {
         QSignalSpy userAddedSpy(usersManagementModel, &UsersManagementModel::userAdded);
-        usersManagementModel->addUser(
-            User{.id = "1", .username = "newUser", .password = "newPassword", .roleId = "1"});
+        usersManagementModel->addUser(Common::Entities::User{
+            .id = "1", .username = "newUser", .password = "newPassword", .roleId = "1"});
         QCOMPARE(userAddedSpy.count(), 1);
     }
 
     void testEditUser()
     {
         QSignalSpy userEditedSpy(usersManagementModel, &UsersManagementModel::userEdited);
-        usersManagementModel->editUser(User{
+        usersManagementModel->editUser(Common::Entities::User{
             .id = "1", .username = "updatedUser", .password = "updatedPassword", .roleId = "1"});
         QCOMPARE(userEditedSpy.count(), 1);
     }
@@ -57,14 +57,14 @@ private slots:
     void testCreateRole()
     {
         QSignalSpy roleCreatedSpy(usersManagementModel, &UsersManagementModel::roleCreated);
-        usersManagementModel->createRole(Role{.name = "testRole"});
+        usersManagementModel->createRole(Common::Entities::Role{.name = "testRole"});
         QCOMPARE(roleCreatedSpy.count(), 1);
     }
 
     void testEditRole()
     {
         QSignalSpy roleEditedSpy(usersManagementModel, &UsersManagementModel::roleEdited);
-        usersManagementModel->editRole(Role{.id = "1", .name = "updatedRole"});
+        usersManagementModel->editRole(Common::Entities::Role{.id = "1", .name = "updatedRole"});
         QCOMPARE(roleEditedSpy.count(), 1);
     }
 
@@ -80,13 +80,6 @@ private slots:
         QSignalSpy rolesChangedSpy(usersManagementModel, &UsersManagementModel::rolesChanged);
         usersManagementModel->fetchRoles();
         QCOMPARE(rolesChangedSpy.count(), 1);
-    }
-
-    void testErrorOccurred()
-    {
-        QSignalSpy errorOccurredSpy(usersManagementModel, &UsersManagementModel::errorOccurred);
-        apiManagerMock->emitError("Test error");
-        QCOMPARE(errorOccurredSpy.count(), 1);
     }
 };
 

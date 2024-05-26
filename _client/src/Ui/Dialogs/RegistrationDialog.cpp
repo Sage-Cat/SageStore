@@ -24,14 +24,13 @@ RegistrationDialog::~RegistrationDialog()
 
 void RegistrationDialog::showWithPresetData(const QString &username, const QString &password)
 {
-    SPDLOG_TRACE("RegistrationDialog::showWithPresetData | user: {} | password: {}",
-                 username.toStdString(), password.toStdString());
+    SPDLOG_TRACE("RegistrationDialog::showWithPresetData | user: {}", username.toStdString());
     m_usernameField->setText(username);
     m_passwordField->setText(password);
     show();
 }
 
-void RegistrationDialog::onuserAdded() { SPDLOG_TRACE("RegistrationDialog::onuserAdded"); }
+void RegistrationDialog::onUserAdded() { SPDLOG_TRACE("RegistrationDialog::onUserAdded"); }
 
 void RegistrationDialog::onRegistrationFailure()
 {
@@ -107,13 +106,13 @@ void RegistrationDialog::onRegisterClicked()
     SPDLOG_TRACE("RegistrationDialog::onRegisterClicked | Username: {}",
                  m_usernameField->text().toStdString());
     if (m_passwordField->text() == m_confirmPasswordField->text())
-        emit registrationAttempted(
-            User{.id       = {},
-                 .username = m_usernameField->text().toStdString(),
-                 .password = QCryptographicHash::hash(m_passwordField->text().toUtf8(),
-                                                      QCryptographicHash::Sha256)
-                                 .toStdString(),
-                 .roleId = {}});
+        emit registrationAttempted(Common::Entities::User{
+            .id       = {},
+            .username = m_usernameField->text().toStdString(),
+            .password = QCryptographicHash::hash(m_passwordField->text().toUtf8(),
+                                                 QCryptographicHash::Sha256)
+                            .toStdString(),
+            .roleId = {"0"}});
     else
         emit requestErrorMessageBox(tr("Passwords do not match"));
 }

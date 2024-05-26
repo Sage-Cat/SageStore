@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     NetworkService networkService(serverConfig, std::make_unique<JsonSerializer>());
     ApiManager apiManager(networkService);
     QThread apiManagerThread;
+    QObject::connect(&apiManagerThread, &QThread::started, &networkService, &NetworkService::init);
     apiManager.moveToThread(&apiManagerThread);
     networkService.moveToThread(&apiManagerThread);
     apiManagerThread.start();

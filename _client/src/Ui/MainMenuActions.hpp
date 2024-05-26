@@ -19,6 +19,7 @@ enum class Type {
     STOCK_TRACKING,
     SALES_ANALYTICS,
     INVENTORY_ANALYTICS,
+    USERS,
     USER_ROLES,
     USER_LOGS,
     EMPLOYEES,
@@ -26,7 +27,7 @@ enum class Type {
     SUPPLIERS
 };
 
-const std::map<Type, std::string> NAMES = {
+const std::map<Type, QString> NAMES = {
     {Type::SETTINGS, "Settings"},
     {Type::EXIT, "Exit"},
     {Type::PURCHASE_ORDERS, "Purchase Orders"},
@@ -40,6 +41,7 @@ const std::map<Type, std::string> NAMES = {
     {Type::STOCK_TRACKING, "Stock Tracking"},
     {Type::SALES_ANALYTICS, "Sales Analytics"},
     {Type::INVENTORY_ANALYTICS, "Inventory Analytics"},
+    {Type::USERS, "Users Management"},
     {Type::USER_ROLES, "User Roles"},
     {Type::USER_LOGS, "User Logs"},
     {Type::EMPLOYEES, "Employees"},
