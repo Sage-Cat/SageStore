@@ -35,28 +35,28 @@ void ApiManager::getUsers()
     m_networkService.sendRequest(Endpoints::Users::USERS, Method::GET);
 }
 
-void ApiManager::addUser(const User &user)
+void ApiManager::addUser(const Common::Entities::User &user)
 {
     SPDLOG_TRACE("ApiManager::addUser");
 
     Dataset dataset;
-    dataset[User::ID_KEY]       = {user.id};
-    dataset[User::USERNAME_KEY] = {user.username};
-    dataset[User::PASSWORD_KEY] = {user.password};
-    dataset[User::ROLE_ID_KEY]  = {user.roleId};
+    dataset[Common::Entities::User::ID_KEY]       = {user.id};
+    dataset[Common::Entities::User::USERNAME_KEY] = {user.username};
+    dataset[Common::Entities::User::PASSWORD_KEY] = {user.password};
+    dataset[Common::Entities::User::ROLE_ID_KEY]  = {user.roleId};
 
     m_networkService.sendRequest(Endpoints::Users::USERS, Method::POST, dataset);
 }
 
-void ApiManager::updateUser(const User &user)
+void ApiManager::editUser(const Common::Entities::User &user)
 {
-    SPDLOG_TRACE("ApiManager::updateUser");
+    SPDLOG_TRACE("ApiManager::editUser");
 
     Dataset dataset;
-    dataset[User::ID_KEY]       = {user.id};
-    dataset[User::USERNAME_KEY] = {user.username};
-    dataset[User::PASSWORD_KEY] = {user.password};
-    dataset[User::ROLE_ID_KEY]  = {user.roleId};
+    dataset[Common::Entities::User::ID_KEY]       = {user.id};
+    dataset[Common::Entities::User::USERNAME_KEY] = {user.username};
+    dataset[Common::Entities::User::PASSWORD_KEY] = {user.password};
+    dataset[Common::Entities::User::ROLE_ID_KEY]  = {user.roleId};
 
     m_networkService.sendRequest(Endpoints::Users::USERS, Method::PUT, dataset, user.id);
 }
@@ -75,7 +75,7 @@ void ApiManager::getRoleList()
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::GET);
 }
 
-void ApiManager::createRole(const Role &role)
+void ApiManager::createRole(const Common::Entities::Role &role)
 {
     SPDLOG_TRACE("ApiManager::postRole");
     Dataset dataset;
@@ -85,7 +85,7 @@ void ApiManager::createRole(const Role &role)
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::POST, dataset);
 }
 
-void ApiManager::editRole(const Role &role)
+void ApiManager::editRole(const Common::Entities::Role &role)
 {
     SPDLOG_TRACE("ApiManager::editRole");
     Dataset dataset;
@@ -203,7 +203,7 @@ void ApiManager::handleUsers(Method method, const Dataset &dataset)
         emit userAdded();
         break;
     case Method::PUT:
-        emit userUpdated();
+        emit userEdited();
         break;
     case Method::DEL:
         emit userDeleted();
@@ -233,7 +233,7 @@ void ApiManager::handleRolesList(const Dataset &dataset)
             return;
         }
 
-        std::list<Common::Entities::Role> roles;
+        std::vector<Common::Entities::Role> roles;
         auto idIt   = idList.begin();
         auto nameIt = nameList.begin();
 
@@ -257,16 +257,18 @@ void ApiManager::handleUsersList(const Dataset &dataset)
     SPDLOG_TRACE("ApiManager::handleUsersList");
 
     try {
-        if (!dataset.contains(User::ID_KEY) || !dataset.contains(User::USERNAME_KEY) ||
-            !dataset.contains(User::PASSWORD_KEY) || !dataset.contains(User::ROLE_ID_KEY)) {
+        if (!dataset.contains(Common::Entities::User::ID_KEY) ||
+            !dataset.contains(Common::Entities::User::USERNAME_KEY) ||
+            !dataset.contains(Common::Entities::User::PASSWORD_KEY) ||
+            !dataset.contains(Common::Entities::User::ROLE_ID_KEY)) {
             handleError("dataset doesn't contain required User keys");
             return;
         }
 
-        const auto &idList       = dataset.at(User::ID_KEY);
-        const auto &usernameList = dataset.at(User::USERNAME_KEY);
-        const auto &passwordList = dataset.at(User::PASSWORD_KEY);
-        const auto &roleIdList   = dataset.at(User::ROLE_ID_KEY);
+        const auto &idList       = dataset.at(Common::Entities::User::ID_KEY);
+        const auto &usernameList = dataset.at(Common::Entities::User::USERNAME_KEY);
+        const auto &passwordList = dataset.at(Common::Entities::User::PASSWORD_KEY);
+        const auto &roleIdList   = dataset.at(Common::Entities::User::ROLE_ID_KEY);
 
         if (idList.size() != usernameList.size() || usernameList.size() != passwordList.size() ||
             passwordList.size() != roleIdList.size()) {
@@ -274,7 +276,7 @@ void ApiManager::handleUsersList(const Dataset &dataset)
             return;
         }
 
-        std::list<User> users;
+        std::vector<Common::Entities::User> users;
         auto idIt       = idList.begin();
         auto usernameIt = usernameList.begin();
         auto passwordIt = passwordList.begin();
@@ -282,7 +284,7 @@ void ApiManager::handleUsersList(const Dataset &dataset)
 
         while (idIt != idList.end() && usernameIt != usernameList.end() &&
                passwordIt != passwordList.end() && roleIdIt != roleIdList.end()) {
-            User user{
+            Common::Entities::User user{
                 .id = *idIt, .username = *usernameIt, .password = *passwordIt, .roleId = *roleIdIt};
             users.push_back(user);
 

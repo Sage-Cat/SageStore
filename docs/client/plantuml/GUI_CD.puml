@@ -16,7 +16,7 @@ class UiManager {
     ... <<other Views>>
 }
 
-interface IModel {
+interface BaseModel {
 }
 
 interface IViewModel {
@@ -36,7 +36,7 @@ class DialogManager {
 class LoginDialog implements BaseDialog {
 }
 
-class ConcreteModel implements IModel {
+class ConcreteModel implements BaseModel {
 }
 
 class ConcreteViewModel implements IViewModel {
@@ -51,7 +51,7 @@ UiManager -->  ConcreteModel
 UiManager  -->  ConcreteViewModel
 UiManager  -->  ConcreteView
 UiManager -[hidden]right- IViewModel
-UiManager -[hidden]right- IModel
+UiManager -[hidden]right- BaseModel
 UiManager -[hidden]right- BaseView
 UiManager  --> DialogManager
 

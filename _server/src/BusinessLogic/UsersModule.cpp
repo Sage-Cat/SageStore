@@ -35,7 +35,7 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
         } else if (requestData.method == "POST") {
             addUser(requestData.dataset);
         } else if (requestData.method == "PUT") {
-            updateUser(requestData.dataset, requestData.resourceId);
+            editUser(requestData.dataset, requestData.resourceId);
         } else if (requestData.method == "DEL") {
             deleteUser(requestData.resourceId);
         }
@@ -138,9 +138,9 @@ void UsersModule::addUser(const Dataset &request)
     SPDLOG_INFO("UsersModule::addUser | New user `{}` added", username);
 }
 
-void UsersModule::updateUser(const Dataset &request, const std::string &userId)
+void UsersModule::editUser(const Dataset &request, const std::string &userId)
 {
-    SPDLOG_TRACE("UsersModule::updateUser");
+    SPDLOG_TRACE("UsersModule::editUser");
     if (userId.empty()) {
         throw ServerException(_M, "User ID is empty");
     }
@@ -151,14 +151,14 @@ void UsersModule::updateUser(const Dataset &request, const std::string &userId)
         password = request.at(Common::Entities::User::PASSWORD_KEY).front();
         roleId   = request.at(Common::Entities::User::ROLE_ID_KEY).front();
     } catch (const std::out_of_range &e) {
-        SPDLOG_ERROR("UsersModule::updateUser | Missing user data: {}", e.what());
+        SPDLOG_ERROR("UsersModule::editUser | Missing user data: {}", e.what());
         throw ServerException(_M, "Incomplete user data");
     }
 
     Common::Entities::User updatedUser{
         .id = userId, .username = username, .password = password, .roleId = roleId};
     m_usersRepository->update(updatedUser);
-    SPDLOG_INFO("UsersModule::updateUser | User `{}` updated", username);
+    SPDLOG_INFO("UsersModule::editUser | User `{}` updated", username);
 }
 
 void UsersModule::deleteUser(const std::string &userId)

@@ -6,7 +6,6 @@
 #include "wrappers/DialogManagerWrapper.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
-#include "mocks/NetworkServiceMock.hpp"
 
 /* This component test performs testing of MainWindow+DialogManager (NO UI)
  * logic block It's purpose is to test main signal-slot connections between
@@ -19,14 +18,12 @@ class UiTest : public QObject {
     MainWindow *mainWindow;
     DialogManagerWrapper *dialogManager;
 
-    NetworkServiceMock *networkServiceMock;
     ApiManagerMock *apiManagerMock;
 
 public:
     UiTest(QApplication &app) : app(app)
     {
-        networkServiceMock = new NetworkServiceMock;
-        apiManagerMock     = new ApiManagerMock(*networkServiceMock);
+        apiManagerMock = new ApiManagerMock();
 
         mainWindow = new MainWindow(app, *apiManagerMock, *dialogManager);
     }
@@ -35,7 +32,6 @@ public:
     {
         delete mainWindow;
         delete apiManagerMock;
-        delete networkServiceMock;
     }
 
 private slots:
