@@ -1,0 +1,113 @@
+
+
+
+<!DOCTYPE html>
+<script>
+function setAction(action) {
+    var form = document.getElementById('reglogform');
+    form.action = action;
+    form.submit();
+}
+
+ </script>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body >
+  
+                    <title>Combobox Example</title>
+                
+                </head>
+                <body>
+                    <div class="flex justify-center">
+                    <select class="block  w-max h-max flex justify-center  px-4 py-2 text-base rounded-lg text-black bg-green-600" id="combobox" onchange="showContent()">
+                        <option value="form">Register/Login</option>
+                        <option value="hello">Another Form</option>
+                    </select>
+                </div>
+                
+                    <div id="formContent" class="content">
+                        <div class="py-12 w-50%">
+                            <div class="px-4 py-4 bg-grey-600 shadow rounded">
+                                <h1 class="pt-4 pb-8 text-xl font-bold flex w-50% h-50% justify-center text-black">
+                                 {{.}}
+                                </h1>
+                                <form id="reglogform" method="post">
+                                    <div class="py-2 flex justify-center">
+                                        <label class="pr-8" for="username">Username</label>
+                                        <input name="username" id="username" type="text" placeholder="username"  required autocomplete="name" class="w-max px-3 py-2 border border-gray-300 rounded-lg" />
+                                    </div>
+                                    <div class="py-2 flex justify-center">
+                                        <label class="pr-8" for="password">Password</label>
+                                        <input type="text" name="password" id="password" placeholder="password"  required autocomplete="password" class="w-max px-3 py-2 border border-gray-300 rounded-lg" />
+                                    </div>
+                                    <div class="py-2 flex justify-center">
+                                      
+                                        <button id="login" class="px-6 py-3.5 text-base font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" onclick="setAction('/login')">Login</button>
+                                        <button id="register" class="px-6 py-3.5 text-base font-medium text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" type="button" onclick="setAction('/register')">Register</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                  
+                
+                    <div id="helloContent" class="content">
+                        <div class="py-12 w-50%">
+                            <div class="px-4 py-4 bg-gray-200 shadow rounded">
+                                <h1 class="pt-4 pb-8 text-xl font-bold flex w-50% h-50% justify-center text-gray-900">
+                                    Product Form
+                                </h1>
+                                <form id="productForm" method="post">
+                                    <div class="py-2 flex justify-center">
+                                        <label class="pr-8" for="productId">Product ID</label>
+                                        <input name="productId" id="productId" type="text" placeholder="Product ID" required autocomplete="off" class="w-max px-3 py-2 border border-gray-300 rounded-lg" />
+                                    </div>
+                                    <div class="py-2 flex justify-center">
+                                        <label class="pr-8" for="productName">Product Name</label>
+                                        <input name="productName" id="productName" type="text" placeholder="Product Name" required autocomplete="off" class="w-max px-3 py-2 border border-gray-300 rounded-lg" />
+                                    </div>
+                                    <div class="py-2 flex justify-center">
+                                        <button type="submit" id="submitProduct" class="px-6 py-3.5 text-base font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <script>
+                        function showContent() {
+                            var combobox = document.getElementById('combobox');
+                            var formContent = document.getElementById('formContent');
+                            var helloContent = document.getElementById('helloContent');
+                
+                            formContent.style.display = 'none';
+                            helloContent.style.display = 'none';
+                
+                            if (combobox.value === 'form') {
+                                formContent.style.display = 'block';
+                            } else if (combobox.value === 'hello') {
+                                helloContent.style.display = 'block';
+                            }
+                        }
+                
+                        showContent();
+                    </script>
+               
+                
+        
+</body>
+</html> 
+
+
+
