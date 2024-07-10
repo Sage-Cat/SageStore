@@ -144,7 +144,7 @@ ctest --verbose
    export QT_DIR
    ```
    into your .bashrc file.
-   INPORTANT: version of qt is 6.6.3
+   INPORTANT: version of qt is 6.6.2
  
 2. Go to build folder and run cmake with presets
 
