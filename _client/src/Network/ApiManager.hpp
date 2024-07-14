@@ -8,6 +8,8 @@
 #include "common/DataTypes.hpp"
 #include "common/Entities/Role.hpp"
 #include "common/Entities/User.hpp"
+#include "common/Entities/PurchaseOrder.hpp"
+#include "common/Entities/PurchaseOrderRecord.hpp"
 
 class NetworkService;
 enum class Method;
@@ -35,6 +37,20 @@ public slots:
     virtual void editRole(const Common::Entities::Role &role);
     virtual void deleteRole(const QString &id);
 
+    // Purchase Orders and Purchase Order Records aren't implemented and connected in the snippet. It's just a plug.
+
+    // Purchase Orders
+    virtual void getPurchaseOrders();
+    virtual void createPurchaseOrder(const Common::Entities::PurchaseOrder &purchaseOrder);
+    virtual void editPurchaseOrder(const Common::Entities::PurchaseOrder &purchaseOrder);
+    virtual void deletePurchaseOrder(const QString &id);
+
+    // Purchase Order Records
+    virtual void getPurchaseOrderRecords();
+    virtual void createPurchaseOrderRecord(const Common::Entities::PurchaseOrder &purchaseOrder);
+    virtual void editPurchaseOrderRecord(const Common::Entities::PurchaseOrder &purchaseOrder);
+    virtual void deletePurchaseOrderRecord(const QString &id);
+
 protected slots:
     // for NetworkService
     virtual void handleResponse(const std::string &endpoint, Method method, const Dataset &dataset);
@@ -55,6 +71,21 @@ signals:
     void roleCreated();
     void roleEdited();
     void roleDeleted();
+
+    // Purchase Orders and Purchase Order Records aren't implemented and connected in the snippet. It's just a plug.
+
+    // Purchase Orders
+    void purchaseOrdersList(const std::vector<Common::Entities::PurchaseOrder> &purchaseOrders);
+    void purchaseOrderAdded();
+    void purchaseOrderEdited();
+    void purchaseOrderDeleted();
+
+    // Purchase Order Records
+    void purchaseOrderRecordsList(const std::vector<Common::Entities::PurchaseOrderRecord> &purchaseOrderRecords);
+    void purchaseOrderRecordCreated();
+    void purchaseOrderRecordEdited();
+    void purchaseOrderRecordDeleted();
+
 
     // Error handling
     void errorOccurred(const QString &errorMessage);

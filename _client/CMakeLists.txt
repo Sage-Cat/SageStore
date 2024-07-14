@@ -26,10 +26,13 @@ set(UI_SOURCES
     # Models
     ${CLIENT_SOURCES_DIR}/Ui/Models/BaseModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Models/UsersManagementModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Models/PurchaseOrdersModel.cpp
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/BaseViewModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/UsersManagementViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/ViewModels/PurchaseOrdersViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/ViewModels/PurchaseOrdersRecordsViewModel.cpp
     
     # Dialogs
     ${CLIENT_SOURCES_DIR}/Ui/Dialogs/DialogManager.cpp
@@ -41,6 +44,8 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/Ui/Views/BaseView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/UsersView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/ViewStyles.hpp
+    ${CLIENT_SOURCES_DIR}/Ui/Views/PurchaseOrdersView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Views/PurchaseOrdersRecordsView.cpp
 )
 
 set(MAIN_SOURCES
