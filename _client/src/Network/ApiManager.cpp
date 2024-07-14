@@ -101,6 +101,58 @@ void ApiManager::deleteRole(const QString &id)
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::DEL, {}, id.toStdString());
 }
 
+// Code between this comment and the next comment are not implemented and are just a plug.
+
+void ApiManager::getPurchaseOrders()
+{
+    SPDLOG_TRACE("ApiManager::getPurchaseOrders");
+
+}
+
+void ApiManager::createPurchaseOrder(const Common::Entities::PurchaseOrder &purchaseOrder)
+{
+    SPDLOG_TRACE("ApiManager::createPurchaseOrder");
+    Common::Entities::PurchaseOrder plugPurchaseOrder = purchaseOrder;
+}
+
+void ApiManager::editPurchaseOrder(const Common::Entities::PurchaseOrder &purchaseOrder)
+{
+    SPDLOG_TRACE("ApiManager::editPurchaseOrder");
+    Common::Entities::PurchaseOrder plugPurchaseOrder = purchaseOrder;
+}
+
+void ApiManager::deletePurchaseOrder(const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::deletePurchaseOrder");
+    QString plugId = id;
+}
+
+void ApiManager::getPurchaseOrderRecords()
+{
+    SPDLOG_TRACE("ApiManager::getPurchaseOrderRecords");
+}
+
+void ApiManager::createPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &purchaseOrderRecord)
+{
+    SPDLOG_TRACE("ApiManager::createPurchaseOrderRecord");
+    Common::Entities::PurchaseOrderRecord plugPurchaseOrderRecord = purchaseOrderRecord;
+}
+
+void ApiManager::editPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &purchaseOrderRecord)
+{
+    SPDLOG_TRACE("ApiManager::editPurchaseOrderRecord");
+    Common::Entities::PurchaseOrderRecord plugPurchaseOrderRecord = purchaseOrderRecord;
+    
+}
+
+void ApiManager::deletePurchaseOrderRecord(const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::deletePurchaseOrderRecord");
+    QString plugId = id;
+}
+
+// Code between this comment and the next comment are not implemented and are just a plug.
+
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");

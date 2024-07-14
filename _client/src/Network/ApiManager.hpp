@@ -47,8 +47,8 @@ public slots:
 
     // Purchase Order Records
     virtual void getPurchaseOrderRecords();
-    virtual void createPurchaseOrderRecord(const Common::Entities::PurchaseOrder &purchaseOrder);
-    virtual void editPurchaseOrderRecord(const Common::Entities::PurchaseOrder &purchaseOrder);
+    virtual void createPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &purchaseOrderRecord);
+    virtual void editPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &purchaseOrderRecord);
     virtual void deletePurchaseOrderRecord(const QString &id);
 
 protected slots:
