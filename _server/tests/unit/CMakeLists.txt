@@ -1,8 +1,12 @@
 # ------------------------- UNIT -------------------------
 set(SERVER_UNIT_TESTS_SOURCE
-    ${SERVER_TESTS_DIR}/unit/UsersModuleTest.cpp
+    ${SERVER_TESTS_DIR}/unit/UserModuleTest.cpp
+    ${SERVER_TESTS_DIR}/unit/PurchaseOrdersRecordRepositoryTest.cpp
+    ${SERVER_TESTS_DIR}/unit/PurchaseOrdersRepositoryTest.cpp
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
+    ${SERVER_SOURCES_DIR}/Database/PurchaseOrdersRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/PurchaseOrdersRecordRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
