@@ -1,13 +1,7 @@
 #include "common/Network/JsonSerializer.hpp"
 
-<<<<<<< HEAD
 #include "common/SpdlogConfig.hpp"
 #include <nlohmann/json.hpp>
-=======
-#include <nlohmann/json.hpp>
-#include <spdlog/fmt/ostr.h>
-#include <spdlog/spdlog.h>
->>>>>>> 099b94d (Implement Base Frontend for Users Management)
 
 using json = nlohmann::json;
 
