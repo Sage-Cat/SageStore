@@ -66,7 +66,7 @@ void UsersManagementModel::onUsersList(const std::vector<Common::Entities::User>
 void UsersManagementModel::onUserAdded()
 {
     fetchUsers();
-    userAdded();
+    emit userAdded();
 }
 
 void UsersManagementModel::onUserUpdated()
