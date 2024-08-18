@@ -23,8 +23,8 @@ class SageStorePkg(ConanFile):
     def requirements(self):
         if not self.is_boost_installed_manually():
             self.requires("boost/1.82.0")
-        if not self.is_qt_installed_manually():
-            self.requires("qt/6.6.2")
+        # if not self.is_qt_installed_manually():
+        #     self.requires("qt/6.6.2")
 
     def is_boost_installed_manually(self):
         return "BOOST_ROOT" in os.environ

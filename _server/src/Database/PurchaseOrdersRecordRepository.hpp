@@ -6,8 +6,9 @@
 
 #include "IRepository.hpp"
 #include "IDatabaseManager.hpp"
+#include "common/Entities/PurchaseOrderRecord.hpp"
 
-class Purchaseorderrecord;
+using Purchaseorderrecord = Common::Entities::PurchaseOrderRecord;
 
 class PurchaseOrderRecordRepository : public IRepository<Purchaseorderrecord>
 {
