@@ -6,10 +6,11 @@
 
 #include "IRepository.hpp"
 #include "IDatabaseManager.hpp"
+#include "common/Entities/PurchaseOrder.hpp"
 
-class Purchaseorder;
+using Purchaseorder  = Common::Entities::PurchaseOrder;
 
-class PurchaseOrderRepository : public IRepository<Purchaseorder>
+class PurchaseOrderRepository : public IRepository<Common::Entities::PurchaseOrder>
 {
 public:
     explicit PurchaseOrderRepository(std::shared_ptr<IDatabaseManager> dbManager);

@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#include "DatabaseManagerMock.hpp"
+#include "mocks/DatabaseManagerMock.hpp"
 #include "Database/PurchaseOrdersRepository.hpp"
 #include "ServerException.hpp"
 

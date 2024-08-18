@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#include "DatabaseManagerMock.hpp"
+#include "mocks/DatabaseManagerMock.hpp"
 #include "Database/PurchaseOrdersRecordRepository.hpp"
 #include "ServerException.hpp"
 
@@ -70,9 +70,9 @@ TEST_F(PurchaseOrderRecordRepoTest, getByField)
     current.productTypeId = "44";
     current.quantity = "12";
     current.price = "900";
+EXPECT_CALL(*dataMock, executeQuery("SELECT id, orderId, productTypeId, quantity, price FROM PurchaseOrderRecord WHERE id = ?;", ::testing::_))
+.WillOnce(::testing::Return(qureMock));
 
-    EXPECT_CALL(*dataMock, executeQuery("SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + " WHERE id = ?;", ::testing::_))
-    .WillOnce(::testing::Return(qureMock));
     EXPECT_CALL(*qureMock, next()).WillOnce(::testing::Return(true)).WillOnce(::testing::Return(false));
 
     EXPECT_CALL(*qureMock, getString(0)).WillOnce(::testing::Return(current.id));

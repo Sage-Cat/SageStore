@@ -1,6 +1,4 @@
 #include "PurchaseOrdersRecordRepository.hpp"
-
-#include "common/Entities/PurchaseOrderRecord.hpp"
  
 #include "common/SpdlogConfig.hpp"
 
@@ -56,7 +54,7 @@ std::vector<Purchaseorderrecord> PurchaseOrderRecordRepository::getByField(const
     SPDLOG_TRACE("PurchaseOrderRecordRepository::getByField | {} = {}", fieldName, value);
     std::vector<Purchaseorderrecord> purch;
 
-    const std::string query = "SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + " WHERE " + fieldName + " =?;";
+    const std::string query = "SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
         purch.push_back(PurchFromCurrentRow(result));
