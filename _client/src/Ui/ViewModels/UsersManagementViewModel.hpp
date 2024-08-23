@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QCryptographicHash>
 
 #include "Ui/DisplayData/Entities.hpp"
 #include "Ui/ViewModels/BaseViewModel.hpp"

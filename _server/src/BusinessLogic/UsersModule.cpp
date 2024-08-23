@@ -117,6 +117,7 @@ ResponseData UsersModule::getUsers()
         for (const auto &user : usersVec) { // password is not being sent to client
             response.dataset[Common::Entities::User::ID_KEY].emplace_back(user.id);
             response.dataset[Common::Entities::User::USERNAME_KEY].emplace_back(user.username);
+            response.dataset[Common::Entities::User::PASSWORD_KEY].emplace_back(user.password);
             response.dataset[Common::Entities::User::ROLE_ID_KEY].emplace_back(user.roleId);
         }
     }

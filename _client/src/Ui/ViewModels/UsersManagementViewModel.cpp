@@ -79,7 +79,10 @@ UsersManagementViewModel::convertToCommonUser(const DisplayData::User &displayUs
     Common::Entities::User commonUser;
     commonUser.id       = displayUser.id.toStdString();
     commonUser.username = displayUser.username.toStdString();
-    commonUser.password = displayUser.password.toStdString();
+    commonUser.password = QCryptographicHash::hash(displayUser.password.toUtf8(),
+                                                   QCryptographicHash::Sha256)
+                           .toHex()
+                           .toStdString();
     commonUser.roleId   = displayUser.roleId.toStdString();
 
     return commonUser;

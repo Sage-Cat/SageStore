@@ -259,6 +259,7 @@ void ApiManager::handleUsersList(const Dataset &dataset)
     try {
         if (!dataset.contains(Common::Entities::User::ID_KEY) ||
             !dataset.contains(Common::Entities::User::USERNAME_KEY) ||
+            !dataset.contains(Common::Entities::User::PASSWORD_KEY) ||
             !dataset.contains(Common::Entities::User::ROLE_ID_KEY)) {
             handleError("Dataset doesn't contain required User keys");
             return;
@@ -266,9 +267,10 @@ void ApiManager::handleUsersList(const Dataset &dataset)
 
         const auto &idList       = dataset.at(Common::Entities::User::ID_KEY);
         const auto &usernameList = dataset.at(Common::Entities::User::USERNAME_KEY);
+        const auto &passwordList = dataset.at(Common::Entities::User::PASSWORD_KEY);
         const auto &roleIdList   = dataset.at(Common::Entities::User::ROLE_ID_KEY);
 
-        if (idList.size() != usernameList.size() || usernameList.size() != roleIdList.size()) {
+        if (idList.size() != usernameList.size() || usernameList.size() != roleIdList.size() || roleIdList.size() != passwordList.size()) {
             handleError("User lists have different sizes.");
             return;
         }
@@ -276,15 +278,17 @@ void ApiManager::handleUsersList(const Dataset &dataset)
         std::vector<Common::Entities::User> users;
         auto idIt       = idList.begin();
         auto usernameIt = usernameList.begin();
+        auto passwordIt = passwordList.begin();
         auto roleIdIt   = roleIdList.begin();
 
         while (idIt != idList.end() && usernameIt != usernameList.end() &&
-               roleIdIt != roleIdList.end()) {
-            Common::Entities::User user{.id = *idIt, .username = *usernameIt, .roleId = *roleIdIt};
+               passwordIt != passwordList.end() && roleIdIt != roleIdList.end()) {
+            Common::Entities::User user{.id = *idIt, .username = *usernameIt, .password = *passwordIt, .roleId = *roleIdIt};
             users.push_back(user);
 
             ++idIt;
             ++usernameIt;
+            ++passwordIt;
             ++roleIdIt;
         }
 

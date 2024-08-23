@@ -139,10 +139,17 @@ ctest --verbose
    ```
    If you have already installed qt manualy, add
    ```
-   QT_DIR='your_path_to_qt_with_gcc_64'
-   export QT_DIR
+   export QT_DIR='your_path_to_qt_with_gcc_64'
+   export CMAKE_PREFIX_PATH=$QT_DIR/lib/cmake:$CMAKE_PREFIX_PATH
    ```
-   into your .bashrc file. INPORTANT: version of qt is 6.6.2
+
+   into your .bashrc file and execute
+   
+   ```
+   sudo apt-get install libgl1-mesa-dev
+   ```
+
+   INPORTANT: version of qt is 6.6.2
 
 2. Go to build folder and run cmake with presets
 
