@@ -104,3 +104,13 @@ void UsersManagementModel::onRoleDeleted()
     fetchRoles();
     emit roleDeleted();
 }
+
+QString UsersManagementModel::getUsernameById(const std::string &userId) const
+{
+    for(const auto &user : m_users) {
+        if(user.id == userId) {
+            return QString::fromStdString(user.username);
+        }
+    }
+    return QString();
+}

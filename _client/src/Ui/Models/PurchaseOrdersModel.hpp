@@ -16,7 +16,7 @@ public:
     explicit PurchaseOrdersModel(ApiManager &apiManager, QObject *parent = nullptr);
 
     QVector<Common::Entities::PurchaseOrder> orders() const;
-    QVector<Common::Entities::PurchaseOrderRecord> ordersRecord() const;
+    QVector<Common::Entities::PurchaseOrderRecord> orderRecords() const;
 
 signals:
     // Orders
@@ -44,7 +44,7 @@ public slots:
     void editOrderRecord(const Common::Entities::PurchaseOrderRecord &purchaseOrderRecord);
     void deleteOrderRecord(const QString &id);
 
-private slots: // -- ApiManager signal handlers ---
+private slots: // --- ApiManager signal handlers ---
     void onPurchaseOrderAdded();
     void onPurchaseOrderUpdated();
     void onPurchaseOrderDeleted();
@@ -59,5 +59,5 @@ private:
     ApiManager &m_apiManager;
 
     QVector<Common::Entities::PurchaseOrder> m_orders;
-    QVector<Common::Entities::PurchaseOrderRecord> m_ordersRecord;
+    QVector<Common::Entities::PurchaseOrderRecord> m_orderRecords;
 };

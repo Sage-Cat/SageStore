@@ -27,7 +27,7 @@ PurchaseOrdersModel::PurchaseOrdersModel(ApiManager &apiManager, QObject *parent
 
 
 QVector<Common::Entities::PurchaseOrder> PurchaseOrdersModel::orders() const { return m_orders; }
-QVector<Common::Entities::PurchaseOrderRecord> PurchaseOrdersModel::ordersRecord() const { return m_ordersRecord; }
+QVector<Common::Entities::PurchaseOrderRecord> PurchaseOrdersModel::orderRecords() const { return m_orderRecords; }
 
 void PurchaseOrdersModel::fetchOrders() 
 { 
@@ -96,7 +96,7 @@ void PurchaseOrdersModel::onPurchaseOrderDeleted()
 
 void PurchaseOrdersModel::onPurchaseOrderRecordsList(const std::vector<Common::Entities::PurchaseOrderRecord> &ordersRecord)
 {
-    m_ordersRecord = QVector<Common::Entities::PurchaseOrderRecord>(ordersRecord.begin(), ordersRecord.end());
+    m_orderRecords = QVector<Common::Entities::PurchaseOrderRecord>(ordersRecord.begin(), ordersRecord.end());
     emit orderRecordsChanged();
 }
 

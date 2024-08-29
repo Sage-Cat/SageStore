@@ -27,6 +27,9 @@ set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/Ui/Models/BaseModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Models/UsersManagementModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Models/PurchaseOrdersModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Models/InventoryModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Models/ManagementModel.cpp
+
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/BaseViewModel.cpp

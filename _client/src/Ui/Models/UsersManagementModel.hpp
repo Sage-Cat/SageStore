@@ -14,6 +14,8 @@ class UsersManagementModel : public BaseModel {
     Q_OBJECT
 public:
     explicit UsersManagementModel(ApiManager &apiManager, QObject *parent = nullptr);
+    
+    QString getUsernameById(const std::string &userId) const;
 
     QVector<Common::Entities::User> users() const;
     QVector<Common::Entities::Role> roles() const;
