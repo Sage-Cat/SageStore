@@ -22,11 +22,11 @@ PurchaseOrderRepository::~PurchaseOrderRepository()
     SPDLOG_TRACE("PurchaseOrderRepository::~PurchaseOrderRepository");
 }
 
-void PurchaseOrderRepository::add(const Purchaseorder& entity) 
+void PurchaseOrderRepository::add(const PurchaseOrder& entity) 
 { 
     //?????
     SPDLOG_TRACE("PurchaseOrderRepository::add");
-    const std::string query = "INSERT INTO " + std::string(Purchaseorder::TABLE_NAME) + " (date, userId, supplierId, status) " +
+    const std::string query = "INSERT INTO " + std::string(PurchaseOrder::TABLE_NAME) + " (date, userId, supplierId, status) " +
                                "VALUES (?, ?, ?, ?);";
 
     const std::vector<std::string> params = {entity.date, entity.userId, entity.supplierId, entity.status};
@@ -34,10 +34,10 @@ void PurchaseOrderRepository::add(const Purchaseorder& entity)
 
 }
 
-void PurchaseOrderRepository::update(const Purchaseorder &entity)
+void PurchaseOrderRepository::update(const PurchaseOrder &entity)
 {
     SPDLOG_TRACE("PurchaseOrderRepository::update");
-    const std::string query = "UPDATE" + std::string(Purchaseorder::TABLE_NAME) + " SET date = ?, userId = ?, supplierId = ?, status = ? WHERE id = ?;";
+    const std::string query = "UPDATE" + std::string(PurchaseOrder::TABLE_NAME) + " SET date = ?, userId = ?, supplierId = ?, status = ? WHERE id = ?;";
     const std::vector<std::string> params  = {entity.date, entity.userId, entity.supplierId, entity.status, entity.id};
 
     m_dbManager->executeQuery(query, params);
@@ -46,41 +46,41 @@ void PurchaseOrderRepository::update(const Purchaseorder &entity)
 void PurchaseOrderRepository::deleteResource(const std::string& id)
 {
     SPDLOG_TRACE("PurchaseOrderRepository::deleteResource | id = {}", id);
-    const std::string query = "DELETE FROM " + std::string(Purchaseorder::TABLE_NAME) + " WHERE id = ?;";
+    const std::string query = "DELETE FROM " + std::string(PurchaseOrder::TABLE_NAME) + " WHERE id = ?;";
     const std::vector<std::string> params = {id};
 
     m_dbManager->executeQuery(query, params);
 }
 
-std::vector<Purchaseorder> PurchaseOrderRepository::getByField(const std::string &fieldName, const std::string &value) const
+std::vector<PurchaseOrder> PurchaseOrderRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
     SPDLOG_TRACE("PurchaseOrderRepository::getByField | {} = {}", fieldName, value);
-    std::vector<Purchaseorder> purch;
+    std::vector<PurchaseOrder> purch;
 
-    const std::string query = "SELECT id, date, userId, supplierId, status FROM " + std::string(Purchaseorder::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
+    const std::string query = "SELECT id, date, userId, supplierId, status FROM " + std::string(PurchaseOrder::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
-        purch.emplace_back(PurchFromCurrentRow(result));
+        purch.emplace_back(PurchaseFromCurrentRow(result));
 
     return purch;
 }
 
-std::vector<Purchaseorder> PurchaseOrderRepository::getAll() const
+std::vector<PurchaseOrder> PurchaseOrderRepository::getAll() const
 {
     SPDLOG_TRACE("PurchaseOrderRepository::getAll");
-    std::vector<Purchaseorder> purch;
+    std::vector<PurchaseOrder> purch;
 
-    const std::string query = "SELECT id, date, userId, supplierId, status FROM " + std::string(Purchaseorder::TABLE_NAME) + ";";
+    const std::string query = "SELECT id, date, userId, supplierId, status FROM " + std::string(PurchaseOrder::TABLE_NAME) + ";";
     auto result = m_dbManager->executeQuery(query, {});
     while(result && result->next())
-        purch.emplace_back(PurchFromCurrentRow(result));
+        purch.emplace_back(PurchaseFromCurrentRow(result));
 
     return purch;
 }
 
-Purchaseorder PurchaseOrderRepository::PurchFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
+PurchaseOrder PurchaseOrderRepository::PurchaseFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    return Purchaseorder{
+    return PurchaseOrder{
         .id = queryResult->getString(ID),
         .date = queryResult->getString(DATE),
         .userId = queryResult->getString(USERID),

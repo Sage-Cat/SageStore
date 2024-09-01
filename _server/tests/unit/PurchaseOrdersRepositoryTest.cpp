@@ -17,7 +17,7 @@ using ::testing::Return;
 
 class PurchaseOrderRepoTest : public ::testing::Test {
 protected:
-    std::unique_ptr<PurchaseOrderRepository> purchOrdRepo;
+    std::unique_ptr<PurchaseOrderRepository> purchaseOrderRepository;
     std::shared_ptr<DatabaseManagerMock> dataMock;
     std::shared_ptr<QueryResultMock> qureMock;
 
@@ -25,13 +25,13 @@ protected:
         : dataMock(std::make_shared<DatabaseManagerMock>()),
           qureMock(std::make_shared<QueryResultMock>())
     {
-        purchOrdRepo = std::make_unique<PurchaseOrderRepository>(dataMock);
+        purchaseOrderRepository = std::make_unique<PurchaseOrderRepository>(dataMock);
     }
 };
 
 TEST_F(PurchaseOrderRepoTest, getAll)
 {
-    Purchaseorder current;
+    PurchaseOrder current;
     current.id = "2";
     current.date = "12-01-22";
     current.userId = "47";
@@ -49,7 +49,7 @@ TEST_F(PurchaseOrderRepoTest, getAll)
     EXPECT_CALL(*qureMock, getString(3)).WillOnce(::testing::Return(current.supplierId));
     EXPECT_CALL(*qureMock, getString(4)).WillOnce(::testing::Return(current.status));
 
-    auto data = purchOrdRepo->getAll();
+    auto data = purchaseOrderRepository->getAll();
     for(auto purch : data)
     {
         ASSERT_EQ(purch.id, current.id);
@@ -62,7 +62,7 @@ TEST_F(PurchaseOrderRepoTest, getAll)
 
 TEST_F(PurchaseOrderRepoTest, getByField)
 {
-    Purchaseorder current;
+    PurchaseOrder current;
     current.id = "2";
     current.date = "12-01-22";
     current.userId = "47";
@@ -82,7 +82,7 @@ TEST_F(PurchaseOrderRepoTest, getByField)
     EXPECT_CALL(*qureMock, getString(4)).WillOnce(::testing::Return(current.status));
 
 
-    auto data = purchOrdRepo->getByField("status", "sus");
+    auto data = purchaseOrderRepositoryф->getByField("status", "sus");
     for(auto purch : data)
     {
         ASSERT_EQ(purch.id, current.id);

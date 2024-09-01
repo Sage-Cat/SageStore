@@ -18,7 +18,7 @@ using ::testing::Return;
 class PurchaseOrderRecordRepoTest : public ::testing::Test 
 {
 protected:
-    std::unique_ptr<PurchaseOrderRecordRepository> purchOrdRecRepo;
+    std::unique_ptr<PurchaseOrderRecordRepository> purchaseOrderRecordRepository;
     std::shared_ptr<DatabaseManagerMock> dataMock;
     std::shared_ptr<QueryResultMock> qureMock;
 
@@ -26,20 +26,20 @@ protected:
         dataMock(std::make_shared<DatabaseManagerMock>()),
         qureMock(std::make_shared<QueryResultMock>())
     {
-        purchOrdRecRepo = std::make_unique<PurchaseOrderRecordRepository>(dataMock);
+        purchaseOrderRecordRepository = std::make_unique<PurchaseOrderRecordRepository>(dataMock);
     }
 };
 
 TEST_F(PurchaseOrderRecordRepoTest, getAll)
 {
-    Purchaseorderrecord current;
+    PurchaseOrderRecord current;
     current.id = "2";
     current.orderId = "3";
     current.productTypeId = "44";
     current.quantity = "12";
     current.price = "900";
 
-    EXPECT_CALL(*dataMock, executeQuery("SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + ";", ::testing::_))
+    EXPECT_CALL(*dataMock, executeQuery("SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(PurchaseOrderRecord::TABLE_NAME) + ";", ::testing::_))
         .WillOnce(::testing::Return(qureMock));
     EXPECT_CALL(*qureMock, next())
         .WillOnce(::testing::Return(true))
@@ -51,7 +51,7 @@ TEST_F(PurchaseOrderRecordRepoTest, getAll)
     EXPECT_CALL(*qureMock, getString(3)).WillOnce(::testing::Return(current.quantity));
     EXPECT_CALL(*qureMock, getString(4)).WillOnce(::testing::Return(current.price));
 
-    auto data = purchOrdRecRepo->getAll();
+    auto data = purchaseOrderRecordRepository->getAll();
     for(auto purch : data)
     {
         ASSERT_EQ(purch.id, current.id);
@@ -64,7 +64,7 @@ TEST_F(PurchaseOrderRecordRepoTest, getAll)
 
 TEST_F(PurchaseOrderRecordRepoTest, getByField)
 {
-    Purchaseorderrecord current;
+    PurchaseOrderRecord current;
     current.id = "2";
     current.orderId = "3";
     current.productTypeId = "44";
@@ -81,7 +81,7 @@ EXPECT_CALL(*dataMock, executeQuery("SELECT id, orderId, productTypeId, quantity
     EXPECT_CALL(*qureMock, getString(3)).WillOnce(::testing::Return(current.quantity));
     EXPECT_CALL(*qureMock, getString(4)).WillOnce(::testing::Return(current.price));
         
-    auto data = purchOrdRecRepo->getByField("id", "2");
+    auto data = purchaseOrderRecordRepository->getByField("id", "2");
     for(auto purch : data)
     {
         ASSERT_EQ(purch.id, current.id);

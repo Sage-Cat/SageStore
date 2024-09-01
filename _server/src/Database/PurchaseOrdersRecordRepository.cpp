@@ -22,19 +22,19 @@ PurchaseOrderRecordRepository::~PurchaseOrderRecordRepository()
     SPDLOG_TRACE("PurchaseOrderRecordRepository::~PurchaseOrderRecordRepository");
 }
 
-void PurchaseOrderRecordRepository::add(const Purchaseorderrecord& entity)
+void PurchaseOrderRecordRepository::add(const PurchaseOrderRecord& entity)
 {
     SPDLOG_TRACE("PurchaseOrderRecordRepository::add");
-    const std::string query = "INSERT INTO " + std::string(Purchaseorderrecord::TABLE_NAME) + " (orderId, productTypeId, quantity, price) " +
+    const std::string query = "INSERT INTO " + std::string(PurchaseOrderRecord::TABLE_NAME) + " (orderId, productTypeId, quantity, price) " +
                               "VALUES (?, ?, ?, ?);";
     const std::vector<std::string> params = {entity.orderId, entity.productTypeId, entity.quantity, entity.price};
     m_dbManager->executeQuery(query, params);
 }
 
-void PurchaseOrderRecordRepository::update(const Purchaseorderrecord &entity)
+void PurchaseOrderRecordRepository::update(const PurchaseOrderRecord &entity)
 {
     SPDLOG_TRACE("PurchaseOrderRecordRepository::update");
-    const std::string query = "UPDATE " + std::string(Purchaseorderrecord::TABLE_NAME) + " SET orderId = ?, productTypeId = ?, quantity = ?, price = ? WHERE id = ?;";
+    const std::string query = "UPDATE " + std::string(PurchaseOrderRecord::TABLE_NAME) + " SET orderId = ?, productTypeId = ?, quantity = ?, price = ? WHERE id = ?;";
     const std::vector<std::string> params  = {entity.orderId, entity.productTypeId, entity.quantity, entity.price};
 
     m_dbManager->executeQuery(query, params);
@@ -43,41 +43,41 @@ void PurchaseOrderRecordRepository::update(const Purchaseorderrecord &entity)
 void PurchaseOrderRecordRepository::deleteResource(const std::string& id)
 {
     SPDLOG_TRACE("PurchaseOrderRecordRepository::deleteResource | id = {}", id);
-    const std::string query = "DELETE FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + " WHERE id =?;";
+    const std::string query = "DELETE FROM " + std::string(PurchaseOrderRecord::TABLE_NAME) + " WHERE id =?;";
     const std::vector<std::string> params = {id};
 
     m_dbManager->executeQuery(query, params);
 }  
 
-std::vector<Purchaseorderrecord> PurchaseOrderRecordRepository::getByField(const std::string &fieldName, const std::string &value) const
+std::vector<PurchaseOrderRecord> PurchaseOrderRecordRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
     SPDLOG_TRACE("PurchaseOrderRecordRepository::getByField | {} = {}", fieldName, value);
-    std::vector<Purchaseorderrecord> purch;
+    std::vector<PurchaseOrderRecord> purch;
 
-    const std::string query = "SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
+    const std::string query = "SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(PurchaseOrderRecord::TABLE_NAME) + " WHERE " + fieldName + " = ?;";
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
-        purch.push_back(PurchFromCurrentRow(result));
+        purch.push_back(PurchaseFromCurrentRow(result));
 
     return purch;
 }
 
-std::vector<Purchaseorderrecord> PurchaseOrderRecordRepository::getAll() const
+std::vector<PurchaseOrderRecord> PurchaseOrderRecordRepository::getAll() const
 {
     SPDLOG_TRACE("PurchaseOrderRecordRepository::getAll");
-    std::vector<Purchaseorderrecord> purch;
+    std::vector<PurchaseOrderRecord> purch;
 
-    const std::string query = "SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(Purchaseorderrecord::TABLE_NAME) + ";";
+    const std::string query = "SELECT id, orderId, productTypeId, quantity, price FROM " + std::string(PurchaseOrderRecord::TABLE_NAME) + ";";
     auto result = m_dbManager->executeQuery(query, {});
     while(result && result->next())
-        purch.emplace_back(PurchFromCurrentRow(result));
+        purch.emplace_back(PurchaseFromCurrentRow(result));
 
     return purch;
 }
 
-Purchaseorderrecord PurchaseOrderRecordRepository::PurchFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
+PurchaseOrderRecord PurchaseOrderRecordRepository::PurchaseFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    return Purchaseorderrecord{
+    return PurchaseOrderRecord{
         .id = queryResult->getString(ID),
         .orderId = queryResult->getString(ORDERID),
         .productTypeId = queryResult->getString(PRODUCTTYPEID),
