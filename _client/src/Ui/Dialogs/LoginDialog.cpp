@@ -98,7 +98,8 @@ void LoginDialog::onLoginClicked()
 
     emit loginAttempted(
         m_usernameField->text(),
-        QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+        QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256)
+            .toHex());
 }
 
 void LoginDialog::onRegisterLinkClicked()

@@ -1,6 +1,5 @@
 #include "UserRepository.hpp"
 
-
 #include "common/SpdlogConfig.hpp"
 
 namespace {

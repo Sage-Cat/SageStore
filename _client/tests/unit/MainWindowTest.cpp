@@ -23,8 +23,8 @@ class MainWindowTest : public QObject {
 public:
     MainWindowTest(QApplication &app) : app(app)
     {
-        apiManagerMock     = new ApiManagerMock();
-        dialogManagerMock  = new DialogManagerMock(*apiManagerMock);
+        apiManagerMock    = new ApiManagerMock();
+        dialogManagerMock = new DialogManagerMock(*apiManagerMock);
 
         mainWindow = new MainWindow(app, *apiManagerMock, *dialogManagerMock);
     }
