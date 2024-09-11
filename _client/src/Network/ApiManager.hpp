@@ -8,6 +8,10 @@
 #include "common/DataTypes.hpp"
 #include "common/Entities/Role.hpp"
 #include "common/Entities/User.hpp"
+#include "common/Entities/PurchaseOrder.hpp"
+#include "common/Entities/PurchaseOrderRecord.hpp"
+#include "common/Entities/ProductType.hpp"
+#include "common/Entities/Supplier.hpp"
 
 class NetworkService;
 enum class Method;
@@ -35,6 +39,36 @@ public slots:
     virtual void editRole(const Common::Entities::Role &role);
     virtual void deleteRole(const QString &id);
 
+    // Purchase Orders and Purchase Order Records aren't implemented and connected in the snippet. It's just a plug.
+
+    // Purchase Orders
+    virtual void getPurchaseOrders();
+    virtual void createPurchaseOrder(const Common::Entities::PurchaseOrder &);
+    virtual void editPurchaseOrder(const Common::Entities::PurchaseOrder &);
+    virtual void deletePurchaseOrder(const QString &);
+
+    // Purchase Order Records
+    virtual void getPurchaseOrderRecords();
+    virtual void createPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &);
+    virtual void editPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &);
+    virtual void deletePurchaseOrderRecord(const QString &);
+
+    // Product Types isn't implemented and connected in the snippet. It's just a plug.
+
+    // Product Types
+    virtual void getProductTypes();
+    virtual void createProductType(const Common::Entities::ProductType &);
+    virtual void editProductType(const Common::Entities::ProductType &);
+    virtual void deleteProductType(const QString &);
+
+    // Suppliers isn't implemented and connected in the snippet. It's just a plug.
+
+    // Suppliers
+    virtual void getSuppliers();
+    virtual void createSupplier(const Common::Entities::Supplier &);
+    virtual void editSupplier(const Common::Entities::Supplier &);
+    virtual void deleteSupplier(const QString &);
+
 protected slots:
     // for NetworkService
     virtual void handleResponse(const std::string &endpoint, Method method, const Dataset &dataset);
@@ -55,6 +89,37 @@ signals:
     void roleCreated();
     void roleEdited();
     void roleDeleted();
+
+    // Purchase Orders and Purchase Order Records aren't implemented and connected in the snippet. It's just a plug.
+
+    // Purchase Orders
+    void purchaseOrdersList(const std::vector<Common::Entities::PurchaseOrder> &purchaseOrders);
+    void purchaseOrderAdded();
+    void purchaseOrderEdited();
+    void purchaseOrderDeleted();
+
+    // Purchase Order Records
+    void purchaseOrderRecordsList(const std::vector<Common::Entities::PurchaseOrderRecord> &purchaseOrderRecords);
+    void purchaseOrderRecordCreated();
+    void purchaseOrderRecordEdited();
+    void purchaseOrderRecordDeleted();
+
+// Product Types isn't implemented and connected in the snippet. It's just a plug.
+
+    // Product Types
+    void productTypesList(const std::vector<Common::Entities::ProductType> &productTypes);
+    void productTypeAdded();
+    void productTypeEdited();
+    void productTypeDeleted();
+
+// Suppliers isn't implemented and connected in the snippet. It's just a plug.
+
+    // Suppliers
+    void suppliersList(const std::vector<Common::Entities::Supplier> &suppliers);
+    void supplierAdded();
+    void supplierEdited();
+    void supplierDeleted();
+
 
     // Error handling
     void errorOccurred(const QString &errorMessage);

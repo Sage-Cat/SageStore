@@ -101,6 +101,90 @@ void ApiManager::deleteRole(const QString &id)
     m_networkService.sendRequest(Endpoints::Users::ROLES, Method::DEL, {}, id.toStdString());
 }
 
+// Code between this comment and the next comment are not implemented and are just a plug.
+
+void ApiManager::getPurchaseOrders()
+{
+    SPDLOG_TRACE("ApiManager::getPurchaseOrders");
+}
+
+void ApiManager::createPurchaseOrder(const Common::Entities::PurchaseOrder &)
+{
+    SPDLOG_TRACE("ApiManager::createPurchaseOrder");
+}
+
+void ApiManager::editPurchaseOrder(const Common::Entities::PurchaseOrder &)
+{
+    SPDLOG_TRACE("ApiManager::editPurchaseOrder");
+}
+
+void ApiManager::deletePurchaseOrder(const QString &)
+{
+    SPDLOG_TRACE("ApiManager::deletePurchaseOrder");
+}
+
+void ApiManager::getPurchaseOrderRecords()
+{
+    SPDLOG_TRACE("ApiManager::getPurchaseOrderRecords");
+}
+
+void ApiManager::createPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &)
+{
+    SPDLOG_TRACE("ApiManager::createPurchaseOrderRecord");
+}
+
+void ApiManager::editPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &)
+{
+    SPDLOG_TRACE("ApiManager::editPurchaseOrderRecord");
+}
+
+void ApiManager::deletePurchaseOrderRecord(const QString &)
+{
+    SPDLOG_TRACE("ApiManager::deletePurchaseOrderRecord");
+}
+
+void ApiManager::getProductTypes()
+{
+    SPDLOG_TRACE("ApiManager::getProductTypes");
+}
+
+void ApiManager::createProductType(const Common::Entities::ProductType &)
+{
+    SPDLOG_TRACE("ApiManager::createProductType");
+}
+
+void ApiManager::editProductType(const Common::Entities::ProductType &)
+{
+    SPDLOG_TRACE("ApiManager::editProductType");
+}
+
+void ApiManager::deleteProductType(const QString &)
+{
+    SPDLOG_TRACE("ApiManager::deleteProductType");
+}
+
+void ApiManager::getSuppliers()
+{
+    SPDLOG_TRACE("ApiManager::getSuppliers");
+}
+
+void ApiManager::createSupplier(const Common::Entities::Supplier &)
+{
+    SPDLOG_TRACE("ApiManager::createSupplier");
+}
+
+void ApiManager::editSupplier(const Common::Entities::Supplier &)
+{   
+    SPDLOG_TRACE("ApiManager::editSupplier");
+}
+
+void ApiManager::deleteSupplier(const QString &)
+{
+    SPDLOG_TRACE("ApiManager::deleteSupplier");
+}
+
+// Code between this comment and the previous comment are not implemented and are just a plug.
+
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
