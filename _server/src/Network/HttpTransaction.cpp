@@ -69,7 +69,7 @@ void HttpTransaction::handle_request()
     RequestData rd;
     if (segments.size() >= 3) {
         auto dataset = m_serializer->deserialize(beast::buffers_to_string(m_request.body().data()));
-
+    
         rd = RequestData{.module     = segments[Endpoints::Segments::MODULE],
                          .submodule  = segments[Endpoints::Segments::SUBMODULE],
                          .method     = m_request.method_string(),
