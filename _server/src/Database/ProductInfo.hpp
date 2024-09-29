@@ -18,7 +18,7 @@ public:
     void update(const Common::Entities::ProductInfo &entity) override;
     void deleteResource(const std::string &id) override;
     std::vector<Common::Entities::ProductInfo> getByField(const std::string &fieldName,
-                                                   const std::string &value) const override;
+                                                          const std::string &value) const override;
     std::vector<Common::Entities::ProductInfo> getAll() const override;
 
 private:

@@ -1,14 +1,13 @@
 #include "ProductInfo.hpp"
 
-
 #include "common/Entities/ProductInfo.hpp"
 #include "common/SpdlogConfig.hpp"
 
 namespace {
-inline constexpr int ID       = 0;
+inline constexpr int ID              = 0;
 inline constexpr int PRODUCT_TYPE_ID = 1;
-inline constexpr int NAME = 2;
-inline constexpr int VALUE  = 3;
+inline constexpr int NAME            = 2;
+inline constexpr int VALUE           = 3;
 } // namespace
 
 ProductInfo::ProductInfo(std::shared_ptr<IDatabaseManager> dbManager)
@@ -22,11 +21,12 @@ ProductInfo::~ProductInfo() { SPDLOG_TRACE("ProductInfo::~ProductInfo"); }
 void ProductInfo::add(const Common::Entities::ProductInfo &entity)
 {
     SPDLOG_TRACE("ProductInfo::add");
-    const std::string query = "INSERT INTO " + std::string(Common::Entities::ProductInfo::TABLE_NAME) +
-                              " (id, productTypeId, name, value) " +
-                              "VALUES (?, ?, ?, ?);";
+    const std::string query = "INSERT INTO " +
+                              std::string(Common::Entities::ProductInfo::TABLE_NAME) +
+                              " (id, productTypeId, name, value) " + "VALUES (?, ?, ?, ?);";
 
-    const std::vector<std::string> params = std::vector<std::string>{entity.id, entity.productTypeId, entity.name, entity.value};
+    const std::vector<std::string> params =
+        std::vector<std::string>{entity.id, entity.productTypeId, entity.name, entity.value};
 
     m_dbManager->executeQuery(query, params);
 }
@@ -54,42 +54,42 @@ void ProductInfo::deleteResource(const std::string &id)
 }
 
 std::vector<Common::Entities::ProductInfo> ProductInfo::getByField(const std::string &fieldName,
-                                                               const std::string &value) const
+                                                                   const std::string &value) const
 {
     SPDLOG_TRACE("ProductInfo::getByField | {} = {}", fieldName, value);
-    std::vector<Common::Entities::ProductInfo> users;
+    std::vector<Common::Entities::ProductInfo> productInfo;
 
-    const std::string query = "SELECT if, productTypeId, name, value FROM " +
+    const std::string query = "SELECT productTypeId, name, value FROM " +
                               std::string(Common::Entities::ProductInfo::TABLE_NAME) + " WHERE " +
                               fieldName + " = ?;";
 
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
-        users.emplace_back(userFromCurrentRow(result));
+        productInfo.emplace_back(userFromCurrentRow(result));
 
-    return users;
+    return productInfo;
 }
 
 std::vector<Common::Entities::ProductInfo> ProductInfo::getAll() const
 {
     SPDLOG_TRACE("ProductInfo::getAll");
-    std::vector<Common::Entities::ProductInfo> users;
+    std::vector<Common::Entities::ProductInfo> productInfo;
 
     const std::string query = "SELECT id, productTypeId, name, value FROM  " +
                               std::string(Common::Entities::ProductInfo::TABLE_NAME) + " ;";
     auto result = m_dbManager->executeQuery(query, {});
     while (result && result->next())
-        users.emplace_back(userFromCurrentRow(result));
+        productInfo.emplace_back(userFromCurrentRow(result));
 
-    return users;
+    return productInfo;
 }
 
 Common::Entities::ProductInfo
 ProductInfo::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
     SPDLOG_TRACE("ProductInfo::userFromCurrentRow");
-    return Common::Entities::ProductInfo{.id       = queryResult->getString(ID),
-                                  .productTypeId = queryResult->getString(PRODUCT_TYPE_ID),
-                                  .name = queryResult->getString(NAME),
-                                  .value = queryResult->getString(VALUE)};
+    return Common::Entities::ProductInfo{.id            = queryResult->getString(ID),
+                                         .productTypeId = queryResult->getString(PRODUCT_TYPE_ID),
+                                         .name          = queryResult->getString(NAME),
+                                         .value         = queryResult->getString(VALUE)};
 }
