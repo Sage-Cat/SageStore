@@ -82,7 +82,7 @@ TEST_F(PurchaseOrderRepoTest, getByField)
     EXPECT_CALL(*qureMock, getString(4)).WillOnce(::testing::Return(current.status));
 
 
-    auto data = purchaseOrderRepositoryф->getByField("status", "sus");
+    auto data = purchaseOrderRepository->getByField("status", "sus");
     for(auto purch : data)
     {
         ASSERT_EQ(purch.id, current.id);
