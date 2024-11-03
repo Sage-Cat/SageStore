@@ -1,4 +1,4 @@
-#include "ProductInfo.hpp"
+#include "ProductInfoRepository.hpp"
 
 #include "common/Entities/ProductInfo.hpp"
 #include "common/SpdlogConfig.hpp"
@@ -10,15 +10,15 @@ inline constexpr int NAME            = 2;
 inline constexpr int VALUE           = 3;
 } // namespace
 
-ProductInfo::ProductInfo(std::shared_ptr<IDatabaseManager> dbManager)
+ProductInfoRepository::ProductInfoRepository(std::shared_ptr<IDatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
 {
     SPDLOG_TRACE("ProductInfo::ProductInfo");
 }
 
-ProductInfo::~ProductInfo() { SPDLOG_TRACE("ProductInfo::~ProductInfo"); }
+ProductInfoRepository::~ProductInfoRepository() { SPDLOG_TRACE("ProductInfo::~ProductInfo"); }
 
-void ProductInfo::add(const Common::Entities::ProductInfo &entity)
+void ProductInfoRepository::add(const Common::Entities::ProductInfo &entity)
 {
     SPDLOG_TRACE("ProductInfo::add");
     const std::string query = "INSERT INTO " +
@@ -31,7 +31,7 @@ void ProductInfo::add(const Common::Entities::ProductInfo &entity)
     m_dbManager->executeQuery(query, params);
 }
 
-void ProductInfo::update(const Common::Entities::ProductInfo &entity)
+void ProductInfoRepository::update(const Common::Entities::ProductInfo &entity)
 {
     SPDLOG_TRACE("ProductInfo::update");
     const std::string query = "UPDATE " + std::string(Common::Entities::ProductInfo::TABLE_NAME) +
@@ -42,7 +42,7 @@ void ProductInfo::update(const Common::Entities::ProductInfo &entity)
     m_dbManager->executeQuery(query, params);
 }
 
-void ProductInfo::deleteResource(const std::string &id)
+void ProductInfoRepository::deleteResource(const std::string &id)
 {
     SPDLOG_TRACE("ProductInfo::deleteResource | id = {}", id);
     const std::string query =
@@ -53,8 +53,8 @@ void ProductInfo::deleteResource(const std::string &id)
     m_dbManager->executeQuery(query, params);
 }
 
-std::vector<Common::Entities::ProductInfo> ProductInfo::getByField(const std::string &fieldName,
-                                                                   const std::string &value) const
+std::vector<Common::Entities::ProductInfo>
+ProductInfoRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
     SPDLOG_TRACE("ProductInfo::getByField | {} = {}", fieldName, value);
     std::vector<Common::Entities::ProductInfo> productInfo;
@@ -70,7 +70,7 @@ std::vector<Common::Entities::ProductInfo> ProductInfo::getByField(const std::st
     return productInfo;
 }
 
-std::vector<Common::Entities::ProductInfo> ProductInfo::getAll() const
+std::vector<Common::Entities::ProductInfo> ProductInfoRepository::getAll() const
 {
     SPDLOG_TRACE("ProductInfo::getAll");
     std::vector<Common::Entities::ProductInfo> productInfo;
@@ -85,7 +85,7 @@ std::vector<Common::Entities::ProductInfo> ProductInfo::getAll() const
 }
 
 Common::Entities::ProductInfo
-ProductInfo::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
+ProductInfoRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
     SPDLOG_TRACE("ProductInfo::userFromCurrentRow");
     return Common::Entities::ProductInfo{.id            = queryResult->getString(ID),

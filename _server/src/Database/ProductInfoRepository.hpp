@@ -9,10 +9,10 @@
 
 #include "common/Entities/ProductInfo.hpp"
 
-class ProductInfo : public IRepository<Common::Entities::ProductInfo> {
+class ProductInfoRepository : public IRepository<Common::Entities::ProductInfo> {
 public:
-    explicit ProductInfo(std::shared_ptr<IDatabaseManager> dbManager);
-    ~ProductInfo() override;
+    explicit ProductInfoRepository(std::shared_ptr<IDatabaseManager> dbManager);
+    ~ProductInfoRepository() override;
 
     void add(const Common::Entities::ProductInfo &entity) override;
     void update(const Common::Entities::ProductInfo &entity) override;
