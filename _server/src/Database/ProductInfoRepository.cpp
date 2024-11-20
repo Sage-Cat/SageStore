@@ -13,14 +13,14 @@ inline constexpr int VALUE           = 3;
 ProductInfoRepository::ProductInfoRepository(std::shared_ptr<IDatabaseManager> dbManager)
     : m_dbManager(std::move(dbManager))
 {
-    SPDLOG_TRACE("ProductInfo::ProductInfo");
+    SPDLOG_TRACE("ProductInfoRepository::ProductInfoRepository");
 }
 
-ProductInfoRepository::~ProductInfoRepository() { SPDLOG_TRACE("ProductInfo::~ProductInfo"); }
+ProductInfoRepository::~ProductInfoRepository() { SPDLOG_TRACE("ProductInfoRepository::~ProductInfoRepository"); }
 
 void ProductInfoRepository::add(const Common::Entities::ProductInfo &entity)
 {
-    SPDLOG_TRACE("ProductInfo::add");
+    SPDLOG_TRACE("ProductInfoRepository::add");
     const std::string query = "INSERT INTO " +
                               std::string(Common::Entities::ProductInfo::TABLE_NAME) +
                               " (id, productTypeId, name, value) " + "VALUES (?, ?, ?, ?);";
@@ -33,7 +33,7 @@ void ProductInfoRepository::add(const Common::Entities::ProductInfo &entity)
 
 void ProductInfoRepository::update(const Common::Entities::ProductInfo &entity)
 {
-    SPDLOG_TRACE("ProductInfo::update");
+    SPDLOG_TRACE("ProductInfoRepository::update");
     const std::string query = "UPDATE " + std::string(Common::Entities::ProductInfo::TABLE_NAME) +
                               " SET id = ?, productTypeId = ?, name = ? value = ?;";
     const std::vector<std::string> params = {entity.id, entity.productTypeId, entity.name,
@@ -44,7 +44,7 @@ void ProductInfoRepository::update(const Common::Entities::ProductInfo &entity)
 
 void ProductInfoRepository::deleteResource(const std::string &id)
 {
-    SPDLOG_TRACE("ProductInfo::deleteResource | id = {}", id);
+    SPDLOG_TRACE("ProductInfoRepository::deleteResource | id = {}", id);
     const std::string query =
         "DELETE FROM " + std::string(Common::Entities::ProductInfo::TABLE_NAME) + " WHERE id = ?;";
 
@@ -56,7 +56,7 @@ void ProductInfoRepository::deleteResource(const std::string &id)
 std::vector<Common::Entities::ProductInfo>
 ProductInfoRepository::getByField(const std::string &fieldName, const std::string &value) const
 {
-    SPDLOG_TRACE("ProductInfo::getByField | {} = {}", fieldName, value);
+    SPDLOG_TRACE("ProductInfoRepository::getByField | {} = {}", fieldName, value);
     std::vector<Common::Entities::ProductInfo> productInfo;
 
     const std::string query = "SELECT productTypeId, name, value FROM " +
@@ -72,7 +72,7 @@ ProductInfoRepository::getByField(const std::string &fieldName, const std::strin
 
 std::vector<Common::Entities::ProductInfo> ProductInfoRepository::getAll() const
 {
-    SPDLOG_TRACE("ProductInfo::getAll");
+    SPDLOG_TRACE("ProductInfoRepository::getAll");
     std::vector<Common::Entities::ProductInfo> productInfo;
 
     const std::string query = "SELECT id, productTypeId, name, value FROM  " +
@@ -87,7 +87,7 @@ std::vector<Common::Entities::ProductInfo> ProductInfoRepository::getAll() const
 Common::Entities::ProductInfo
 ProductInfoRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    SPDLOG_TRACE("ProductInfo::userFromCurrentRow");
+    SPDLOG_TRACE("ProductInfoRepository::userFromCurrentRow");
     return Common::Entities::ProductInfo{.id            = queryResult->getString(ID),
                                          .productTypeId = queryResult->getString(PRODUCT_TYPE_ID),
                                          .name          = queryResult->getString(NAME),
