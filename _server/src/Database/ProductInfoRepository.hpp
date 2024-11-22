@@ -23,7 +23,7 @@ public:
 
 private:
     Common::Entities::ProductInfo
-    userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const;
+    productInfoFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const;
 
 private:
     std::shared_ptr<IDatabaseManager> m_dbManager;

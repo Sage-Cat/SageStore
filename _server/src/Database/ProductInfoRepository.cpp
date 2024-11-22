@@ -65,7 +65,7 @@ ProductInfoRepository::getByField(const std::string &fieldName, const std::strin
 
     auto result = m_dbManager->executeQuery(query, {value});
     while (result && result->next())
-        productInfo.emplace_back(userFromCurrentRow(result));
+        productInfo.emplace_back(productInfoFromCurrentRow(result));
 
     return productInfo;
 }
@@ -79,15 +79,15 @@ std::vector<Common::Entities::ProductInfo> ProductInfoRepository::getAll() const
                               std::string(Common::Entities::ProductInfo::TABLE_NAME) + " ;";
     auto result = m_dbManager->executeQuery(query, {});
     while (result && result->next())
-        productInfo.emplace_back(userFromCurrentRow(result));
+        productInfo.emplace_back(productInfoFromCurrentRow(result));
 
     return productInfo;
 }
 
 Common::Entities::ProductInfo
-ProductInfoRepository::userFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
+ProductInfoRepository::productInfoFromCurrentRow(const std::shared_ptr<IQueryResult> &queryResult) const
 {
-    SPDLOG_TRACE("ProductInfoRepository::userFromCurrentRow");
+    SPDLOG_TRACE("ProductInfoRepository::productInfoFromCurrentRow");
     return Common::Entities::ProductInfo{.id            = queryResult->getString(ID),
                                          .productTypeId = queryResult->getString(PRODUCT_TYPE_ID),
                                          .name          = queryResult->getString(NAME),
