@@ -13,10 +13,7 @@
 - [SageStore](#sagestore)
   - [Comprehensive Documentation for Design, Development, and Deployment Phases](#comprehensive-documentation-for-design-development-and-deployment-phases)
   - [Table of Contents](#table-of-contents)
-  - [Project Overview](#project-overview)
   - [Project Time Borders](#project-time-borders)
-  - [Project Objectives](#project-objectives)
-  - [Timeline and Milestones](#timeline-and-milestones)
   - [Tech Stack](#tech-stack)
     - [Tools and Libraries](#tools-and-libraries)
   - [Feature Breakdown](#feature-breakdown)
@@ -46,6 +43,8 @@
       - [Role](#role)
       - [PurchaseOrder](#purchaseorder)
       - [PurchaseOrderRecord](#purchaseorderrecord)
+      - [ProductType](#producttype)
+      - [ProductInfo](#productinfo)
   - [REST API](#rest-api)
     - [Config](#config)
     - [Endpoints](#endpoints)
@@ -60,14 +59,8 @@
   - [Executive Summary](#executive-summary)
   - [Quality Assurance Plans](#quality-assurance-plans)
     - [Testing Phases](#testing-phases)
-  - [Compliance and Regulations](#compliance-and-regulations)
   - [Document Versioning](#document-versioning)
 
----
-
-## Project Overview
-
-The ERP system aims to offer a comprehensive solution for managing the core business processes of a small-to-medium enterprise (SME). The system will be a client-server desktop application developed using C++20 and Qt 6.5.
 
 ---
 
@@ -77,33 +70,6 @@ The ERP system aims to offer a comprehensive solution for managing the core busi
 | ------------- | --------------- |
 | Project Start | October 1, 2023 |
 | Project End   | going on        |
-
----
-
-## Project Objectives
-
-| Objective                  | Description                                                |
-| -------------------------- | ---------------------------------------------------------- |
-| Efficient Sales Management | Handle different types of sales documentation efficiently. |
-| Inventory Control          | Effective tracking and auditing of inventory.              |
-| Scalable Analytics         | Analytics on sales, inventory, and employee performance.   |
-| User-Friendly              | Intuitive UI and easy-to-use features.                     |
-
----
-
-## Timeline and Milestones
-
-| Milestone                                | Deadline         | Deliverable                                               | Sprint end (two weeks) |
-| ---------------------------------------- | ---------------- | --------------------------------------------------------- | ---------------------- |
-| Requirement Analysis and Planning        | October 18, 2023 | Detailed requirements and planning documents              | 2                      |
-| Database Schema Design                   | October 20, 2023 | Database Schema and Entity-Relationship Diagrams          | 2                      |
-| Tracebullet Project Version              | February 4, 2024 | Tracer implementation for login and registration features | 8                      |
-| Frontend Development (Basic Features)    | April 28, 2024   | Completed UI for Basic Features                           | 12                     |
-| Backend Development (Basic Features)     | May 7, 2024      | Working Backend for Basic Features                        | 13                     |
-| Frontend Development (Advanced Features) | June 21, 2024    | Completed UI for Advanced Features                        | 16                     |
-| Backend Development (Advanced Features)  | June 28, 2024    | Working Backend for Advanced Features                     | 17                     |
-| Testing                                  | July 30, 2024    | Complete bug fixes                                        | 19                     |
-| User Testing and Feedback                | July 31, 2024    | User feedback and final adjustments                       | 19                     |
 
 ---
 
@@ -292,22 +258,20 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ## Dataset specification
 
-The `Dataset` structure in our application is designed to efficiently handle tabled data, particularly for communication over a network using formats like JSON or XML. The structure is defined as follows:
+The structure is defined as follows:
 
 ### Components
 
     - `Data`: Represents a single column of a table. It is a QStringList, where each QString is an individual cell value in the column.
     - `Dataset`: Represents the entire table. It is a QHash that maps a QString key to a Data object. The key is used to identify each column.
 
-### Entities
-
 Dataset is actually a `map<key, value>`, where `key is a string` and `value is a list of strings`
 
 Dataset could store data `entities`. All possible entities are described below. 
 
-It's important to know that Dataset could store any array of one entity, because `value` is actually an array.
-
 If some key is not specified, it has `{ "" }` value as a placeholder for the list of strings.
+
+### Entities
 
 #### Result
 
@@ -354,6 +318,26 @@ If error key exists, it mean that error occured (even if message is empty).
 | description | { "Some long product description" } |
 | isImported  | { "True" }                          |
 
+#### ProductType
+| Key         | Value                     |
+| ----------- | ------------------------- |
+| id          | { "0" }                   |
+| code        | { "asdfasfdadsf1123123" } |
+| barcode     | { "12341243124" }         |
+| name        | { "Oil Elf 5W30" }        |
+| description | { "Something about oil" } |
+| lastPrice   | { "1000.00" }             |
+| unit        | { "shtuka" }              |
+| isImported  | { "1" }                   |
+
+#### ProductInfo
+| Key           | Value                            |
+| ------------- | -------------------------------- |
+| id            | { "0" }                          |
+| productTypeId | { "0" }                          |
+| name          | { "AdditionalInfo" }             |
+| value         | { "My teammates are good boys" } |
+
 ## REST API
 
 Below you could find spesification for different RESTful API request-response. 
@@ -369,7 +353,7 @@ Current configuration structure:
 | Field               | Value                       |
 | ------------------- | --------------------------- |
 | `apiUrl`            | `http://localhost:8000/api` |
-| `serializationType` | `json`, `xml`               |
+| `serializationType` | `json`          |
 
 Before you start to use next API Endpoints you should to remember that REST API url starts with `/api` endpoint
 For example `http://localhost:8000/api/sales`
@@ -479,10 +463,7 @@ The aim of this project is to develop a comprehensive software solution for smal
 ### Testing Phases
 
 - Unit Testing
-
-## Compliance and Regulations
-
-- Data Protection: All features will comply with GDPR and other relevant data protection laws.
+- Manual Testing
 
 ## Document Versioning
 
@@ -496,4 +477,5 @@ The aim of this project is to develop a comprehensive software solution for smal
 | 10/10/2023 | 2.0     | Full docs revision. Refactored schemas                            | Pavlenko Volodymyr |
 | 04/02/2024 | 3.0     | Full-ranged docs rev. Complete schemas and design refactoring     | Pavlenko Volodymyr |
 | 20/02/2024 | 3.1     | REST revision. Finishing docs structure                           | Pavlenko Volodymyr |
-| 20/02/2024 | 3.2     | Add Purchase spesific docs                                        | Pavlenko Volodymyr |
+| 20/05/2024 | 3.2     | Add Purchase spesific docs                                        | Pavlenko Volodymyr |
+| 01/12/2024 | 3.3     | General update                                                     | Pavlenko Volodymyr |
