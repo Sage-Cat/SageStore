@@ -58,8 +58,8 @@ The project aims to build an ERP system to manage core business processes for SM
 
 | Layer        | Technology   |
 | ------------ | ------------ |
-| Frontend     | Qt 6.5       |
-| Backend      | C++20        |
+| Frontend     | C++20, Qt 6.5       |
+| Backend      | C++20, Boost        |
 | Database     | SQLite       |
 | Build Tool   | CMake, Conan |
 | Version Ctrl | Git          |
@@ -70,13 +70,6 @@ The project aims to build an ERP system to manage core business processes for SM
 ## Getting Started
 
 ### Prerequisites
-
-- [Qt 6.5](https://wiki.qt.io/Qt_6.5_Release)
-- [Conan](https://conan.io/)
-- [SQLite](https://www.sqlite.org/index.html)
-- [CMake](https://cmake.org/)
-- [Boost](https://www.boost.org/)
-- [GTest](http://google.github.io/googletest/)
 
 _Check conanfile.py if you need versions of specific libs, that were used_
 
@@ -132,11 +125,7 @@ ctest --verbose
    ```
    conan install . --output-folder=build --build=missing
    ```
-
-   Or if your conan have sudo rights:
-   ```
-   conan install . --output-folder=build --build=missing -c tools.system.package_manager:mode=install
-   ```
+   
    If you have already installed qt manualy, add
    ```
    QT_DIR='your_path_to_qt_with_gcc_64'
