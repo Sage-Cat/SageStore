@@ -18,6 +18,16 @@ UsersView::UsersView(UsersManagementViewModel &viewModel, QWidget *parent)
     // We can't add new users this way for now
     // TODO: https://sageteam.atlassian.net/browse/SS-32
     m_addButton->setHidden(true);
+    
+    m_showPassword = new QCheckBox("Show passwords");
+
+    m_buttonRow->removeItem(m_buttonRowSpacerItem);
+    m_buttonRow->addWidget(m_showPassword);
+    m_buttonRow->addItem(m_buttonRowSpacerItem);
+
+    connect(m_showPassword, &QCheckBox::stateChanged, this, &UsersView::onUsersChanged);
+
+
 }
 
 void UsersView::onDeleteButtonClicked()
@@ -51,7 +61,7 @@ void UsersView::onEditButtonClicked()
         user.roleName = m_dataTable->item(row, 4)->text();
         m_viewModel.editUser(user);
     } else {
-        SPDLOG_WARN("No user selected for deletion.");
+        SPDLOG_WARN("No user selected for editing.");
     }
 }
 
@@ -69,13 +79,17 @@ void UsersView::fillTable(const QVector<DisplayData::User> &users)
     m_dataTable->setRowCount(users.size());
     m_dataTable->setColumnCount(DisplayData::User::VAR_COUNT);
     QStringList headers = {"ID", "Username", "Password", "Role ID", "Role Name"};
+    m_dataTable->setColumnWidth(2, 550);
     m_dataTable->setHorizontalHeaderLabels(headers);
 
     for (int row = 0; row < users.size(); ++row) {
         const auto &user = users[row];
         m_dataTable->setItem(row, 0, new QTableWidgetItem(user.id));
         m_dataTable->setItem(row, 1, new QTableWidgetItem(user.username));
-        m_dataTable->setItem(row, 2, new QTableWidgetItem(user.password));
+        m_dataTable->setItem(row, 2, new QTableWidgetItem(
+            (m_showPassword->isChecked()) ? user.password : QString(user.password.length(), '*')
+        ));
+
         m_dataTable->setItem(row, 3, new QTableWidgetItem(user.roleId));
         m_dataTable->setItem(row, 4, new QTableWidgetItem(user.roleName));
     }

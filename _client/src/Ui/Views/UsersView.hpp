@@ -3,6 +3,7 @@
 #include "Ui/Views/BaseView.hpp"
 #include <QTableWidget>
 #include <QWidget>
+#include <QCheckBox>
 
 #include "Ui/DisplayData/User.hpp"
 
@@ -23,4 +24,6 @@ private:
 
 private:
     UsersManagementViewModel &m_viewModel;
+
+    QCheckBox *m_showPassword;
 };
