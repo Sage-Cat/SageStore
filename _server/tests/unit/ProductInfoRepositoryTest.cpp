@@ -25,8 +25,8 @@ using ::testing::Return;
 class ProductInfoRepositoryTest : public ::testing::Test {
 protected:
     std::shared_ptr<QueryResultMock> queryResultMock;
-    std::unique_ptr<ProductInfoRepository> productInfoRepository;
     std::shared_ptr<DatabaseManagerMock> databaseManagerMock;
+    std::unique_ptr<ProductInfoRepository> productInfoRepository;
 
     ProductInfoRepositoryTest()
         : queryResultMock(std::make_shared<QueryResultMock>()),
