@@ -33,6 +33,8 @@ set(DATABASE_SOURCES
     # Repositories
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/PurchaseOrdersRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/PurchaseOrdersRecordRepository.cpp
 )
 
 set(NETWORK_SOURCES
