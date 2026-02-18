@@ -8,6 +8,7 @@
 
 #include "Ui/Dialogs/DialogManager.hpp"
 #include "Ui/MainWindow.hpp"
+#include "Ui/UiScale.hpp"
 #include "Ui/Views/BaseView.hpp"
 
 #include "common/SpdlogConfig.hpp"
@@ -19,6 +20,7 @@ inline constexpr int ENDPOINT_PORT      = 8001;
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    UiScale::configureApplication(app);
 
     SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
