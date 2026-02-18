@@ -67,6 +67,29 @@ ctest --test-dir build --output-on-failure --verbose
 ./build/_client/SageStoreClient
 ```
 
+## Run From WSL2 (GUI)
+
+Recommended approach on Windows 11 is running Linux binaries via WSLg (no Windows cross-toolchain needed).
+
+For client-only launch:
+
+```bash
+scripts/wsl/run_gui_app.sh ./build/_client/SageStoreClient
+```
+
+For server + client launch:
+
+```bash
+scripts/wsl/run_fullstack_gui.sh
+```
+
+If WSLg is not available, the script falls back to external X server display:
+
+```bash
+export SAGESTORE_WSL_X_DISPLAY="sage-pc:0.0"
+scripts/wsl/run_gui_app.sh ./build/_client/SageStoreClient
+```
+
 ## Documentation
 
 Generate PlantUML diagrams (Docker-based):
@@ -95,6 +118,8 @@ Main task flows:
 
 - `workflow:build+test`
 - `workflow:docs`
+- `workflow:run:wsl:client-gui`
+- `workflow:run:wsl:fullstack-gui`
 
 ## Contributing
 

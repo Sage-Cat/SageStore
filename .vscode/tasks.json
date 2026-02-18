@@ -155,6 +155,47 @@
       "problemMatcher": []
     },
     {
+      "label": "run:wsl:server",
+      "type": "shell",
+      "command": "./build/_server/SageStoreServer",
+      "problemMatcher": []
+    },
+    {
+      "label": "run:wsl:client-gui",
+      "type": "shell",
+      "command": "scripts/wsl/run_gui_app.sh",
+      "args": [
+        "./build/_client/SageStoreClient"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "run:wsl:fullstack-gui",
+      "type": "shell",
+      "command": "scripts/wsl/run_fullstack_gui.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "workflow:run:wsl:client-gui",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "cmake:configure:all",
+        "cmake:build",
+        "run:wsl:client-gui"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "workflow:run:wsl:fullstack-gui",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "cmake:configure:all",
+        "cmake:build",
+        "run:wsl:fullstack-gui"
+      ],
+      "problemMatcher": []
+    },
+    {
       "label": "docs:check-links",
       "type": "shell",
       "command": "python3",
