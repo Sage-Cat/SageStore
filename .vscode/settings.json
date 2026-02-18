@@ -1,8 +1,22 @@
 {
   "editor.formatOnSave": true,
-  "editor.rulers": [100],
+  "editor.rulers": [
+    100
+  ],
   "files.eol": "\n",
   "files.insertFinalNewline": true,
+  "files.exclude": {
+    "**/build": true,
+    "**/docs/doxygen_generated": true
+  },
+  "search.exclude": {
+    "**/build/**": true,
+    "**/docs/doxygen_generated/**": true
+  },
+  "files.watcherExclude": {
+    "**/build/**": true,
+    "**/docs/doxygen_generated/**": true
+  },
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.configureOnOpen": false,
   "cmake.copyCompileCommands": "${workspaceFolder}/build/compile_commands.json",

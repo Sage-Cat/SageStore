@@ -114,12 +114,22 @@ python3 scripts/check_docs_links.py
 
 Workspace tasks are in `.vscode/tasks.json`.
 
-Main task flows:
+Task naming convention:
 
-- `workflow:build+test`
-- `workflow:docs`
-- `workflow:run:wsl:client-gui`
-- `workflow:run:wsl:fullstack-gui`
+- `SageStore: <Area>: <Action>`
+
+Recommended workflows:
+
+- `SageStore: Workflow: Configure + Build + Test (all targets)`
+- `SageStore: Workflow: Configure + Build + Run Client GUI (WSL)`
+- `SageStore: Workflow: Configure + Build + Run Full stack (WSL)`
+- `SageStore: Workflow: Documentation (links + PlantUML + Doxygen)`
+
+Useful single-run tasks:
+
+- `SageStore: Configure: CMake (client + server + tests)`
+- `SageStore: Build: Compile current configuration`
+- `SageStore: Test: Run all CTest suites`
 
 ## Contributing
 
