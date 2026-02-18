@@ -2,16 +2,17 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QScreen>
 #include <QVBoxLayout>
 
 #include "Ui/Dialogs/DialogManager.hpp"
 #include "Ui/MainMenuActions.hpp"
+#include "Ui/UiScale.hpp"
 
 #include "common/SpdlogConfig.hpp"
 
 namespace {
-constexpr int WINDOW_WIDTH  = 1200;
-constexpr int WINDOW_HEIGHT = 800;
+const QSize BASE_WINDOW_SIZE{1200, 800};
 } // namespace
 
 MainWindow::MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &dialogManager,
@@ -32,8 +33,18 @@ void MainWindow::startUiProcess()
 
 void MainWindow::setupUi()
 {
-    resize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    showMaximized();
+    const QScreen *primaryScreen = m_app.primaryScreen();
+    const QRect availableGeometry =
+        primaryScreen ? primaryScreen->availableGeometry() : QRect();
+
+    resize(UiScale::scaledWindowSize(BASE_WINDOW_SIZE, availableGeometry));
+    setMinimumSize(UiScale::scalePx(960), UiScale::scalePx(640));
+
+    if (availableGeometry.isValid()) {
+        const QPoint centeredPosition =
+            availableGeometry.center() - QPoint(width() / 2, height() / 2);
+        move(centeredPosition);
+    }
 
     // MainMenu
     m_mainMenuBar = menuBar();

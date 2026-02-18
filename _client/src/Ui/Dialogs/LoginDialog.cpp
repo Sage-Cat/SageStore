@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
+#include "Ui/UiScale.hpp"
 #include "common/SpdlogConfig.hpp"
 
 LoginDialog::LoginDialog(BaseDialog *parent) : BaseDialog(parent)
@@ -80,6 +81,9 @@ void LoginDialog::setupLayout()
 
     mainLayout->addLayout(linkLayout);
     setLayout(mainLayout);
+
+    setMinimumWidth(UiScale::scalePx(420));
+    adjustSize();
 }
 
 void LoginDialog::setupConnections()

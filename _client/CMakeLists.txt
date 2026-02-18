@@ -22,6 +22,7 @@ set(NETWORK_SOURCES
 set(UI_SOURCES
     ${CLIENT_SOURCES_DIR}/Ui/MainWindow.cpp
     ${CLIENT_SOURCES_DIR}/Ui/MainMenuActions.hpp
+    ${CLIENT_SOURCES_DIR}/Ui/UiScale.hpp
 
     # Models
     ${CLIENT_SOURCES_DIR}/Ui/Models/BaseModel.cpp

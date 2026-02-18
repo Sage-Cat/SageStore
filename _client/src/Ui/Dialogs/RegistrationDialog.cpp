@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
+#include "Ui/UiScale.hpp"
 #include "common/SpdlogConfig.hpp"
 
 RegistrationDialog::RegistrationDialog(BaseDialog *parent) : BaseDialog(parent)
@@ -91,6 +92,9 @@ void RegistrationDialog::setupLayout()
 
     mainLayout->addLayout(linkLayout);
     setLayout(mainLayout);
+
+    setMinimumWidth(UiScale::scalePx(460));
+    adjustSize();
 }
 
 void RegistrationDialog::setupConnections()

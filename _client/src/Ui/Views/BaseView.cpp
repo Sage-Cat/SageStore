@@ -1,4 +1,7 @@
 #include "BaseView.hpp"
+#include <QHeaderView>
+
+#include "Ui/UiScale.hpp"
 #include "Ui/Views/ViewStyles.hpp"
 
 #include "Ui/ViewModels/BaseViewModel.hpp"
@@ -23,7 +26,8 @@ void BaseView::setupUi()
 
     // Create spacer item for the button layout
     m_buttonRowSpacerItem =
-        new QSpacerItem(ViewsStyles::ButtonsSpacer::WIDTH, ViewsStyles::ButtonsSpacer::HEIGHT,
+        new QSpacerItem(UiScale::scalePx(ViewsStyles::ButtonsSpacer::WIDTH),
+                        UiScale::scalePx(ViewsStyles::ButtonsSpacer::HEIGHT),
                         QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     // Create a row layout for buttons and add spacer item
@@ -32,11 +36,13 @@ void BaseView::setupUi()
 
     // Create a data table and add it to the main layout
     m_dataTable = new QTableWidget(this);
+    m_dataTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     // Create a status label and spacer item for additional info
     m_status = new QLabel("Status: ready", this);
     m_additionalInfoSpacerItem =
-        new QSpacerItem(ViewsStyles::ButtonsSpacer::WIDTH, ViewsStyles::ButtonsSpacer::HEIGHT,
+        new QSpacerItem(UiScale::scalePx(ViewsStyles::ButtonsSpacer::WIDTH),
+                        UiScale::scalePx(ViewsStyles::ButtonsSpacer::HEIGHT),
                         QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     // Create additional info layout with m_status and additionalInfoSpacerItem
