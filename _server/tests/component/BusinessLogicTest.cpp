@@ -37,6 +37,20 @@ protected:
 
         businessLogic = std::make_unique<BusinessLogic>(*repositoryManagerMock);
     }
+
+    ResponseData executeTask(const RequestData &requestData)
+    {
+        ResponseData responseData;
+        bool callbackInvoked = false;
+
+        businessLogic->executeTask(requestData, [&](ResponseData response) {
+            callbackInvoked = true;
+            responseData    = std::move(response);
+        });
+
+        EXPECT_TRUE(callbackInvoked);
+        return responseData;
+    }
 };
 
 TEST_F(BusinessLogicTest, UsersModule_LoginUser)
@@ -58,36 +72,75 @@ TEST_F(BusinessLogicTest, UsersModule_LoginUser)
     std::vector<Common::Entities::User> expectedUsers{user};
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
 
-    // Prepare the callback and its expectation
-    bool callbackInvoked = false;
-    auto callback        = [&callbackInvoked](const ResponseData &responseData) {
-        callbackInvoked = true;
-        ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
-    };
-
-    // Execute the task
-    businessLogic->executeTask(requestData, callback);
-
-    // Verify the callback was invoked
-    ASSERT_TRUE(callbackInvoked);
+    const ResponseData response = executeTask(requestData);
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) == response.dataset.end());
 }
 
-TEST_F(BusinessLogicTest, UsersModule_addRole)
+TEST_F(BusinessLogicTest, UsersModule_GetRoles)
 {
     RequestData requestData{
         .module = "users", .submodule = "roles", .method = "GET", .resourceId = "", .dataset = {}};
 
-    std::vector<Common::Entities::Role> expectedUsers{};
-    EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedUsers));
-    // Prepare the callback and its expectation
-    bool callbackInvoked = false;
-    auto callback        = [&callbackInvoked](const ResponseData &responseData) {
-        callbackInvoked = true;
-        ASSERT_TRUE(responseData.dataset.find(Keys::_ERROR) == responseData.dataset.end());
-    };
+    std::vector<Common::Entities::Role> expectedRoles{};
+    EXPECT_CALL(*rolesRepositoryMock, getAll()).WillOnce(Return(expectedRoles));
+    const ResponseData response = executeTask(requestData);
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) == response.dataset.end());
+}
 
-    // Execute the task
-    businessLogic->executeTask(requestData, callback);
+TEST_F(BusinessLogicTest, PlannedModule_ReturnsNotImplementedErrorResponse)
+{
+    RequestData requestData{.module     = "inventory",
+                            .submodule  = "list",
+                            .method     = "GET",
+                            .resourceId = "",
+                            .dataset    = {}};
+
+    const ResponseData response = executeTask(requestData);
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) != response.dataset.end());
+    ASSERT_FALSE(response.dataset.at(Keys::_ERROR).empty());
+    EXPECT_EQ(response.dataset.at(Keys::_ERROR).front(), "InventoryModule");
+}
+
+TEST_F(BusinessLogicTest, UnknownModule_ReturnsErrorResponse)
+{
+    RequestData requestData{
+        .module = "billing", .submodule = "list", .method = "GET", .resourceId = "", .dataset = {}};
+
+    const ResponseData response = executeTask(requestData);
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) != response.dataset.end());
+    ASSERT_FALSE(response.dataset.at(Keys::_ERROR).empty());
+    EXPECT_EQ(response.dataset.at(Keys::_ERROR).front(), "BusinessLogic");
+}
+
+TEST_F(BusinessLogicTest, EmptyModule_ReturnsErrorResponse)
+{
+    RequestData requestData{
+        .module = "", .submodule = "users", .method = "GET", .resourceId = "", .dataset = {}};
+
+    const ResponseData response = executeTask(requestData);
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) != response.dataset.end());
+    ASSERT_FALSE(response.dataset.at(Keys::_ERROR).empty());
+    EXPECT_EQ(response.dataset.at(Keys::_ERROR).front(), "BusinessLogic");
+}
+
+TEST_F(BusinessLogicTest, ModuleException_IsConvertedToErrorDataset)
+{
+    constexpr char UNKNOWN_USERNAME[] = "missing-user";
+    constexpr char PASSWORD[]         = "password1";
+
+    RequestData requestData{.module     = "users",
+                            .submodule  = "login",
+                            .method     = "POST",
+                            .resourceId = "",
+                            .dataset = {{Common::Entities::User::USERNAME_KEY, {UNKNOWN_USERNAME}},
+                                        {Common::Entities::User::PASSWORD_KEY, {PASSWORD}}}};
+
+    EXPECT_CALL(*usersRepositoryMock, getByField(_, _))
+        .WillOnce(Return(std::vector<Common::Entities::User>{}));
+    const ResponseData response = executeTask(requestData);
+
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) != response.dataset.end());
+    EXPECT_EQ(response.dataset.at(Keys::_ERROR).front(), "UsersModule");
 }
 
 int main(int argc, char **argv)

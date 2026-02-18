@@ -30,8 +30,8 @@ private:
 
     ResponseData getRoles();
     void addRole(const Dataset &request);
-    void updateRole(const Dataset &request, const std::string &resourseId);
-    void deleteRole(const std::string &resourseId);
+    void updateRole(const Dataset &request, const std::string &resourceId);
+    void deleteRole(const std::string &resourceId);
 
 private:
     std::shared_ptr<IRepository<Common::Entities::User>> m_usersRepository;

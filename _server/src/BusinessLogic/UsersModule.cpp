@@ -12,6 +12,30 @@
 
 #define _M "UsersModule"
 
+namespace {
+std::string getOptionalDatasetValue(const Dataset &request, const std::string &key)
+{
+    const auto dataIt = request.find(key);
+    if (dataIt == request.end() || dataIt->second.empty()) {
+        return {};
+    }
+
+    return dataIt->second.front();
+}
+
+std::string getRequiredDatasetValue(const Dataset &request, const std::string &key,
+                                    const char *context)
+{
+    const auto value = getOptionalDatasetValue(request, key);
+    if (value.empty()) {
+        SPDLOG_ERROR("{} | Missing required dataset key: {}", context, key);
+        throw ServerException(_M, "Missing required field: " + key);
+    }
+
+    return value;
+}
+} // namespace
+
 UsersModule::UsersModule(RepositoryManager &repositoryManager)
 {
     SPDLOG_TRACE("UsersModule::UsersModule");
@@ -56,7 +80,7 @@ ResponseData UsersModule::executeTask(const RequestData &requestData)
         } else if (requestData.method == "DELETE") {
             deleteRole(requestData.resourceId);
         } else {
-            SPDLOG_ERROR("UsersModule::executeTask | Submodule = users | Unrecognized method: {}",
+            SPDLOG_ERROR("UsersModule::executeTask | Submodule = roles | Unrecognized method: {}",
                          requestData.method);
             throw ServerException(_M, "Unrecognized method");
         }
@@ -74,14 +98,10 @@ ResponseData UsersModule::loginUser(const Dataset &request)
     SPDLOG_TRACE("UsersModule::loginUser");
     ResponseData response;
 
-    std::string clientUsername{}, clientPassword{};
-    try {
-        clientUsername = request.at(Common::Entities::User::USERNAME_KEY).front();
-        clientPassword = request.at(Common::Entities::User::PASSWORD_KEY).front();
-    } catch (const std::out_of_range &e) {
-        SPDLOG_ERROR("UsersModule::loginUser | dataset has no needed info: {}", e.what());
-        throw ServerException(_M, "Server got no username or password from Client");
-    }
+    const auto clientUsername = getRequiredDatasetValue(
+        request, Common::Entities::User::USERNAME_KEY, "UsersModule::loginUser");
+    const auto clientPassword = getRequiredDatasetValue(
+        request, Common::Entities::User::PASSWORD_KEY, "UsersModule::loginUser");
 
     // get user by username from repository
     auto usersVec =
@@ -109,16 +129,21 @@ ResponseData UsersModule::getUsers()
 {
     SPDLOG_TRACE("UsersModule::getUsers");
     ResponseData response;
+    response.dataset[Common::Entities::User::ID_KEY]       = {};
+    response.dataset[Common::Entities::User::USERNAME_KEY] = {};
+    response.dataset[Common::Entities::User::ROLE_ID_KEY]  = {};
+
     auto usersVec = m_usersRepository->getAll();
 
     if (usersVec.empty()) {
         SPDLOG_WARN("UsersModule::getUsers | array of users is empty");
-    } else {
-        for (const auto &user : usersVec) { // password is not being sent to client
-            response.dataset[Common::Entities::User::ID_KEY].emplace_back(user.id);
-            response.dataset[Common::Entities::User::USERNAME_KEY].emplace_back(user.username);
-            response.dataset[Common::Entities::User::ROLE_ID_KEY].emplace_back(user.roleId);
-        }
+        return response;
+    }
+
+    for (const auto &user : usersVec) { // password is not being sent to client
+        response.dataset[Common::Entities::User::ID_KEY].emplace_back(user.id);
+        response.dataset[Common::Entities::User::USERNAME_KEY].emplace_back(user.username);
+        response.dataset[Common::Entities::User::ROLE_ID_KEY].emplace_back(user.roleId);
     }
 
     return response;
@@ -127,18 +152,11 @@ ResponseData UsersModule::getUsers()
 void UsersModule::addUser(const Dataset &request)
 {
     SPDLOG_TRACE("UsersModule::addUser");
-    std::string username, password, roleId;
-    try {
-        username = request.at(Common::Entities::User::USERNAME_KEY).front();
-        password = request.at(Common::Entities::User::PASSWORD_KEY).front();
-
-        // We could have no Role (it means to use default)
-        if (request.contains(Common::Entities::User::ROLE_ID_KEY))
-            request.at(Common::Entities::User::ROLE_ID_KEY);
-    } catch (const std::out_of_range &e) {
-        SPDLOG_ERROR("UsersModule::addUser | Missing user data: {}", e.what());
-        throw ServerException(_M, "Incomplete user data");
-    }
+    const auto username = getRequiredDatasetValue(request, Common::Entities::User::USERNAME_KEY,
+                                                  "UsersModule::addUser");
+    const auto password = getRequiredDatasetValue(request, Common::Entities::User::PASSWORD_KEY,
+                                                  "UsersModule::addUser");
+    const auto roleId   = getOptionalDatasetValue(request, Common::Entities::User::ROLE_ID_KEY);
 
     auto usersVec = m_usersRepository->getByField(Common::Entities::User::USERNAME_KEY, username);
     if (!usersVec.empty()) {
@@ -159,14 +177,21 @@ void UsersModule::editUser(const Dataset &request, const std::string &userId)
         throw ServerException(_M, "User ID is empty");
     }
 
-    std::string username, password, roleId;
-    try {
-        username = request.at(Common::Entities::User::USERNAME_KEY).front();
-        password = request.at(Common::Entities::User::PASSWORD_KEY).front();
-        roleId   = request.at(Common::Entities::User::ROLE_ID_KEY).front();
-    } catch (const std::out_of_range &e) {
-        SPDLOG_ERROR("UsersModule::editUser | Missing user data: {}", e.what());
-        throw ServerException(_M, "Incomplete user data");
+    const auto username = getRequiredDatasetValue(request, Common::Entities::User::USERNAME_KEY,
+                                                  "UsersModule::editUser");
+    const auto roleId   = getRequiredDatasetValue(request, Common::Entities::User::ROLE_ID_KEY,
+                                                  "UsersModule::editUser");
+    auto password       = getOptionalDatasetValue(request, Common::Entities::User::PASSWORD_KEY);
+
+    if (password.empty()) {
+        const auto usersById =
+            m_usersRepository->getByField(Common::Entities::User::ID_KEY, userId);
+        if (usersById.empty()) {
+            SPDLOG_WARN("UsersModule::editUser | user with ID={} does not exist", userId);
+            throw ServerException(_M, "User does not exist");
+        }
+
+        password = usersById.front().password;
     }
 
     Common::Entities::User updatedUser{
@@ -190,17 +215,19 @@ ResponseData UsersModule::getRoles()
 {
     SPDLOG_TRACE("UsersModule::getRole");
     ResponseData response;
+    response.dataset[Common::Entities::Role::ID_KEY]   = {};
+    response.dataset[Common::Entities::Role::NAME_KEY] = {};
+
     auto rolesVec = m_rolesRepository->getAll();
 
     if (rolesVec.empty()) {
-        response.dataset[Common::Entities::Role::ID_KEY]   = {""};
-        response.dataset[Common::Entities::Role::NAME_KEY] = {""};
         SPDLOG_WARN("UsersModule::getRoles | array of roles is empty");
-    } else {
-        for (auto i = rolesVec.cbegin(); i != rolesVec.cend(); i++) {
-            response.dataset[Common::Entities::Role::ID_KEY].emplace_back(i->id);
-            response.dataset[Common::Entities::Role::NAME_KEY].emplace_back(i->name);
-        }
+        return response;
+    }
+
+    for (auto i = rolesVec.cbegin(); i != rolesVec.cend(); i++) {
+        response.dataset[Common::Entities::Role::ID_KEY].emplace_back(i->id);
+        response.dataset[Common::Entities::Role::NAME_KEY].emplace_back(i->name);
     }
 
     return response;
@@ -208,48 +235,39 @@ ResponseData UsersModule::getRoles()
 
 void UsersModule::addRole(const Dataset &request)
 {
-    SPDLOG_TRACE("UsersModule::addRoles");
-    ResponseData response;
-    std::string roleName{};
-    try {
-        roleName = request.at(Common::Entities::Role::NAME_KEY).front();
-    } catch (const std::out_of_range &e) {
-        SPDLOG_WARN("UsersModule::addRole username or password does not exit");
-        throw ServerException(_M, "Server got no username or password in Dataset");
-    }
+    SPDLOG_TRACE("UsersModule::addRole");
+    const auto roleName =
+        getRequiredDatasetValue(request, Common::Entities::Role::NAME_KEY, "UsersModule::addRole");
+
     auto usersVec = m_rolesRepository->getByField(Common::Entities::Role::NAME_KEY, roleName);
     if (usersVec.empty()) {
         const Common::Entities::Role role{.id = "" /* autoincremented */, .name = roleName};
         m_rolesRepository->add(role);
-        SPDLOG_INFO("UsersModule::registerUser | new role `{}` is added", roleName);
+        SPDLOG_INFO("UsersModule::addRole | new role `{}` is added", roleName);
     } else {
-        throw ServerException(_M, "Server got no username or password in Dataset");
+        throw ServerException(_M, "Role with this name already exists");
     }
 }
 
-void UsersModule::updateRole(const Dataset &request, const std::string &resourseId)
+void UsersModule::updateRole(const Dataset &request, const std::string &resourceId)
 {
     SPDLOG_TRACE("UsersModule::updateRole");
-    if (resourseId.empty()) {
-        throw ServerException(_M, "resourseId is emtpy");
+    if (resourceId.empty()) {
+        throw ServerException(_M, "resourceId is empty");
     }
 
-    std::string roleName{};
-    try {
-        m_rolesRepository->update(
-            Common::Entities::Role{.id = {} /* autoincremented */, .name = roleName});
-        roleName = request.at(Common::Entities::Role::NAME_KEY).front();
-    } catch (std::out_of_range &e) {
-        SPDLOG_WARN("UsersModule::updateRole role name does not exit");
-        throw ServerException(_M, "Server got no role name in Dataset");
-    }
+    const auto roleName = getRequiredDatasetValue(request, Common::Entities::Role::NAME_KEY,
+                                                  "UsersModule::updateRole");
+    m_rolesRepository->update(Common::Entities::Role{.id = resourceId, .name = roleName});
+    SPDLOG_INFO("UsersModule::updateRole | role id=`{}` updated", resourceId);
 }
 
-void UsersModule::deleteRole(const std::string &resourseId)
+void UsersModule::deleteRole(const std::string &resourceId)
 {
     SPDLOG_TRACE("UsersModule::deleteRole");
-    if (resourseId.empty()) {
-        throw ServerException(_M, "resourseId is emtpy");
+    if (resourceId.empty()) {
+        throw ServerException(_M, "resourceId is empty");
     }
-    m_rolesRepository->deleteResource(resourseId);
+
+    m_rolesRepository->deleteResource(resourceId);
 }
