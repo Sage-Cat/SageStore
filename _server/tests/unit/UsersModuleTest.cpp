@@ -1,7 +1,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <vector>
 
 #include "BusinessLogic/BusinessLogic.hpp"
@@ -16,6 +15,7 @@
 
 using ::testing::_;
 using ::testing::Return;
+using ::testing::Truly;
 
 class UsersModuleTest : public ::testing::Test {
 protected:
@@ -87,6 +87,7 @@ TEST_F(UsersModuleTest, getUsers)
         std::advance(it_roleId, i);
         EXPECT_EQ(*it_roleId, expectedUsers[i].roleId);
     }
+    EXPECT_EQ(response.dataset.count(Common::Entities::User::PASSWORD_KEY), 0U);
 }
 
 TEST_F(UsersModuleTest, addUser)
@@ -105,7 +106,10 @@ TEST_F(UsersModuleTest, addUser)
 
     std::vector<Common::Entities::User> expectedUsers{};
     EXPECT_CALL(*usersRepositoryMock, getByField(_, _)).WillOnce(Return(expectedUsers));
-    EXPECT_CALL(*usersRepositoryMock, add(_)).WillOnce(Return());
+    EXPECT_CALL(*usersRepositoryMock, add(Truly([&](const Common::Entities::User &user) {
+        return user.username == CORRECT_USERNAME && user.password == CORRECT_PASSWORD &&
+               user.roleId == CORRECT_ROLE_ID;
+    }))).WillOnce(Return());
 
     EXPECT_NO_THROW(usersModule->executeTask(requestData));
 }
@@ -125,7 +129,38 @@ TEST_F(UsersModuleTest, editUser)
                                            {Common::Entities::User::PASSWORD_KEY, {NEW_PASSWORD}},
                                            {Common::Entities::User::ROLE_ID_KEY, {NEW_ROLE_ID}}}};
 
-    EXPECT_CALL(*usersRepositoryMock, update(_)).WillOnce(Return());
+    EXPECT_CALL(*usersRepositoryMock, update(Truly([&](const Common::Entities::User &user) {
+        return user.id == USER_ID && user.username == NEW_USERNAME &&
+               user.password == NEW_PASSWORD && user.roleId == NEW_ROLE_ID;
+    }))).WillOnce(Return());
+
+    EXPECT_NO_THROW(usersModule->executeTask(requestData));
+}
+
+TEST_F(UsersModuleTest, editUserWithoutPassword_UsesStoredPassword)
+{
+    const std::string USER_ID         = "1";
+    const std::string NEW_USERNAME    = "updateduser";
+    const std::string STORED_PASSWORD = "stored_hash";
+    const std::string UPDATED_ROLE_ID = "updatedrole";
+    const Common::Entities::User inDb = {.id       = USER_ID,
+                                         .username = "user_before_update",
+                                         .password = STORED_PASSWORD,
+                                         .roleId   = "old_role"};
+
+    RequestData requestData{.module     = "users",
+                            .submodule  = "users",
+                            .method     = "PUT",
+                            .resourceId = USER_ID,
+                            .dataset    = {{Common::Entities::User::USERNAME_KEY, {NEW_USERNAME}},
+                                           {Common::Entities::User::ROLE_ID_KEY, {UPDATED_ROLE_ID}}}};
+
+    EXPECT_CALL(*usersRepositoryMock, getByField(Common::Entities::User::ID_KEY, USER_ID))
+        .WillOnce(Return(std::vector<Common::Entities::User>{inDb}));
+    EXPECT_CALL(*usersRepositoryMock, update(Truly([&](const Common::Entities::User &user) {
+        return user.id == USER_ID && user.username == NEW_USERNAME &&
+               user.password == STORED_PASSWORD && user.roleId == UPDATED_ROLE_ID;
+    }))).WillOnce(Return());
 
     EXPECT_NO_THROW(usersModule->executeTask(requestData));
 }
@@ -168,7 +203,7 @@ TEST_F(UsersModuleTest, getRoles)
     }
 }
 
-TEST_F(UsersModuleTest, addRoles)
+TEST_F(UsersModuleTest, addRole)
 {
     const std::string CORRECT_NAME = "adminchik";
     RequestData requestData{.module     = "users",
@@ -184,6 +219,23 @@ TEST_F(UsersModuleTest, addRoles)
     EXPECT_NO_THROW(usersModule->executeTask(requestData));
 }
 
+TEST_F(UsersModuleTest, addRoleFailsWhenRoleAlreadyExists)
+{
+    const std::string EXISTING_ROLE_NAME = "admin";
+    RequestData requestData{.module     = "users",
+                            .submodule  = "roles",
+                            .method     = "POST",
+                            .resourceId = "",
+                            .dataset = {{Common::Entities::Role::NAME_KEY, {EXISTING_ROLE_NAME}}}};
+
+    EXPECT_CALL(*rolesRepositoryMock,
+                getByField(Common::Entities::Role::NAME_KEY, EXISTING_ROLE_NAME))
+        .WillOnce(Return(std::vector<Common::Entities::Role>{
+            Common::Entities::Role{.id = "1", .name = EXISTING_ROLE_NAME}}));
+
+    EXPECT_THROW(usersModule->executeTask(requestData), ServerException);
+}
+
 TEST_F(UsersModuleTest, editRole)
 {
     const std::string CORRECT_ID = "3";
@@ -194,7 +246,9 @@ TEST_F(UsersModuleTest, editRole)
                             .resourceId = CORRECT_ID,
                             .dataset    = {{Common::Entities::Role::NAME_KEY, {NEW_NAME}}}};
 
-    EXPECT_CALL(*rolesRepositoryMock, update(_)).WillOnce(Return());
+    EXPECT_CALL(*rolesRepositoryMock, update(Truly([&](const Common::Entities::Role &role) {
+        return role.id == CORRECT_ID && role.name == NEW_NAME;
+    }))).WillOnce(Return());
 
     EXPECT_NO_THROW(usersModule->executeTask(requestData));
 }

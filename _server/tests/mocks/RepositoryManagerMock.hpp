@@ -12,7 +12,10 @@ class SqliteDatabaseManager;
 
 class RepositoryManagerMock : public RepositoryManager {
 public:
-    RepositoryManagerMock() : RepositoryManager(std::make_shared<DatabaseManagerMock>()) {}
+    RepositoryManagerMock()
+        : RepositoryManager(std::make_shared<::testing::NiceMock<DatabaseManagerMock>>())
+    {
+    }
 
     MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::User>>, getUserRepository, (),
                 (override));

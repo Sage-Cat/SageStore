@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Create Role table
 CREATE TABLE Role (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -8,7 +10,7 @@ CREATE TABLE User (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL, 
-  roleId INTEGER DEFAULT 0,
+  roleId INTEGER DEFAULT 1,
   FOREIGN KEY (roleId) REFERENCES Role(id)
 );
 
@@ -18,7 +20,7 @@ CREATE TABLE Log (
   userId INTEGER,
   action VARCHAR(100),
   timestamp DATETIME,
-  FOREIGN KEY (userId) REFERENCES Users(id)
+  FOREIGN KEY (userId) REFERENCES User(id)
 );
 
 -- Create Contacts table
@@ -36,7 +38,7 @@ CREATE TABLE ContactInfo (
   contactID INTEGER,
   name VARCHAR(50),
   value VARCHAR(100),
-  FOREIGN KEY (contactID) REFERENCES Contacts(id)
+  FOREIGN KEY (contactID) REFERENCES Contact(id)
 );
 
 -- Create Employees table
@@ -63,7 +65,7 @@ CREATE TABLE SuppliersProductInfo (
   supplierID INTEGER,
   productTypeId INTEGER,
   code VARCHAR(50),
-  FOREIGN KEY (supplierID) REFERENCES Suppliers(id),
+  FOREIGN KEY (supplierID) REFERENCES Supplier(id),
   FOREIGN KEY (productTypeId) REFERENCES ProductType(id)
 );
 
@@ -95,7 +97,7 @@ CREATE TABLE Inventory (
   quantityAvailable INTEGER,
   employeeId INTEGER,
   FOREIGN KEY (productTypeId) REFERENCES ProductType(id),
-  FOREIGN KEY (employeeId) REFERENCES Employees(id)
+  FOREIGN KEY (employeeId) REFERENCES Employee(id)
 );
 
 -- Create SaleOrders table
@@ -106,9 +108,9 @@ CREATE TABLE SaleOrder (
   contactId INTEGER,
   employeeId INTEGER,
   status VARCHAR(50),
-  FOREIGN KEY (userId) REFERENCES Users(id),
-  FOREIGN KEY (contactId) REFERENCES Contacts(id),
-  FOREIGN KEY (employeeId) REFERENCES Employees(id)
+  FOREIGN KEY (userId) REFERENCES User(id),
+  FOREIGN KEY (contactId) REFERENCES Contact(id),
+  FOREIGN KEY (employeeId) REFERENCES Employee(id)
 );
 
 -- Create SalesOrderRecords table
@@ -118,7 +120,7 @@ CREATE TABLE SalesOrderRecord (
   productTypeId INTEGER,
   quantity INTEGER,
   price FLOAT,
-  FOREIGN KEY (orderId) REFERENCES SaleOrders(id),
+  FOREIGN KEY (orderId) REFERENCES SaleOrder(id),
   FOREIGN KEY (productTypeId) REFERENCES ProductType(id)
 );
 
@@ -129,8 +131,8 @@ CREATE TABLE PurchaseOrder (
   userId INTEGER,
   supplierId INTEGER,
   status VARCHAR(50),
-  FOREIGN KEY (userId) REFERENCES Users(id),
-  FOREIGN KEY (supplierId) REFERENCES Suppliers(id)
+  FOREIGN KEY (userId) REFERENCES User(id),
+  FOREIGN KEY (supplierId) REFERENCES Supplier(id)
 );
 
 -- Create PurchaseOrderRecords table
@@ -140,7 +142,7 @@ CREATE TABLE PurchaseOrderRecord (
   productTypeId INTEGER,
   quantity INTEGER,
   price FLOAT,
-  FOREIGN KEY (orderId) REFERENCES PurchaseOrders(id),
+  FOREIGN KEY (orderId) REFERENCES PurchaseOrder(id),
   FOREIGN KEY (productTypeId) REFERENCES ProductType(id)
 );
 

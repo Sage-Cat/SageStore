@@ -21,14 +21,18 @@ UserRepository::~UserRepository() { SPDLOG_TRACE("UserRepository::~UserRepositor
 void UserRepository::add(const Common::Entities::User &entity)
 {
     SPDLOG_TRACE("UserRepository::add");
-    const std::string query = "INSERT INTO " + std::string(Common::Entities::User::TABLE_NAME) +
-                              " (username, password) " +
-                              (entity.roleId.empty() ? "VALUES (?, ?);" : "VALUES (?, ?, ?);");
+    const std::string query = entity.roleId.empty()
+                                  ? "INSERT INTO " + std::string(Common::Entities::User::TABLE_NAME) +
+                                        " (username, password) VALUES (?, ?);"
+                                  : "INSERT INTO " + std::string(Common::Entities::User::TABLE_NAME) +
+                                        " (username, password, roleId) VALUES (?, ?, ?);";
 
-    const std::vector<std::string> params =
-        entity.roleId.empty()
-            ? std::vector<std::string>{entity.username, entity.password}
-            : std::vector<std::string>{entity.username, entity.password, entity.roleId};
+    const std::vector<std::string> params = entity.roleId.empty()
+                                                ? std::vector<std::string>{entity.username,
+                                                                           entity.password}
+                                                : std::vector<std::string>{entity.username,
+                                                                           entity.password,
+                                                                           entity.roleId};
     m_dbManager->executeQuery(query, params);
 }
 
