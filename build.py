@@ -44,8 +44,20 @@ def clean_build_dir(build_dir: Path) -> None:
         shutil.rmtree(build_dir)
 
 
-def conan_install(build_dir: Path) -> None:
-    run_command(["conan", "install", ".", f"--output-folder={build_dir}", "--build=missing"])
+def conan_install(build_dir: Path, build_type: str) -> None:
+    run_command(
+        [
+            "conan",
+            "install",
+            ".",
+            f"--output-folder={build_dir}",
+            "--build=missing",
+            "-s:h",
+            f"build_type={build_type}",
+            "-s:b",
+            f"build_type={build_type}",
+        ]
+    )
 
 
 def cmake_configure(build_dir: Path, build_type: str, cmake_options: list[str]) -> None:
@@ -92,7 +104,7 @@ def build_target(target: str, build_type: str, clean: bool, run_tests: bool) -> 
 
     if clean:
         clean_build_dir(BUILD_DIR)
-    conan_install(BUILD_DIR)
+    conan_install(BUILD_DIR, build_type)
     cmake_configure(BUILD_DIR, build_type, target_options[target])
     cmake_build(BUILD_DIR)
 
@@ -125,7 +137,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--cmake-options",
-        nargs="*",
+        nargs=argparse.REMAINDER,
         default=[],
         help="Extra CMake options used only with the configure command.",
     )
@@ -145,7 +157,7 @@ def main() -> None:
         return
 
     if args.command == "configure":
-        conan_install(BUILD_DIR)
+        conan_install(BUILD_DIR, args.build_type)
         cmake_configure(BUILD_DIR, args.build_type, args.cmake_options)
         return
 

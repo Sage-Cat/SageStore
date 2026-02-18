@@ -80,5 +80,5 @@ void UsersView::fillTable(const QVector<DisplayData::User> &users)
 
     // Hide the ID and Role ID columns
     m_dataTable->setColumnHidden(0, true);
-    m_dataTable->setColumnHidden(3, true);
+    m_dataTable->setColumnHidden(2, true);
 }
