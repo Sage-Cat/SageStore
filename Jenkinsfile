@@ -14,6 +14,7 @@ pipeline {
         stage('Clean Build Folder') {
             steps {
                 sh '''
+                    set -eux
                     rm -rf build || true
                 '''
             }
@@ -21,32 +22,44 @@ pipeline {
         stage('Conan Install') {
             steps {
                 sh '''
+                    set -eux
                     conan install . --output-folder=build --build=missing
+                '''
+            }
+        }
+        stage('Docs Link Check') {
+            steps {
+                sh '''
+                    set -eux
+                    python3 scripts/check_docs_links.py
                 '''
             }
         }
         stage('CMake Configure') {
             steps {
                 sh '''
+                    set -eux
                     mkdir -p build
                     cd build
-                    cmake .. --preset conan-release -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
+                    cmake .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Release -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
                 '''
             }
         }
         stage('CMake Build') {
             steps {
                 sh '''
+                    set -eux
                     cd build
-                    cmake --build .
+                    cmake --build . --parallel
                 '''
             }
         }
         stage('Run Tests') {
             steps {
                 sh '''
+                    set -eux
                     cd build
-                    ctest --verbose
+                    ctest --output-on-failure --verbose
                 '''
             }
         }

@@ -1,63 +1,167 @@
+#!/usr/bin/env python3
 import argparse
-import sys
 import shutil
-from pathlib import Path
 import subprocess
-from colorama import Fore, Style, init
+import sys
+from pathlib import Path
 
-# Initialize Colorama to auto-reset styles
-init(autoreset=True)
+try:
+    from colorama import Fore, Style, init
 
-def run_command(command):
-    """Utility function to run commands safely and catch exceptions."""
-    try:
-        result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(Fore.GREEN + "[OK] " + Style.RESET_ALL + f"Success: '{' '.join(command)}'")
-        return result
-    except subprocess.CalledProcessError as e:
-        print(Fore.RED + "[FAIL] " + Style.RESET_ALL + f"Error during '{' '.join(command)}': {e.stderr.decode()}", file=sys.stderr)
-        sys.exit(1)
+    init(autoreset=True)
+except ModuleNotFoundError:
+    Fore = Style = None  # type: ignore[assignment]
 
-def clean_build_dir(build_dir):
-    """Remove the build directory if it exists, using pathlib for path manipulation."""
+
+BUILD_DIR = Path("build")
+
+
+def _ok_prefix() -> str:
+    if Fore and Style:
+        return Fore.GREEN + "[OK] " + Style.RESET_ALL
+    return "[OK] "
+
+
+def _fail_prefix() -> str:
+    if Fore and Style:
+        return Fore.RED + "[FAIL] " + Style.RESET_ALL
+    return "[FAIL] "
+
+
+def run_command(command: list[str], cwd: Path | None = None) -> None:
+    cmd_str = " ".join(command)
+    print(f"-> {cmd_str}")
+    result = subprocess.run(command, cwd=cwd)
+    if result.returncode != 0:
+        print(f"{_fail_prefix()}Command failed: {cmd_str}", file=sys.stderr)
+        sys.exit(result.returncode)
+    print(f"{_ok_prefix()}Command succeeded: {cmd_str}")
+
+
+def clean_build_dir(build_dir: Path) -> None:
     if build_dir.exists():
+        print(f"-> Removing {build_dir}")
         shutil.rmtree(build_dir)
 
-def setup_conan(build_dir):
-    """Configure the conan installation."""
-    run_command(['conan', 'install', '.', f'--output-folder={build_dir}', '--build=missing'])
 
-def configure_cmake(build_dir, options):
-    """Configure the project using CMake with provided options."""
-    run_command(['cmake', '.', f'-B{build_dir}', '--preset', 'conan-release'] + options)
+def conan_install(build_dir: Path) -> None:
+    run_command(["conan", "install", ".", f"--output-folder={build_dir}", "--build=missing"])
 
-def build_cmake(build_dir):
-    """Build the project using CMake."""
-    run_command(['cmake', '--build', str(build_dir)])
 
-def build_project(options):
-    """General build function that can handle full or incremental builds."""
-    build_dir = Path('build')
-    clean_build_dir(build_dir)
-    setup_conan(build_dir)
-    configure_cmake(build_dir, options)
-    build_cmake(build_dir)
+def cmake_configure(build_dir: Path, build_type: str, cmake_options: list[str]) -> None:
+    run_command(
+        [
+            "cmake",
+            "-S",
+            ".",
+            "-B",
+            str(build_dir),
+            "-G",
+            "Ninja",
+            f"-DCMAKE_TOOLCHAIN_FILE={build_dir / 'conan_toolchain.cmake'}",
+            "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW",
+            f"-DCMAKE_BUILD_TYPE={build_type}",
+        ]
+        + cmake_options
+    )
 
-def main():
-    parser = argparse.ArgumentParser(description="Build SageStore project.")
-    parser.add_argument('command', nargs='?', default='help', choices=['all', 'client', 'server', 'help'])
-    args = parser.parse_args()
 
-    options = {
-        'all': ['-DBUILD_CLIENT=ON', '-DBUILD_SERVER=ON', '-DBUILD_TESTS=ON'],
-        'client': ['-DBUILD_CLIENT=ON'],
-        'server': ['-DBUILD_SERVER=ON']
+def cmake_build(build_dir: Path) -> None:
+    run_command(["cmake", "--build", str(build_dir), "--parallel"])
+
+
+def ctest_run(build_dir: Path) -> None:
+    run_command(["ctest", "--test-dir", str(build_dir), "--output-on-failure", "--verbose"])
+
+
+def doxygen_generate() -> None:
+    run_command(["doxygen", "Doxyfile"])
+
+
+def docs_links_check() -> None:
+    run_command(["python3", "scripts/check_docs_links.py"])
+
+
+def build_target(target: str, build_type: str, clean: bool, run_tests: bool) -> None:
+    target_options: dict[str, list[str]] = {
+        "all": ["-DBUILD_CLIENT=ON", "-DBUILD_SERVER=ON", "-DBUILD_TESTS=ON"],
+        "client": ["-DBUILD_CLIENT=ON", "-DBUILD_SERVER=OFF", "-DBUILD_TESTS=OFF"],
+        "server": ["-DBUILD_CLIENT=OFF", "-DBUILD_SERVER=ON", "-DBUILD_TESTS=OFF"],
+        "tests": ["-DBUILD_CLIENT=ON", "-DBUILD_SERVER=ON", "-DBUILD_TESTS=ON"],
     }
 
-    if args.command == 'help':
-        parser.print_help()
-    else:
-        build_project(options.get(args.command, []))
+    if clean:
+        clean_build_dir(BUILD_DIR)
+    conan_install(BUILD_DIR)
+    cmake_configure(BUILD_DIR, build_type, target_options[target])
+    cmake_build(BUILD_DIR)
+
+    if run_tests or target in {"all", "tests"}:
+        ctest_run(BUILD_DIR)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Build and test SageStore.")
+    parser.add_argument(
+        "command",
+        choices=["all", "client", "server", "tests", "configure", "build", "test", "clean", "docs"],
+        help="Action to run.",
+    )
+    parser.add_argument(
+        "--build-type",
+        default="Release",
+        choices=["Debug", "Release"],
+        help="CMake build type used for configure/build actions. Default: Release",
+    )
+    parser.add_argument(
+        "--no-clean",
+        action="store_true",
+        help="Skip cleaning build directory before target commands.",
+    )
+    parser.add_argument(
+        "--run-tests",
+        action="store_true",
+        help="Run ctest after build for client/server commands.",
+    )
+    parser.add_argument(
+        "--cmake-options",
+        nargs="*",
+        default=[],
+        help="Extra CMake options used only with the configure command.",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    if args.command == "clean":
+        clean_build_dir(BUILD_DIR)
+        return
+
+    if args.command in {"all", "client", "server", "tests"}:
+        build_target(args.command, args.build_type, clean=not args.no_clean,
+                     run_tests=args.run_tests)
+        return
+
+    if args.command == "configure":
+        conan_install(BUILD_DIR)
+        cmake_configure(BUILD_DIR, args.build_type, args.cmake_options)
+        return
+
+    if args.command == "build":
+        cmake_build(BUILD_DIR)
+        return
+
+    if args.command == "test":
+        ctest_run(BUILD_DIR)
+        return
+
+    if args.command == "docs":
+        docs_links_check()
+        doxygen_generate()
+        return
+
 
 if __name__ == "__main__":
     main()
