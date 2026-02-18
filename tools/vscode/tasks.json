@@ -4,7 +4,7 @@
     {
       "id": "buildType",
       "type": "pickString",
-      "description": "Select CMake build type",
+      "description": "Select CMake build type for build tasks",
       "options": [
         "Release",
         "Debug"
@@ -14,119 +14,33 @@
   ],
   "tasks": [
     {
-      "label": "SageStore: Build: Clean build directory",
-      "detail": "Deletes ./build for a fully clean configure/build run.",
+      "label": "SageStore: Clean Rebuild (all targets + docs)",
+      "detail": "Clean build directory, rebuild all targets, then rebuild documentation.",
       "type": "shell",
-      "command": "cmake",
+      "command": "scripts/vscode/run_task.sh",
       "args": [
-        "-E",
-        "rm",
-        "-rf",
-        "build"
+        "clean-rebuild"
       ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
       "problemMatcher": []
     },
     {
-      "label": "SageStore: Build: Conan install dependencies",
-      "detail": "Installs Conan dependencies and generates toolchain files in ./build.",
+      "label": "SageStore: Build (with cache, all targets)",
+      "detail": "Incremental build using Conan/CMake cache (configure + build).",
       "type": "shell",
-      "command": "conan",
+      "command": "scripts/vscode/run_task.sh",
       "args": [
-        "install",
-        ".",
-        "--output-folder=build",
-        "--build=missing",
-        "-s",
-        "build_type=${input:buildType}"
+        "build-cache"
       ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Configure: CMake (client + server + tests)",
-      "detail": "Configures all project targets using Ninja and Conan toolchain.",
-      "type": "shell",
-      "command": "cmake",
-      "args": [
-        "-S",
-        ".",
-        "-B",
-        "build",
-        "-G",
-        "Ninja",
-        "-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake",
-        "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW",
-        "-DCMAKE_BUILD_TYPE=${input:buildType}",
-        "-DBUILD_CLIENT=ON",
-        "-DBUILD_SERVER=ON",
-        "-DBUILD_TESTS=ON"
-      ],
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Build: Conan install dependencies"
-      ],
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Configure: CMake (client only)",
-      "detail": "Configures only client target (no server/tests).",
-      "type": "shell",
-      "command": "cmake",
-      "args": [
-        "-S",
-        ".",
-        "-B",
-        "build",
-        "-G",
-        "Ninja",
-        "-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake",
-        "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW",
-        "-DCMAKE_BUILD_TYPE=${input:buildType}",
-        "-DBUILD_CLIENT=ON",
-        "-DBUILD_SERVER=OFF",
-        "-DBUILD_TESTS=OFF"
-      ],
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Build: Conan install dependencies"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Configure: CMake (server only)",
-      "detail": "Configures only server target (no client/tests).",
-      "type": "shell",
-      "command": "cmake",
-      "args": [
-        "-S",
-        ".",
-        "-B",
-        "build",
-        "-G",
-        "Ninja",
-        "-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake",
-        "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW",
-        "-DCMAKE_BUILD_TYPE=${input:buildType}",
-        "-DBUILD_CLIENT=OFF",
-        "-DBUILD_SERVER=ON",
-        "-DBUILD_TESTS=OFF"
-      ],
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Build: Conan install dependencies"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Build: Compile current configuration",
-      "detail": "Builds whichever targets were selected during the last configure step.",
-      "type": "shell",
-      "command": "cmake",
-      "args": [
-        "--build",
-        "build",
-        "--parallel"
-      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
       "group": {
         "kind": "build",
         "isDefault": true
@@ -134,92 +48,22 @@
       "problemMatcher": []
     },
     {
-      "label": "SageStore: Test: Run all CTest suites",
-      "detail": "Runs all tests registered in CTest with verbose output.",
+      "label": "SageStore: Build Documentation",
+      "detail": "Validate docs links, render PlantUML, and generate Doxygen docs.",
       "type": "shell",
-      "command": "ctest",
+      "command": "scripts/vscode/run_task.sh",
       "args": [
-        "--test-dir",
-        "build",
-        "--output-on-failure",
-        "--verbose"
+        "docs"
       ],
-      "group": "test",
       "problemMatcher": []
     },
     {
-      "label": "SageStore: Run: Server executable",
-      "detail": "Runs the server binary from build output.",
+      "label": "SageStore: Run Tests",
+      "detail": "Run all CTest suites from current build directory.",
       "type": "shell",
-      "command": "./build/_server/SageStoreServer",
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Run: Client GUI (WSLg or X server fallback)",
-      "detail": "Runs Qt client via scripts/wsl/run_gui_app.sh with auto display detection.",
-      "type": "shell",
-      "command": "scripts/wsl/run_gui_app.sh",
+      "command": "scripts/vscode/run_task.sh",
       "args": [
-        "./build/_client/SageStoreClient"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Run: Full stack (server + GUI client, WSL)",
-      "detail": "Starts server then launches GUI client with cleanup on exit.",
-      "type": "shell",
-      "command": "scripts/wsl/run_fullstack_gui.sh",
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Docs: Check markdown links",
-      "detail": "Validates local markdown links in README/CONTRIBUTING/docs.",
-      "type": "shell",
-      "command": "python3",
-      "args": [
-        "scripts/check_docs_links.py"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Docs: Render PlantUML diagrams via Docker",
-      "detail": "Renders all docs/*.puml diagrams to PNG using dockerized PlantUML.",
-      "type": "shell",
-      "command": "scripts/plantuml/render_puml_docker.sh",
-      "args": [
-        "docs",
-        "png"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Docs: Generate Doxygen API docs",
-      "detail": "Builds API documentation into docs/doxygen_generated.",
-      "type": "shell",
-      "command": "doxygen",
-      "args": [
-        "Doxyfile"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Workflow: Configure + Build (all targets)",
-      "detail": "Conan install + CMake configure (all targets) + build.",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Configure: CMake (client + server + tests)",
-        "SageStore: Build: Compile current configuration"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Workflow: Configure + Build + Test (all targets)",
-      "detail": "Conan install + configure + build + full test suite.",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Configure: CMake (client + server + tests)",
-        "SageStore: Build: Compile current configuration",
-        "SageStore: Test: Run all CTest suites"
+        "test"
       ],
       "group": {
         "kind": "test",
@@ -228,35 +72,22 @@
       "problemMatcher": []
     },
     {
-      "label": "SageStore: Workflow: Configure + Build + Run Client GUI (WSL)",
-      "detail": "Conan install + configure all + build + launch GUI client.",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Configure: CMake (client + server + tests)",
-        "SageStore: Build: Compile current configuration",
-        "SageStore: Run: Client GUI (WSLg or X server fallback)"
+      "label": "SageStore: Run Server (only)",
+      "detail": "Run server binary from build output.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "run-server"
       ],
       "problemMatcher": []
     },
     {
-      "label": "SageStore: Workflow: Configure + Build + Run Full stack (WSL)",
-      "detail": "Conan install + configure all + build + launch server/client stack.",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Configure: CMake (client + server + tests)",
-        "SageStore: Build: Compile current configuration",
-        "SageStore: Run: Full stack (server + GUI client, WSL)"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "SageStore: Workflow: Documentation (links + PlantUML + Doxygen)",
-      "detail": "Runs all documentation quality and generation tasks.",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "SageStore: Docs: Check markdown links",
-        "SageStore: Docs: Render PlantUML diagrams via Docker",
-        "SageStore: Docs: Generate Doxygen API docs"
+      "label": "SageStore: Run Client (only)",
+      "detail": "Run client binary with WSLg/X display auto-detection.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "run-client"
       ],
       "problemMatcher": []
     }

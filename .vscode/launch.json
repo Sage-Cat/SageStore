@@ -13,7 +13,7 @@
       "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
-      "preLaunchTask": "SageStore: Build: Compile current configuration",
+      "preLaunchTask": "SageStore: Build (with cache, all targets)",
       "setupCommands": [
         {
           "description": "Enable gdb pretty-printing",
@@ -39,7 +39,7 @@
       "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
-      "preLaunchTask": "SageStore: Build: Compile current configuration",
+      "preLaunchTask": "SageStore: Build (with cache, all targets)",
       "setupCommands": [
         {
           "description": "Enable gdb pretty-printing",
@@ -60,7 +60,7 @@
       "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
-      "preLaunchTask": "SageStore: Build: Compile current configuration",
+      "preLaunchTask": "SageStore: Build (with cache, all targets)",
       "setupCommands": [
         {
           "description": "Enable gdb pretty-printing",
@@ -81,7 +81,7 @@
       "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
-      "preLaunchTask": "SageStore: Build: Compile current configuration",
+      "preLaunchTask": "SageStore: Build (with cache, all targets)",
       "setupCommands": [
         {
           "description": "Enable gdb pretty-printing",
