@@ -24,8 +24,7 @@ LoginDialog::~LoginDialog()
 
 void LoginDialog::showWithPresetData(const QString &username, const QString &password)
 {
-    SPDLOG_TRACE("LoginDialog::showWithPresetData | user: {} | password: {}",
-                 username.toStdString(), password.toStdString());
+    SPDLOG_TRACE("LoginDialog::showWithPresetData | user: {}", username.toStdString());
     m_usernameField->setText(username);
     m_passwordField->setText(password);
     show();
@@ -98,7 +97,8 @@ void LoginDialog::onLoginClicked()
 
     emit loginAttempted(
         m_usernameField->text(),
-        QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+        QCryptographicHash::hash(m_passwordField->text().toUtf8(), QCryptographicHash::Sha256)
+            .toHex());
 }
 
 void LoginDialog::onRegisterLinkClicked()

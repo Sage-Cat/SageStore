@@ -20,7 +20,6 @@ public:
         } else if (endpoint == Endpoints::Users::USERS && method == Method::GET) {
             serverResponse = {{Common::Entities::User::ID_KEY, {"1", "2"}},
                               {Common::Entities::User::USERNAME_KEY, {"user1", "user2"}},
-                              {Common::Entities::User::PASSWORD_KEY, {"password1", "password2"}},
                               {Common::Entities::User::ROLE_ID_KEY, {"1", "2"}}};
         } else if (endpoint == Endpoints::Users::USERS && method == Method::POST) {
             serverResponse = {};

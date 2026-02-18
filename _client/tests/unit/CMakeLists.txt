@@ -79,3 +79,11 @@ target_link_libraries(UsersManagementModelTest
 )
 message(STATUS "Adding unit test: UsersManagementModelTest")
 add_test(NAME Unit_UsersManagementModelTest COMMAND UsersManagementModelTest)
+
+set_tests_properties(
+    Unit_ApiManagerTest
+    Unit_MainWindowTest
+    Unit_DialogManagerTest
+    Unit_UsersManagementModelTest
+    PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+)

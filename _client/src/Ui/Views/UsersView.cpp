@@ -46,9 +46,8 @@ void UsersView::onEditButtonClicked()
         DisplayData::User user;
         user.id       = m_dataTable->item(row, 0)->text();
         user.username = m_dataTable->item(row, 1)->text();
-        user.password = m_dataTable->item(row, 2)->text();
-        user.roleId   = m_dataTable->item(row, 3)->text();
-        user.roleName = m_dataTable->item(row, 4)->text();
+        user.roleId   = m_dataTable->item(row, 2)->text();
+        user.roleName = m_dataTable->item(row, 3)->text();
         m_viewModel.editUser(user);
     } else {
         SPDLOG_WARN("No user selected for deletion.");
@@ -68,16 +67,15 @@ void UsersView::fillTable(const QVector<DisplayData::User> &users)
     m_dataTable->clear();
     m_dataTable->setRowCount(users.size());
     m_dataTable->setColumnCount(DisplayData::User::VAR_COUNT);
-    QStringList headers = {"ID", "Username", "Password", "Role ID", "Role Name"};
+    QStringList headers = {"ID", "Username", "Role ID", "Role Name"};
     m_dataTable->setHorizontalHeaderLabels(headers);
 
     for (int row = 0; row < users.size(); ++row) {
         const auto &user = users[row];
         m_dataTable->setItem(row, 0, new QTableWidgetItem(user.id));
         m_dataTable->setItem(row, 1, new QTableWidgetItem(user.username));
-        m_dataTable->setItem(row, 2, new QTableWidgetItem(user.password));
-        m_dataTable->setItem(row, 3, new QTableWidgetItem(user.roleId));
-        m_dataTable->setItem(row, 4, new QTableWidgetItem(user.roleName));
+        m_dataTable->setItem(row, 2, new QTableWidgetItem(user.roleId));
+        m_dataTable->setItem(row, 3, new QTableWidgetItem(user.roleName));
     }
 
     // Hide the ID and Role ID columns
