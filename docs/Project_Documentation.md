@@ -3,8 +3,11 @@
 ## Comprehensive Documentation for Design, Development, and Deployment Phases
 
 - **Prepared by:** Volodymyr Pavlenko
-- **Date:** February 20, 2024
-- **Version:** 3.1
+- **Date:** February 18, 2026
+- **Version:** 3.2
+
+> Implementation note: this document captures target product scope.  
+> Current implementation status and delivery plan are tracked in `docs/Implementation_Status.md`.
 
 ---
 
@@ -33,7 +36,7 @@
       - [Overview](#overview)
       - [Architecture Layers and Components](#architecture-layers-and-components)
   - [Database](#database)
-    - [Table Name: Roles](#table-name-roles)
+    - [Table Name: Role](#table-name-role)
     - [Database schema](#database-schema)
   - [Dataset specification](#dataset-specification)
     - [Components](#components-1)
@@ -233,24 +236,25 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ## Database
 
-### Table Name: Roles
+### Table Name: Role
 
 | Table Name           | Fields                                                                                               | Primary Key | Foreign Key               | Notes                                |
 | -------------------- | ---------------------------------------------------------------------------------------------------- | ----------- | ------------------------- | ------------------------------------ |
-| Roles                | id (int), name (string)                                                                              | id          | -                         | User roles for access control        |
-| Users                | id (int), username (string), password (string), roleId (int)                                         | id          | roleId                    | User information                     |
-| Logs                 | id (int), userId (int), action (string), timestamp (datetime)                                        | id          | userId                    | User logs                            |
-| Contacts             | id (int), name (string), type (string), email (string), phone (string)                               | id          | -                         | Consolidates customers and suppliers |
+| Role                 | id (int), name (string)                                                                              | id          | -                         | User roles for access control        |
+| User                 | id (int), username (string), password (string), roleId (int)                                         | id          | roleId                    | User information                     |
+| Log                  | id (int), userId (int), action (string), timestamp (datetime)                                        | id          | userId                    | User logs                            |
+| Contact              | id (int), name (string), type (string), email (string), phone (string)                               | id          | -                         | Consolidates customers and suppliers |
 | ContactInfo          | id (int), contactID (int), name (string), value (string)                                             | id          | contactID                 |
-| Employees            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Employee details                     |
-| Suppliers            | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Supplier details                     |
+| Employee             | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Employee details                     |
+| Supplier             | id (int), name (string), number (string), email (string), address (string)                           | id          | -                         | Supplier details                     |
 | SuppliersProductInfo | id (int), supplierID (int), productTypeId (int), code (string)                                       | id          | supplierID                | Supplier info for product types      |
 | ProductInfo          | id (int), productTypeId (int), name (string), value (string)                                         | id          | productTypeId             |
 | ProductType          | id (int), code (string), barcode (string), ukt_zed (string), name (string), description (string),... | id          | -                         | Product type details                 |
 | Inventory            | id (int), productTypeId (int), quantityAvailable (int), employeeId (int)                             | id          | productTypeId, employeeId | Current products inventory           |
-| SaleOrders           | id (int), date (datetime), userId (int), contactId (int), employeeId (int), status (string),...      | id          | userId, contactId         | Manages sales orders                 |
-| OrderInfo            | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
-| PurchaseOrders       | id (int), date (datetime), userId (int), supplierId (int), status (string),...                       | id          | userId, supplierId        | Manages purchase orders              |
+| SaleOrder            | id (int), date (datetime), userId (int), contactId (int), employeeId (int), status (string),...      | id          | userId, contactId         | Manages sales orders                 |
+| SalesOrderRecord     | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
+| PurchaseOrder        | id (int), date (datetime), userId (int), supplierId (int), status (string),...                       | id          | userId, supplierId        | Manages purchase orders              |
+| PurchaseOrderRecord  | id (int), orderId (int), productTypeId (int), quantity (int), price (float)                          | id          | orderId, productTypeId    | Details of each order                |
 
 ### Database schema
 
@@ -269,7 +273,7 @@ Dataset is actually a `map<key, value>`, where `key is a string` and `value is a
 
 Dataset could store data `entities`. All possible entities are described below. 
 
-If some key is not specified, it has `{ "" }` value as a placeholder for the list of strings.
+If some key is not specified, it may be omitted or provided with an empty list.
 
 ### Entities
 
@@ -346,17 +350,17 @@ Below you could find spesification for different RESTful API request-response.
 
 | Method | URL                            | Description                            |
 | ------ | ------------------------------ | -------------------------------------- |
-| `GET`  | `http://localhost:8000/config` | Fetch recommended client configuration |
+| `GET`  | `http://localhost:8001/config` | Fetch recommended client configuration |
 
 Current configuration structure:
 
 | Field               | Value                       |
 | ------------------- | --------------------------- |
-| `apiUrl`            | `http://localhost:8000/api` |
+| `apiUrl`            | `http://localhost:8001/api` |
 | `serializationType` | `json`          |
 
-Before you start to use next API Endpoints you should to remember that REST API url starts with `/api` endpoint
-For example `http://localhost:8000/api/sales`
+Before you start to use next API Endpoints you should to remember that REST API url starts with `/api` endpoint.
+For example `http://localhost:8001/api/sales`
 
 ### Endpoints
 
@@ -368,14 +372,16 @@ As for the cases of simple entity name `User`, it just means that all keys must 
 
 About arrays: Request or Response is array of entities if it's specified as `array<User>`
 
+> Implementation status: only `Users` endpoints are currently wired end-to-end in server and client code.
+
 #### Users
 
 | Method   | Endpoint                | Request                  | Response                      | Description                                             |
 | -------- | ----------------------- | ------------------------ | ----------------------------- | ------------------------------------------------------- |
 | `POST`   | `/users/login`          | User[username, password] | User[id, roleId]              | Authenticate a user (compare login and passoword in DB) |
-| `GET`    | `/users/users`          | -                        | array<User[id, username, id]> | Fetch all users for Role-based access                   |
+| `GET`    | `/users/users`          | -                        | array<User[id, username, roleId]> | Fetch all users for Role-based access                   |
 | `POST`   | `/users/users`          | User                     | Result                        | Add a new user (Admin only)                             |
-| `PUT`    | `/users/users/{userId}` | User                     | Result                        | Edit a specific user (Admin only)                       |
+| `PUT`    | `/users/users/{userId}` | User[username, roleId] (+ optional password) | Result | Edit a specific user (Admin only)                       |
 | `DELETE` | `/users/users/{userId}` | -                        | Result                        | Delete a specific user (Admin only)                     |
 | `GET`    | `/users/roles`          | -                        | array<Role>                   | Fetch all roles for Role-based access                   |
 | `POST`   | `/users/roles`          | Role                     | Result                        | Add a new role (Admin only)                             |

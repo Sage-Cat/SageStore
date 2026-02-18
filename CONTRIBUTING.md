@@ -44,7 +44,7 @@ Commit messages should clearly describe what has been done and what is left to d
 
 2. **Review Process**:
     - At least two team members must review and approve the pull request before it can be merged.
-    - Reviewers should focus on the [code convention](TODO) and whether the PR adequately addresses the issue.
+    - Reviewers should focus on code conventions from `.clang-format`, project docs under `docs/`, and whether the PR adequately addresses the issue.
     - CI pipeline must succeed.
 
 3. **Merging**:
