@@ -3,17 +3,16 @@ import subprocess
 import argparse
 
 
-def run_plantuml_to_png(source_directory, output_directory):
+def run_plantuml_to_png(source_directory):
     current_script_dir = os.path.dirname(os.path.abspath(__file__))
-    script_path = os.path.join(current_script_dir, 'plantuml_to_png.py')
-    command = ['python', script_path, '-d', source_directory,
-               '-o', output_directory, '-p', '5018']
+    script_path = os.path.join(current_script_dir, 'render_puml_docker.sh')
+    command = [script_path, source_directory, 'png']
     subprocess.run(command, check=True)
 
 
 def update_folder_images(source_directory):
-    """Search for .puml files and convert them to PNG."""
-    run_plantuml_to_png(source_directory + "/plantuml/", source_directory)
+    """Search for .puml files and convert them to PNG via Dockerized PlantUML."""
+    run_plantuml_to_png(source_directory)
 
 
 if __name__ == "__main__":
