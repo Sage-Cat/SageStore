@@ -1,184 +1,105 @@
-# SageStore - ERP System for Small-to-Medium Enterprises
+# SageStore
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](LINK_TO_BUILD)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Contributors](https://img.shields.io/github/contributors/Sage-Cat/SageStore)](https://github.com/Sage-Cat/SageStore/contributors)
+SageStore is a C++20/Qt desktop ERP project with a client-server architecture.
 
----
+## Current Project Stage
 
-## Table of Contents
+This branch focuses on stabilizing the foundation for continued development.
 
-- [SageStore - ERP System for Small-to-Medium Enterprises](#sagestore---erp-system-for-small-to-medium-enterprises)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-    - [Project Overview](#project-overview)
-    - [Objectives](#objectives)
-    - [Features](#features)
-  - [Technologies Used](#technologies-used)
-    - [Tech Stack](#tech-stack)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-  - [Building](#building)
-  - [Testing](#testing)
-  - [Manual build process](#manual-build-process)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Contact](#contact)
-  - [Acknowledgments](#acknowledgments)
-  - [Detailed project documentation](#detailed-project-documentation)
+| Module | Status | Notes |
+| --- | --- | --- |
+| Users (login/users/roles) | Implemented | End-to-end client API + server business logic + repository + tests |
+| Purchase | Planned | Data schema exists, business/UI flow not implemented end-to-end |
+| Sales | Planned | Data schema exists, business/UI flow not implemented end-to-end |
+| Inventory | Planned | Data schema exists, business/UI flow not implemented end-to-end |
+| Management | Planned | Data schema exists, business/UI flow not implemented end-to-end |
+| Analytics | Planned | Not implemented |
 
----
+Detailed status and execution roadmap: `docs/Implementation_Status.md`.
 
-## Introduction
+## Tech Stack
 
-### Project Overview
+- Language: C++20
+- Client UI: Qt 6.6.x
+- Server networking: Boost.Beast/Asio
+- Database: SQLite3
+- Build: CMake + Conan
+- Tests: GoogleTest/GoogleMock + QtTest
+- CI: Jenkins
+- Docs: Doxygen + PlantUML
 
-The project aims to build an ERP system to manage core business processes for SMEs, including inventory, sales, purchase, HR, and accounting. It will be a client-server desktop application developed using C++20 and Qt 6.5.
+## Build
 
-### Objectives
+### Recommended (scripted)
 
-- Efficient Sales Management
-- Inventory Control
-- Scalable Analytics
-- User-Friendly UI
-
-### Features
-
-- Sales Module: Management of sales orders and customer data.
-- Inventory Module: Real-time inventory tracking.
-- HR Module: HR management including employee data and payroll.
-- Analytics Module: Comprehensive analytics dashboard.
-- User Management: Role-based access control.
-- API Support for future scalability.
-- Multi-language support.
-
-## Technologies Used
-
-### Tech Stack
-
-| Layer        | Technology   |
-| ------------ | ------------ |
-| Frontend     | C++20, Qt 6.5       |
-| Backend      | C++20, Boost        |
-| Database     | SQLite       |
-| Build Tool   | CMake, Conan |
-| Version Ctrl | Git          |
-| CI/CD        | Jenkins      |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-_Check conanfile.py if you need versions of specific libs, that were used_
-
-## Building
-
-> If you are using VS Code you could use my [tasks.json](tools/vscode_config/tasks.json) config file
-
-1. Clone repo:
-
-   ```
-   git clone git@gitlab.com:sagecat/SageStore.git
-   ```
-
-2. Automated build:
-
-   ```
-   python3 build.py
-   ```
-   You can also do [manual build process](#manual-build-process)
-
-3. Run the application
-
-   ```
-   # Windows
-   .\_server\SageStoreServer.exe
-   .\_client\SageStoreClient.exe
-
-   # Linux
-   ./_server/SageStoreServer
-   ./_client/SageStoreClient
-   ```
-
-## Testing
-
-Run tests
-
-```
-# Inside build folder
-ctest
-
-# More detailed output
-ctest --verbose
-
-# Run specific test
-.\_client\unit\test_SageStoreClient.exe
-# or
-./_client/unit/test_SageStoreClient
+```bash
+python3 build.py all
 ```
 
-## Manual build process
-1. Install conan debs
+Other commands:
 
-   ```
-   conan install . --output-folder=build --build=missing
-   ```
-   
-   If you have already installed qt manualy, add
-   ```
-   QT_DIR='your_path_to_qt_with_gcc_64'
-   export QT_DIR
-   ```
-   into your .bashrc file. INPORTANT: version of qt is 6.6.2
+```bash
+python3 build.py client
+python3 build.py server
+python3 build.py tests
+python3 build.py test
+python3 build.py clean
+```
 
-2. Go to build folder and run cmake with presets
+### Manual
 
-   ```
-   cd build
-   cmake .. --preset conan-debug -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
-   ```
+```bash
+conan install . --output-folder=build --build=missing
+cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Release -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DBUILD_TESTS=ON
+cmake --build build --parallel
+```
 
-3. Build the project
+## Test
 
-   ```
-   cmake --build .
-   ```
+```bash
+ctest --test-dir build --output-on-failure --verbose
+```
 
-4. Code formatting:
+## Run
 
-   ```
-   find . -type f \( -name '*.cpp' -or -name '*.hpp' \) -exec clang-format -i {} +
-   ```
+```bash
+./build/_server/SageStoreServer
+./build/_client/SageStoreClient
+```
+
+## Documentation
+
+Generate PlantUML diagrams (Docker-based):
+
+```bash
+scripts/plantuml/render_puml_docker.sh docs png
+```
+
+Generate Doxygen API docs:
+
+```bash
+doxygen Doxyfile
+```
+
+Validate markdown links:
+
+```bash
+python3 scripts/check_docs_links.py
+```
+
+## VS Code
+
+Workspace tasks are in `.vscode/tasks.json`.
+
+Main task flows:
+
+- `workflow:build+test`
+- `workflow:docs`
 
 ## Contributing
 
-All contributing rules you can find in [CONTRIBUTING.md](CONTRIBUTING.md)
-
----
+See `CONTRIBUTING.md`.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Contact
-
-sagecatbox@gmail.com
-
-Project Link: [https://github.com/Sage-Cat/SageStore](https://github.com/Sage-Cat/SageStore)
-
----
-
-## Acknowledgments
-
-- Open-source libraries: nlohmann_json, Boost, SQLite3, GTest
-- Generated with PlantUML
-
----
-
-## Detailed project documentation
-
-Please refer to the [Project Documentation](docs/Project_Documentation.md) for detailed information.
+GPL v3. See `LICENSE`.

@@ -1,61 +1,55 @@
 @startuml
+title Client GUI Class Diagram (Current)
 
-class SageStoreClient {
-    -m_uiManager: UiManager
-    ...
-}
-
-class UiManager {
-    -m_dialogManager: DialogManager
-    ...
-    -m_concreteModel: ConcreteModel 
-    ... <<other Models>>
-    -m_concreteViewModel: ConcreteViewModel
-    ... <<other ViewModels>>
-    -m_concreteView: ConcreteView
-    ... <<other Views>>
-}
-
-interface BaseModel {
-}
-
-interface IViewModel {
-}
-
-interface BaseView {
-}
-
-interface BaseDialog {
+class MainWindow {
+    - m_usersManagementModel: UsersManagementModel
+    - m_usersManagementViewModel: UsersManagementViewModel
+    - m_usersView: UsersView
+    + startUiProcess()
 }
 
 class DialogManager {
-    -m_loginDialog: LoginDialog
-    ... <<other Dialogs>>
+    + init()
+    + showLoginDialog()
+    + showErrorDialog(msg)
 }
 
-class LoginDialog implements BaseDialog {
+class LoginDialog
+class RegistrationDialog
+
+class UsersManagementModel {
+    + fetchUsers()
+    + addUser(user)
+    + editUser(user)
+    + deleteUser(id)
+    + fetchRoles()
 }
 
-class ConcreteModel implements BaseModel {
+class UsersManagementViewModel {
+    + users(): QVector<DisplayData::User>
+    + roles(): QVector<DisplayData::Role>
 }
 
-class ConcreteViewModel implements IViewModel {
+class UsersView {
+    + fillTable(users)
 }
 
-class ConcreteView implements BaseView {
+class ApiManager {
+    + loginUser(username, password)
+    + getUsers()
+    + addUser(user)
+    + editUser(user)
+    + getRoleList()
 }
 
-SageStoreClient -->  UiManager
-
-UiManager -->  ConcreteModel
-UiManager  -->  ConcreteViewModel
-UiManager  -->  ConcreteView
-UiManager -[hidden]right- IViewModel
-UiManager -[hidden]right- BaseModel
-UiManager -[hidden]right- BaseView
-UiManager  --> DialogManager
-
-DialogManager  --> LoginDialog
-DialogManager -[hidden]left- BaseDialog
+MainWindow --> DialogManager
+MainWindow --> UsersManagementModel
+MainWindow --> UsersManagementViewModel
+MainWindow --> UsersView
+UsersManagementModel --> ApiManager
+UsersManagementModel --> UsersManagementViewModel
+UsersManagementViewModel --> UsersView
+DialogManager --> LoginDialog
+DialogManager --> RegistrationDialog
 
 @enduml

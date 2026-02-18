@@ -1,14 +1,15 @@
 @startuml
-!define table(x) class x << (T,#FFAAAA) >>
 !define entity(x) class x << (E,#D5E1DD) >>
 
-entity("Roles") {
+title Database Schema (Current)
+
+entity("Role") {
   + id : int
   --
   name : string
 }
 
-entity("Users") {
+entity("User") {
   + id : int
   --
   username : string
@@ -16,7 +17,7 @@ entity("Users") {
   roleId : int
 }
 
-entity("Logs") {
+entity("Log") {
   + id : int
   --
   userId : int
@@ -24,7 +25,7 @@ entity("Logs") {
   timestamp : datetime
 }
 
-entity("Contacts") {
+entity("Contact") {
   + id : int
   --
   name : string
@@ -41,7 +42,7 @@ entity("ContactInfo") {
   value : string
 }
 
-entity("Employees") {
+entity("Employee") {
   + id : int
   --
   name : string
@@ -50,7 +51,7 @@ entity("Employees") {
   address : string
 }
 
-entity("Suppliers") {
+entity("Supplier") {
   + id : int
   --
   name : string
@@ -95,7 +96,7 @@ entity("Inventory") {
   employeeId : int
 }
 
-entity("SaleOrders") {
+entity("SaleOrder") {
   + id : int
   --
   date : datetime
@@ -105,8 +106,7 @@ entity("SaleOrders") {
   status : string
 }
 
-
-entity("SalesOrderRecords") {
+entity("SalesOrderRecord") {
   + id : int
   --
   orderId : int
@@ -115,7 +115,7 @@ entity("SalesOrderRecords") {
   price : float
 }
 
-entity("PurchaseOrders") {
+entity("PurchaseOrder") {
   + id : int
   --
   date : datetime
@@ -124,7 +124,7 @@ entity("PurchaseOrders") {
   status : string
 }
 
-entity("PurchaseOrderRecords") {
+entity("PurchaseOrderRecord") {
   + id : int
   --
   orderId : int
@@ -133,19 +133,19 @@ entity("PurchaseOrderRecords") {
   price : float
 }
 
-Roles "1" -- "0..*" Users : asigned to
-Users "1" -- "0..*" Logs : has
-Users "1" -- "0..*" SaleOrders : create
-Users "1" -- "0..*" PurchaseOrders : create
-Employees "1" -- "0..*" Inventory : own
-Contacts "1" -- "0..*" ContactInfo : has
-Contacts "1" -- "0..*" SaleOrders : buy
+Role "1" -- "0..*" User : assigned to
+User "1" -- "0..*" Log : has
+User "1" -- "0..*" SaleOrder : creates
+User "1" -- "0..*" PurchaseOrder : creates
+Employee "1" -- "0..*" Inventory : owns
+Contact "1" -- "0..*" ContactInfo : has
+Contact "1" -- "0..*" SaleOrder : buys
 ProductType "1" -- "0..*" ProductInfo
 ProductType "1" -- "0..*" SuppliersProductInfo
-Suppliers "1" -- "0..*" SuppliersProductInfo
+Supplier "1" -- "0..*" SuppliersProductInfo
 ProductType "1" -- "0..*" Inventory : stored_in
-ProductType "1" -- "0..*" SalesOrderRecords : involved_in
-SaleOrders "1" -- "0..*" SalesOrderRecords : consists_of
-ProductType "1" -- "0..*" PurchaseOrderRecords : involved_in
-PurchaseOrders "1" -- "0..*" PurchaseOrderRecords : consists_of
+ProductType "1" -- "0..*" SalesOrderRecord : involved_in
+SaleOrder "1" -- "0..*" SalesOrderRecord : consists_of
+ProductType "1" -- "0..*" PurchaseOrderRecord : involved_in
+PurchaseOrder "1" -- "0..*" PurchaseOrderRecord : consists_of
 @enduml

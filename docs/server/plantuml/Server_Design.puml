@@ -1,37 +1,38 @@
 @startuml
 skinparam componentStyle uml2
 
+title SageStore Server (Current)
+
 package "SageStore Server" {
-    [SageStoreServer] as SSS 
-    [HttpServer] as HS 
-    [HttpTransaction] as HT 
-    [Serializers] as S 
-    [BusinessLogic] as BLF 
-    [BusinessModules] as BM 
-    [RepositoriesManager] as RM
-    [SqliteDatabaseManager] as DM
-    [Repositories] as R  
+    [SageStoreServer] as APP
+    [HttpServer] as HTTP
+    [HttpTransaction] as TX
+    [JsonSerializer] as JSON
 
-    SSS -down-> HS 
-    SSS -down-> BLF 
-    SSS -down-> RM
+    [BusinessLogic] as BL
+    [UsersModule] as UM
 
-    HS -down-> HT
-    HT -down-> S 
+    [RepositoryManager] as RM
+    [UserRepository] as UR
+    [RoleRepository] as RR
+    [SqliteDatabaseManager] as DB
 
-    BLF -down-> BM
-    HT <.> BLF : "request-response"
+    APP --> HTTP
+    APP --> BL
+    APP --> RM
 
-    RM -down-> R 
-    R -down-> DM
+    HTTP --> TX
+    TX --> JSON
+    TX --> BL : request-response
 
-    BM .> R : "read/write"
+    BL --> UM
+    UM --> UR
+    UM --> RR
 
-    note "Repository Pattern" as RepoNote1
-    RepoNote1 .. R
-
-    note "Facade Pattern" as RepoNote2
-    RepoNote2 .. BLF
+    RM --> UR
+    RM --> RR
+    UR --> DB
+    RR --> DB
 }
 
 @enduml

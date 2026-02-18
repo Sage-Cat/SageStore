@@ -1,38 +1,36 @@
 @startuml
 skinparam componentStyle uml2
 
+title SageStore Client (Current)
+
 package "SageStore Client" {
-    [SageStoreClient] as SSC
-    [UiManager] as UIM
-    [ApiManager] as AC
-    [NetworkService] as NS
-    [Serializers] <<json, xml etc.>>
-    [DialogManager] as DM 
+    [main.cpp] as MAIN
+    [DialogManager] as DM
     [MainWindow] as MW
 
-    package "MVVM" {
-        [Models] as M
-        [ViewModels]as VM
-        [Views] as V
+    package "Users Management MVVM" {
+        [UsersManagementModel] as UMM
+        [UsersManagementViewModel] as UMVM
+        [UsersView] as UV
 
-        M . VM
-        VM .. V 
-        V . M
+        UMM --> UMVM
+        UMVM --> UV
     }
 
-    SSC -down-> UIM : manages
-    SSC -down-> AC : manages
+    [ApiManager] as API
+    [NetworkService] as NET
+    [JsonSerializer] as JSON
 
-    AC -down-> NS : manages
-    AC <- UIM : request
-    AC -> UIM : response
+    MAIN --> DM
+    MAIN --> MW
+    MAIN --> API
+    API --> NET
+    NET --> JSON
 
-    UIM -down-> MVVM  
-    UIM -down-> MW 
-    UIM -down-> DM 
-    DM -[hidden]left-> MVVM 
-
-    NS -down-> [Serializers] 
+    MW --> UMM
+    MW --> UMVM
+    MW --> UV
+    DM --> API
 }
 
 @enduml
