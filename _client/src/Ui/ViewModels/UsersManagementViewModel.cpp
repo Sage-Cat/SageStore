@@ -66,7 +66,7 @@ UsersManagementViewModel::convertToDisplayUser(const Common::Entities::User &com
     DisplayData::User displayUser;
     displayUser.id       = QString::fromStdString(commonUser.id);
     displayUser.username = QString::fromStdString(commonUser.username);
-    displayUser.password = QString::fromStdString(commonUser.password);
+    displayUser.password = {};
     displayUser.roleId   = QString::fromStdString(commonUser.roleId);
     displayUser.roleName = getRoleNameById(commonUser.roleId);
 

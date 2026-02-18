@@ -4,7 +4,7 @@
 
 namespace DisplayData {
 struct User {
-    static constexpr const size_t VAR_COUNT = 5;
+    static constexpr const size_t VAR_COUNT = 4;
 
     QString id{};
     QString username{};
