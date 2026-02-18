@@ -8,8 +8,26 @@ Usage: scripts/wsl/run_gui_app.sh [--dry-run] <app_path> [app_args...]
 WSL behavior:
 1. Prefer existing WSLg environment (WAYLAND_DISPLAY and/or DISPLAY).
 2. If no GUI env is detected, fallback to DISPLAY from SAGESTORE_WSL_X_DISPLAY,
-   then to default "sage-pc:0.0".
+   then to "<windows-host-ip>:0.0" derived from /etc/resolv.conf.
 USAGE
+}
+
+detect_wsl_x_display() {
+    if [[ -n "${SAGESTORE_WSL_X_DISPLAY:-}" ]]; then
+        echo "${SAGESTORE_WSL_X_DISPLAY}"
+        return 0
+    fi
+
+    if [[ -r /etc/resolv.conf ]]; then
+        local host_ip
+        host_ip="$(awk '/^nameserver[[:space:]]+/ {print $2; exit}' /etc/resolv.conf)"
+        if [[ -n "${host_ip}" ]]; then
+            echo "${host_ip}:0.0"
+            return 0
+        fi
+    fi
+
+    echo "localhost:0.0"
 }
 
 is_wsl_environment() {
@@ -50,7 +68,7 @@ if is_wsl_environment; then
         MODE="wslg"
     else
         MODE="wsl2-external-xserver"
-        export DISPLAY="${SAGESTORE_WSL_X_DISPLAY:-sage-pc:0.0}"
+        export DISPLAY="$(detect_wsl_x_display)"
     fi
 
     # Qt Widgets app: prefer XCB for consistent behavior across WSLg and external X servers.
