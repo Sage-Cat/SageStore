@@ -10,6 +10,7 @@ This branch focuses on stabilizing the foundation for continued development.
 | --- | --- | --- |
 | Users (login/users/roles) | Implemented | End-to-end client API + server business logic + repository + tests |
 | Inventory (ProductType CRUD) | Implemented slice | Shared endpoint + server module/repository + Qt client MVVM/UI + automated tests |
+| Inventory (stock tracking) | Implemented slice | Shared endpoint + server module/repository + Qt desktop view/MVVM + HTTP/unit/integration/UI coverage + smoke validation |
 | Purchase | Planned | Data schema exists, business/UI flow not implemented end-to-end |
 | Sales | Planned | Data schema exists, business/UI flow not implemented end-to-end |
 | Management | Planned | Data schema exists, business/UI flow not implemented end-to-end |
@@ -18,6 +19,7 @@ This branch focuses on stabilizing the foundation for continued development.
 
 Detailed status and execution roadmap: `docs/Implementation_Status.md`.
 Requirements reconciliation and use-case baseline: `docs/Requirements_Baseline.md`.
+Runtime/deployment instructions: `docs/Deployment_Runbook.md`.
 
 ## Tech Stack
 
@@ -45,8 +47,12 @@ python3 build.py client
 python3 build.py server
 python3 build.py tests
 python3 build.py test
+python3 build.py smoke
+python3 build.py smoke-gui
 python3 build.py clean
 ```
+
+`python3 build.py smoke` and `python3 build.py smoke-gui` are validation commands and expect built binaries to already exist.
 
 ### Manual
 
@@ -67,6 +73,15 @@ ctest --test-dir build --output-on-failure --verbose
 ```bash
 ./build/_server/SageStoreServer
 ./build/_client/SageStoreClient
+```
+
+Both binaries also support simple environment-based configuration:
+
+```bash
+export SAGESTORE_SERVER_ADDRESS=127.0.0.1
+export SAGESTORE_SERVER_PORT=18081
+export SAGESTORE_DB_PATH="$PWD/build/_server/local-demo.db"
+./build/_server/SageStoreServer
 ```
 
 ## Run From WSL2 (GUI)
@@ -110,6 +125,12 @@ Validate markdown links:
 
 ```bash
 python3 scripts/check_docs_links.py
+```
+
+Canonical docs entrypoint:
+
+```bash
+python3 build.py docs
 ```
 
 ## VS Code

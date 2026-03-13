@@ -18,11 +18,6 @@ UsersManagementModel::UsersManagementModel(ApiManager &apiManager, QObject *pare
     connect(&m_apiManager, &ApiManager::roleEdited, this, &UsersManagementModel::onRoleEdited);
     connect(&m_apiManager, &ApiManager::roleDeleted, this, &UsersManagementModel::onRoleDeleted);
     connect(&m_apiManager, &ApiManager::rolesList, this, &UsersManagementModel::onRolesList);
-
-    // Fetch data on startup
-    SPDLOG_TRACE("UsersManagementModel | On startup fetch data");
-    fetchRoles();
-    fetchUsers();
 }
 
 QVector<Common::Entities::User> UsersManagementModel::users() const { return m_users; }

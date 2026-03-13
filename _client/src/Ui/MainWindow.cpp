@@ -53,6 +53,7 @@ void MainWindow::setupUi()
     // TabWidget
     m_tabWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_tabWidget->setTabsClosable(true);
+    m_tabWidget->setDocumentMode(true);
     connect(m_tabWidget, &QTabWidget::tabCloseRequested, m_tabWidget, &QTabWidget::removeTab);
 
     // MainWindow layout
@@ -67,6 +68,31 @@ void MainWindow::setupUi()
 
     // StatusBar
     setStatusBar(m_statusBar);
+
+    setStyleSheet(R"(
+        QMainWindow { background-color: #f4efe7; }
+        QMenuBar { background-color: #34504f; color: #f5efe6; }
+        QMenuBar::item { padding: 6px 10px; background: transparent; }
+        QMenuBar::item:selected { background: #496a68; border-radius: 4px; }
+        QMenu { background-color: #fffaf2; border: 1px solid #d8cdbd; }
+        QMenu::item:selected { background-color: #e3d5bd; }
+        QTabWidget::pane {
+            border: 1px solid #d8cdbd;
+            background-color: #fffaf2;
+            border-radius: 8px;
+            top: -1px;
+        }
+        QTabBar::tab {
+            background: #d9cfbf;
+            color: #2f3736;
+            padding: 8px 14px;
+            margin-right: 4px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        QTabBar::tab:selected { background: #fffaf2; }
+        QStatusBar { background: #e9dfd1; color: #4a433b; }
+    )");
 }
 
 void MainWindow::setupMenu()
@@ -113,20 +139,39 @@ void MainWindow::handleMainMenuAction(MainMenuActions::Type actionType)
     const auto openTab = [this](QWidget *widget, MainMenuActions::Type type) {
         const auto title = MainMenuActions::NAMES.at(type);
         auto tabIndex    = m_tabWidget->indexOf(widget);
+        const bool willOpenTab = tabIndex == -1;
         if (tabIndex == -1) {
             tabIndex = m_tabWidget->addTab(widget, title);
         }
         m_tabWidget->setCurrentIndex(tabIndex);
+        return willOpenTab;
     };
 
     // Performing action based on actionType
     switch (actionType) {
-    case MainMenuActions::Type::PRODUCT_MANAGEMENT:
-        openTab(m_productTypesView, MainMenuActions::Type::PRODUCT_MANAGEMENT);
+    case MainMenuActions::Type::PRODUCT_MANAGEMENT: {
+        auto *view = ensureProductTypesView();
+        if (openTab(view, MainMenuActions::Type::PRODUCT_MANAGEMENT)) {
+            m_productTypesViewModel->fetchProductTypes();
+        }
         break;
-    case MainMenuActions::Type::USERS:
-        openTab(m_usersView, MainMenuActions::Type::USERS);
+    }
+    case MainMenuActions::Type::STOCK_TRACKING: {
+        auto *view = ensureStocksView();
+        if (openTab(view, MainMenuActions::Type::STOCK_TRACKING)) {
+            m_stocksViewModel->fetchProductTypes();
+            m_stocksViewModel->fetchStocks();
+        }
         break;
+    }
+    case MainMenuActions::Type::USERS: {
+        auto *view = ensureUsersView();
+        if (openTab(view, MainMenuActions::Type::USERS)) {
+            m_usersManagementViewModel->fetchRoles();
+            m_usersManagementViewModel->fetchUsers();
+        }
+        break;
+    }
     case MainMenuActions::Type::EXIT:
         close();
         break;
@@ -150,15 +195,50 @@ QMenu *MainWindow::createModuleMenu(const QString &menuTitle,
 
 void MainWindow::setupMVVM()
 {
-    // Product management
+    // Views are created lazily when the corresponding tab is first opened.
+}
+
+ProductTypesView *MainWindow::ensureProductTypesView()
+{
+    if (m_productTypesView != nullptr) {
+        return m_productTypesView;
+    }
+
     m_productTypesModel     = new ProductTypesModel(m_apiManager, this);
     m_productTypesViewModel = new ProductTypesViewModel(*m_productTypesModel, this);
     m_productTypesView      = new ProductTypesView(*m_productTypesViewModel, this);
+    connect(m_productTypesViewModel, &ProductTypesViewModel::errorOccurred, &m_dialogManager,
+            &DialogManager::showErrorDialog);
 
-    // Users Management
+    return m_productTypesView;
+}
+
+StocksView *MainWindow::ensureStocksView()
+{
+    if (m_stocksView != nullptr) {
+        return m_stocksView;
+    }
+
+    m_stocksModel     = new StocksModel(m_apiManager, this);
+    m_stocksViewModel = new StocksViewModel(*m_stocksModel, this);
+    m_stocksView      = new StocksView(*m_stocksViewModel, this);
+    connect(m_stocksViewModel, &StocksViewModel::errorOccurred, &m_dialogManager,
+            &DialogManager::showErrorDialog);
+
+    return m_stocksView;
+}
+
+UsersView *MainWindow::ensureUsersView()
+{
+    if (m_usersView != nullptr) {
+        return m_usersView;
+    }
+
     m_usersManagementModel     = new UsersManagementModel(m_apiManager, this);
     m_usersManagementViewModel = new UsersManagementViewModel(*m_usersManagementModel, this);
     m_usersView                = new UsersView(*m_usersManagementViewModel, this);
-    connect(m_usersManagementModel, &BaseModel::errorOccurred, &m_dialogManager,
+    connect(m_usersManagementViewModel, &UsersManagementViewModel::errorOccurred, &m_dialogManager,
             &DialogManager::showErrorDialog);
+
+    return m_usersView;
 }

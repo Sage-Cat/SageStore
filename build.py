@@ -94,6 +94,22 @@ def docs_links_check() -> None:
     run_command(["python3", "scripts/check_docs_links.py"])
 
 
+def render_plantuml_if_available() -> None:
+    if shutil.which("docker") is None:
+        print("-> Skipping PlantUML render (docker not available)")
+        return
+
+    run_command(["bash", "scripts/plantuml/render_puml_docker.sh", "docs", "png"])
+
+
+def smoke_run() -> None:
+    run_command(["bash", "scripts/smoke/fullstack_inventory_smoke.sh"])
+
+
+def smoke_gui_run() -> None:
+    run_command(["bash", "scripts/smoke/fullstack_gui_startup_smoke.sh"])
+
+
 def build_target(target: str, build_type: str, clean: bool, run_tests: bool) -> None:
     target_options: dict[str, list[str]] = {
         "all": ["-DBUILD_CLIENT=ON", "-DBUILD_SERVER=ON", "-DBUILD_TESTS=ON"],
@@ -116,7 +132,19 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build and test SageStore.")
     parser.add_argument(
         "command",
-        choices=["all", "client", "server", "tests", "configure", "build", "test", "clean", "docs"],
+        choices=[
+            "all",
+            "client",
+            "server",
+            "tests",
+            "configure",
+            "build",
+            "test",
+            "clean",
+            "docs",
+            "smoke",
+            "smoke-gui",
+        ],
         help="Action to run.",
     )
     parser.add_argument(
@@ -171,7 +199,16 @@ def main() -> None:
 
     if args.command == "docs":
         docs_links_check()
+        render_plantuml_if_available()
         doxygen_generate()
+        return
+
+    if args.command == "smoke":
+        smoke_run()
+        return
+
+    if args.command == "smoke-gui":
+        smoke_gui_run()
         return
 
 

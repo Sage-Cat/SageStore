@@ -6,8 +6,9 @@ start
 :Run local verification as needed;
 note right
 Available local entrypoints:
-- python3 scripts/check_docs_links.py
 - python3 build.py docs
+- python3 build.py smoke
+- python3 build.py smoke-gui
 - scripts/vscode/run_task.sh docs
 end note
 
@@ -16,18 +17,21 @@ end note
 :Checkout;
 :Clean build folder;
 :Conan install;
-:Docs link check;
+:Canonical docs build (links + optional PlantUML + Doxygen);
 :CMake configure;
 :CMake build;
 :CTest;
+:Inventory smoke script;
+:GUI startup smoke script;
 
 if (Pipeline green?) then (yes)
+    :Archive client binary, server binary,\nbootstrap SQL, and deployment runbook;
     :Manual release review;
     note right
 Current gaps in automated release flow:
-- no PlantUML render in Jenkins
-- no Doxygen generation in Jenkins
-- no packaging/publish/deploy stage
+- PlantUML render still depends on Docker
+- archived outputs are not a packaged installer/bundle
+- no installer/publish/deploy stage
 end note
     :Manual deploy/package decision;
 else (no)

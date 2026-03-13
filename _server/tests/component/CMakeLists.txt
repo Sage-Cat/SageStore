@@ -4,6 +4,7 @@ set(TEST_BUSINESS_LOGIC_SOURCES
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
@@ -37,6 +38,7 @@ set(TEST_REPOSITORY_INTEGRATION_SOURCES
     ${SERVER_TESTS_DIR}/component/RepositoryIntegrationTest.cpp
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
@@ -77,6 +79,7 @@ if(NOT TARGET HttpContractTest)
         ${BUSINESS_SOURCES}
         ${SERVER_SOURCES_DIR}/ServerException.cpp
         ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+        ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
         ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
         ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
         ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp

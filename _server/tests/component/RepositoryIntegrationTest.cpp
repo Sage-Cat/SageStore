@@ -1,15 +1,20 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include <memory>
 
 #include "Database/RepositoryManager.hpp"
+#include "Database/InventoryRepository.hpp"
 #include "Database/ProductTypeRepository.hpp"
 #include "Database/RoleRepository.hpp"
 #include "Database/SqliteDatabaseManager.hpp"
 #include "Database/UserRepository.hpp"
 
+#include "ServerException.hpp"
+
+#include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
 #include "common/Entities/Role.hpp"
 #include "common/Entities/User.hpp"
@@ -29,6 +34,7 @@ protected:
         m_repositoryManager = std::make_unique<RepositoryManager>(dbManager);
         m_userRepository    = m_repositoryManager->getUserRepository();
         m_roleRepository    = m_repositoryManager->getRoleRepository();
+        m_inventoryRepository = m_repositoryManager->getInventoryRepository();
         m_productTypeRepository = m_repositoryManager->getProductTypeRepository();
     }
 
@@ -36,6 +42,7 @@ protected:
     {
         m_roleRepository.reset();
         m_userRepository.reset();
+        m_inventoryRepository.reset();
         m_productTypeRepository.reset();
         m_repositoryManager.reset();
         std::error_code errorCode;
@@ -46,7 +53,25 @@ protected:
     std::unique_ptr<RepositoryManager> m_repositoryManager;
     std::shared_ptr<IRepository<Common::Entities::User>> m_userRepository;
     std::shared_ptr<IRepository<Common::Entities::Role>> m_roleRepository;
+    std::shared_ptr<IRepository<Common::Entities::Inventory>> m_inventoryRepository;
     std::shared_ptr<IRepository<Common::Entities::ProductType>> m_productTypeRepository;
+
+    std::string createProductType(const std::string &code)
+    {
+        m_productTypeRepository->add(Common::Entities::ProductType{.id = "",
+                                                                   .code = code,
+                                                                   .barcode = code + "-BARCODE",
+                                                                   .name = code + "-NAME",
+                                                                   .description = code + "-DESC",
+                                                                   .lastPrice = "10.00",
+                                                                   .unit = "pcs",
+                                                                   .isImported = "0"});
+
+        const auto created =
+            m_productTypeRepository->getByField(Common::Entities::ProductType::CODE_KEY, code);
+        EXPECT_EQ(created.size(), 1U);
+        return created.empty() ? std::string{} : created.front().id;
+    }
 };
 
 TEST_F(RepositoryIntegrationTest, RoleRepository_CRUD_RoundTrip)
@@ -138,6 +163,75 @@ TEST_F(RepositoryIntegrationTest, ProductTypeRepository_CRUD_RoundTrip)
     const auto deletedProductTypes =
         m_productTypeRepository->getByField(Common::Entities::ProductType::CODE_KEY, "PT-100");
     EXPECT_TRUE(deletedProductTypes.empty());
+}
+
+TEST_F(RepositoryIntegrationTest, InventoryRepository_CRUD_RoundTrip)
+{
+    const std::string productTypeId = createProductType("PT-INVENTORY-CRUD");
+    ASSERT_FALSE(productTypeId.empty());
+
+    const Common::Entities::Inventory newStock{
+        .id = "", .productTypeId = productTypeId, .quantityAvailable = "11", .employeeId = "1"};
+    m_inventoryRepository->add(newStock);
+
+    auto createdStocks =
+        m_inventoryRepository->getByField(Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY,
+                                          productTypeId);
+    ASSERT_FALSE(createdStocks.empty());
+
+    const auto createdIt =
+        std::find_if(createdStocks.begin(), createdStocks.end(),
+                     [](const Common::Entities::Inventory &stock) {
+                         return stock.quantityAvailable == "11" && stock.employeeId == "1";
+                     });
+    ASSERT_NE(createdIt, createdStocks.end());
+    ASSERT_FALSE(createdIt->id.empty());
+
+    const std::string stockId = createdIt->id;
+    m_inventoryRepository->update(Common::Entities::Inventory{
+        .id = stockId,
+        .productTypeId = productTypeId,
+        .quantityAvailable = "19",
+        .employeeId = "1"});
+
+    const auto updatedStocks =
+        m_inventoryRepository->getByField(Common::Entities::Inventory::ID_KEY, stockId);
+    ASSERT_EQ(updatedStocks.size(), 1U);
+    EXPECT_EQ(updatedStocks.front().quantityAvailable, "19");
+
+    m_inventoryRepository->deleteResource(stockId);
+    const auto deletedStocks =
+        m_inventoryRepository->getByField(Common::Entities::Inventory::ID_KEY, stockId);
+    EXPECT_TRUE(deletedStocks.empty());
+}
+
+TEST_F(RepositoryIntegrationTest, InventoryRepository_RejectsUnknownEmployeeReference)
+{
+    const std::string productTypeId = createProductType("PT-INVENTORY-FK");
+    ASSERT_FALSE(productTypeId.empty());
+
+    EXPECT_THROW(m_inventoryRepository->add(Common::Entities::Inventory{
+                     .id = "",
+                     .productTypeId = productTypeId,
+                     .quantityAvailable = "7",
+                     .employeeId = "999"}),
+                 ServerException);
+}
+
+TEST_F(RepositoryIntegrationTest, InventoryRepository_RejectsDuplicateProductTypeStock)
+{
+    const std::string productTypeId = createProductType("PT-INVENTORY-UNIQUE");
+    ASSERT_FALSE(productTypeId.empty());
+
+    m_inventoryRepository->add(Common::Entities::Inventory{
+        .id = "", .productTypeId = productTypeId, .quantityAvailable = "7", .employeeId = "1"});
+
+    EXPECT_THROW(m_inventoryRepository->add(Common::Entities::Inventory{
+                     .id = "",
+                     .productTypeId = productTypeId,
+                     .quantityAvailable = "8",
+                     .employeeId = "1"}),
+                 ServerException);
 }
 
 int main(int argc, char **argv)

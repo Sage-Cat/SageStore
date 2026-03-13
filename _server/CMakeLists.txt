@@ -34,6 +34,7 @@ set(DATABASE_SOURCES
     # Repositories
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
 )
 
@@ -45,6 +46,7 @@ set(NETWORK_SOURCES
 set(MAIN_SOURCES
     ${SERVER_SOURCES_DIR}/SageStoreServer.cpp
     ${SERVER_SOURCES_DIR}/ServerException.cpp
+    ${SERVER_SOURCES_DIR}/ServerStartupConfig.cpp
 )
 
 # All server sources

@@ -52,6 +52,17 @@ public:
             serverResponse = {};
         } else if (endpoint == Endpoints::Inventory::PRODUCT_TYPES && method == Method::DEL) {
             serverResponse = {};
+        } else if (endpoint == Endpoints::Inventory::STOCKS && method == Method::GET) {
+            serverResponse = {{Common::Entities::Inventory::ID_KEY, {"1", "2"}},
+                              {Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY, {"1", "2"}},
+                              {Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY, {"10", "4"}},
+                              {Common::Entities::Inventory::EMPLOYEE_ID_KEY, {"1", "1"}}};
+        } else if (endpoint == Endpoints::Inventory::STOCKS && method == Method::POST) {
+            serverResponse = {};
+        } else if (endpoint == Endpoints::Inventory::STOCKS && method == Method::PUT) {
+            serverResponse = {};
+        } else if (endpoint == Endpoints::Inventory::STOCKS && method == Method::DEL) {
+            serverResponse = {};
         }
         emit responseReceived(endpoint, method, serverResponse);
     }

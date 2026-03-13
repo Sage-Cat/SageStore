@@ -17,8 +17,6 @@ ProductTypesModel::ProductTypesModel(ApiManager &apiManager, QObject *parent)
             &ProductTypesModel::onProductTypeEdited);
     connect(&m_apiManager, &ApiManager::productTypeDeleted, this,
             &ProductTypesModel::onProductTypeDeleted);
-
-    fetchProductTypes();
 }
 
 QVector<Common::Entities::ProductType> ProductTypesModel::productTypes() const

@@ -19,9 +19,9 @@
   - `purchase`, `sales`, `management`, `analytics`, and `logs` still dispatch to placeholder/not-implemented behavior in `BusinessLogic`
   - schema entities and some repository groundwork exist for later slices
 - Release/process reality:
-  - Jenkins validates checkout, Conan install, markdown links, configure, build, and `ctest`
-  - PlantUML render and Doxygen generation exist locally, but are not enforced in Jenkins
-  - packaging/publish automation is still absent
+  - Jenkins validates checkout, Conan install, docs via `python3 build.py docs`, configure, build, `ctest`, the non-interactive inventory smoke path, and an offscreen GUI startup smoke path
+  - PlantUML render is now attempted through the canonical docs path when Docker is available
+  - packaging/publish automation is still absent, but successful runs archive the client/server binaries, bootstrap SQL, and deployment runbook
 
 ## Actors
 
@@ -42,9 +42,9 @@
 | Assign roles | Administrator | Defined | Implemented | `UsersModule`, `RoleRepository`, tests |
 | Edit own profile | User | Defined | Not implemented as a separate flow | no dedicated endpoint/UI flow |
 | Manage Product Types | User | Defined | Implemented baseline | `InventoryModule`, `ProductTypeRepository`, `ProductTypes*`, tests |
-| Search/filter Product Types | User | Defined | Not implemented | no filter/search path in server or client |
+| Search/filter Product Types | User | Defined | Implemented in desktop baseline | `ProductTypesView` filter UI and tests |
 | Upload supplier product data | User | Defined | Not implemented | no end-to-end route/module/UI |
-| View stock / inventory records | User | Defined | Not implemented | `Inventory` table exists, no slice |
+| View stock / inventory records | User | Defined | Implemented as a desktop and server/API baseline | `InventoryModule`, `InventoryRepository`, `Stocks*`, tests, smoke |
 | Manage purchase orders and records | User | Defined | Not implemented | schema exists, module/UI absent |
 | Manage sales invoices and export | User | Defined | Not implemented | schema exists, module/UI absent |
 | Manage employees, suppliers, customers/contacts, companies | User | Defined | Not implemented | schema exists, module/UI absent |
@@ -89,7 +89,7 @@
 | Module | Target scope summary | Current repo reality | Main gap |
 | --- | --- | --- | --- |
 | Users | login, user CRUD, role CRUD, profile editing, history | login + user CRUD + role CRUD implemented | profile editing and dedicated history UI |
-| Inventory | Product Types, supplier product base, stock tracking | ProductType CRUD implemented baseline | stock records, supplier upload/import, search/filter |
+| Inventory | Product Types, supplier product base, stock tracking | ProductType CRUD and stock tracking implemented baseline | supplier upload/import, broader inventory workflows, interactive fullstack GUI coverage |
 | Purchase | orders, order records, invoices, barcode flows | schema only / placeholder dispatch | first business slice not started |
 | Sales | sales invoices, export, customer flows | schema only / placeholder dispatch | first business slice not started |
 | Management | employees, suppliers, contacts/customers, companies | schema only / placeholder dispatch | no end-to-end master-data slice |
@@ -102,22 +102,22 @@
 | --- | --- | --- | --- |
 | Consumer-agnostic server API | repo instructions, HTTP server design | addressed for current implemented resources | keep all future slices resource-oriented and client-neutral |
 | Clean architecture boundaries | `_client`, `_server`, `_common` separation | broadly in place | maintain discipline as Purchase/Sales are added |
-| ProductType CRUD | target docs + roadmap evidence | implemented | add deeper view/system coverage and search/filter |
-| Stock tracking | target docs + `Inventory` table | not implemented | make this the next inventory follow-up after ProductType |
+| ProductType CRUD | target docs + roadmap evidence | implemented | add live fullstack GUI coverage |
+| Stock tracking | target docs + `Inventory` table | implemented as a desktop/server baseline | add broader workflows and interactive fullstack GUI coverage |
 | Supplier product import | target docs + `SuppliersProductInfo` table | not implemented | define ingestion format and workflow |
 | Purchase CRUD | target docs + schema | not implemented | next major transactional slice after inventory hardening |
 | Sales CRUD/export | target docs + schema | not implemented | follow Purchase with shared contact/customer rules |
 | Management master data | target docs + schema | not implemented | deliver after transactional baseline depends on it |
 | Logs/audit views | target docs + `Log` table | not implemented | define log source and retrieval contracts |
 | Analytics/reporting | target docs | not implemented | depends on transactional and inventory data maturity |
-| Release workflow | `Jenkinsfile`, docs build scripts | partial | add docs-render enforcement, smoke gate, packaging notes |
+| Release workflow | `Jenkinsfile`, docs build scripts | partial | enforce PlantUML rendering in CI and define a real package/distribution format |
 
 ## Per-Module Gap Analysis
 
 | Module | Current evidence | Strengths already present | Missing pieces | Recommended next step |
 | --- | --- | --- | --- | --- |
 | Users | real server module, repositories, client MVVM, tests | mature baseline slice | self-profile flow, history/log view, stronger contract/UI coverage | preserve; do not destabilize |
-| Inventory | ProductType entity/schema/menu now wired end-to-end | first non-users vertical slice complete enough to extend | stock records, search/filter, supplier upload, deeper GUI/system coverage | extend into Inventory stock records |
+| Inventory | ProductType entity/schema/menu wired end-to-end; stock desktop/API slice now validated | strongest non-users area in repo | supplier upload, broader inventory workflows, live interactive GUI/system coverage | keep inventory stable, deepen system coverage, then move to Purchase |
 | Purchase | schema and target docs only | clear business scope and DB entities | routes, repositories, business logic, client UI | implement base order CRUD + records |
 | Sales | schema and target docs only | clear adjacency to contacts/inventory | routes, repositories, business logic, client UI, export | implement base CRUD after Purchase |
 | Management | schema and target docs only | master-data entities exist | routes, repositories, client UI, normalization around `Contact` | define Contact/Supplier/Employee first |
@@ -126,11 +126,10 @@
 
 ## Recommended Implementation Order
 
-1. Keep `Inventory/ProductType` stable and add deeper view/system validation plus search/filter.
-2. Extend Inventory into stock/inventory records so the catalog slice becomes operational.
-3. Deliver Purchase base CRUD plus order records as the first transactional slice.
-4. Deliver Sales base CRUD after Purchase, reusing normalized party/contact rules.
-5. Add Management master data required by Purchase/Sales, then Logs, then Analytics.
+1. Keep the current Inventory desktop/server slices stable and add deeper live GUI/system validation.
+2. Deliver Purchase base CRUD plus order records as the first transactional slice.
+3. Deliver Sales base CRUD after Purchase, reusing normalized party/contact rules.
+4. Add Management master data required by Purchase/Sales, then Logs, then Analytics.
 
 ## Architecture Diagram Set
 

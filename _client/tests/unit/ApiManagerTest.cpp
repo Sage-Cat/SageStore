@@ -128,6 +128,36 @@ private slots:
         apiManager->deleteProductType("1");
         QCOMPARE(deletedSpy.count(), 1);
     }
+
+    void testSuccessfulGetStocks()
+    {
+        QSignalSpy getStocksSpy(apiManager, &ApiManager::stocksList);
+        apiManager->getStocks();
+        QCOMPARE(getStocksSpy.count(), 1);
+    }
+
+    void testSuccessfulCreateStock()
+    {
+        QSignalSpy createdSpy(apiManager, &ApiManager::stockCreated);
+        apiManager->createStock(Common::Entities::Inventory{
+            .id = "", .productTypeId = "1", .quantityAvailable = "14", .employeeId = "1"});
+        QCOMPARE(createdSpy.count(), 1);
+    }
+
+    void testSuccessfulEditStock()
+    {
+        QSignalSpy editedSpy(apiManager, &ApiManager::stockEdited);
+        apiManager->editStock(Common::Entities::Inventory{
+            .id = "1", .productTypeId = "1", .quantityAvailable = "17", .employeeId = "2"});
+        QCOMPARE(editedSpy.count(), 1);
+    }
+
+    void testSuccessfulDeleteStock()
+    {
+        QSignalSpy deletedSpy(apiManager, &ApiManager::stockDeleted);
+        apiManager->deleteStock("1");
+        QCOMPARE(deletedSpy.count(), 1);
+    }
 };
 
 QTEST_MAIN(ApiManagerTest)

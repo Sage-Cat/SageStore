@@ -7,6 +7,7 @@
 #include "mocks/RepositoryManagerMock.hpp"
 #include "mocks/RepositoryMock.hpp"
 
+#include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
 #include "common/Keys.hpp"
 #include "common/SpdlogConfig.hpp"
@@ -21,12 +22,14 @@ protected:
     std::shared_ptr<RepositoryManagerMock> repositoryManagerMock;
     std::shared_ptr<RepositoryMock<Common::Entities::User>> usersRepositoryMock;
     std::shared_ptr<RepositoryMock<Common::Entities::Role>> rolesRepositoryMock;
+    std::shared_ptr<RepositoryMock<Common::Entities::Inventory>> inventoryRepositoryMock;
     std::shared_ptr<RepositoryMock<Common::Entities::ProductType>> productTypesRepositoryMock;
 
     BusinessLogicTest()
         : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
           usersRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::User>>()),
           rolesRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::Role>>()),
+          inventoryRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::Inventory>>()),
           productTypesRepositoryMock(
               std::make_shared<RepositoryMock<Common::Entities::ProductType>>())
     {
@@ -38,6 +41,8 @@ protected:
             .WillRepeatedly(Return(usersRepositoryMock));
         EXPECT_CALL(*repositoryManagerMock, getRoleRepository())
             .WillRepeatedly(Return(rolesRepositoryMock));
+        EXPECT_CALL(*repositoryManagerMock, getInventoryRepository())
+            .WillRepeatedly(Return(inventoryRepositoryMock));
         EXPECT_CALL(*repositoryManagerMock, getProductTypeRepository())
             .WillRepeatedly(Return(productTypesRepositoryMock));
 
@@ -115,6 +120,27 @@ TEST_F(BusinessLogicTest, InventoryModule_GetProductTypes)
     const ResponseData response = executeTask(requestData);
     ASSERT_TRUE(response.dataset.find(Keys::_ERROR) == response.dataset.end());
     ASSERT_TRUE(response.dataset.find(Common::Entities::ProductType::CODE_KEY) !=
+                response.dataset.end());
+}
+
+TEST_F(BusinessLogicTest, InventoryModule_GetStocks)
+{
+    RequestData requestData{.module = "inventory",
+                            .submodule = "stocks",
+                            .method = "GET",
+                            .resourceId = "",
+                            .dataset = {}};
+
+    EXPECT_CALL(*inventoryRepositoryMock, getAll())
+        .WillOnce(Return(std::vector<Common::Entities::Inventory>{
+            Common::Entities::Inventory{.id = "1",
+                                        .productTypeId = "1",
+                                        .quantityAvailable = "8",
+                                        .employeeId = "1"}}));
+
+    const ResponseData response = executeTask(requestData);
+    ASSERT_TRUE(response.dataset.find(Keys::_ERROR) == response.dataset.end());
+    ASSERT_TRUE(response.dataset.find(Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY) !=
                 response.dataset.end());
 }
 

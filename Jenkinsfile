@@ -27,11 +27,11 @@ pipeline {
                 '''
             }
         }
-        stage('Docs Link Check') {
+        stage('Docs') {
             steps {
                 sh '''
                     set -eux
-                    python3 scripts/check_docs_links.py
+                    python3 build.py docs
                 '''
             }
         }
@@ -63,8 +63,27 @@ pipeline {
                 '''
             }
         }
+        stage('Inventory Smoke') {
+            steps {
+                sh '''
+                    set -eux
+                    bash scripts/smoke/fullstack_inventory_smoke.sh
+                '''
+            }
+        }
+        stage('GUI Startup Smoke') {
+            steps {
+                sh '''
+                    set -eux
+                    bash scripts/smoke/fullstack_gui_startup_smoke.sh
+                '''
+            }
+        }
     }
     post {
+        success {
+            archiveArtifacts artifacts: 'build/_server/SageStoreServer,build/_server/scripts/create_db.sql,build/_client/SageStoreClient,docs/Deployment_Runbook.md', fingerprint: true
+        }
         always {
             sh 'killall Xvfb || true'
         }

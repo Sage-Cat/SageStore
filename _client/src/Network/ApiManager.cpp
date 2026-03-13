@@ -2,6 +2,7 @@
 
 #include "Network/NetworkService.hpp"
 #include "common/Endpoints.hpp"
+#include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
 #include "common/Keys.hpp"
 #include "common/SpdlogConfig.hpp"
@@ -150,6 +151,44 @@ void ApiManager::deleteProductType(const QString &id)
                                  id.toStdString());
 }
 
+void ApiManager::getStocks()
+{
+    SPDLOG_TRACE("ApiManager::getStocks");
+
+    m_networkService.sendRequest(Endpoints::Inventory::STOCKS, Method::GET);
+}
+
+void ApiManager::createStock(const Common::Entities::Inventory &stock)
+{
+    SPDLOG_TRACE("ApiManager::createStock");
+
+    Dataset dataset;
+    dataset[Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY]    = {stock.productTypeId};
+    dataset[Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY] = {stock.quantityAvailable};
+    dataset[Common::Entities::Inventory::EMPLOYEE_ID_KEY]        = {stock.employeeId};
+
+    m_networkService.sendRequest(Endpoints::Inventory::STOCKS, Method::POST, dataset);
+}
+
+void ApiManager::editStock(const Common::Entities::Inventory &stock)
+{
+    SPDLOG_TRACE("ApiManager::editStock");
+
+    Dataset dataset;
+    dataset[Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY]    = {stock.productTypeId};
+    dataset[Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY] = {stock.quantityAvailable};
+    dataset[Common::Entities::Inventory::EMPLOYEE_ID_KEY]        = {stock.employeeId};
+
+    m_networkService.sendRequest(Endpoints::Inventory::STOCKS, Method::PUT, dataset, stock.id);
+}
+
+void ApiManager::deleteStock(const QString &id)
+{
+    SPDLOG_TRACE("ApiManager::deleteStock");
+
+    m_networkService.sendRequest(Endpoints::Inventory::STOCKS, Method::DEL, {}, id.toStdString());
+}
+
 void ApiManager::setupHandlers()
 {
     SPDLOG_TRACE("ApiManager::setupHandlers");
@@ -164,6 +203,8 @@ void ApiManager::setupHandlers()
     };
     m_responseHandlers[Endpoints::Inventory::PRODUCT_TYPES] =
         [this](Method method, const Dataset &dataset) { handleProductTypes(method, dataset); };
+    m_responseHandlers[Endpoints::Inventory::STOCKS] =
+        [this](Method method, const Dataset &dataset) { handleStocks(method, dataset); };
 }
 
 void ApiManager::handleResponse(const std::string &endpoint, Method method, const Dataset &dataset)
@@ -232,6 +273,27 @@ void ApiManager::handleProductTypes(Method method, const Dataset &dataset)
         break;
     default:
         SPDLOG_WARN("ApiManager::handleProductTypes | Got unhandled method");
+        break;
+    }
+}
+
+void ApiManager::handleStocks(Method method, const Dataset &dataset)
+{
+    switch (method) {
+    case Method::GET:
+        handleStocksList(dataset);
+        break;
+    case Method::POST:
+        emit stockCreated();
+        break;
+    case Method::PUT:
+        emit stockEdited();
+        break;
+    case Method::DEL:
+        emit stockDeleted();
+        break;
+    default:
+        SPDLOG_WARN("ApiManager::handleStocks | Got unhandled method");
         break;
     }
 }
@@ -422,6 +484,47 @@ void ApiManager::handleProductTypesList(const Dataset &dataset)
         emit productTypesList(productTypes);
     } catch (const std::out_of_range &e) {
         SPDLOG_ERROR("handleProductTypesList | Key missing in dataset: {}", e.what());
+        handleError("Key missing in dataset");
+    }
+}
+
+void ApiManager::handleStocksList(const Dataset &dataset)
+{
+    SPDLOG_TRACE("ApiManager::handleStocksList");
+
+    try {
+        const auto &idList = dataset.at(Common::Entities::Inventory::ID_KEY);
+        const auto &productTypeIdList = dataset.at(Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY);
+        const auto &quantityList = dataset.at(Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY);
+        const auto &employeeIdList = dataset.at(Common::Entities::Inventory::EMPLOYEE_ID_KEY);
+
+        const auto itemCount = idList.size();
+        if (productTypeIdList.size() != itemCount || quantityList.size() != itemCount ||
+            employeeIdList.size() != itemCount) {
+            handleError("Inventory lists have different sizes.");
+            return;
+        }
+
+        std::vector<Common::Entities::Inventory> stocks;
+        auto idIt          = idList.begin();
+        auto productTypeIt = productTypeIdList.begin();
+        auto quantityIt    = quantityList.begin();
+        auto employeeIt    = employeeIdList.begin();
+
+        while (idIt != idList.end()) {
+            stocks.push_back(Common::Entities::Inventory{.id = *idIt,
+                                                         .productTypeId = *productTypeIt,
+                                                         .quantityAvailable = *quantityIt,
+                                                         .employeeId = *employeeIt});
+            ++idIt;
+            ++productTypeIt;
+            ++quantityIt;
+            ++employeeIt;
+        }
+
+        emit stocksList(stocks);
+    } catch (const std::out_of_range &e) {
+        SPDLOG_ERROR("handleStocksList | Key missing in dataset: {}", e.what());
         handleError("Key missing in dataset");
     }
 }

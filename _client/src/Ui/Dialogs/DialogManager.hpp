@@ -45,7 +45,7 @@ private slots:
 
 protected:
     // dialogs
-    LoginDialog *m_loginDialog;
-    RegistrationDialog *m_registrationDialog;
-    QMessageBox *m_messageDialog;
+    LoginDialog *m_loginDialog{nullptr};
+    RegistrationDialog *m_registrationDialog{nullptr};
+    QMessageBox *m_messageDialog{nullptr};
 };
