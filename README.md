@@ -1,49 +1,121 @@
 # SageStore
 
-SageStore is a C++20/Qt desktop ERP project with a client-server architecture.
+SageStore is a desktop business-operations MVP for small goods-selling operations. It combines a Qt client, a consumer-agnostic HTTP server, and SQLite persistence to support everyday workflows across inventory, purchasing, sales, access control, analytics, and audit visibility.
 
-## Current Project Stage
+**Current stage:** validated MVP baseline, not yet a packaged production release or a feature-complete business suite.
 
-This branch now delivers a validated ERP baseline rather than users-only foundation work.
+<p align="center">
+  <img src="docs/readme/demo-collage.png" alt="SageStore demo collage" width="1000">
+</p>
 
-| Module | Status | Notes |
-| --- | --- | --- |
-| Users (login/users/roles) | Implemented | End-to-end client API + server business logic + repository + tests |
-| Settings and localization | Implemented slice | Desktop settings persistence plus `en`/`ua` UI language selection |
-| Inventory (ProductType CRUD) | Implemented slice | Shared endpoint + server module/repository + Qt client MVVM/UI + automated tests |
-| Inventory (stock tracking) | Implemented slice | Shared endpoint + server module/repository + Qt desktop view/MVVM + HTTP/unit/integration/UI coverage + smoke validation |
-| Inventory (supplier catalog) | Implemented slice | Supplier-product mappings plus desktop CSV import workflow |
-| Management | Implemented slice | Contacts/customers, suppliers, and employees CRUD across server + desktop UI |
-| Purchase | Implemented slice | Purchase orders, order lines, and goods receipt posting into stock |
-| Sales | Implemented slice | Sales orders, order lines, and simple invoice export |
-| Analytics | Implemented slice | Sales and inventory summary endpoints plus desktop dashboard |
-| Logs | Implemented slice | Audit log writes and desktop log browsing |
-| Companies / barcode labels / incoming invoices | Planned | Broader product-doc scope still pending |
+<p align="center">
+  <em>Actual screenshots extracted from the current local product demo.</em>
+</p>
 
-Detailed status and execution roadmap: `docs/Implementation_Status.md`.
-Requirements reconciliation and use-case baseline: `docs/Requirements_Baseline.md`.
-Runtime/deployment instructions: `docs/Deployment_Runbook.md`.
+## Why SageStore
 
-## Tech Stack
+SageStore is designed around a practical split between operator workflow and business logic:
 
-- Language: C++20
-- Client UI: Qt 6.6.x
-- Server networking: Boost.Beast/Asio
-- Database: SQLite3
-- Build: CMake + Conan
-- Tests: GoogleTest/GoogleMock + QtTest
-- CI: Jenkins
-- Docs: Doxygen + PlantUML
+- A Qt desktop workspace for day-to-day operations
+- A stable HTTP API that is not tied only to the current desktop client
+- Shared contracts in `_common/` so client and server evolve together
+- SQLite-backed repositories behind business modules
 
-## Build
+That keeps the current desktop product usable while preserving a clean path for future web, mobile, CLI, or integration consumers.
 
-### Recommended (scripted)
+## What Works Today
+
+- Login, user administration, and role administration
+- Product type CRUD and stock tracking
+- Supplier catalog mappings with desktop CSV import
+- Purchase orders, line items, and goods receipt posting into stock
+- Sales orders with basic invoice export
+- Contacts/customers, suppliers, and employees CRUD
+- Audit log browsing and summary analytics
+- English and Ukrainian language selection in desktop settings
+
+## Product Demo
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/readme/settings-overview.png" alt="Settings and localization" width="100%">
+      <br>
+      <strong>Configure the client once</strong>
+      <br>
+      Operators can save connection defaults and choose the desktop UI language between English and Ukrainian.
+    </td>
+    <td width="50%">
+      <img src="docs/readme/product-management.png" alt="Product management" width="100%">
+      <br>
+      <strong>Maintain product master data</strong>
+      <br>
+      Product types carry the identifiers the rest of the application relies on, including code, barcode, unit, description, and pricing fields.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/readme/purchasing-workflow.png" alt="Purchasing workflow" width="100%">
+      <br>
+      <strong>Process purchasing workflows</strong>
+      <br>
+      Buyers can create purchase orders, add line items, and move received goods into tracked stock.
+    </td>
+    <td width="50%">
+      <img src="docs/readme/supplier-catalog.png" alt="Supplier catalog" width="100%">
+      <br>
+      <strong>Normalize supplier data</strong>
+      <br>
+      Supplier product codes can be mapped back to internal product types, including CSV-driven import workflows for catalog maintenance.
+    </td>
+  </tr>
+</table>
+
+## Why This Repo Is Credible
+
+- The implemented slices are not mockups. They are wired across `_client/`, `_server/`, and `_common/`.
+- The repo contains unit, component, contract, and Qt UI tests.
+- Validation flows already include build/test automation, smoke checks, documentation generation, and markdown link checking.
+- Jenkins is present for dependency installation, docs link validation, build, and test execution.
+
+For the current evidence-based status, see [docs/Implementation_Status.md](docs/Implementation_Status.md) and [docs/Requirements_Baseline.md](docs/Requirements_Baseline.md).
+
+## Current Limits
+
+SageStore is intentionally presented as an implemented MVP baseline, not as a finished all-in-one business product.
+
+The following broader product goals are still incomplete or only partially realized:
+
+- companies support
+- barcode label generation and printing
+- incoming invoice upload/attachment workflows
+- richer packaging and installer automation
+- live language hot-swap without restart
+- broader export/reporting depth beyond the current baseline
+
+## Quick Start
+
+Build everything:
 
 ```bash
 python3 build.py all
 ```
 
-Other commands:
+Run tests:
+
+```bash
+python3 build.py test
+```
+
+Run the current full stack from WSL2/WSLg:
+
+```bash
+scripts/wsl/run_fullstack_gui.sh
+```
+
+## Build, Run, and Docs
+
+Recommended scripted commands:
 
 ```bash
 python3 build.py client
@@ -52,12 +124,11 @@ python3 build.py tests
 python3 build.py test
 python3 build.py smoke
 python3 build.py smoke-gui
+python3 build.py docs
 python3 build.py clean
 ```
 
-`python3 build.py smoke` and `python3 build.py smoke-gui` are validation commands and expect built binaries to already exist.
-
-### Manual
+Manual build:
 
 ```bash
 conan install . --output-folder=build --build=missing
@@ -65,98 +136,32 @@ cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake 
 cmake --build build --parallel
 ```
 
-## Test
-
-```bash
-ctest --test-dir build --output-on-failure --verbose
-```
-
-## Run
+Manual run:
 
 ```bash
 ./build/_server/SageStoreServer
 ./build/_client/SageStoreClient
 ```
 
-Both binaries also support simple environment-based configuration:
+Useful documentation entry points:
 
-```bash
-export SAGESTORE_SERVER_ADDRESS=127.0.0.1
-export SAGESTORE_SERVER_PORT=18081
-export SAGESTORE_DB_PATH="$PWD/build/_server/local-demo.db"
-./build/_server/SageStoreServer
-```
+- [docs/Implementation_Status.md](docs/Implementation_Status.md)
+- [docs/Requirements_Baseline.md](docs/Requirements_Baseline.md)
+- [docs/Deployment_Runbook.md](docs/Deployment_Runbook.md)
+- [docs/architecture/](docs/architecture/)
+- [docs/client/](docs/client/)
+- [docs/server/](docs/server/)
 
-## Run From WSL2 (GUI)
-
-Recommended approach on Windows 11 is running Linux binaries via WSLg (no Windows cross-toolchain needed).
-
-For client-only launch:
-
-```bash
-scripts/wsl/run_gui_app.sh ./build/_client/SageStoreClient
-```
-
-For server + client launch:
-
-```bash
-scripts/wsl/run_fullstack_gui.sh
-```
-
-If WSLg is not available, the script falls back to external X server display:
-
-```bash
-export SAGESTORE_WSL_X_DISPLAY="sage-pc:0.0"
-scripts/wsl/run_gui_app.sh ./build/_client/SageStoreClient
-```
-
-## Documentation
-
-Generate PlantUML diagrams (Docker-based):
-
-```bash
-scripts/plantuml/render_puml_docker.sh docs png
-```
-
-Generate Doxygen API docs:
-
-```bash
-doxygen Doxyfile
-```
-
-Validate markdown links:
+Markdown link validation:
 
 ```bash
 python3 scripts/check_docs_links.py
 ```
 
-Canonical docs entrypoint:
-
-```bash
-python3 build.py docs
-```
-
-## VS Code
-
-Workspace tasks are in `.vscode/tasks.json`.
-
-Task output:
-
-- Colored stage headers and command traces are shown for every task run.
-
-Available team tasks (kept intentionally minimal):
-
-- `SageStore: Clean Rebuild (all targets + docs)` (always rebuilds docs)
-- `SageStore: Build (with cache, all targets)`
-- `SageStore: Build Documentation`
-- `SageStore: Run Tests`
-- `SageStore: Run Server (only)`
-- `SageStore: Run Client (only)`
-
 ## Contributing
 
-See `CONTRIBUTING.md`.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-GPL v3. See `LICENSE`.
+GPL v3. See [LICENSE](LICENSE).
