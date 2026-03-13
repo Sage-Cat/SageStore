@@ -14,6 +14,9 @@ class DatabaseManagerMock : public IDatabaseManager {
 public:
     MOCK_METHOD(bool, open, (), (override));
     MOCK_METHOD(void, close, (), (override));
+    MOCK_METHOD(void, beginTransaction, (), (override));
+    MOCK_METHOD(void, commitTransaction, (), (override));
+    MOCK_METHOD(void, rollbackTransaction, (), (override));
     MOCK_METHOD(std::shared_ptr<IQueryResult>, executeQuery,
                 (std::string_view query, const std::vector<std::string> &params), (override));
 };

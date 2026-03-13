@@ -1,10 +1,13 @@
 #include <QApplication>
+#include <QComboBox>
+#include <QSet>
 #include <QSignalSpy>
 #include <QTabWidget>
 #include <QtTest>
 
 #include "Ui/MainWindow.hpp"
 #include "Ui/MainMenuActions.hpp"
+#include "Ui/Views/SettingsView.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
 #include "mocks/DialogManagerMock.hpp"
@@ -66,14 +69,14 @@ private slots:
 
         QAction *productManagementAction =
             findMenuAction("Inventory",
-                           MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+                           MainMenuActions::displayName(MainMenuActions::Type::PRODUCT_MANAGEMENT));
         QVERIFY(productManagementAction != nullptr);
 
         productManagementAction->trigger();
 
         QCOMPARE(tabWidget->count(), 1);
         QCOMPARE(tabWidget->tabText(0),
-                 MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+                 MainMenuActions::displayName(MainMenuActions::Type::PRODUCT_MANAGEMENT));
         QCOMPARE(apiManagerMock->productTypesRequestCount(), 1);
 
         productManagementAction->trigger();
@@ -91,14 +94,14 @@ private slots:
 
         QAction *stockTrackingAction =
             findMenuAction("Inventory",
-                           MainMenuActions::NAMES.at(MainMenuActions::Type::STOCK_TRACKING));
+                           MainMenuActions::displayName(MainMenuActions::Type::STOCK_TRACKING));
         QVERIFY(stockTrackingAction != nullptr);
 
         stockTrackingAction->trigger();
 
         QCOMPARE(tabWidget->count(), initialTabCount + 1);
         QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()),
-                 MainMenuActions::NAMES.at(MainMenuActions::Type::STOCK_TRACKING));
+                 MainMenuActions::displayName(MainMenuActions::Type::STOCK_TRACKING));
         QCOMPARE(apiManagerMock->productTypesRequestCount(), initialProductTypeRequests + 1);
         QCOMPARE(apiManagerMock->stocksRequestCount(), initialStockRequests + 1);
 
@@ -115,7 +118,7 @@ private slots:
 
         QAction *stockTrackingAction =
             findMenuAction("Inventory",
-                           MainMenuActions::NAMES.at(MainMenuActions::Type::STOCK_TRACKING));
+                           MainMenuActions::displayName(MainMenuActions::Type::STOCK_TRACKING));
         QVERIFY(stockTrackingAction != nullptr);
 
         stockTrackingAction->trigger();
@@ -139,7 +142,7 @@ private slots:
         QCOMPARE(apiManagerMock->usersRequestCount(), 0);
 
         QAction *usersAction =
-            findMenuAction("Users", MainMenuActions::NAMES.at(MainMenuActions::Type::USERS));
+            findMenuAction("Users", MainMenuActions::displayName(MainMenuActions::Type::USERS));
         QVERIFY(usersAction != nullptr);
 
         usersAction->trigger();
@@ -163,20 +166,38 @@ private slots:
         QCOMPARE(apiManagerMock->usersRequestCount(), 0);
 
         QAction *rolesAction =
-            findMenuAction("Users", MainMenuActions::NAMES.at(MainMenuActions::Type::USER_ROLES));
+            findMenuAction("Users", MainMenuActions::displayName(MainMenuActions::Type::USER_ROLES));
         QVERIFY(rolesAction != nullptr);
 
         rolesAction->trigger();
 
         QCOMPARE(tabWidget->count(), initialTabCount + 1);
         QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()),
-                 MainMenuActions::NAMES.at(MainMenuActions::Type::USER_ROLES));
+                 MainMenuActions::displayName(MainMenuActions::Type::USER_ROLES));
         QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
         QCOMPARE(apiManagerMock->usersRequestCount(), 0);
 
         rolesAction->trigger();
         QCOMPARE(tabWidget->count(), initialTabCount + 1);
         QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+    }
+
+    void testOpenSettingsTabUsesRealSettingsView()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        QCOMPARE(tabWidget->count(), 0);
+
+        QAction *settingsAction =
+            findMenuAction("File", MainMenuActions::displayName(MainMenuActions::Type::SETTINGS));
+        QVERIFY(settingsAction != nullptr);
+
+        settingsAction->trigger();
+
+        QCOMPARE(tabWidget->count(), 1);
+        QCOMPARE(tabWidget->tabText(0),
+                 MainMenuActions::displayName(MainMenuActions::Type::SETTINGS));
+        QVERIFY(tabWidget->widget(0)->findChild<QComboBox *>("settingsLanguageCombo") != nullptr);
     }
 
     void testPreviouslyUnsupportedMenuActionsNowOpenTabs()
@@ -202,23 +223,54 @@ private slots:
             {"Management", MainMenuActions::Type::CUSTOMERS},
             {"Management", MainMenuActions::Type::SUPPLIERS}};
 
-        int expectedTabCount = 0;
+        auto expectedTabTitle = [](MainMenuActions::Type actionType) {
+            switch (actionType) {
+            case MainMenuActions::Type::PURCHASE_ORDERS:
+            case MainMenuActions::Type::GOODS_RECEIPTS:
+                return QStringLiteral("Purchasing");
+            case MainMenuActions::Type::SUPPLIER_MANAGEMENT:
+            case MainMenuActions::Type::CUSTOMER_MANAGEMENT:
+            case MainMenuActions::Type::EMPLOYEES:
+            case MainMenuActions::Type::CUSTOMERS:
+            case MainMenuActions::Type::SUPPLIERS:
+                return QStringLiteral("Management");
+            case MainMenuActions::Type::SALES_ORDERS:
+            case MainMenuActions::Type::INVOICING:
+                return QStringLiteral("Sales");
+            case MainMenuActions::Type::SALES_ANALYTICS:
+            case MainMenuActions::Type::INVENTORY_ANALYTICS:
+                return QStringLiteral("Analytics");
+            default:
+                return MainMenuActions::displayName(actionType);
+            }
+        };
+
+        QSet<QString> expectedOpenTabs;
         for (const auto &entry : actions) {
-            const QString &menuTitle           = entry.first;
+            const QString &menuTitle = entry.first;
             const MainMenuActions::Type actionType = entry.second;
-            QAction *action = findMenuAction(menuTitle, MainMenuActions::NAMES.at(actionType));
+            QAction *action = findMenuAction(menuTitle, MainMenuActions::displayName(actionType));
             QVERIFY(action != nullptr);
 
             action->trigger();
-            ++expectedTabCount;
+            expectedOpenTabs.insert(expectedTabTitle(actionType));
 
-            QCOMPARE(tabWidget->count(), expectedTabCount);
-            QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()),
-                     MainMenuActions::NAMES.at(actionType));
+            QCOMPARE(tabWidget->count(), expectedOpenTabs.size());
+            QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()), expectedTabTitle(actionType));
         }
 
-        QCOMPARE(apiManagerMock->usersRequestCount(), 0);
+        QCOMPARE(apiManagerMock->usersRequestCount(), 3);
         QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 3);
+        QCOMPARE(apiManagerMock->contactsRequestCount(), 2);
+        QCOMPARE(apiManagerMock->suppliersRequestCount(), 3);
+        QCOMPARE(apiManagerMock->employeesRequestCount(), 3);
+        QCOMPARE(apiManagerMock->supplierProductsRequestCount(), 1);
+        QCOMPARE(apiManagerMock->purchaseOrdersRequestCount(), 1);
+        QCOMPARE(apiManagerMock->salesOrdersRequestCount(), 1);
+        QCOMPARE(apiManagerMock->logsRequestCount(), 1);
+        QCOMPARE(apiManagerMock->salesAnalyticsRequestCount(), 1);
+        QCOMPARE(apiManagerMock->inventoryAnalyticsRequestCount(), 1);
     }
 
 private:

@@ -11,8 +11,11 @@
 
 #include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
+#include "common/Entities/Supplier.hpp"
+#include "common/Entities/SuppliersProductInfo.hpp"
 #include "common/SpdlogConfig.hpp"
 
+using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::Truly;
 
@@ -20,31 +23,45 @@ class InventoryModuleTest : public ::testing::Test {
 protected:
     std::unique_ptr<InventoryModule> inventoryModule;
     std::shared_ptr<RepositoryManagerMock> repositoryManagerMock;
-    std::shared_ptr<RepositoryMock<Common::Entities::Inventory>> inventoryRepositoryMock;
-    std::shared_ptr<RepositoryMock<Common::Entities::ProductType>> productTypesRepositoryMock;
+    std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::Inventory>>> inventoryRepositoryMock;
+    std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::ProductType>>>
+        productTypesRepositoryMock;
+    std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::Supplier>>> suppliersRepositoryMock;
+    std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::SuppliersProductInfo>>>
+        supplierProductsRepositoryMock;
 
-    InventoryModuleTest()
-        : repositoryManagerMock(std::make_shared<RepositoryManagerMock>()),
-          inventoryRepositoryMock(std::make_shared<RepositoryMock<Common::Entities::Inventory>>()),
-          productTypesRepositoryMock(
-              std::make_shared<RepositoryMock<Common::Entities::ProductType>>())
+    void SetUp() override
     {
+        repositoryManagerMock        = std::make_shared<RepositoryManagerMock>();
+        inventoryRepositoryMock      =
+            std::make_shared<NiceMock<RepositoryMock<Common::Entities::Inventory>>>();
+        productTypesRepositoryMock   =
+            std::make_shared<NiceMock<RepositoryMock<Common::Entities::ProductType>>>();
+        suppliersRepositoryMock      =
+            std::make_shared<NiceMock<RepositoryMock<Common::Entities::Supplier>>>();
+        supplierProductsRepositoryMock =
+            std::make_shared<NiceMock<RepositoryMock<Common::Entities::SuppliersProductInfo>>>();
+
         EXPECT_CALL(*repositoryManagerMock, getInventoryRepository())
             .WillRepeatedly(Return(inventoryRepositoryMock));
         EXPECT_CALL(*repositoryManagerMock, getProductTypeRepository())
             .WillRepeatedly(Return(productTypesRepositoryMock));
+        EXPECT_CALL(*repositoryManagerMock, getSupplierRepository())
+            .WillRepeatedly(Return(suppliersRepositoryMock));
+        EXPECT_CALL(*repositoryManagerMock, getSuppliersProductInfoRepository())
+            .WillRepeatedly(Return(supplierProductsRepositoryMock));
 
         inventoryModule = std::make_unique<InventoryModule>(*repositoryManagerMock);
     }
 };
 
-TEST_F(InventoryModuleTest, getProductTypes)
+TEST_F(InventoryModuleTest, GetProductTypes)
 {
-    RequestData requestData{.module = "inventory",
-                            .submodule = "product-types",
-                            .method = "GET",
-                            .resourceId = "",
-                            .dataset = {}};
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "product-types",
+                                  .method = "GET",
+                                  .resourceId = "",
+                                  .dataset = {}};
 
     EXPECT_CALL(*productTypesRepositoryMock, getAll())
         .WillOnce(Return(std::vector<Common::Entities::ProductType>{
@@ -63,9 +80,9 @@ TEST_F(InventoryModuleTest, getProductTypes)
     EXPECT_EQ(response.dataset.at(Common::Entities::ProductType::NAME_KEY).front(), "Oil");
 }
 
-TEST_F(InventoryModuleTest, addProductType)
+TEST_F(InventoryModuleTest, AddProductType)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "product-types",
         .method = "POST",
@@ -83,14 +100,14 @@ TEST_F(InventoryModuleTest, addProductType)
                     return productType.id.empty() && productType.code == "PT-002" &&
                            productType.name == "Brake fluid" &&
                            productType.lastPrice == "12.30" && productType.unit == "bottle";
-                }))).WillOnce(Return());
+                })));
 
     EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
 }
 
-TEST_F(InventoryModuleTest, addProductTypeFailsWhenCodeAlreadyExists)
+TEST_F(InventoryModuleTest, AddProductTypeFailsWhenCodeAlreadyExists)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "product-types",
         .method = "POST",
@@ -107,9 +124,9 @@ TEST_F(InventoryModuleTest, addProductTypeFailsWhenCodeAlreadyExists)
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
 
-TEST_F(InventoryModuleTest, editProductType)
+TEST_F(InventoryModuleTest, EditProductType)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "product-types",
         .method = "PUT",
@@ -130,14 +147,14 @@ TEST_F(InventoryModuleTest, editProductType)
                 update(Truly([](const Common::Entities::ProductType &productType) {
                     return productType.id == "1" && productType.name == "Updated oil" &&
                            productType.isImported == "1";
-                }))).WillOnce(Return());
+                })));
 
     EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
 }
 
-TEST_F(InventoryModuleTest, editProductTypeFailsWhenMissing)
+TEST_F(InventoryModuleTest, EditProductTypeFailsWhenMissing)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "product-types",
         .method = "PUT",
@@ -156,29 +173,30 @@ TEST_F(InventoryModuleTest, editProductTypeFailsWhenMissing)
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
 
-TEST_F(InventoryModuleTest, deleteProductType)
+TEST_F(InventoryModuleTest, DeleteProductType)
 {
-    RequestData requestData{.module = "inventory",
-                            .submodule = "product-types",
-                            .method = "DELETE",
-                            .resourceId = "3",
-                            .dataset = {}};
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "product-types",
+                                  .method = "DELETE",
+                                  .resourceId = "3",
+                                  .dataset = {}};
 
-    EXPECT_CALL(*productTypesRepositoryMock, getByField(Common::Entities::ProductType::ID_KEY, "3"))
+    EXPECT_CALL(*productTypesRepositoryMock,
+                getByField(Common::Entities::ProductType::ID_KEY, "3"))
         .WillOnce(Return(std::vector<Common::Entities::ProductType>{
             Common::Entities::ProductType{.id = "3", .code = "PT-003"}}));
-    EXPECT_CALL(*productTypesRepositoryMock, deleteResource("3")).WillOnce(Return());
+    EXPECT_CALL(*productTypesRepositoryMock, deleteResource("3"));
 
     EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
 }
 
-TEST_F(InventoryModuleTest, deleteProductTypeFailsWhenMissing)
+TEST_F(InventoryModuleTest, DeleteProductTypeFailsWhenMissing)
 {
-    RequestData requestData{.module = "inventory",
-                            .submodule = "product-types",
-                            .method = "DELETE",
-                            .resourceId = "999",
-                            .dataset = {}};
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "product-types",
+                                  .method = "DELETE",
+                                  .resourceId = "999",
+                                  .dataset = {}};
 
     EXPECT_CALL(*productTypesRepositoryMock,
                 getByField(Common::Entities::ProductType::ID_KEY, "999"))
@@ -188,13 +206,13 @@ TEST_F(InventoryModuleTest, deleteProductTypeFailsWhenMissing)
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
 
-TEST_F(InventoryModuleTest, getStocks)
+TEST_F(InventoryModuleTest, GetStocks)
 {
-    RequestData requestData{.module = "inventory",
-                            .submodule = "stocks",
-                            .method = "GET",
-                            .resourceId = "",
-                            .dataset = {}};
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "stocks",
+                                  .method = "GET",
+                                  .resourceId = "",
+                                  .dataset = {}};
 
     EXPECT_CALL(*inventoryRepositoryMock, getAll())
         .WillOnce(Return(std::vector<Common::Entities::Inventory>{
@@ -210,9 +228,9 @@ TEST_F(InventoryModuleTest, getStocks)
               "15");
 }
 
-TEST_F(InventoryModuleTest, addStock)
+TEST_F(InventoryModuleTest, AddStock)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "stocks",
         .method = "POST",
@@ -232,14 +250,14 @@ TEST_F(InventoryModuleTest, addStock)
                 add(Truly([](const Common::Entities::Inventory &stock) {
                     return stock.id.empty() && stock.productTypeId == "2" &&
                            stock.quantityAvailable == "25" && stock.employeeId == "1";
-                }))).WillOnce(Return());
+                })));
 
     EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
 }
 
-TEST_F(InventoryModuleTest, addStockFailsWhenProductTypeMissing)
+TEST_F(InventoryModuleTest, AddStockFailsWhenProductTypeMissing)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "stocks",
         .method = "POST",
@@ -255,9 +273,9 @@ TEST_F(InventoryModuleTest, addStockFailsWhenProductTypeMissing)
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
 
-TEST_F(InventoryModuleTest, editStock)
+TEST_F(InventoryModuleTest, EditStock)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "stocks",
         .method = "PUT",
@@ -287,14 +305,14 @@ TEST_F(InventoryModuleTest, editStock)
     EXPECT_CALL(*inventoryRepositoryMock,
                 update(Truly([](const Common::Entities::Inventory &stock) {
                     return stock.id == "3" && stock.quantityAvailable == "30";
-                }))).WillOnce(Return());
+                })));
 
     EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
 }
 
-TEST_F(InventoryModuleTest, editStockFailsWhenStockDoesNotExist)
+TEST_F(InventoryModuleTest, EditStockFailsWhenStockDoesNotExist)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "stocks",
         .method = "PUT",
@@ -310,13 +328,13 @@ TEST_F(InventoryModuleTest, editStockFailsWhenStockDoesNotExist)
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
 
-TEST_F(InventoryModuleTest, deleteStock)
+TEST_F(InventoryModuleTest, DeleteStock)
 {
-    RequestData requestData{.module = "inventory",
-                            .submodule = "stocks",
-                            .method = "DELETE",
-                            .resourceId = "3",
-                            .dataset = {}};
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "stocks",
+                                  .method = "DELETE",
+                                  .resourceId = "3",
+                                  .dataset = {}};
 
     EXPECT_CALL(*inventoryRepositoryMock,
                 getByField(Common::Entities::Inventory::ID_KEY, "3"))
@@ -325,18 +343,18 @@ TEST_F(InventoryModuleTest, deleteStock)
                                         .productTypeId = "2",
                                         .quantityAvailable = "20",
                                         .employeeId = "1"}}));
-    EXPECT_CALL(*inventoryRepositoryMock, deleteResource("3")).WillOnce(Return());
+    EXPECT_CALL(*inventoryRepositoryMock, deleteResource("3"));
 
     EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
 }
 
-TEST_F(InventoryModuleTest, deleteStockFailsWhenStockDoesNotExist)
+TEST_F(InventoryModuleTest, DeleteStockFailsWhenStockDoesNotExist)
 {
-    RequestData requestData{.module = "inventory",
-                            .submodule = "stocks",
-                            .method = "DELETE",
-                            .resourceId = "99",
-                            .dataset = {}};
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "stocks",
+                                  .method = "DELETE",
+                                  .resourceId = "99",
+                                  .dataset = {}};
 
     EXPECT_CALL(*inventoryRepositoryMock,
                 getByField(Common::Entities::Inventory::ID_KEY, "99"))
@@ -345,9 +363,9 @@ TEST_F(InventoryModuleTest, deleteStockFailsWhenStockDoesNotExist)
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
 
-TEST_F(InventoryModuleTest, addStockFailsWhenEmployeeIdIsNotPositive)
+TEST_F(InventoryModuleTest, AddStockFailsWhenEmployeeIdIsNotPositive)
 {
-    RequestData requestData{
+    const RequestData requestData{
         .module = "inventory",
         .submodule = "stocks",
         .method = "POST",
@@ -355,6 +373,111 @@ TEST_F(InventoryModuleTest, addStockFailsWhenEmployeeIdIsNotPositive)
         .dataset = {{Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY, {"2"}},
                     {Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY, {"25"}},
                     {Common::Entities::Inventory::EMPLOYEE_ID_KEY, {"0"}}}};
+
+    EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
+}
+
+TEST_F(InventoryModuleTest, AddStockFailsWhenEmployeeIdIsOutOfRange)
+{
+    const RequestData requestData{
+        .module = "inventory",
+        .submodule = "stocks",
+        .method = "POST",
+        .resourceId = "",
+        .dataset = {{Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY, {"2"}},
+                    {Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY, {"25"}},
+                    {Common::Entities::Inventory::EMPLOYEE_ID_KEY,
+                     {"9223372036854775808"}}}};
+
+    EXPECT_CALL(*inventoryRepositoryMock,
+                add(::testing::An<const Common::Entities::Inventory &>()))
+        .Times(0);
+
+    EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
+}
+
+TEST_F(InventoryModuleTest, GetSupplierProducts)
+{
+    const RequestData requestData{.module = "inventory",
+                                  .submodule = "supplier-products",
+                                  .method = "GET",
+                                  .resourceId = "",
+                                  .dataset = {}};
+
+    EXPECT_CALL(*supplierProductsRepositoryMock, getAll())
+        .WillOnce(Return(std::vector<Common::Entities::SuppliersProductInfo>{
+            Common::Entities::SuppliersProductInfo{
+                .id = "4", .supplierID = "7", .productTypeId = "2", .code = "SUP-002"}}));
+
+    const auto response = inventoryModule->executeTask(requestData);
+    EXPECT_EQ(response.dataset.at(Common::Entities::SuppliersProductInfo::ID_KEY).front(), "4");
+    EXPECT_EQ(response.dataset.at(Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY).front(),
+              "7");
+    EXPECT_EQ(
+        response.dataset.at(Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY).front(),
+        "2");
+}
+
+TEST_F(InventoryModuleTest, AddSupplierProduct)
+{
+    const RequestData requestData{
+        .module = "inventory",
+        .submodule = "supplier-products",
+        .method = "POST",
+        .resourceId = "",
+        .dataset = {{Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY, {"7"}},
+                    {Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY, {"2"}},
+                    {Common::Entities::SuppliersProductInfo::CODE_KEY, {"SUP-002"}}}};
+
+    EXPECT_CALL(*suppliersRepositoryMock,
+                getByField(Common::Entities::Supplier::ID_KEY, "7"))
+        .WillOnce(Return(std::vector<Common::Entities::Supplier>{
+            Common::Entities::Supplier{.id = "7", .name = "Parts Ltd"}}));
+    EXPECT_CALL(*productTypesRepositoryMock,
+                getByField(Common::Entities::ProductType::ID_KEY, "2"))
+        .WillOnce(Return(std::vector<Common::Entities::ProductType>{
+            Common::Entities::ProductType{.id = "2", .code = "PT-002"}}));
+    EXPECT_CALL(*supplierProductsRepositoryMock,
+                add(Truly([](const Common::Entities::SuppliersProductInfo &mapping) {
+                    return mapping.id.empty() && mapping.supplierID == "7" &&
+                           mapping.productTypeId == "2" && mapping.code == "SUP-002";
+                })));
+
+    EXPECT_NO_THROW(inventoryModule->executeTask(requestData));
+}
+
+TEST_F(InventoryModuleTest, AddSupplierProductFailsWhenSupplierMissing)
+{
+    const RequestData requestData{
+        .module = "inventory",
+        .submodule = "supplier-products",
+        .method = "POST",
+        .resourceId = "",
+        .dataset = {{Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY, {"7"}},
+                    {Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY, {"2"}},
+                    {Common::Entities::SuppliersProductInfo::CODE_KEY, {"SUP-002"}}}};
+
+    EXPECT_CALL(*suppliersRepositoryMock,
+                getByField(Common::Entities::Supplier::ID_KEY, "7"))
+        .WillOnce(Return(std::vector<Common::Entities::Supplier>{}));
+
+    EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
+}
+
+TEST_F(InventoryModuleTest, EditSupplierProductFailsWhenMappingDoesNotExist)
+{
+    const RequestData requestData{
+        .module = "inventory",
+        .submodule = "supplier-products",
+        .method = "PUT",
+        .resourceId = "5",
+        .dataset = {{Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY, {"7"}},
+                    {Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY, {"2"}},
+                    {Common::Entities::SuppliersProductInfo::CODE_KEY, {"SUP-002"}}}};
+
+    EXPECT_CALL(*supplierProductsRepositoryMock,
+                getByField(Common::Entities::SuppliersProductInfo::ID_KEY, "5"))
+        .WillOnce(Return(std::vector<Common::Entities::SuppliersProductInfo>{}));
 
     EXPECT_THROW(inventoryModule->executeTask(requestData), ServerException);
 }
