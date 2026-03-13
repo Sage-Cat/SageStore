@@ -37,6 +37,29 @@ target_link_libraries(MainWindowTest
 message(STATUS "Adding unit test: MainWindowTest")
 add_test(NAME Unit_MainWindowTest COMMAND MainWindowTest)
 
+# ------------------------- STARTUPCONTROLLER -------------------------
+set(TEST_STARTUP_CONTROLLER_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/StartupControllerTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(StartupControllerTest ${TEST_STARTUP_CONTROLLER_SOURCES}
+    ${CLIENT_TEST_INCLUDE_DIR}/mocks/DialogManagerMock.hpp)
+target_include_directories(StartupControllerTest PUBLIC ${CLIENT_SOURCES_DIR}
+    ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(StartupControllerTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: StartupControllerTest")
+add_test(NAME Unit_StartupControllerTest COMMAND StartupControllerTest)
+
 
 # ------------------------- DIALOGMANAGER -------------------------
 set(TEST_DIALOGMANAGER_SOURCES
@@ -140,6 +163,26 @@ target_link_libraries(RolesViewTest
 message(STATUS "Adding unit test: RolesViewTest")
 add_test(NAME Unit_RolesViewTest COMMAND RolesViewTest)
 
+set(TEST_SETTINGS_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/SettingsViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(SettingsViewTest ${TEST_SETTINGS_VIEW_SOURCES})
+target_include_directories(SettingsViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(SettingsViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: SettingsViewTest")
+add_test(NAME Unit_SettingsViewTest COMMAND SettingsViewTest)
+
 set(TEST_STOCKS_MODEL_SOURCES
     ${CLIENT_UNIT_TESTS_DIR}/StocksModelTest.cpp
     ${NETWORK_SOURCES}
@@ -180,15 +223,59 @@ target_link_libraries(StocksViewTest
 message(STATUS "Adding unit test: StocksViewTest")
 add_test(NAME Unit_StocksViewTest COMMAND StocksViewTest)
 
+set(TEST_SALES_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/SalesViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(SalesViewTest ${TEST_SALES_VIEW_SOURCES})
+target_include_directories(SalesViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(SalesViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: SalesViewTest")
+add_test(NAME Unit_SalesViewTest COMMAND SalesViewTest)
+
+set(TEST_ERP_MODELS_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/ErpModelsTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(ErpModelsTest ${TEST_ERP_MODELS_SOURCES})
+target_include_directories(ErpModelsTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(ErpModelsTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: ErpModelsTest")
+add_test(NAME Unit_ErpModelsTest COMMAND ErpModelsTest)
+
 set_tests_properties(
     Unit_ApiManagerTest
     Unit_MainWindowTest
+    Unit_StartupControllerTest
     Unit_DialogManagerTest
     Unit_UsersManagementModelTest
     Unit_ProductTypesModelTest
     Unit_ProductTypesViewTest
     Unit_RolesViewTest
+    Unit_SettingsViewTest
     Unit_StocksModelTest
     Unit_StocksViewTest
+    Unit_SalesViewTest
+    Unit_ErpModelsTest
     PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
 )

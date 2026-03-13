@@ -3,11 +3,7 @@ set(TEST_BUSINESS_LOGIC_SOURCES
     ${SERVER_TESTS_DIR}/component/BusinessLogicTest.cpp
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
-    ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
-    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+    ${DATABASE_SOURCES}
 )
 
 add_executable(BusinessLogicTest ${TEST_BUSINESS_LOGIC_SOURCES})
@@ -22,6 +18,7 @@ target_link_libraries(BusinessLogicTest
     common
     boost::boost 
     spdlog::spdlog 
+    SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
     $<$<PLATFORM_ID:Windows>:Wsock32>
     GTest::gtest 
@@ -37,12 +34,7 @@ message(STATUS "Adding component test: BusinessLogicTest")
 set(TEST_REPOSITORY_INTEGRATION_SOURCES
     ${SERVER_TESTS_DIR}/component/RepositoryIntegrationTest.cpp
     ${SERVER_SOURCES_DIR}/ServerException.cpp
-    ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
-    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
-    ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
-    ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+    ${DATABASE_SOURCES}
 )
 
 add_executable(RepositoryIntegrationTest ${TEST_REPOSITORY_INTEGRATION_SOURCES})
@@ -78,12 +70,7 @@ if(NOT TARGET HttpContractTest)
         ${SERVER_TESTS_DIR}/component/HttpContractTest.cpp
         ${BUSINESS_SOURCES}
         ${SERVER_SOURCES_DIR}/ServerException.cpp
-        ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
-        ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
-        ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
-        ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
-        ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
-        ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+        ${DATABASE_SOURCES}
         ${SERVER_SOURCES_DIR}/Network/HttpTransaction.cpp
     )
 

@@ -2,6 +2,9 @@
 #include <QtTest>
 
 #include "Network/ApiManager.hpp"
+
+#include "common/AnalyticsKeys.hpp"
+
 #include "mocks/NetworkServiceMock.hpp"
 
 class ApiManagerTest : public QObject {
@@ -157,6 +160,132 @@ private slots:
         QSignalSpy deletedSpy(apiManager, &ApiManager::stockDeleted);
         apiManager->deleteStock("1");
         QCOMPARE(deletedSpy.count(), 1);
+    }
+
+    void testSuccessfulGetContacts()
+    {
+        QSignalSpy getContactsSpy(apiManager, &ApiManager::contactsList);
+        apiManager->getContacts();
+        QCOMPARE(getContactsSpy.count(), 1);
+    }
+
+    void testSuccessfulCreateContact()
+    {
+        QSignalSpy createdSpy(apiManager, &ApiManager::contactCreated);
+        apiManager->createContact(Common::Entities::Contact{
+            .id = "",
+            .name = "New Customer",
+            .type = "Customer",
+            .email = "customer@example.com",
+            .phone = "123456789"});
+        QCOMPARE(createdSpy.count(), 1);
+    }
+
+    void testSuccessfulGetSupplierProducts()
+    {
+        QSignalSpy getSupplierProductsSpy(apiManager, &ApiManager::supplierProductsList);
+        apiManager->getSupplierProducts();
+        QCOMPARE(getSupplierProductsSpy.count(), 1);
+    }
+
+    void testSuccessfulCreateSupplierProduct()
+    {
+        QSignalSpy createdSpy(apiManager, &ApiManager::supplierProductCreated);
+        apiManager->createSupplierProduct(Common::Entities::SuppliersProductInfo{
+            .id = "", .supplierID = "1", .productTypeId = "1", .code = "SUP-NEW"});
+        QCOMPARE(createdSpy.count(), 1);
+    }
+
+    void testSuccessfulGetPurchaseOrders()
+    {
+        QSignalSpy getPurchaseOrdersSpy(apiManager, &ApiManager::purchaseOrdersList);
+        apiManager->getPurchaseOrders();
+        QCOMPARE(getPurchaseOrdersSpy.count(), 1);
+    }
+
+    void testSuccessfulCreatePurchaseOrder()
+    {
+        QSignalSpy createdSpy(apiManager, &ApiManager::purchaseOrderCreated);
+        apiManager->createPurchaseOrder(Common::Entities::PurchaseOrder{
+            .id = "",
+            .date = "2026-03-13",
+            .userId = "1",
+            .supplierId = "1",
+            .status = "Ordered"});
+        QCOMPARE(createdSpy.count(), 1);
+    }
+
+    void testSuccessfulGetPurchaseOrderRecords()
+    {
+        QSignalSpy getPurchaseOrderRecordsSpy(apiManager, &ApiManager::purchaseOrderRecordsList);
+        apiManager->getPurchaseOrderRecords("1");
+        QCOMPARE(getPurchaseOrderRecordsSpy.count(), 1);
+    }
+
+    void testSuccessfulPostPurchaseReceipt()
+    {
+        QSignalSpy postedSpy(apiManager, &ApiManager::purchaseReceiptPosted);
+        apiManager->postPurchaseReceipt("1", "1");
+        QCOMPARE(postedSpy.count(), 1);
+    }
+
+    void testSuccessfulGetSalesOrders()
+    {
+        QSignalSpy getSalesOrdersSpy(apiManager, &ApiManager::salesOrdersList);
+        apiManager->getSalesOrders();
+        QCOMPARE(getSalesOrdersSpy.count(), 1);
+    }
+
+    void testSuccessfulCreateSalesOrder()
+    {
+        QSignalSpy createdSpy(apiManager, &ApiManager::salesOrderCreated);
+        apiManager->createSalesOrder(Common::Entities::SaleOrder{
+            .id = "",
+            .date = "2026-03-13",
+            .userId = "1",
+            .contactId = "1",
+            .employeeId = "1",
+            .status = "Confirmed"});
+        QCOMPARE(createdSpy.count(), 1);
+    }
+
+    void testSuccessfulGetSalesOrderRecords()
+    {
+        QSignalSpy getSalesOrderRecordsSpy(apiManager, &ApiManager::salesOrderRecordsList);
+        apiManager->getSalesOrderRecords("1");
+        QCOMPARE(getSalesOrderRecordsSpy.count(), 1);
+    }
+
+    void testSuccessfulGetLogs()
+    {
+        QSignalSpy getLogsSpy(apiManager, &ApiManager::logsList);
+        apiManager->getLogs();
+        QCOMPARE(getLogsSpy.count(), 1);
+    }
+
+    void testSuccessfulGetSalesAnalytics()
+    {
+        QSignalSpy analyticsSpy(apiManager, &ApiManager::salesAnalyticsReady);
+        apiManager->getSalesAnalytics();
+        QCOMPARE(analyticsSpy.count(), 1);
+
+        const auto payload = analyticsSpy.takeFirst().at(0).toMap();
+        QCOMPARE(payload.value(AnalyticsKeys::Sales::TOTAL_ORDERS).toString(), QString("1"));
+        QCOMPARE(payload.value(AnalyticsKeys::Sales::TOTAL_REVENUE).toString(),
+                 QString("31.50"));
+    }
+
+    void testSuccessfulGetInventoryAnalytics()
+    {
+        QSignalSpy analyticsSpy(apiManager, &ApiManager::inventoryAnalyticsReady);
+        apiManager->getInventoryAnalytics();
+        QCOMPARE(analyticsSpy.count(), 1);
+
+        const auto payload = analyticsSpy.takeFirst().at(0).toMap();
+        QCOMPARE(payload.value(AnalyticsKeys::Inventory::TOTAL_PRODUCT_TYPES).toString(),
+                 QString("2"));
+        QCOMPARE(payload.value(AnalyticsKeys::Inventory::TOTAL_UNITS_AVAILABLE).toString(),
+                 QString("14"));
     }
 };
 
