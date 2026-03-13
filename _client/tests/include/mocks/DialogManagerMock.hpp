@@ -11,6 +11,9 @@ public:
     {
     }
 
+    void emitLoginSucceededForTest() { emit loginSucceeded(); }
+    void emitLoginCancelledForTest() { emit loginCancelled(); }
+
     // show dialogs
     void showLoginDialog() override { emit showLogDialog(); }
     void showRegistrationDialog() override { emit showRegDialog(); }

@@ -51,8 +51,6 @@ public:
                         QWidget *parent = nullptr);
     ~MainWindow() = default;
 
-    void startUiProcess();
-
 signals:
     void menuActionTriggered(MainMenuActions::Type actionType);
 

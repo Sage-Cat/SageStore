@@ -25,12 +25,6 @@ MainWindow::MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &
     setupMVVM();
 }
 
-void MainWindow::startUiProcess()
-{
-    m_dialogManager.showLoginDialog();
-    show();
-}
-
 void MainWindow::setupUi()
 {
     const QScreen *primaryScreen = m_app.primaryScreen();
