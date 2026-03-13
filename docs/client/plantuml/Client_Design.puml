@@ -8,6 +8,15 @@ package "SageStore Client" {
     [DialogManager] as DM
     [MainWindow] as MW
 
+    package "Product Types MVVM" {
+        [ProductTypesModel] as PTM
+        [ProductTypesViewModel] as PTVM
+        [ProductTypesView] as PTV
+
+        PTM --> PTVM
+        PTVM --> PTV
+    }
+
     package "Users Management MVVM" {
         [UsersManagementModel] as UMM
         [UsersManagementViewModel] as UMVM
@@ -27,6 +36,9 @@ package "SageStore Client" {
     API --> NET
     NET --> JSON
 
+    MW --> PTM
+    MW --> PTVM
+    MW --> PTV
     MW --> UMM
     MW --> UMVM
     MW --> UV

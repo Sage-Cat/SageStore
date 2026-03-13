@@ -1,0 +1,17 @@
+@startuml
+title ProductType Lifecycle State (Implemented Baseline)
+
+[*] --> Draft : create form opened
+Draft --> Persisted : POST succeeds
+Draft --> Draft : validation error
+
+Persisted --> Persisted : GET/list/view
+Persisted --> Updated : PUT succeeds
+Updated --> Persisted : refresh list
+
+Persisted --> Deleted : DELETE succeeds
+Deleted --> [*]
+
+Persisted --> Persisted : duplicate code rejected
+
+@enduml

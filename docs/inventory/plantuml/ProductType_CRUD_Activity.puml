@@ -1,0 +1,31 @@
+@startuml
+title ProductType CRUD Activity
+
+start
+:Open Product Management tab;
+:Fetch Product Types;
+
+if (User action?) then (Create)
+  :Enter code, name, unit,\nand optional fields;
+  :POST /api/inventory/product-types;
+elseif (Edit)
+  :Select existing Product Type;
+  :Update fields;
+  :PUT /api/inventory/product-types/{id};
+elseif (Delete)
+  :Select existing Product Type;
+  :DELETE /api/inventory/product-types/{id};
+else (Refresh)
+  :GET /api/inventory/product-types;
+endif
+
+if (Validation or duplicate error?) then (yes)
+  :Show error and keep current view state;
+else (no)
+  :Refresh list with GET;
+  :Render updated table;
+endif
+
+stop
+
+@enduml

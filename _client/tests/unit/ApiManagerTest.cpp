@@ -84,6 +84,50 @@ private slots:
         apiManager->deleteUser("1");
         QCOMPARE(deleteUserSuccessSpy.count(), 1);
     }
+
+    void testSuccessfulGetProductTypes()
+    {
+        QSignalSpy getProductTypesSpy(apiManager, &ApiManager::productTypesList);
+        apiManager->getProductTypes();
+        QCOMPARE(getProductTypesSpy.count(), 1);
+    }
+
+    void testSuccessfulCreateProductType()
+    {
+        QSignalSpy createdSpy(apiManager, &ApiManager::productTypeCreated);
+        apiManager->createProductType(Common::Entities::ProductType{
+            .id = "",
+            .code = "PT-001",
+            .barcode = "123",
+            .name = "Oil",
+            .description = "Synthetic oil",
+            .lastPrice = "10.50",
+            .unit = "pcs",
+            .isImported = "0"});
+        QCOMPARE(createdSpy.count(), 1);
+    }
+
+    void testSuccessfulEditProductType()
+    {
+        QSignalSpy editedSpy(apiManager, &ApiManager::productTypeEdited);
+        apiManager->editProductType(Common::Entities::ProductType{
+            .id = "1",
+            .code = "PT-001",
+            .barcode = "123",
+            .name = "Oil updated",
+            .description = "Synthetic oil updated",
+            .lastPrice = "11.00",
+            .unit = "pcs",
+            .isImported = "1"});
+        QCOMPARE(editedSpy.count(), 1);
+    }
+
+    void testSuccessfulDeleteProductType()
+    {
+        QSignalSpy deletedSpy(apiManager, &ApiManager::productTypeDeleted);
+        apiManager->deleteProductType("1");
+        QCOMPARE(deletedSpy.count(), 1);
+    }
 };
 
 QTEST_MAIN(ApiManagerTest)

@@ -1,0 +1,30 @@
+@startuml
+title Vertical Slice Validation Flow
+
+start
+:Change shared / server / client / docs layers;
+:Build touched targets;
+
+if (Build passes?) then (yes)
+    :Run unit, component,\nand integration/contract tests;
+
+    if (Tests pass?) then (yes)
+        :Check markdown links;
+        :Render PlantUML assets;
+        :Run docs build;
+
+        if (Docs pass?) then (yes)
+            :Update implementation status,\nrequirements baseline,\nand release-readiness docs;
+            :Review diff against request\nand completion gates;
+        else (no)
+            :Fix docs/diagram issues;
+        endif
+    else (no)
+        :Fix code or tests;
+    endif
+else (no)
+    :Fix compile/link issues;
+endif
+
+stop
+@enduml

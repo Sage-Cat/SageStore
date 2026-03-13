@@ -1,0 +1,29 @@
+@startuml
+skinparam componentStyle uml2
+
+title Inventory/ProductType Server Slice (Current)
+
+actor "Qt client or\nHTTP test harness" as CLIENT
+
+package "SageStore Server" {
+    [HttpServer] as HTTP
+    [HttpTransaction] as TX
+    [JsonSerializer] as JSON
+    [BusinessLogic] as BL
+    [InventoryModule] as IM
+    [RepositoryManager] as RM
+    [ProductTypeRepository] as PTR
+    [SQLite ProductType table] as DB
+
+    HTTP --> TX
+    TX --> JSON
+    TX --> BL : RequestData
+    BL --> IM : inventory / product-types
+    IM --> RM : getProductTypeRepository()
+    IM --> PTR : CRUD + validation
+    PTR --> DB
+}
+
+CLIENT --> HTTP : /api/inventory/product-types
+
+@enduml

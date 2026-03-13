@@ -2,6 +2,9 @@
 title Client GUI Class Diagram (Current)
 
 class MainWindow {
+    - m_productTypesModel: ProductTypesModel
+    - m_productTypesViewModel: ProductTypesViewModel
+    - m_productTypesView: ProductTypesView
     - m_usersManagementModel: UsersManagementModel
     - m_usersManagementViewModel: UsersManagementViewModel
     - m_usersView: UsersView
@@ -34,18 +37,43 @@ class UsersView {
     + fillTable(users)
 }
 
+class ProductTypesModel {
+    + fetchProductTypes()
+    + createProductType(productType)
+    + editProductType(productType)
+    + deleteProductType(id)
+}
+
+class ProductTypesViewModel {
+    + productTypes(): QVector<DisplayData::ProductType>
+}
+
+class ProductTypesView {
+    + fillTable(productTypes)
+}
+
 class ApiManager {
     + loginUser(username, password)
     + getUsers()
     + addUser(user)
     + editUser(user)
     + getRoleList()
+    + getProductTypes()
+    + createProductType(productType)
+    + editProductType(productType)
+    + deleteProductType(id)
 }
 
 MainWindow --> DialogManager
+MainWindow --> ProductTypesModel
+MainWindow --> ProductTypesViewModel
+MainWindow --> ProductTypesView
 MainWindow --> UsersManagementModel
 MainWindow --> UsersManagementViewModel
 MainWindow --> UsersView
+ProductTypesModel --> ApiManager
+ProductTypesModel --> ProductTypesViewModel
+ProductTypesViewModel --> ProductTypesView
 UsersManagementModel --> ApiManager
 UsersManagementModel --> UsersManagementViewModel
 UsersManagementViewModel --> UsersView

@@ -10,8 +10,11 @@
 
 #include "MainMenuActions.hpp"
 
+#include "Ui/Models/ProductTypesModel.hpp"
 #include "Ui/Models/UsersManagementModel.hpp"
+#include "Ui/ViewModels/ProductTypesViewModel.hpp"
 #include "Ui/ViewModels/UsersManagementViewModel.hpp"
+#include "Ui/Views/ProductTypesView.hpp"
 #include "Ui/Views/UsersView.hpp"
 
 class ApiManager;
@@ -53,6 +56,11 @@ private:
     QMenuBar *m_mainMenuBar;
 
     /* MVVM */
+    // Product types
+    ProductTypesModel *m_productTypesModel;
+    ProductTypesViewModel *m_productTypesViewModel;
+    ProductTypesView *m_productTypesView;
+
     // UsersManagement
     UsersManagementModel *m_usersManagementModel;
     UsersManagementViewModel *m_usersManagementViewModel;

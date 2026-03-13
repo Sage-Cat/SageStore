@@ -3,6 +3,7 @@
 #include <array>
 #include <utility>
 
+#include "InventoryModule.hpp"
 #include "IBusinessModule.hpp"
 #include "Network/NetworkGeneral.hpp"
 #include "ServerException.hpp"
@@ -37,11 +38,11 @@ private:
 BusinessLogic::BusinessLogic(RepositoryManager &repositoryManager)
 {
     m_modules.emplace("users", std::make_unique<UsersModule>(repositoryManager));
+    m_modules.emplace("inventory", std::make_unique<InventoryModule>(repositoryManager));
 
-    constexpr std::array<std::pair<const char *, const char *>, 6> PLANNED_MODULES{{
+    constexpr std::array<std::pair<const char *, const char *>, 5> PLANNED_MODULES{{
         {"purchase", "PurchaseModule"},
         {"sales", "SalesModule"},
-        {"inventory", "InventoryModule"},
         {"management", "ManagementModule"},
         {"analytics", "AnalyticsModule"},
         {"logs", "LogsModule"},

@@ -1,5 +1,6 @@
 #include "RepositoryManager.hpp"
 
+#include "ProductTypeRepository.hpp"
 #include "RoleRepository.hpp"
 #include "UserRepository.hpp"
 
@@ -31,4 +32,14 @@ auto RepositoryManager::getRoleRepository() -> std::shared_ptr<IRepository<Commo
         m_rolesRepository = std::make_shared<RoleRepository>(m_dbManager);
     }
     return m_rolesRepository;
+}
+
+auto RepositoryManager::getProductTypeRepository()
+    -> std::shared_ptr<IRepository<Common::Entities::ProductType>>
+{
+    SPDLOG_TRACE("RepositoryManager::getProductTypeRepository");
+    if (!m_productTypesRepository) {
+        m_productTypesRepository = std::make_shared<ProductTypeRepository>(m_dbManager);
+    }
+    return m_productTypesRepository;
 }

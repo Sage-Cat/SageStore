@@ -12,6 +12,10 @@ class ApiManager {
     + createRole(role)
     + editRole(role)
     + deleteRole(id)
+    + getProductTypes()
+    + createProductType(productType)
+    + editProductType(productType)
+    + deleteProductType(id)
 }
 
 class NetworkService {

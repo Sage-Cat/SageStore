@@ -11,10 +11,12 @@ package "SageStore Server" {
 
     [BusinessLogic] as BL
     [UsersModule] as UM
+    [InventoryModule] as IM
 
     [RepositoryManager] as RM
     [UserRepository] as UR
     [RoleRepository] as RR
+    [ProductTypeRepository] as PTR
     [SqliteDatabaseManager] as DB
 
     APP --> HTTP
@@ -26,13 +28,18 @@ package "SageStore Server" {
     TX --> BL : request-response
 
     BL --> UM
+    BL --> IM
+
     UM --> UR
     UM --> RR
+    IM --> PTR
 
     RM --> UR
     RM --> RR
+    RM --> PTR
     UR --> DB
     RR --> DB
+    PTR --> DB
 }
 
 @enduml
