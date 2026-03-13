@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include "common/DataTypes.hpp"
+#include "common/Entities/ProductType.hpp"
 #include "common/Entities/Role.hpp"
 #include "common/Entities/User.hpp"
 
@@ -35,6 +36,12 @@ public slots:
     virtual void editRole(const Common::Entities::Role &role);
     virtual void deleteRole(const QString &id);
 
+    // Inventory / Product types
+    virtual void getProductTypes();
+    virtual void createProductType(const Common::Entities::ProductType &productType);
+    virtual void editProductType(const Common::Entities::ProductType &productType);
+    virtual void deleteProductType(const QString &id);
+
 protected slots:
     // for NetworkService
     virtual void handleResponse(const std::string &endpoint, Method method, const Dataset &dataset);
@@ -56,6 +63,12 @@ signals:
     void roleEdited();
     void roleDeleted();
 
+    // Inventory / Product types
+    void productTypesList(const std::vector<Common::Entities::ProductType> &productTypes);
+    void productTypeCreated();
+    void productTypeEdited();
+    void productTypeDeleted();
+
     // Error handling
     void errorOccurred(const QString &errorMessage);
 
@@ -68,10 +81,12 @@ private:
     void handleLoginResponse(Method method, const Dataset &dataset);
     void handleUsers(Method method, const Dataset &dataset);
     void handleRoles(Method method, const Dataset &dataset);
+    void handleProductTypes(Method method, const Dataset &dataset);
 
 private:
     void handleRolesList(const Dataset &dataset);
     void handleUsersList(const Dataset &dataset);
+    void handleProductTypesList(const Dataset &dataset);
 
 private:
     NetworkService &m_networkService;

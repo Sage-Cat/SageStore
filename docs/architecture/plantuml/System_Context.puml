@@ -1,0 +1,32 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+title SageStore System Context (Current Baseline)
+
+actor Administrator
+actor "ERP User" as User
+actor "Future API Consumer\n(web/mobile/CLI/integration)" as Consumer
+
+rectangle "SageStore Desktop Client\nQt 6 + MVVM" as Desktop
+rectangle "SageStore Server API\nHTTP + Dataset/JSON" as Server
+database "SQLite Database" as Db
+rectangle "Jenkins CI" as CI
+
+Administrator --> Desktop : users and roles admin tasks
+User --> Desktop : login and product management
+Desktop --> Server : /api/users/*\n/api/inventory/product-types
+Consumer --> Server : same resource contracts
+Server --> Db : repositories
+CI --> Desktop : build + unit tests
+CI --> Server : build + ctest
+
+note bottom of Server
+Implemented resources:
+- users/login
+- users/users
+- users/roles
+- inventory/product-types
+end note
+
+@enduml

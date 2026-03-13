@@ -8,6 +8,7 @@
 
 > Implementation note: this document captures target product scope.  
 > Current implementation status and delivery plan are tracked in `docs/Implementation_Status.md`.
+> Requirements reconciliation, terminology normalization, and gap analysis are tracked in `docs/Requirements_Baseline.md`.
 
 ---
 

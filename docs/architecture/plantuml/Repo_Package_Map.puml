@@ -1,0 +1,70 @@
+@startuml
+skinparam packageStyle rectangle
+
+title SageStore Repository Package Map (Current)
+
+package "_client/" {
+    [Dialogs] as Dialogs
+    [MainWindow] as MainWindow
+    [Users MVVM] as UsersMVVM
+    [ProductTypes MVVM] as ProductTypesMVVM
+    [ApiManager] as ApiManager
+    [NetworkService] as NetworkService
+}
+
+package "_common/" {
+    [Entities] as Entities
+    [Dataset / Keys] as DatasetKeys
+    [Endpoints] as Endpoints
+    [JsonSerializer] as JsonSerializer
+}
+
+package "_server/" {
+    [HttpServer / HttpTransaction] as HttpLayer
+    [BusinessLogic] as BusinessLogic
+    [UsersModule] as UsersModule
+    [InventoryModule] as InventoryModule
+    [Repositories] as Repositories
+    [SQLite manager] as SqliteManager
+}
+
+package "docs/" {
+    [Implementation Status] as ImplStatus
+    [Requirements Baseline] as ReqBaseline
+    [PlantUML assets] as PlantUML
+    [Release readiness docs] as ReleaseDocs
+}
+
+package "scripts + CI" {
+    [build.py] as BuildScript
+    [docs task] as DocsTask
+    [markdown link check] as LinkCheck
+    [Jenkinsfile] as Jenkins
+}
+
+Dialogs --> ApiManager
+MainWindow --> UsersMVVM
+MainWindow --> ProductTypesMVVM
+UsersMVVM --> ApiManager
+ProductTypesMVVM --> ApiManager
+ApiManager --> NetworkService
+NetworkService --> Endpoints
+NetworkService --> JsonSerializer
+
+HttpLayer --> BusinessLogic
+BusinessLogic --> UsersModule
+BusinessLogic --> InventoryModule
+UsersModule --> Repositories
+InventoryModule --> Repositories
+Repositories --> SqliteManager
+Repositories --> Entities
+ApiManager --> Entities
+
+DocsTask --> PlantUML
+BuildScript --> LinkCheck
+Jenkins --> BuildScript
+Jenkins --> ImplStatus
+ReqBaseline --> PlantUML
+ReleaseDocs --> PlantUML
+
+@enduml

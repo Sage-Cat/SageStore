@@ -24,6 +24,7 @@ set(BUSINESS_SOURCES
 
     # Modules
     ${SERVER_SOURCES_DIR}/BusinessLogic/UsersModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/InventoryModule.cpp
 )
 
 set(DATABASE_SOURCES
@@ -33,6 +34,7 @@ set(DATABASE_SOURCES
     # Repositories
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
 )
 
 set(NETWORK_SOURCES

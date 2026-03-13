@@ -9,13 +9,15 @@ This branch focuses on stabilizing the foundation for continued development.
 | Module | Status | Notes |
 | --- | --- | --- |
 | Users (login/users/roles) | Implemented | End-to-end client API + server business logic + repository + tests |
+| Inventory (ProductType CRUD) | Implemented slice | Shared endpoint + server module/repository + Qt client MVVM/UI + automated tests |
 | Purchase | Planned | Data schema exists, business/UI flow not implemented end-to-end |
 | Sales | Planned | Data schema exists, business/UI flow not implemented end-to-end |
-| Inventory | Planned | Data schema exists, business/UI flow not implemented end-to-end |
 | Management | Planned | Data schema exists, business/UI flow not implemented end-to-end |
 | Analytics | Planned | Not implemented |
+| Logs | Planned | Schema and placeholder routing exist, but no end-to-end slice |
 
 Detailed status and execution roadmap: `docs/Implementation_Status.md`.
+Requirements reconciliation and use-case baseline: `docs/Requirements_Baseline.md`.
 
 ## Tech Stack
 

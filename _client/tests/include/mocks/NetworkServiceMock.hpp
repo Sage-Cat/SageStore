@@ -36,6 +36,22 @@ public:
             serverResponse = {};
         } else if (endpoint == Endpoints::Users::ROLES && method == Method::DEL) {
             serverResponse = {};
+        } else if (endpoint == Endpoints::Inventory::PRODUCT_TYPES && method == Method::GET) {
+            serverResponse = {{Common::Entities::ProductType::ID_KEY, {"1", "2"}},
+                              {Common::Entities::ProductType::CODE_KEY, {"PT-001", "PT-002"}},
+                              {Common::Entities::ProductType::BARCODE_KEY, {"123", "456"}},
+                              {Common::Entities::ProductType::NAME_KEY, {"Oil", "Brake fluid"}},
+                              {Common::Entities::ProductType::DESCRIPTION_KEY,
+                               {"Synthetic oil", "DOT-4"}},
+                              {Common::Entities::ProductType::LAST_PRICE_KEY, {"10.50", "12.00"}},
+                              {Common::Entities::ProductType::UNIT_KEY, {"pcs", "bottle"}},
+                              {Common::Entities::ProductType::IS_IMPORTED_KEY, {"0", "1"}}};
+        } else if (endpoint == Endpoints::Inventory::PRODUCT_TYPES && method == Method::POST) {
+            serverResponse = {};
+        } else if (endpoint == Endpoints::Inventory::PRODUCT_TYPES && method == Method::PUT) {
+            serverResponse = {};
+        } else if (endpoint == Endpoints::Inventory::PRODUCT_TYPES && method == Method::DEL) {
+            serverResponse = {};
         }
         emit responseReceived(endpoint, method, serverResponse);
     }

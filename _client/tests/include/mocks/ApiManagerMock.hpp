@@ -17,5 +17,15 @@ public slots:
     void editRole(const Common::Entities::Role &role) override { emit roleEdited(); }
     void deleteRole(const QString &id) override { emit roleDeleted(); }
     void getRoleList() override { emit rolesList({}); }
+    void getProductTypes() override { emit productTypesList({}); }
+    void createProductType(const Common::Entities::ProductType &productType) override
+    {
+        emit productTypeCreated();
+    }
+    void editProductType(const Common::Entities::ProductType &productType) override
+    {
+        emit productTypeEdited();
+    }
+    void deleteProductType(const QString &id) override { emit productTypeDeleted(); }
     void emitError(const QString &errorMessage) { emit errorOccurred(errorMessage); }
 };

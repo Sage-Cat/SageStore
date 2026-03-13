@@ -1,0 +1,36 @@
+@startuml
+title SageStore Runtime / Deployment Topology (Current Baseline)
+
+node "Operator workstation" {
+    artifact "SageStoreClient\nQt desktop app" as Client
+}
+
+node "Future consumer" {
+    artifact "Web / Mobile / CLI /\nIntegration client" as OtherClient
+}
+
+node "Server host" {
+    artifact "SageStoreServer\nBoost.Beast / Asio" as Server
+    database "SQLite DB file" as Db
+}
+
+node "CI runner" {
+    artifact "Jenkins pipeline" as Jenkins
+    artifact "Local/VS Code docs task\nPlantUML + Doxygen" as DocsTask
+}
+
+Client --> Server : HTTP/JSON Dataset API
+OtherClient --> Server : same API contracts
+Server --> Db
+Jenkins --> Server : configure / build / ctest
+Jenkins --> Client : configure / build / unit tests
+DocsTask --> Client : diagram + docs generation
+DocsTask --> Server : diagram + docs generation
+
+note bottom of Jenkins
+Current automation gap:
+docs rendering and packaging
+are not enforced in CI yet.
+end note
+
+@enduml

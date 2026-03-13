@@ -80,10 +80,31 @@ target_link_libraries(UsersManagementModelTest
 message(STATUS "Adding unit test: UsersManagementModelTest")
 add_test(NAME Unit_UsersManagementModelTest COMMAND UsersManagementModelTest)
 
+set(TEST_PRODUCT_TYPES_MODEL_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/ProductTypesModelTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(ProductTypesModelTest ${TEST_PRODUCT_TYPES_MODEL_SOURCES})
+target_include_directories(ProductTypesModelTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(ProductTypesModelTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: ProductTypesModelTest")
+add_test(NAME Unit_ProductTypesModelTest COMMAND ProductTypesModelTest)
+
 set_tests_properties(
     Unit_ApiManagerTest
     Unit_MainWindowTest
     Unit_DialogManagerTest
     Unit_UsersManagementModelTest
+    Unit_ProductTypesModelTest
     PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
 )

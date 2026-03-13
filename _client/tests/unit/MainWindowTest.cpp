@@ -1,8 +1,10 @@
 #include <QApplication>
 #include <QSignalSpy>
+#include <QTabWidget>
 #include <QtTest>
 
 #include "Ui/MainWindow.hpp"
+#include "Ui/MainMenuActions.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
 #include "mocks/DialogManagerMock.hpp"
@@ -35,12 +37,50 @@ public:
         delete apiManagerMock;
     }
 
+    QAction *findMenuAction(const QString &menuTitle, const QString &actionTitle) const
+    {
+        for (QAction *menuAction : mainWindow->menuBar()->actions()) {
+            if (menuAction->text() != menuTitle || menuAction->menu() == nullptr) {
+                continue;
+            }
+
+            for (QAction *action : menuAction->menu()->actions()) {
+                if (action->text() == actionTitle) {
+                    return action;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
 private slots:
     void testShowLoginDialogOnInit()
     {
         QSignalSpy errorMessageSpy(dialogManagerMock, &DialogManagerMock::showLogDialog);
         mainWindow->startUiProcess();
         QCOMPARE(errorMessageSpy.count(), 1);
+    }
+
+    void testOpenProductManagementTabFromInventoryMenu()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        QCOMPARE(tabWidget->count(), 0);
+
+        QAction *productManagementAction =
+            findMenuAction("Inventory",
+                           MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+        QVERIFY(productManagementAction != nullptr);
+
+        productManagementAction->trigger();
+
+        QCOMPARE(tabWidget->count(), 1);
+        QCOMPARE(tabWidget->tabText(0),
+                 MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+
+        productManagementAction->trigger();
+        QCOMPARE(tabWidget->count(), 1);
     }
 };
 

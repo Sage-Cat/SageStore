@@ -1,0 +1,67 @@
+@startuml
+left to right direction
+
+title SageStore High-Level Use Cases (Baseline vs Target)
+
+actor Administrator
+actor User
+
+rectangle SageStore {
+    usecase "Login" as UC_Login
+    usecase "Manage Users" as UC_Users
+    usecase "Manage Roles" as UC_Roles
+    usecase "Manage Product Types" as UC_ProductTypes
+    usecase "View Stock / Inventory" as UC_Inventory
+    usecase "Manage Purchase Orders" as UC_Purchase
+    usecase "Manage Sales Invoices" as UC_Sales
+    usecase "Manage Employees /\nSuppliers / Contacts / Companies" as UC_Management
+    usecase "View Logs / History" as UC_Logs
+    usecase "Run Reports / Analytics" as UC_Analytics
+}
+
+Administrator --> UC_Login
+Administrator --> UC_Users
+Administrator --> UC_Roles
+
+User --> UC_Login
+User --> UC_ProductTypes
+User --> UC_Inventory
+User --> UC_Purchase
+User --> UC_Sales
+User --> UC_Management
+User --> UC_Logs
+User --> UC_Analytics
+
+note right of UC_Users
+Implemented
+end note
+
+note right of UC_Roles
+Implemented
+end note
+
+note right of UC_ProductTypes
+Implemented baseline
+end note
+
+note right of UC_Purchase
+Planned
+end note
+
+note right of UC_Sales
+Planned
+end note
+
+note right of UC_Management
+Planned
+end note
+
+note right of UC_Logs
+Planned
+end note
+
+note right of UC_Analytics
+Planned
+end note
+
+@enduml

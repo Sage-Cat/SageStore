@@ -4,6 +4,7 @@ set(TEST_BUSINESS_LOGIC_SOURCES
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
 )
@@ -36,6 +37,7 @@ set(TEST_REPOSITORY_INTEGRATION_SOURCES
     ${SERVER_TESTS_DIR}/component/RepositoryIntegrationTest.cpp
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
@@ -66,3 +68,45 @@ target_compile_definitions(RepositoryIntegrationTest PRIVATE
 
 add_test(NAME Component_RepositoryIntegrationTest COMMAND RepositoryIntegrationTest)
 message(STATUS "Adding component test: RepositoryIntegrationTest")
+
+
+# ------------------------- HTTP CONTRACT -------------------------
+if(NOT TARGET HttpContractTest)
+    set(TEST_HTTP_CONTRACT_SOURCES
+        ${SERVER_TESTS_DIR}/component/HttpContractTest.cpp
+        ${BUSINESS_SOURCES}
+        ${SERVER_SOURCES_DIR}/ServerException.cpp
+        ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+        ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
+        ${SERVER_SOURCES_DIR}/Database/SqliteDatabaseManager.cpp
+        ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
+        ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
+        ${SERVER_SOURCES_DIR}/Network/HttpTransaction.cpp
+    )
+
+    add_executable(HttpContractTest ${TEST_HTTP_CONTRACT_SOURCES})
+
+    target_include_directories(HttpContractTest PUBLIC
+        ${SERVER_SOURCES_DIR}
+        ${SERVER_TESTS_DIR}
+    )
+
+    target_link_libraries(HttpContractTest
+        PUBLIC
+        common
+        boost::boost
+        spdlog::spdlog
+        SQLite::SQLite3
+        $<$<PLATFORM_ID:Windows>:Ws2_32>
+        $<$<PLATFORM_ID:Windows>:Wsock32>
+        GTest::gtest
+        GTest::gtest_main
+    )
+
+    target_compile_definitions(HttpContractTest PRIVATE
+        TEST_CREATE_DB_SQL_FILE_PATH="${CMAKE_SOURCE_DIR}/scripts/create_db.sql"
+    )
+
+    add_test(NAME Component_HttpContractTest COMMAND HttpContractTest)
+    message(STATUS "Adding component test: HttpContractTest")
+endif()

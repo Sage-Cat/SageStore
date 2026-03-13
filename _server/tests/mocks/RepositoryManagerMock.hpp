@@ -6,6 +6,7 @@
 #include "DatabaseManagerMock.hpp"
 
 #include "common/Entities/Role.hpp"
+#include "common/Entities/ProductType.hpp"
 #include "common/Entities/User.hpp"
 
 class SqliteDatabaseManager;
@@ -21,4 +22,6 @@ public:
                 (override));
     MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::Role>>, getRoleRepository, (),
                 (override));
+    MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::ProductType>>,
+                getProductTypeRepository, (), (override));
 };

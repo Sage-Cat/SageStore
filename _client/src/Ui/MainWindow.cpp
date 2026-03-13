@@ -110,10 +110,22 @@ void MainWindow::handleMainMenuAction(MainMenuActions::Type actionType)
                      ? MainMenuActions::NAMES.at(actionType).toStdString()
                      : std::to_string(static_cast<int>(actionType)));
 
+    const auto openTab = [this](QWidget *widget, MainMenuActions::Type type) {
+        const auto title = MainMenuActions::NAMES.at(type);
+        auto tabIndex    = m_tabWidget->indexOf(widget);
+        if (tabIndex == -1) {
+            tabIndex = m_tabWidget->addTab(widget, title);
+        }
+        m_tabWidget->setCurrentIndex(tabIndex);
+    };
+
     // Performing action based on actionType
     switch (actionType) {
+    case MainMenuActions::Type::PRODUCT_MANAGEMENT:
+        openTab(m_productTypesView, MainMenuActions::Type::PRODUCT_MANAGEMENT);
+        break;
     case MainMenuActions::Type::USERS:
-        m_tabWidget->addTab(m_usersView, MainMenuActions::NAMES.at(MainMenuActions::Type::USERS));
+        openTab(m_usersView, MainMenuActions::Type::USERS);
         break;
     case MainMenuActions::Type::EXIT:
         close();
@@ -138,6 +150,11 @@ QMenu *MainWindow::createModuleMenu(const QString &menuTitle,
 
 void MainWindow::setupMVVM()
 {
+    // Product management
+    m_productTypesModel     = new ProductTypesModel(m_apiManager, this);
+    m_productTypesViewModel = new ProductTypesViewModel(*m_productTypesModel, this);
+    m_productTypesView      = new ProductTypesView(*m_productTypesViewModel, this);
+
     // Users Management
     m_usersManagementModel     = new UsersManagementModel(m_apiManager, this);
     m_usersManagementViewModel = new UsersManagementViewModel(*m_usersManagementModel, this);

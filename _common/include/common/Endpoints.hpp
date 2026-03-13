@@ -13,4 +13,8 @@ inline constexpr char LOGIN[]        = "/api/users/login";
 inline constexpr char USERS[]        = "/api/users/users";
 inline constexpr char ROLES[]        = "/api/users/roles";
 } // namespace Users
+
+namespace Inventory {
+inline constexpr char PRODUCT_TYPES[] = "/api/inventory/product-types";
+} // namespace Inventory
 } // namespace Endpoints

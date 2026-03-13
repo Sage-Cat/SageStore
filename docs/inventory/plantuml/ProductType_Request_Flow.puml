@@ -1,0 +1,67 @@
+@startuml
+title ProductType Create Flow (Current End-to-End Shape)
+
+actor User
+participant ProductTypesView
+participant ProductTypesViewModel
+participant ProductTypesModel
+participant ApiManager
+participant NetworkService
+participant HttpServer
+participant HttpTransaction
+participant BusinessLogic
+participant InventoryModule
+participant ProductTypeRepository
+database SQLite
+
+User -> ProductTypesView: Submit "Create product type"
+ProductTypesView -> ProductTypesViewModel: createProductType(display data)
+ProductTypesViewModel -> ProductTypesModel: createProductType(common entity)
+ProductTypesModel -> ApiManager: createProductType(...)
+ApiManager -> NetworkService: POST /api/inventory/product-types
+NetworkService -> HttpServer: HTTP request
+HttpServer -> HttpTransaction: route request
+HttpTransaction -> BusinessLogic: RequestData{inventory, product-types, POST}
+BusinessLogic -> InventoryModule: executeTask(request)
+InventoryModule -> InventoryModule: validate code/name/unit\nnormalize defaults
+InventoryModule -> ProductTypeRepository: getByField(code)
+ProductTypeRepository -> SQLite: SELECT ... WHERE code = ?
+SQLite --> ProductTypeRepository: existing rows
+
+alt code is unique
+    InventoryModule -> ProductTypeRepository: add(ProductType)
+    ProductTypeRepository -> SQLite: INSERT ProductType
+    SQLite --> ProductTypeRepository: success
+    InventoryModule --> BusinessLogic: empty success dataset
+else duplicate code
+    InventoryModule --> BusinessLogic: ServerException
+end
+
+BusinessLogic --> HttpTransaction: response dataset
+HttpTransaction --> NetworkService: HTTP response
+NetworkService --> ApiManager: parsed dataset
+
+alt success
+    ApiManager --> ProductTypesModel: productTypeCreated()
+    ProductTypesModel -> ApiManager: getProductTypes()
+    ApiManager -> NetworkService: GET /api/inventory/product-types
+    NetworkService -> HttpServer: HTTP request
+    HttpServer -> HttpTransaction: route request
+    HttpTransaction -> BusinessLogic: RequestData{inventory, product-types, GET}
+    BusinessLogic -> InventoryModule: getProductTypes()
+    InventoryModule -> ProductTypeRepository: getAll()
+    ProductTypeRepository -> SQLite: SELECT ProductType rows
+    SQLite --> ProductTypeRepository: rows
+    ProductTypeRepository --> InventoryModule: entities
+    InventoryModule --> BusinessLogic: dataset
+    BusinessLogic --> HttpTransaction: response dataset
+    HttpTransaction --> NetworkService: HTTP response
+    NetworkService --> ApiManager: parsed dataset
+    ApiManager --> ProductTypesModel: productTypesList(...)
+    ProductTypesModel --> ProductTypesViewModel: productTypesChanged()
+    ProductTypesViewModel --> ProductTypesView: productTypesChanged()
+else validation error
+    ApiManager --> ProductTypesModel: errorOccurred(...)
+end
+
+@enduml

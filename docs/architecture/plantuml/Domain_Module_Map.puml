@@ -1,0 +1,58 @@
+@startuml
+skinparam packageStyle rectangle
+
+title SageStore Domain / Module Map (Current to Target)
+
+package "Shared platform" {
+    [HTTP API / Dataset contracts] as API
+    [Qt desktop MVVM client] as Desktop
+    [SQLite repositories] as Repo
+}
+
+package "Implemented now" {
+    [Identity & Access\nUsers / Roles / Login] as Identity
+    [Inventory catalog\nProductType] as Catalog
+}
+
+package "Next slices" {
+    [Inventory stock] as Stock
+    [Purchase] as Purchase
+    [Sales] as Sales
+}
+
+package "Planned support domains" {
+    [Management master data] as Management
+    [Logs / Audit] as Logs
+    [Analytics / Reporting] as Analytics
+}
+
+Desktop --> API
+API --> Identity
+API --> Catalog
+API --> Stock
+API --> Purchase
+API --> Sales
+API --> Management
+API --> Logs
+API --> Analytics
+
+Identity --> Repo
+Catalog --> Repo
+Stock --> Repo
+Purchase --> Repo
+Sales --> Repo
+Management --> Repo
+Logs --> Repo
+Analytics --> Repo
+
+Purchase --> Catalog : uses ProductType
+Sales --> Catalog : uses ProductType
+Stock --> Catalog : tracks quantities
+Sales --> Management : uses Contact/Employee data
+Purchase --> Management : uses Supplier data
+Logs --> Identity : actor context
+Analytics --> Purchase
+Analytics --> Sales
+Analytics --> Stock
+
+@enduml

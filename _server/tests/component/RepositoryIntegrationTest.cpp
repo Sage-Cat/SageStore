@@ -5,10 +5,12 @@
 #include <memory>
 
 #include "Database/RepositoryManager.hpp"
+#include "Database/ProductTypeRepository.hpp"
 #include "Database/RoleRepository.hpp"
 #include "Database/SqliteDatabaseManager.hpp"
 #include "Database/UserRepository.hpp"
 
+#include "common/Entities/ProductType.hpp"
 #include "common/Entities/Role.hpp"
 #include "common/Entities/User.hpp"
 #include "common/SpdlogConfig.hpp"
@@ -23,16 +25,18 @@ protected:
                    ("sagestore_repository_integration_" + uniqueSuffix + ".db");
 
         auto dbManager      = std::make_shared<SqliteDatabaseManager>(m_dbPath.string(),
-                                                                 TEST_CREATE_DB_SQL_FILE_PATH);
+                                                                      TEST_CREATE_DB_SQL_FILE_PATH);
         m_repositoryManager = std::make_unique<RepositoryManager>(dbManager);
         m_userRepository    = m_repositoryManager->getUserRepository();
         m_roleRepository    = m_repositoryManager->getRoleRepository();
+        m_productTypeRepository = m_repositoryManager->getProductTypeRepository();
     }
 
     void TearDown() override
     {
         m_roleRepository.reset();
         m_userRepository.reset();
+        m_productTypeRepository.reset();
         m_repositoryManager.reset();
         std::error_code errorCode;
         std::filesystem::remove(m_dbPath, errorCode);
@@ -42,6 +46,7 @@ protected:
     std::unique_ptr<RepositoryManager> m_repositoryManager;
     std::shared_ptr<IRepository<Common::Entities::User>> m_userRepository;
     std::shared_ptr<IRepository<Common::Entities::Role>> m_roleRepository;
+    std::shared_ptr<IRepository<Common::Entities::ProductType>> m_productTypeRepository;
 };
 
 TEST_F(RepositoryIntegrationTest, RoleRepository_CRUD_RoundTrip)
@@ -92,6 +97,47 @@ TEST_F(RepositoryIntegrationTest, UserRepository_CRUD_RoundTrip)
     const auto deletedUsers =
         m_userRepository->getByField(Common::Entities::User::USERNAME_KEY, "repo_user_updated");
     EXPECT_TRUE(deletedUsers.empty());
+}
+
+TEST_F(RepositoryIntegrationTest, ProductTypeRepository_CRUD_RoundTrip)
+{
+    const Common::Entities::ProductType newProductType{.id = "",
+                                                       .code = "PT-100",
+                                                       .barcode = "100200300",
+                                                       .name = "Gear oil",
+                                                       .description = "GL-5",
+                                                       .lastPrice = "55.20",
+                                                       .unit = "pcs",
+                                                       .isImported = "1"};
+    m_productTypeRepository->add(newProductType);
+
+    auto createdProductTypes =
+        m_productTypeRepository->getByField(Common::Entities::ProductType::CODE_KEY, "PT-100");
+    ASSERT_EQ(createdProductTypes.size(), 1U);
+    ASSERT_FALSE(createdProductTypes.front().id.empty());
+    EXPECT_EQ(createdProductTypes.front().name, "Gear oil");
+
+    const std::string productTypeId = createdProductTypes.front().id;
+    m_productTypeRepository->update(Common::Entities::ProductType{.id = productTypeId,
+                                                                  .code = "PT-100",
+                                                                  .barcode = "100200300",
+                                                                  .name = "Gear oil updated",
+                                                                  .description = "GL-5 updated",
+                                                                  .lastPrice = "60.00",
+                                                                  .unit = "pcs",
+                                                                  .isImported = "0"});
+
+    const auto updatedProductTypes =
+        m_productTypeRepository->getByField(Common::Entities::ProductType::CODE_KEY, "PT-100");
+    ASSERT_EQ(updatedProductTypes.size(), 1U);
+    EXPECT_EQ(updatedProductTypes.front().id, productTypeId);
+    EXPECT_EQ(updatedProductTypes.front().name, "Gear oil updated");
+    EXPECT_EQ(updatedProductTypes.front().isImported, "0");
+
+    m_productTypeRepository->deleteResource(productTypeId);
+    const auto deletedProductTypes =
+        m_productTypeRepository->getByField(Common::Entities::ProductType::CODE_KEY, "PT-100");
+    EXPECT_TRUE(deletedProductTypes.empty());
 }
 
 int main(int argc, char **argv)
