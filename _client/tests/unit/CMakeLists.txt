@@ -120,6 +120,26 @@ target_link_libraries(ProductTypesViewTest
 message(STATUS "Adding unit test: ProductTypesViewTest")
 add_test(NAME Unit_ProductTypesViewTest COMMAND ProductTypesViewTest)
 
+set(TEST_ROLES_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/RolesViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(RolesViewTest ${TEST_ROLES_VIEW_SOURCES})
+target_include_directories(RolesViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(RolesViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: RolesViewTest")
+add_test(NAME Unit_RolesViewTest COMMAND RolesViewTest)
+
 set(TEST_STOCKS_MODEL_SOURCES
     ${CLIENT_UNIT_TESTS_DIR}/StocksModelTest.cpp
     ${NETWORK_SOURCES}
@@ -167,6 +187,7 @@ set_tests_properties(
     Unit_UsersManagementModelTest
     Unit_ProductTypesModelTest
     Unit_ProductTypesViewTest
+    Unit_RolesViewTest
     Unit_StocksModelTest
     Unit_StocksViewTest
     PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"

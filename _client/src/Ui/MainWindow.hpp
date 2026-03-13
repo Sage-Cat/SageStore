@@ -7,6 +7,7 @@
 #include <QString>
 #include <QTabWidget>
 #include <QVector>
+#include <map>
 
 #include "MainMenuActions.hpp"
 
@@ -16,7 +17,9 @@
 #include "Ui/ViewModels/ProductTypesViewModel.hpp"
 #include "Ui/ViewModels/StocksViewModel.hpp"
 #include "Ui/ViewModels/UsersManagementViewModel.hpp"
+#include "Ui/Views/ModuleStatusView.hpp"
 #include "Ui/Views/ProductTypesView.hpp"
+#include "Ui/Views/RolesView.hpp"
 #include "Ui/Views/StocksView.hpp"
 #include "Ui/Views/UsersView.hpp"
 
@@ -47,9 +50,12 @@ private: // --- General UI ---
 
 private: // --- MVVM ---
     void setupMVVM();
+    void ensureUsersManagementState();
     ProductTypesView *ensureProductTypesView();
     StocksView *ensureStocksView();
     UsersView *ensureUsersView();
+    RolesView *ensureRolesView();
+    ModuleStatusView *ensureModuleStatusView(MainMenuActions::Type actionType);
 
 private:
     QApplication &m_app;
@@ -76,4 +82,8 @@ private:
     UsersManagementModel *m_usersManagementModel{nullptr};
     UsersManagementViewModel *m_usersManagementViewModel{nullptr};
     UsersView *m_usersView{nullptr};
+    RolesView *m_rolesView{nullptr};
+
+    // Planned/current status views
+    std::map<MainMenuActions::Type, ModuleStatusView *> m_moduleStatusViews;
 };

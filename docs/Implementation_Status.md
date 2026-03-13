@@ -16,7 +16,8 @@
 | --- | --- | --- | --- | --- |
 | Users: login | Defined | Implemented (`_server/src/BusinessLogic/UsersModule.cpp`, `_client/src/Network/ApiManager.cpp`) | Yes (`_server/tests/unit/UsersModuleTest.cpp`, `_server/tests/component/BusinessLogicTest.cpp`, `_client/tests/unit/ApiManagerTest.cpp`) | None |
 | Users: users CRUD | Defined | Implemented (`UsersModule`, `UserRepository`, `UsersManagement*`) | Yes (unit + component + integration + client unit) | Add more UI workflow tests |
-| Users: roles CRUD | Defined | Implemented (`UsersModule`, `RoleRepository`) | Yes (`UsersModuleTest`, `ApiManagerTest`, `RepositoryIntegrationTest`) | Add more API-level contract tests |
+| Users: roles CRUD | Defined | Implemented across server, API, and Qt desktop role-management view (`UsersModule`, `RoleRepository`, `_client/src/Ui/Views/RolesView.cpp`) | Yes (`UsersModuleTest`, `ApiManagerTest`, `RepositoryIntegrationTest`, `RolesViewTest`, `MainWindowTest`) | Add more API-level contract tests |
+| Desktop module navigation | Defined | Every menu action now opens a concrete tab: implemented slices use real views, while unfinished modules use explicit status/landing views instead of unsupported fallbacks (`_client/src/Ui/MainWindow.cpp`, `_client/src/Ui/Views/ModuleStatusView.cpp`) | Yes (`_client/tests/unit/MainWindowTest.cpp`) | Planned modules still need real end-to-end slices behind their landing views |
 | Module dispatch (non-users) | Defined | `inventory` now dispatches to a real module; `purchase`, `sales`, `management`, `analytics`, and `logs` still return planned/not-implemented errors (`_server/src/BusinessLogic/BusinessLogic.cpp`) | Yes (`_server/tests/component/BusinessLogicTest.cpp`) | Complete remaining modules |
 | Inventory: ProductType CRUD | Defined | Implemented across shared endpoint, server module/repository, Qt client wiring, and HTTP transport (`_common/include/common/Endpoints.hpp`, `_server/src/BusinessLogic/InventoryModule.cpp`, `_server/src/Database/ProductTypeRepository.cpp`, `_server/tests/component/HttpContractTest.cpp`, `_client/src/Network/ApiManager.cpp`, `_client/src/Ui/Models/ProductTypesModel.cpp`, `_client/src/Ui/Views/ProductTypesView.cpp`) | Yes (server unit + component + repository integration + HTTP contract + client unit + MainWindow smoke + ProductTypesView Qt workflow tests) | Add live fullstack GUI round-trip coverage and richer error-state/system validation |
 | Inventory: stock tracking | Defined | Implemented across shared endpoint, server module/repository, Qt client wiring, and smoke/runtime scripts (`InventoryModule`, `InventoryRepository`, `Stocks*`, `MainWindow`, smoke scripts) | Yes (server unit + component + repository integration + HTTP contract + client unit + MainWindow + StocksView Qt tests + smoke) | Broader inventory workflows and live interactive GUI/system coverage still missing |
@@ -28,7 +29,7 @@
 
 ## Architecture Baseline
 
-- Client: `MainWindow` now lazily hosts users, ProductType, and stock flows through `ApiManager`, `ProductTypes*`, and `Stocks*`, so startup no longer eagerly constructs or fetches those tabs.
+- Client: `MainWindow` now lazily hosts users, roles, ProductType, and stock flows through `ApiManager`, `UsersManagement*`, `ProductTypes*`, and `Stocks*`; every remaining menu action opens an explicit status/landing view instead of an unsupported warning path.
 - Server: `HttpServer/HttpTransaction` routes into `BusinessLogic`, which now dispatches to both `UsersModule` and `InventoryModule`.
 - Data access: `RepositoryManager` now serves `UserRepository`, `RoleRepository`, `ProductTypeRepository`, and `InventoryRepository` over SQLite.
 - Runtime configuration: both client and server now accept environment-based host/port settings; the server also accepts DB/bootstrap path overrides, and the client supports an optional auto-exit timer for offscreen smoke runs.
@@ -49,6 +50,8 @@
 - ProductType HTTP request/response contract through `HttpTransaction` and real `BusinessLogic`.
 - ProductType client API/model behavior in `_client/tests/unit/ApiManagerTest.cpp` and `_client/tests/unit/ProductTypesModelTest.cpp`.
 - Product management menu/tab workflow coverage in `_client/tests/unit/MainWindowTest.cpp`.
+- Full menu-routing coverage, including planned-module landing views and the dedicated roles tab, in `_client/tests/unit/MainWindowTest.cpp`.
+- Roles view workflow coverage for create/edit/delete interactions in `_client/tests/unit/RolesViewTest.cpp`.
 - ProductTypes view workflow coverage for create/edit/delete/filter interactions in `_client/tests/unit/ProductTypesViewTest.cpp`.
 - Stock tracking server rules, repository persistence, HTTP contracts, desktop view workflows, and smoke validation.
 - Gap: there is still no full interactive live client/server GUI round-trip test.

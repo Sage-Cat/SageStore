@@ -11,6 +11,8 @@ class ApiManagerMock : public ApiManager {
 public:
     ApiManagerMock() : ApiManager(*(new NetworkServiceMock))
     {
+        m_roles = {Common::Entities::Role{.id = "1", .name = "Administrator"},
+                   Common::Entities::Role{.id = "2", .name = "Manager"}};
         m_productTypes = {
             Common::Entities::ProductType{.id = "1",
                                           .code = "PT-001",
@@ -52,13 +54,32 @@ public slots:
         ++m_getUsersCalls;
         emit usersList({});
     }
-    void createRole(const Common::Entities::Role &role) override { emit roleCreated(); }
-    void editRole(const Common::Entities::Role &role) override { emit roleEdited(); }
-    void deleteRole(const QString &id) override { emit roleDeleted(); }
+    void editRole(const Common::Entities::Role &role) override
+    {
+        auto it = std::find_if(m_roles.begin(), m_roles.end(), [&role](const auto &existingRole) {
+            return existingRole.id == role.id;
+        });
+        if (it != m_roles.end()) {
+            *it = role;
+        }
+        emit roleEdited();
+    }
+    void deleteRole(const QString &id) override
+    {
+        std::erase_if(m_roles, [&id](const auto &role) { return role.id == id.toStdString(); });
+        emit roleDeleted();
+    }
     void getRoleList() override
     {
         ++m_getRolesCalls;
-        emit rolesList({});
+        emit rolesList(m_roles);
+    }
+    void createRole(const Common::Entities::Role &role) override
+    {
+        auto createdRole = role;
+        createdRole.id   = std::to_string(m_nextRoleId++);
+        m_roles.push_back(createdRole);
+        emit roleCreated();
     }
     void getProductTypes() override
     {
@@ -125,8 +146,10 @@ private:
     int m_getRolesCalls{0};
     int m_getProductTypesCalls{0};
     int m_getStocksCalls{0};
+    int m_nextRoleId{3};
     int m_nextProductTypeId{3};
     int m_nextStockId{2};
+    std::vector<Common::Entities::Role> m_roles;
     std::vector<Common::Entities::ProductType> m_productTypes;
     std::vector<Common::Entities::Inventory> m_stocks;
 };
