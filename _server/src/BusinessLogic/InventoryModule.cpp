@@ -2,12 +2,15 @@
 
 #include <algorithm>
 #include <cctype>
+#include <limits>
 
 #include "Database/RepositoryManager.hpp"
 #include "ServerException.hpp"
 
 #include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
+#include "common/Entities/Supplier.hpp"
+#include "common/Entities/SuppliersProductInfo.hpp"
 #include "common/SpdlogConfig.hpp"
 
 #define _M "InventoryModule"
@@ -51,6 +54,19 @@ std::string getRequiredNonNegativeInteger(const Dataset &request, const std::str
     if (!std::all_of(value.begin(), value.end(), [](unsigned char c) { return std::isdigit(c); })) {
         SPDLOG_ERROR("{} | Invalid integer for dataset key: {}", context, key);
         throw ServerException(_M, "Invalid integer field: " + key);
+    }
+
+    try {
+        const auto parsed = std::stoull(value);
+        if (parsed > static_cast<unsigned long long>(std::numeric_limits<long long>::max())) {
+            SPDLOG_ERROR("{} | Integer is out of range for dataset key: {}", context, key);
+            throw ServerException(_M, "Integer field out of range: " + key);
+        }
+    } catch (const ServerException &) {
+        throw;
+    } catch (...) {
+        SPDLOG_ERROR("{} | Integer is out of range for dataset key: {}", context, key);
+        throw ServerException(_M, "Integer field out of range: " + key);
     }
 
     return value;
@@ -114,6 +130,21 @@ Common::Entities::Inventory buildStock(const Dataset &request, const std::string
                                                  Common::Entities::Inventory::EMPLOYEE_ID_KEY,
                                                  "InventoryModule::buildStock")};
 }
+
+Common::Entities::SuppliersProductInfo buildSupplierProduct(const Dataset &request,
+                                                            const std::string &resourceId)
+{
+    return Common::Entities::SuppliersProductInfo{
+        .id = resourceId,
+        .supplierID = getRequiredPositiveInteger(
+            request, Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY,
+            "InventoryModule::buildSupplierProduct"),
+        .productTypeId = getRequiredPositiveInteger(
+            request, Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY,
+            "InventoryModule::buildSupplierProduct"),
+        .code = getRequiredDatasetValue(request, Common::Entities::SuppliersProductInfo::CODE_KEY,
+                                        "InventoryModule::buildSupplierProduct")};
+}
 } // namespace
 
 InventoryModule::InventoryModule(RepositoryManager &repositoryManager)
@@ -122,6 +153,9 @@ InventoryModule::InventoryModule(RepositoryManager &repositoryManager)
 
     m_inventoryRepository    = std::move(repositoryManager.getInventoryRepository());
     m_productTypesRepository = std::move(repositoryManager.getProductTypeRepository());
+    m_suppliersRepository    = std::move(repositoryManager.getSupplierRepository());
+    m_suppliersProductInfoRepository =
+        std::move(repositoryManager.getSuppliersProductInfoRepository());
 }
 
 InventoryModule::~InventoryModule() { SPDLOG_TRACE("InventoryModule::~InventoryModule"); }
@@ -170,6 +204,29 @@ ResponseData InventoryModule::executeTask(const RequestData &requestData)
 
         if (requestData.method == "DELETE") {
             deleteStock(requestData.resourceId);
+            return {};
+        }
+
+        throw ServerException(_M, "Unrecognized method");
+    }
+
+    if (requestData.submodule == "supplier-products") {
+        if (requestData.method == "GET") {
+            return getSupplierProducts();
+        }
+
+        if (requestData.method == "POST") {
+            addSupplierProduct(requestData.dataset);
+            return {};
+        }
+
+        if (requestData.method == "PUT") {
+            editSupplierProduct(requestData.dataset, requestData.resourceId);
+            return {};
+        }
+
+        if (requestData.method == "DELETE") {
+            deleteSupplierProduct(requestData.resourceId);
             return {};
         }
 
@@ -293,6 +350,30 @@ ResponseData InventoryModule::getStocks() const
     return response;
 }
 
+ResponseData InventoryModule::getSupplierProducts() const
+{
+    SPDLOG_TRACE("InventoryModule::getSupplierProducts");
+
+    ResponseData response;
+    response.dataset[Common::Entities::SuppliersProductInfo::ID_KEY]              = {};
+    response.dataset[Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY]     = {};
+    response.dataset[Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY] = {};
+    response.dataset[Common::Entities::SuppliersProductInfo::CODE_KEY]            = {};
+
+    const auto mappings = m_suppliersProductInfoRepository->getAll();
+    for (const auto &mapping : mappings) {
+        response.dataset[Common::Entities::SuppliersProductInfo::ID_KEY].emplace_back(mapping.id);
+        response.dataset[Common::Entities::SuppliersProductInfo::SUPPLIER_ID_KEY].emplace_back(
+            mapping.supplierID);
+        response.dataset[Common::Entities::SuppliersProductInfo::PRODUCT_TYPE_ID_KEY].emplace_back(
+            mapping.productTypeId);
+        response.dataset[Common::Entities::SuppliersProductInfo::CODE_KEY].emplace_back(
+            mapping.code);
+    }
+
+    return response;
+}
+
 void InventoryModule::addStock(const Dataset &request) const
 {
     SPDLOG_TRACE("InventoryModule::addStock");
@@ -360,4 +441,72 @@ void InventoryModule::deleteStock(const std::string &resourceId) const
     }
 
     m_inventoryRepository->deleteResource(resourceId);
+}
+
+void InventoryModule::addSupplierProduct(const Dataset &request) const
+{
+    SPDLOG_TRACE("InventoryModule::addSupplierProduct");
+
+    const auto mapping = buildSupplierProduct(request, "");
+    if (m_suppliersRepository
+            ->getByField(Common::Entities::Supplier::ID_KEY, mapping.supplierID)
+            .empty()) {
+        throw ServerException(_M, "Referenced supplier does not exist");
+    }
+
+    if (m_productTypesRepository
+            ->getByField(Common::Entities::ProductType::ID_KEY, mapping.productTypeId)
+            .empty()) {
+        throw ServerException(_M, "Referenced product type does not exist");
+    }
+
+    m_suppliersProductInfoRepository->add(mapping);
+}
+
+void InventoryModule::editSupplierProduct(const Dataset &request,
+                                          const std::string &resourceId) const
+{
+    SPDLOG_TRACE("InventoryModule::editSupplierProduct");
+
+    if (resourceId.empty()) {
+        throw ServerException(_M, "Supplier product mapping ID is empty");
+    }
+
+    if (m_suppliersProductInfoRepository
+            ->getByField(Common::Entities::SuppliersProductInfo::ID_KEY, resourceId)
+            .empty()) {
+        throw ServerException(_M, "Supplier product mapping does not exist");
+    }
+
+    const auto mapping = buildSupplierProduct(request, resourceId);
+    if (m_suppliersRepository
+            ->getByField(Common::Entities::Supplier::ID_KEY, mapping.supplierID)
+            .empty()) {
+        throw ServerException(_M, "Referenced supplier does not exist");
+    }
+
+    if (m_productTypesRepository
+            ->getByField(Common::Entities::ProductType::ID_KEY, mapping.productTypeId)
+            .empty()) {
+        throw ServerException(_M, "Referenced product type does not exist");
+    }
+
+    m_suppliersProductInfoRepository->update(mapping);
+}
+
+void InventoryModule::deleteSupplierProduct(const std::string &resourceId) const
+{
+    SPDLOG_TRACE("InventoryModule::deleteSupplierProduct");
+
+    if (resourceId.empty()) {
+        throw ServerException(_M, "Supplier product mapping ID is empty");
+    }
+
+    if (m_suppliersProductInfoRepository
+            ->getByField(Common::Entities::SuppliersProductInfo::ID_KEY, resourceId)
+            .empty()) {
+        throw ServerException(_M, "Supplier product mapping does not exist");
+    }
+
+    m_suppliersProductInfoRepository->deleteResource(resourceId);
 }

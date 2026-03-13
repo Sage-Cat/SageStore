@@ -180,7 +180,7 @@ INSERT INTO SaleOrder (date, userId, contactId, employeeId, status) VALUES ('202
 INSERT INTO SalesOrderRecord (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); 
 
 -- Insert default purchase order
-INSERT INTO PurchaseOrder (date, userId, supplierId, status) VALUES ('2024-02-19', 1, 1, 'Pending'); 
+INSERT INTO PurchaseOrder (date, userId, supplierId, status) VALUES ('2024-02-19', 1, 1, 'Ordered');
 
 -- Insert default purchase order record
 INSERT INTO PurchaseOrderRecord (orderId, productTypeId, quantity, price) VALUES (1, 1, 1, 10.99); --Assuming the default purchase order id is 1 and product type id is 1

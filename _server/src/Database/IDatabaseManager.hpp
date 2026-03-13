@@ -26,6 +26,9 @@ public:
 
     virtual bool open()                                                                        = 0;
     virtual void close()                                                                       = 0;
+    virtual void beginTransaction()                                                            = 0;
+    virtual void commitTransaction()                                                           = 0;
+    virtual void rollbackTransaction()                                                         = 0;
     virtual std::shared_ptr<IQueryResult> executeQuery(std::string_view query,
                                                        const std::vector<std::string> &params) = 0;
 };

@@ -101,6 +101,17 @@ public:
         SPDLOG_INFO("Database closed successfully");
     }
 
+    void executeStatement(std::string_view statement)
+    {
+        char *errMsg = nullptr;
+        if (sqlite3_exec(m_db.get(), statement.data(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+            const std::string error = errMsg ? errMsg : "unknown";
+            SPDLOG_ERROR("SQLite statement failed: {} | {}", statement, error);
+            sqlite3_free(errMsg);
+            throw ServerException(_M, "Failed to execute statement: " + error);
+        }
+    }
+
     std::shared_ptr<IQueryResult> executeQuery(std::string_view query,
                                                const std::vector<std::string> &params)
     {
@@ -186,6 +197,21 @@ SqliteDatabaseManager::~SqliteDatabaseManager() = default;
 bool SqliteDatabaseManager::open() { return pImpl->open(); }
 
 void SqliteDatabaseManager::close() { pImpl->close(); }
+
+void SqliteDatabaseManager::beginTransaction()
+{
+    pImpl->executeStatement("BEGIN IMMEDIATE TRANSACTION;");
+}
+
+void SqliteDatabaseManager::commitTransaction()
+{
+    pImpl->executeStatement("COMMIT;");
+}
+
+void SqliteDatabaseManager::rollbackTransaction()
+{
+    pImpl->executeStatement("ROLLBACK;");
+}
 
 std::shared_ptr<IQueryResult>
 SqliteDatabaseManager::executeQuery(std::string_view query, const std::vector<std::string> &params)

@@ -25,6 +25,11 @@ set(BUSINESS_SOURCES
     # Modules
     ${SERVER_SOURCES_DIR}/BusinessLogic/UsersModule.cpp
     ${SERVER_SOURCES_DIR}/BusinessLogic/InventoryModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/ManagementModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/PurchaseModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/SalesModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/LogsModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/AnalyticsModule.cpp
 )
 
 set(DATABASE_SOURCES
@@ -36,6 +41,15 @@ set(DATABASE_SOURCES
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/ContactRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/EmployeeRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/LogRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/PurchaseOrderRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/PurchaseOrderRecordRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/SaleOrderRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/SalesOrderRecordRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/SupplierRepository.cpp
+    ${SERVER_SOURCES_DIR}/Database/SuppliersProductInfoRepository.cpp
 )
 
 set(NETWORK_SOURCES

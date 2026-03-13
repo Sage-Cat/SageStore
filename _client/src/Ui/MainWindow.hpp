@@ -7,20 +7,37 @@
 #include <QString>
 #include <QTabWidget>
 #include <QVector>
-#include <map>
 
 #include "MainMenuActions.hpp"
 
+#include "Ui/Models/AnalyticsModel.hpp"
+#include "Ui/Models/LogsModel.hpp"
+#include "Ui/Models/ManagementModel.hpp"
 #include "Ui/Models/ProductTypesModel.hpp"
+#include "Ui/Models/PurchaseModel.hpp"
+#include "Ui/Models/SalesModel.hpp"
+#include "Ui/Models/SupplierCatalogModel.hpp"
 #include "Ui/Models/StocksModel.hpp"
 #include "Ui/Models/UsersManagementModel.hpp"
+#include "Ui/ViewModels/AnalyticsViewModel.hpp"
+#include "Ui/ViewModels/LogsViewModel.hpp"
+#include "Ui/ViewModels/ManagementViewModel.hpp"
 #include "Ui/ViewModels/ProductTypesViewModel.hpp"
+#include "Ui/ViewModels/PurchaseViewModel.hpp"
+#include "Ui/ViewModels/SalesViewModel.hpp"
+#include "Ui/ViewModels/SupplierCatalogViewModel.hpp"
 #include "Ui/ViewModels/StocksViewModel.hpp"
 #include "Ui/ViewModels/UsersManagementViewModel.hpp"
-#include "Ui/Views/ModuleStatusView.hpp"
+#include "Ui/Views/AnalyticsView.hpp"
+#include "Ui/Views/LogsView.hpp"
+#include "Ui/Views/ManagementView.hpp"
 #include "Ui/Views/ProductTypesView.hpp"
+#include "Ui/Views/PurchaseView.hpp"
 #include "Ui/Views/RolesView.hpp"
+#include "Ui/Views/SalesView.hpp"
+#include "Ui/Views/SettingsView.hpp"
 #include "Ui/Views/StocksView.hpp"
+#include "Ui/Views/SupplierCatalogView.hpp"
 #include "Ui/Views/UsersView.hpp"
 
 class ApiManager;
@@ -55,7 +72,13 @@ private: // --- MVVM ---
     StocksView *ensureStocksView();
     UsersView *ensureUsersView();
     RolesView *ensureRolesView();
-    ModuleStatusView *ensureModuleStatusView(MainMenuActions::Type actionType);
+    SettingsView *ensureSettingsView();
+    ManagementView *ensureManagementView();
+    SupplierCatalogView *ensureSupplierCatalogView();
+    PurchaseView *ensurePurchaseView();
+    SalesView *ensureSalesView();
+    LogsView *ensureLogsView();
+    AnalyticsView *ensureAnalyticsView();
 
 private:
     QApplication &m_app;
@@ -83,7 +106,35 @@ private:
     UsersManagementViewModel *m_usersManagementViewModel{nullptr};
     UsersView *m_usersView{nullptr};
     RolesView *m_rolesView{nullptr};
+    SettingsView *m_settingsView{nullptr};
 
-    // Planned/current status views
-    std::map<MainMenuActions::Type, ModuleStatusView *> m_moduleStatusViews;
+    // Management
+    ManagementModel *m_managementModel{nullptr};
+    ManagementViewModel *m_managementViewModel{nullptr};
+    ManagementView *m_managementView{nullptr};
+
+    // Supplier catalog
+    SupplierCatalogModel *m_supplierCatalogModel{nullptr};
+    SupplierCatalogViewModel *m_supplierCatalogViewModel{nullptr};
+    SupplierCatalogView *m_supplierCatalogView{nullptr};
+
+    // Purchase
+    PurchaseModel *m_purchaseModel{nullptr};
+    PurchaseViewModel *m_purchaseViewModel{nullptr};
+    PurchaseView *m_purchaseView{nullptr};
+
+    // Sales
+    SalesModel *m_salesModel{nullptr};
+    SalesViewModel *m_salesViewModel{nullptr};
+    SalesView *m_salesView{nullptr};
+
+    // Logs
+    LogsModel *m_logsModel{nullptr};
+    LogsViewModel *m_logsViewModel{nullptr};
+    LogsView *m_logsView{nullptr};
+
+    // Analytics
+    AnalyticsModel *m_analyticsModel{nullptr};
+    AnalyticsViewModel *m_analyticsViewModel{nullptr};
+    AnalyticsView *m_analyticsView{nullptr};
 };

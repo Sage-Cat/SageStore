@@ -1,57 +1,57 @@
 #include "BusinessLogic.hpp"
 
-#include <array>
 #include <utility>
 
+#include "AnalyticsModule.hpp"
+#include "Database/RepositoryManager.hpp"
 #include "InventoryModule.hpp"
 #include "IBusinessModule.hpp"
+#include "LogsModule.hpp"
+#include "ManagementModule.hpp"
+#include "ModuleUtils.hpp"
 #include "Network/NetworkGeneral.hpp"
+#include "PurchaseModule.hpp"
 #include "ServerException.hpp"
+#include "SalesModule.hpp"
 #include "UsersModule.hpp"
 
+#include "common/Entities/Log.hpp"
 #include "common/Keys.hpp"
 #include "common/SpdlogConfig.hpp"
 
 #define _M "BusinessLogic"
 
 namespace {
-class NotImplementedModule : public IBusinessModule {
-public:
-    explicit NotImplementedModule(std::string moduleName, std::string componentName)
-        : m_moduleName(std::move(moduleName)), m_componentName(std::move(componentName))
-    {
+std::string getOptionalDatasetValue(const Dataset &request, const std::string &key)
+{
+    const auto dataIt = request.find(key);
+    if (dataIt == request.end() || dataIt->second.empty()) {
+        return {};
     }
 
-    ResponseData executeTask(const RequestData &requestData) override
-    {
-        (void)requestData;
-        throw ServerException(m_componentName,
-                              "Module `" + m_moduleName + "` is planned but not implemented yet");
-    }
+    return dataIt->second.front();
+}
 
-private:
-    std::string m_moduleName;
-    std::string m_componentName;
-};
+std::string buildAuditAction(const RequestData &requestData)
+{
+    std::string action = requestData.module + "/" + requestData.submodule + " " + requestData.method;
+    if (!requestData.resourceId.empty()) {
+        action += " #" + requestData.resourceId;
+    }
+    return action;
+}
 } // namespace
 
 BusinessLogic::BusinessLogic(RepositoryManager &repositoryManager)
 {
+    m_logRepository = repositoryManager.getLogRepository();
     m_modules.emplace("users", std::make_unique<UsersModule>(repositoryManager));
     m_modules.emplace("inventory", std::make_unique<InventoryModule>(repositoryManager));
-
-    constexpr std::array<std::pair<const char *, const char *>, 5> PLANNED_MODULES{{
-        {"purchase", "PurchaseModule"},
-        {"sales", "SalesModule"},
-        {"management", "ManagementModule"},
-        {"analytics", "AnalyticsModule"},
-        {"logs", "LogsModule"},
-    }};
-
-    for (const auto &[moduleName, componentName] : PLANNED_MODULES) {
-        m_modules.emplace(moduleName,
-                          std::make_unique<NotImplementedModule>(moduleName, componentName));
-    }
+    m_modules.emplace("management", std::make_unique<ManagementModule>(repositoryManager));
+    m_modules.emplace("purchase", std::make_unique<PurchaseModule>(repositoryManager));
+    m_modules.emplace("sales", std::make_unique<SalesModule>(repositoryManager));
+    m_modules.emplace("analytics", std::make_unique<AnalyticsModule>(repositoryManager));
+    m_modules.emplace("logs", std::make_unique<LogsModule>(repositoryManager));
 
     SPDLOG_TRACE("BusinessLogic::BusinessLogic");
 }
@@ -73,6 +73,18 @@ void BusinessLogic::executeTask(RequestData requestData, BusinessLogicCallback c
         }
 
         responseData = moduleIt->second->executeTask(requestData);
+        if (m_logRepository != nullptr && requestData.method != "GET" &&
+            requestData.module != "logs") {
+            try {
+                m_logRepository->add(Common::Entities::Log{
+                    .id = "",
+                    .userId = getOptionalDatasetValue(requestData.dataset, "userId"),
+                    .action = buildAuditAction(requestData),
+                    .timestamp = ModuleUtils::currentTimestamp()});
+            } catch (const std::exception &ex) {
+                SPDLOG_WARN("BusinessLogic::executeTask | Failed to write audit log: {}", ex.what());
+            }
+        }
     } catch (const ServerException &ex) {
         responseData.dataset[Keys::_ERROR] = {ex.componentName(), ex.what()};
     } catch (const std::exception &ex) {

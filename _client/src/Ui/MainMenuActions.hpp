@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QCoreApplication>
+
 #include <map>
 #include <string>
 
@@ -27,7 +29,7 @@ enum class Type {
     SUPPLIERS
 };
 
-const std::map<Type, QString> NAMES = {
+inline const std::map<Type, const char *> SOURCE_TEXTS = {
     {Type::SETTINGS, "Settings"},
     {Type::EXIT, "Exit"},
     {Type::PURCHASE_ORDERS, "Purchase Orders"},
@@ -47,4 +49,9 @@ const std::map<Type, QString> NAMES = {
     {Type::EMPLOYEES, "Employees"},
     {Type::CUSTOMERS, "Customers"},
     {Type::SUPPLIERS, "Suppliers"}};
+
+inline QString displayName(Type type)
+{
+    return QCoreApplication::translate("MainMenuActions", SOURCE_TEXTS.at(type));
+}
 } // namespace MainMenuActions
