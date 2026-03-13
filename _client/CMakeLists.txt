@@ -44,7 +44,9 @@ set(UI_SOURCES
 
     # Views
     ${CLIENT_SOURCES_DIR}/Ui/Views/BaseView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Views/ModuleStatusView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/ProductTypesView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Views/RolesView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/StocksView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/UsersView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/ViewStyles.hpp

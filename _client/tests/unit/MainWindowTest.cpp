@@ -154,6 +154,73 @@ private slots:
         QCOMPARE(apiManagerMock->usersRequestCount(), 1);
     }
 
+    void testOpenUserRolesTabFetchesRolesOnce()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        const int initialTabCount = tabWidget->count();
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 0);
+        QCOMPARE(apiManagerMock->usersRequestCount(), 0);
+
+        QAction *rolesAction =
+            findMenuAction("Users", MainMenuActions::NAMES.at(MainMenuActions::Type::USER_ROLES));
+        QVERIFY(rolesAction != nullptr);
+
+        rolesAction->trigger();
+
+        QCOMPARE(tabWidget->count(), initialTabCount + 1);
+        QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()),
+                 MainMenuActions::NAMES.at(MainMenuActions::Type::USER_ROLES));
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+        QCOMPARE(apiManagerMock->usersRequestCount(), 0);
+
+        rolesAction->trigger();
+        QCOMPARE(tabWidget->count(), initialTabCount + 1);
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+    }
+
+    void testPreviouslyUnsupportedMenuActionsNowOpenTabs()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        QCOMPARE(tabWidget->count(), 0);
+
+        const QVector<QPair<QString, MainMenuActions::Type>> actions = {
+            {"File", MainMenuActions::Type::SETTINGS},
+            {"Purchasing", MainMenuActions::Type::PURCHASE_ORDERS},
+            {"Purchasing", MainMenuActions::Type::SUPPLIER_MANAGEMENT},
+            {"Purchasing", MainMenuActions::Type::GOODS_RECEIPTS},
+            {"Sales", MainMenuActions::Type::SALES_ORDERS},
+            {"Sales", MainMenuActions::Type::CUSTOMER_MANAGEMENT},
+            {"Sales", MainMenuActions::Type::INVOICING},
+            {"Inventory", MainMenuActions::Type::SUPPLIER_PRICELIST_UPLOAD},
+            {"Analytics", MainMenuActions::Type::SALES_ANALYTICS},
+            {"Analytics", MainMenuActions::Type::INVENTORY_ANALYTICS},
+            {"Users", MainMenuActions::Type::USER_ROLES},
+            {"Users", MainMenuActions::Type::USER_LOGS},
+            {"Management", MainMenuActions::Type::EMPLOYEES},
+            {"Management", MainMenuActions::Type::CUSTOMERS},
+            {"Management", MainMenuActions::Type::SUPPLIERS}};
+
+        int expectedTabCount = 0;
+        for (const auto &entry : actions) {
+            const QString &menuTitle           = entry.first;
+            const MainMenuActions::Type actionType = entry.second;
+            QAction *action = findMenuAction(menuTitle, MainMenuActions::NAMES.at(actionType));
+            QVERIFY(action != nullptr);
+
+            action->trigger();
+            ++expectedTabCount;
+
+            QCOMPARE(tabWidget->count(), expectedTabCount);
+            QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()),
+                     MainMenuActions::NAMES.at(actionType));
+        }
+
+        QCOMPARE(apiManagerMock->usersRequestCount(), 0);
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+    }
+
 private:
     QAction *findMenuAction(const QString &menuTitle, const QString &actionTitle) const
     {
