@@ -4,18 +4,21 @@ SageStore is a C++20/Qt desktop ERP project with a client-server architecture.
 
 ## Current Project Stage
 
-This branch focuses on stabilizing the foundation for continued development.
+This branch now delivers a validated ERP baseline rather than users-only foundation work.
 
 | Module | Status | Notes |
 | --- | --- | --- |
 | Users (login/users/roles) | Implemented | End-to-end client API + server business logic + repository + tests |
+| Settings and localization | Implemented slice | Desktop settings persistence plus `en`/`ua` UI language selection |
 | Inventory (ProductType CRUD) | Implemented slice | Shared endpoint + server module/repository + Qt client MVVM/UI + automated tests |
 | Inventory (stock tracking) | Implemented slice | Shared endpoint + server module/repository + Qt desktop view/MVVM + HTTP/unit/integration/UI coverage + smoke validation |
-| Purchase | Planned | Data schema exists, business/UI flow not implemented end-to-end |
-| Sales | Planned | Data schema exists, business/UI flow not implemented end-to-end |
-| Management | Planned | Data schema exists, business/UI flow not implemented end-to-end |
-| Analytics | Planned | Not implemented |
-| Logs | Planned | Schema and placeholder routing exist, but no end-to-end slice |
+| Inventory (supplier catalog) | Implemented slice | Supplier-product mappings plus desktop CSV import workflow |
+| Management | Implemented slice | Contacts/customers, suppliers, and employees CRUD across server + desktop UI |
+| Purchase | Implemented slice | Purchase orders, order lines, and goods receipt posting into stock |
+| Sales | Implemented slice | Sales orders, order lines, and simple invoice export |
+| Analytics | Implemented slice | Sales and inventory summary endpoints plus desktop dashboard |
+| Logs | Implemented slice | Audit log writes and desktop log browsing |
+| Companies / barcode labels / incoming invoices | Planned | Broader product-doc scope still pending |
 
 Detailed status and execution roadmap: `docs/Implementation_Status.md`.
 Requirements reconciliation and use-case baseline: `docs/Requirements_Baseline.md`.

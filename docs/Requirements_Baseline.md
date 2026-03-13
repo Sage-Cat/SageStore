@@ -10,126 +10,146 @@
 ## Reconciliation Summary
 
 - The target product documentation still describes a broader ERP than the repository currently implements.
-- Current end-to-end reality is:
-  - Users login
-  - Users CRUD
-  - Roles CRUD
-  - Inventory/ProductType CRUD through shared endpoint constants, server business logic/repository, client API/MVVM/UI, and automated tests
-- The rest of the ERP remains planned or partial:
-  - `purchase`, `sales`, `management`, `analytics`, and `logs` still dispatch to placeholder/not-implemented behavior in `BusinessLogic`
-  - schema entities and some repository groundwork exist for later slices
-- Release/process reality:
-  - Jenkins validates checkout, Conan install, docs via `python3 build.py docs`, configure, build, `ctest`, the non-interactive inventory smoke path, and an offscreen GUI startup smoke path
-  - PlantUML render is now attempted through the canonical docs path when Docker is available
-  - packaging/publish automation is still absent, but successful runs archive the client/server binaries, bootstrap SQL, and deployment runbook
+- Current end-to-end reality now includes:
+  - users login
+  - users CRUD
+  - roles CRUD
+  - settings with persisted server defaults and language selection
+  - English and Ukrainian desktop UI support
+  - inventory ProductType CRUD
+  - stock tracking
+  - supplier catalog mappings with desktop CSV import
+  - management CRUD for contacts, suppliers, and employees
+  - purchase orders, order lines, and goods receipt posting into stock
+  - sales orders, order lines, and simple desktop invoice export
+  - audit-log browsing plus mutation audit writes
+  - read-only sales and inventory analytics summaries
+- Still outside current evidence-backed implementation:
+  - company management
+  - incoming invoice registration/upload
+  - barcode/label PDF generation and printing
+  - advanced invoice export formats such as HTML/PDF/XML
+  - dedicated self-profile editing
+  - mature packaging/publish automation
 
 ## Actors
 
 | Actor | Type | Evidence | Current effective scope |
 | --- | --- | --- | --- |
-| Administrator | Business | `docs/Project_Documentation.md` user stories | Login, manage users, manage roles |
-| User | Business | `docs/Project_Documentation.md` user stories | Login, manage Product Types; broader ERP use cases remain planned |
-| Desktop client | Technical consumer | `_client/` implementation | Full consumer for current implemented slices |
-| Future API consumer | Technical consumer | repo architecture constraints and current HTTP server design | Must be supported by resource-oriented, consumer-agnostic server contracts |
-| Developer / CI | Delivery actor | `Jenkinsfile`, `build.py`, `scripts/` | Builds, tests, docs checks, release-readiness evidence |
+| Administrator | Business | `docs/Project_Documentation.md` user stories | Login, manage users, manage roles, use the rest of the desktop ERP baseline |
+| User | Business | `docs/Project_Documentation.md` user stories | Login, manage inventory, master data, purchase, sales, logs, and analytics in the current baseline |
+| Desktop client | Technical consumer | `_client/` implementation | Full consumer for the implemented ERP slices |
+| Future API consumer | Technical consumer | repo architecture constraints and current HTTP server design | Must be supported by stable, resource-oriented, consumer-agnostic HTTP contracts |
+| Developer / CI | Delivery actor | `Jenkinsfile`, `build.py`, `scripts/` | Builds, tests, docs checks, smoke validation, release-readiness evidence |
 
 ## Use-Case Catalog
 
 | Use case | Primary actor | Target doc status | Current repo status | Evidence |
 | --- | --- | --- | --- | --- |
-| Login | Administrator, User | Defined | Implemented | `UsersModule`, `ApiManager`, `DialogManager`, tests |
+| Login | Administrator, User | Defined | Implemented | `UsersModule`, `ApiManager`, dialogs, tests |
 | Create/edit/delete users | Administrator | Defined | Implemented | `UsersModule`, `UserRepository`, `UsersManagement*`, tests |
 | Assign roles | Administrator | Defined | Implemented | `UsersModule`, `RoleRepository`, tests |
 | Edit own profile | User | Defined | Not implemented as a separate flow | no dedicated endpoint/UI flow |
+| Configure desktop settings and language | Administrator, User | Not explicit in target doc, required by current branch goal | Implemented | `AppSettings`, `SettingsView`, `main.cpp`, `TsTranslator`, tests |
 | Manage Product Types | User | Defined | Implemented baseline | `InventoryModule`, `ProductTypeRepository`, `ProductTypes*`, tests |
-| Search/filter Product Types | User | Defined | Implemented in desktop baseline | `ProductTypesView` filter UI and tests |
-| Upload supplier product data | User | Defined | Not implemented | no end-to-end route/module/UI |
-| View stock / inventory records | User | Defined | Implemented as a desktop and server/API baseline | `InventoryModule`, `InventoryRepository`, `Stocks*`, tests, smoke |
-| Manage purchase orders and records | User | Defined | Not implemented | schema exists, module/UI absent |
-| Manage sales invoices and export | User | Defined | Not implemented | schema exists, module/UI absent |
-| Manage employees, suppliers, customers/contacts, companies | User | Defined | Not implemented | schema exists, module/UI absent |
-| View logs / history | User | Defined | Not implemented | `Log` table exists, route placeholder only |
-| Run analytics / reports | User | Defined | Not implemented | no analytics module implementation |
+| View stock / inventory records | User | Defined | Implemented baseline | `InventoryModule`, `InventoryRepository`, `Stocks*`, tests, smoke |
+| Manage supplier product mappings | User | Defined | Implemented baseline | `SuppliersProductInfoRepository`, `InventoryModule`, `SupplierCatalog*`, tests |
+| Import supplier catalog from CSV | User | Defined | Implemented as desktop CSV import | `SupplierCatalogView.cpp` |
+| Manage employees, suppliers, customers/contacts | User | Defined | Implemented baseline | `ManagementModule`, repositories, `ManagementView`, tests |
+| Manage companies | User | Defined | Not implemented | no shared entity, repository, or UI slice |
+| Manage purchase orders and order records | User | Defined | Implemented baseline | `PurchaseModule`, repositories, `PurchaseView`, tests |
+| Post goods receipts into stock | User | Defined | Implemented baseline | `/api/purchase/receipts`, tests |
+| Register or upload incoming invoices | User | Defined | Not implemented | no file/attachment workflow |
+| Manage sales invoices/orders | User | Defined | Implemented baseline | `SalesModule`, repositories, `SalesView`, tests |
+| Export invoices | User | Defined | Implemented as simple text export | `SalesView.cpp` |
+| Export invoices to HTML/PDF/XML | User | Defined | Not implemented | no renderer/export adapters |
+| View logs / history | User | Defined | Implemented baseline | `LogsModule`, audit writes, `LogsView`, tests |
+| Run analytics / reports | User | Defined | Implemented baseline | `AnalyticsModule`, `AnalyticsView`, tests |
+| Generate barcode PDFs / print labels | User | Defined | Not implemented | no label-generation pipeline |
 
 ## Assumptions Register
 
 | ID | Assumption | Reasoning / evidence | Impact |
 | --- | --- | --- | --- |
-| A1 | `Inventory/ProductType` is the first non-users vertical slice to advance | shared entity, DB table, menu entry, and partial groundwork already existed | keeps scope realistic and end-to-end |
-| A2 | The server API must stay consumer-agnostic and resource-oriented | repo instructions explicitly require modern API design beyond the desktop client | endpoint contracts stay additive and not Qt-specific |
-| A3 | Self-registration is not a release requirement | target docs say user creation is admin-driven, while current registration dialog is a legacy implementation artifact | do not extend self-registration; treat it as unresolved legacy behavior |
-| A4 | `Contact` is the canonical shared data model for customer/client-style parties | schema has `Contact`, while docs alternate between contact/client/customer | future management/sales work should normalize around one entity with type-based roles |
-| A5 | `Sales` is the canonical module name for external API/docs, while `SaleOrder` remains the legacy schema/entity name | docs and routes use `sales`; code/schema use `SaleOrder` | avoid premature rename; document the mismatch instead |
-| A6 | No schema migration is required for the ProductType slice | existing `ProductType` table supports the implemented fields | implementation stays additive and low-risk |
-| A7 | The ProductType payload excludes `ukt_zed` for now | target doc mentions it, but the generated entity, schema, and JSON serializers do not | docs must call this out as a gap, not invent the field |
+| A1 | The server API must stay consumer-agnostic and resource-oriented | repo instructions explicitly require modern API design beyond the desktop client | endpoint contracts remain additive and not Qt-specific |
+| A2 | `Contact` is the canonical shared data model for customer/client-style parties | schema has `Contact`, while docs alternate between contact/client/customer | management and sales use `Contact` as the storage entity |
+| A3 | `Sales` is the canonical module name for outward API/docs, while `SaleOrder` remains the current schema/entity name | docs and routes use `sales`; code/schema use `SaleOrder` | outward docs normalize to `Sales` without forced internal rename |
+| A4 | Self-registration is not a release requirement | target docs say user creation is admin-driven, while the registration dialog still exists | registration remains a legacy bootstrap/testing behavior until policy is resolved |
+| A5 | Language changes are safely applied on restart for now | startup translation loading is implemented; live hot-switch would require wider widget refresh handling | settings truthfully instruct the user to restart after language change |
+| A6 | Supplier catalog import currently means desktop CSV ingestion into `SuppliersProductInfo` mappings | repo now implements CSV import in the client but not XML/XLSX or invoice-driven creation | docs must distinguish implemented CSV import from broader target import scope |
+| A7 | Sales baseline currently covers order/invoice management and export, but not automatic inventory decrement | `SalesModule` does not touch stock repositories today | inventory effects of sales remain a documented follow-up decision |
 
 ## Ambiguity Register
 
 | Topic | Evidence of ambiguity | Resolution / current stance |
 | --- | --- | --- |
 | Current implementation vs target scope | `docs/Project_Documentation.md` is broader than code | treat `docs/Implementation_Status.md` plus code/tests as present truth and the broader doc as target scope |
-| `Sale` vs `Sales` naming | feature table says `Sale`, API/docs use `sales`, schema uses `SaleOrder` | normalize outward-facing docs/plans to `Sales`; keep code/schema names unchanged until a dedicated rename is justified |
-| `contact` vs `client` vs `customer` | management docs and API tables vary | normalize future requirements around `Contact` as canonical storage with business-type semantics |
-| Logs module visibility | target docs define Logs, status docs historically under-represented it | explicitly track Logs as planned with schema + placeholder routing only |
-| Registration policy | login dialog exposes registration, target docs say admin controls users | treat registration as a legacy bootstrap/testing flow and a release blocker until policy is resolved |
-| ProductType payload shape | docs are not precise and mention fields absent from current schema | current implemented payload is `id`, `code`, `barcode`, `name`, `description`, `lastPrice`, `unit`, `isImported` |
+| `Sale` vs `Sales` naming | feature table says `Sale`, API/docs use `sales`, schema uses `SaleOrder` | normalize outward-facing docs/plans to `Sales`; keep current schema/code identifiers unchanged |
+| `contact` vs `client` vs `customer` | management docs and API tables vary | normalize around `Contact` as canonical storage, with role/type labels in the UI |
+| Registration policy | login dialog exposes registration, target docs say admin controls users | keep current registration path as unresolved legacy behavior and do not expand it |
+| Company scope | target docs include companies, but the repo has no shared entity or table | keep companies explicitly out of implemented scope until fields/contracts are defined |
+| Barcode and invoice formats | docs mention PDF, XML, XLSX, Medoc export, and uploads without concrete contracts | do not invent formats; keep these as unresolved product gaps |
 
 ## Terminology Normalization
 
 | Canonical term | Alternatives found | Working rule |
 | --- | --- | --- |
-| `Sales` | `Sale`, `Sale invoices`, `SaleOrder` | use `Sales` for module/docs/API language; keep `SaleOrder` as current schema/code identifier |
-| `Contact` | `client`, `customer`, `contact` | treat `Contact` as canonical storage; other labels are role-specific views |
-| `ProductType` | `Product Type`, `product-types` | use `ProductType` for entity, `product-types` for the REST subresource |
+| `Sales` | `Sale`, `Sale invoices`, `SaleOrder` | use `Sales` for module/docs/API language; keep `SaleOrder` as the current schema/code identifier |
+| `Contact` | `client`, `customer`, `contact` | use `Contact` as canonical storage; customer/client are business labels |
+| `Supplier catalog` | `supplier's products base`, `pricelist upload` | use `supplier catalog` for the mapping/import slice backed by `SuppliersProductInfo` |
 | `Inventory` | `stock tracking`, `inventory view` | reserve `Inventory` for stock/quantity records; `ProductType` is catalog/master data |
-| `Logs` | `history`, `user history`, `contacts history` | treat all as audit/log viewing requirements until split later |
+| `Logs` | `history`, `user logs`, `activity logs` | treat all as the current audit/log viewing requirement |
+| `Language: en/ua` | `English/Ukrainian`, `uk/ua` | persist `en` and `ua`; load Ukrainian resources when `ua` is selected |
 
 ## Current-vs-Target Scope Matrix
 
 | Module | Target scope summary | Current repo reality | Main gap |
 | --- | --- | --- | --- |
-| Users | login, user CRUD, role CRUD, profile editing, history | login + user CRUD + role CRUD implemented | profile editing and dedicated history UI |
-| Inventory | Product Types, supplier product base, stock tracking | ProductType CRUD and stock tracking implemented baseline | supplier upload/import, broader inventory workflows, interactive fullstack GUI coverage |
-| Purchase | orders, order records, invoices, barcode flows | schema only / placeholder dispatch | first business slice not started |
-| Sales | sales invoices, export, customer flows | schema only / placeholder dispatch | first business slice not started |
-| Management | employees, suppliers, contacts/customers, companies | schema only / placeholder dispatch | no end-to-end master-data slice |
-| Analytics | sales and inventory reports | placeholder only | no data pipeline or reporting endpoints |
-| Logs | user/activity history | schema + placeholder only | no module, no UI, no search/filter |
+| Users | login, user CRUD, role CRUD, profile editing, history | login + user CRUD + role CRUD implemented | self-profile flow and clearer registration policy |
+| Settings/Localization | not explicit in target doc, now required by branch scope | persisted desktop settings and EN/UA selection implemented | no live language hot-swap |
+| Inventory | Product Types, supplier product base, stock tracking | ProductType CRUD, supplier catalog mappings/CSV import, and stock tracking implemented | barcode labels, invoice-driven imports, multi-storage/company support |
+| Purchase | orders, order records, invoices, barcode flows | orders + records + goods receipt posting implemented | incoming invoices/attachments and barcode flows |
+| Sales | sales invoices, export, customer flows | orders + records + simple text export implemented | richer export formats and inventory posting policy |
+| Management | employees, suppliers, contacts/customers, companies | contacts + suppliers + employees implemented | companies missing |
+| Analytics | sales and inventory reports | baseline summary endpoints/views implemented | advanced analytics/report exports |
+| Logs | user/activity history | audit writes and read-only browsing implemented | richer filtering/export/history structure |
 
 ## Requirements-Gap Matrix
 
 | Requirement | Evidence | Current status | Gap / action |
 | --- | --- | --- | --- |
-| Consumer-agnostic server API | repo instructions, HTTP server design | addressed for current implemented resources | keep all future slices resource-oriented and client-neutral |
-| Clean architecture boundaries | `_client`, `_server`, `_common` separation | broadly in place | maintain discipline as Purchase/Sales are added |
-| ProductType CRUD | target docs + roadmap evidence | implemented | add live fullstack GUI coverage |
-| Stock tracking | target docs + `Inventory` table | implemented as a desktop/server baseline | add broader workflows and interactive fullstack GUI coverage |
-| Supplier product import | target docs + `SuppliersProductInfo` table | not implemented | define ingestion format and workflow |
-| Purchase CRUD | target docs + schema | not implemented | next major transactional slice after inventory hardening |
-| Sales CRUD/export | target docs + schema | not implemented | follow Purchase with shared contact/customer rules |
-| Management master data | target docs + schema | not implemented | deliver after transactional baseline depends on it |
-| Logs/audit views | target docs + `Log` table | not implemented | define log source and retrieval contracts |
-| Analytics/reporting | target docs | not implemented | depends on transactional and inventory data maturity |
-| Release workflow | `Jenkinsfile`, docs build scripts | partial | enforce PlantUML rendering in CI and define a real package/distribution format |
+| Consumer-agnostic server API | repo instructions, HTTP server design | implemented for current resources | keep future additions resource-oriented and client-neutral |
+| Clean architecture boundaries | `_client`, `_server`, `_common` separation | maintained across the new slices | preserve discipline for remaining gaps |
+| Desktop settings and language selection | current user request and branch goal | implemented | no live language hot-switch |
+| Management master data | target docs + schema | implemented for contacts, suppliers, employees | add companies if/when fields are defined |
+| ProductType CRUD | target docs + roadmap evidence | implemented | add barcode/label workflows later |
+| Stock tracking | target docs + `Inventory` table | implemented | add multi-company storage/inventory operations later |
+| Supplier product import | target docs + `SuppliersProductInfo` table | partially implemented | desktop CSV import is done; XML/XLSX/invoice-driven import remains |
+| Purchase CRUD | target docs + schema | implemented baseline | add invoice registration/upload |
+| Sales CRUD/export | target docs + schema | implemented baseline | add richer export formats and decide stock posting |
+| Logs/audit views | target docs + `Log` table | implemented baseline | add richer filtering/export if justified |
+| Analytics/reporting | target docs | implemented baseline | expand beyond current summary metrics |
+| Release workflow | `Jenkinsfile`, docs build scripts | partial | define a real packaged release format |
 
 ## Per-Module Gap Analysis
 
 | Module | Current evidence | Strengths already present | Missing pieces | Recommended next step |
 | --- | --- | --- | --- | --- |
-| Users | real server module, repositories, client MVVM, tests | mature baseline slice | self-profile flow, history/log view, stronger contract/UI coverage | preserve; do not destabilize |
-| Inventory | ProductType entity/schema/menu wired end-to-end; stock desktop/API slice now validated | strongest non-users area in repo | supplier upload, broader inventory workflows, live interactive GUI/system coverage | keep inventory stable, deepen system coverage, then move to Purchase |
-| Purchase | schema and target docs only | clear business scope and DB entities | routes, repositories, business logic, client UI | implement base order CRUD + records |
-| Sales | schema and target docs only | clear adjacency to contacts/inventory | routes, repositories, business logic, client UI, export | implement base CRUD after Purchase |
-| Management | schema and target docs only | master-data entities exist | routes, repositories, client UI, normalization around `Contact` | define Contact/Supplier/Employee first |
-| Analytics | target docs only | reporting intent documented | no module, data aggregation, or UI | defer until transactional slices exist |
-| Logs | schema + placeholder routing | audit concept exists in docs and DB | no module, no source events, no UI | define log capture strategy after core slices |
+| Users | real server module, repositories, client MVVM/UI, tests | mature baseline slice | self-profile flow, registration-policy cleanup | preserve; do not destabilize |
+| Settings/Localization | startup loading, persisted settings, Settings UI, translation asset | practical EN/UA baseline | live language switching test/support | keep restart-based application unless live reload is fully justified |
+| Inventory | ProductType, stock, supplier catalog mappings, desktop CSV import | strongest data-management area in the repo | barcode labels, invoice-driven imports, company-aware storage | deepen only when missing contracts are defined |
+| Purchase | real routes, repositories, receipt posting, desktop workflow | coherent vertical slice with stock integration | invoice upload/attachment and barcode workflows | add only from clarified product requirements |
+| Sales | real routes, repositories, desktop workflow, simple export | coherent order/invoice baseline | richer export formats, stock effects, print pipeline | clarify target export formats before broadening |
+| Management | contacts, suppliers, employees fully wired | solid supporting master-data slice | companies | add shared entity/schema only with justified field set |
+| Analytics | sales and inventory summary endpoints/views | lightweight but real reporting baseline | richer metrics, charts, export/report persistence | expand after missing business decisions are clarified |
+| Logs | audit writes plus read-only browsing | honest cross-cutting history baseline | richer filtering/export/history partitioning | add only if operational needs justify it |
 
-## Recommended Implementation Order
+## Recommended Implementation Priorities
 
-1. Keep the current Inventory desktop/server slices stable and add deeper live GUI/system validation.
-2. Deliver Purchase base CRUD plus order records as the first transactional slice.
-3. Deliver Sales base CRUD after Purchase, reusing normalized party/contact rules.
-4. Add Management master data required by Purchase/Sales, then Logs, then Analytics.
+1. Add interactive fullstack GUI/system validation for the implemented ERP workspaces.
+2. Finalize and implement company-aware management/storage if the business fields are defined.
+3. Define incoming invoice, barcode, and richer invoice export contracts before implementing them.
+4. Package the current baseline into a real release format instead of archived binaries only.
 
 ## Architecture Diagram Set
 
