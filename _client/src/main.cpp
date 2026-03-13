@@ -5,6 +5,7 @@
 #include <QTranslator>
 
 #include <cstdlib>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -17,6 +18,7 @@
 
 #include "Ui/Dialogs/DialogManager.hpp"
 #include "Ui/MainWindow.hpp"
+#include "Ui/StartupController.hpp"
 #include "Ui/UiScale.hpp"
 #include "Ui/Views/BaseView.hpp"
 
@@ -85,10 +87,15 @@ int main(int argc, char *argv[])
     // Dialog windows
     DialogManager dialogManager(apiManager);
     dialogManager.init();
+    QObject::connect(&dialogManager, &DialogManager::loginCancelled, &app,
+                     &QCoreApplication::quit);
 
-    // MainWindow
-    MainWindow mainWindow(app, apiManager, dialogManager);
-    mainWindow.startUiProcess();
+    std::unique_ptr<MainWindow> mainWindow;
+    StartupController startupController(dialogManager, [&]() {
+        mainWindow = std::make_unique<MainWindow>(app, apiManager, dialogManager);
+        return mainWindow.get();
+    });
+    startupController.start();
 
     // Handle closing
     QObject::connect(&app, &QCoreApplication::aboutToQuit, []() {

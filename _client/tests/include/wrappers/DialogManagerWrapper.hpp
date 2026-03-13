@@ -18,4 +18,11 @@ public:
         m_registrationDialog = new RegistrationDialogMock;
         m_messageDialog      = new QMessageBoxMock;
     }
+
+    void setLoginAutoSubmit(bool autoSubmit)
+    {
+        static_cast<LoginDialogMock *>(m_loginDialog)->setAutoSubmit(autoSubmit);
+    }
+
+    void rejectLoginDialog() { m_loginDialog->reject(); }
 };

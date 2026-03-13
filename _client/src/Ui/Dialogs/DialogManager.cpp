@@ -19,19 +19,26 @@ DialogManager::~DialogManager()
 void DialogManager::init()
 {
     setupDialogs();
+    setupDialogConnections();
     setupApiConnections();
 }
 
 void DialogManager::showLoginDialog()
 {
     SPDLOG_TRACE("DialogManager::showLoginDialog");
+    m_registrationDialog->hide();
+    m_loginDialog->setWindowModality(Qt::ApplicationModal);
     m_loginDialog->showWithPresetData("admin", "admin123");
+    m_loginDialog->activateWindow();
 }
 
 void DialogManager::showRegistrationDialog()
 {
     SPDLOG_TRACE("DialogManager::showRegistrationDialog");
+    m_loginDialog->hide();
+    m_registrationDialog->setWindowModality(Qt::ApplicationModal);
     m_registrationDialog->showWithPresetData("newuser", "123");
+    m_registrationDialog->activateWindow();
 }
 
 void DialogManager::showErrorDialog(const QString &message)
@@ -48,13 +55,16 @@ void DialogManager::setupDialogs()
     m_loginDialog        = new LoginDialog();
     m_registrationDialog = new RegistrationDialog();
     m_messageDialog      = new QMessageBox();
+}
 
+void DialogManager::setupDialogConnections()
+{
+    SPDLOG_TRACE("DialogManager::setupDialogConnections");
     // --- Connnections ---
     // Login
-    connect(m_loginDialog, &LoginDialog::registrationRequested, [this]() {
-        m_loginDialog->hide();
-        m_registrationDialog->show();
-    });
+    connect(m_loginDialog, &LoginDialog::registrationRequested, this,
+            &DialogManager::showRegistrationDialog);
+    connect(m_loginDialog, &QDialog::rejected, this, &DialogManager::onLoginDialogRejected);
 
     // Registration
     connect(m_registrationDialog, &RegistrationDialog::requestErrorMessageBox, this,
@@ -62,7 +72,10 @@ void DialogManager::setupDialogs()
     connect(m_registrationDialog, &RegistrationDialog::loginRequested, [this]() {
         m_registrationDialog->hide();
         m_loginDialog->show();
+        m_loginDialog->activateWindow();
     });
+    connect(m_registrationDialog, &QDialog::rejected, this,
+            &DialogManager::onRegistrationDialogRejected);
 }
 
 void DialogManager::setupApiConnections()
@@ -95,7 +108,10 @@ void DialogManager::showMessage(const QString &title, const QString &message,
 void DialogManager::onLoginSuccess()
 {
     SPDLOG_TRACE("DialogManager::onLoginSuccess");
+    m_isAuthenticated = true;
     m_loginDialog->hide();
+    m_registrationDialog->hide();
+    emit loginSucceeded();
     showMessage(tr("Message"), tr("Login successfull"), QMessageBox::Information);
 }
 
@@ -106,4 +122,24 @@ void DialogManager::onUserAdded()
     m_loginDialog->showWithPresetData(m_registrationDialog->getUsername(),
                                       m_registrationDialog->getPassword());
     showMessage(tr("Message"), tr("Resistrarion successfull"), QMessageBox::Information);
+}
+
+void DialogManager::onLoginDialogRejected()
+{
+    SPDLOG_TRACE("DialogManager::onLoginDialogRejected");
+    if (!m_isAuthenticated) {
+        emit loginCancelled();
+    }
+}
+
+void DialogManager::onRegistrationDialogRejected()
+{
+    SPDLOG_TRACE("DialogManager::onRegistrationDialogRejected");
+    if (m_isAuthenticated) {
+        return;
+    }
+
+    m_registrationDialog->hide();
+    m_loginDialog->show();
+    m_loginDialog->activateWindow();
 }

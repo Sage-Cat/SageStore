@@ -53,13 +53,6 @@ private slots:
         QCOMPARE(apiManagerMock->stocksRequestCount(), 0);
     }
 
-    void testShowLoginDialogOnInit()
-    {
-        QSignalSpy errorMessageSpy(dialogManagerMock, &DialogManagerMock::showLogDialog);
-        mainWindow->startUiProcess();
-        QCOMPARE(errorMessageSpy.count(), 1);
-    }
-
     void testOpenProductManagementTabFromInventoryMenu()
     {
         auto *tabWidget = mainWindow->findChild<QTabWidget *>();

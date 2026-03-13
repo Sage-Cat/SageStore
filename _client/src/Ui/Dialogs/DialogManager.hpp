@@ -30,8 +30,13 @@ public slots:
     virtual void showRegistrationDialog();
     virtual void showErrorDialog(const QString &message);
 
+signals:
+    void loginSucceeded();
+    void loginCancelled();
+
 protected:
     virtual void setupDialogs();
+    void setupDialogConnections();
     void setupApiConnections();
 
     void showMessage(const QString &title, const QString &message, QMessageBox::Icon type);
@@ -42,10 +47,13 @@ private:
 private slots:
     void onLoginSuccess();
     void onUserAdded();
+    void onLoginDialogRejected();
+    void onRegistrationDialogRejected();
 
 protected:
     // dialogs
     LoginDialog *m_loginDialog{nullptr};
     RegistrationDialog *m_registrationDialog{nullptr};
     QMessageBox *m_messageDialog{nullptr};
+    bool m_isAuthenticated{false};
 };
