@@ -1,47 +1,116 @@
 @startuml
 skinparam componentStyle uml2
 
-title SageStore Client (Current)
+title SageStore Client (Current ERP MVP)
 
 package "SageStore Client" {
     [main.cpp] as MAIN
+    [AppSettings] as SETTINGS
+    [TsTranslator] as I18N
     [DialogManager] as DM
     [MainWindow] as MW
 
-    package "Product Types MVVM" {
-        [ProductTypesModel] as PTM
-        [ProductTypesViewModel] as PTVM
-        [ProductTypesView] as PTV
-
-        PTM --> PTVM
-        PTVM --> PTV
-    }
-
-    package "Users Management MVVM" {
+    package "Users MVVM" {
         [UsersManagementModel] as UMM
         [UsersManagementViewModel] as UMVM
         [UsersView] as UV
+        [RolesView] as RV
 
         UMM --> UMVM
         UMVM --> UV
+        UMVM --> RV
+    }
+
+    package "Inventory + Catalog MVVM" {
+        [ProductTypesModel] as PTM
+        [ProductTypesViewModel] as PTVM
+        [ProductTypesView] as PTV
+        [StocksModel] as STM
+        [StocksViewModel] as STVM
+        [StocksView] as STV
+        [SupplierCatalogModel] as SCM
+        [SupplierCatalogViewModel] as SCVM
+        [SupplierCatalogView] as SCV
+
+        PTM --> PTVM
+        PTVM --> PTV
+        STM --> STVM
+        STVM --> STV
+        SCM --> SCVM
+        SCVM --> SCV
+    }
+
+    package "ERP Workspaces" {
+        [ManagementModel] as MGM
+        [ManagementViewModel] as MGVM
+        [ManagementView] as MGV
+        [PurchaseModel] as PUM
+        [PurchaseViewModel] as PUVM
+        [PurchaseView] as PUV
+        [SalesModel] as SAM
+        [SalesViewModel] as SAVM
+        [SalesView] as SAV
+        [LogsModel] as LOGM
+        [LogsViewModel] as LOGVM
+        [LogsView] as LOGV
+        [AnalyticsModel] as ANM
+        [AnalyticsViewModel] as ANVM
+        [AnalyticsView] as ANV
+        [SettingsView] as SV
+
+        MGM --> MGVM
+        MGVM --> MGV
+        PUM --> PUVM
+        PUVM --> PUV
+        SAM --> SAVM
+        SAVM --> SAV
+        LOGM --> LOGVM
+        LOGVM --> LOGV
+        ANM --> ANVM
+        ANVM --> ANV
     }
 
     [ApiManager] as API
     [NetworkService] as NET
     [JsonSerializer] as JSON
 
+    MAIN --> SETTINGS
+    MAIN --> I18N
     MAIN --> DM
     MAIN --> MW
     MAIN --> API
     API --> NET
     NET --> JSON
 
-    MW --> PTM
-    MW --> PTVM
-    MW --> PTV
     MW --> UMM
     MW --> UMVM
     MW --> UV
+    MW --> RV
+    MW --> PTM
+    MW --> PTVM
+    MW --> PTV
+    MW --> STM
+    MW --> STVM
+    MW --> STV
+    MW --> SCM
+    MW --> SCVM
+    MW --> SCV
+    MW --> MGM
+    MW --> MGVM
+    MW --> MGV
+    MW --> PUM
+    MW --> PUVM
+    MW --> PUV
+    MW --> SAM
+    MW --> SAVM
+    MW --> SAV
+    MW --> LOGM
+    MW --> LOGVM
+    MW --> LOGV
+    MW --> ANM
+    MW --> ANVM
+    MW --> ANV
+    MW --> SV
     DM --> API
 }
 

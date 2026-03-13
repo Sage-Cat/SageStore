@@ -9,80 +9,95 @@
 - [Requirements baseline and reconciliation](Requirements_Baseline.md)
 - [Inventory/ProductType requirements and gaps](inventory/ProductType_Slice_Requirements_Gap.md)
 - [Inventory/ProductType release readiness](inventory/ProductType_Release_Readiness.md)
+- [Deployment runbook](Deployment_Runbook.md)
 
 ## Scope Matrix
 
 | Area | Documentation Target | Implemented in Code | Tests | Gap |
 | --- | --- | --- | --- | --- |
-| Users: login | Defined | Implemented (`_server/src/BusinessLogic/UsersModule.cpp`, `_client/src/Network/ApiManager.cpp`) | Yes (`_server/tests/unit/UsersModuleTest.cpp`, `_server/tests/component/BusinessLogicTest.cpp`, `_client/tests/unit/ApiManagerTest.cpp`) | None |
-| Users: users CRUD | Defined | Implemented (`UsersModule`, `UserRepository`, `UsersManagement*`) | Yes (unit + component + integration + client unit) | Add more UI workflow tests |
-| Users: roles CRUD | Defined | Implemented across server, API, and Qt desktop role-management view (`UsersModule`, `RoleRepository`, `_client/src/Ui/Views/RolesView.cpp`) | Yes (`UsersModuleTest`, `ApiManagerTest`, `RepositoryIntegrationTest`, `RolesViewTest`, `MainWindowTest`) | Add more API-level contract tests |
-| Desktop module navigation | Defined | Every menu action now opens a concrete tab: implemented slices use real views, while unfinished modules use explicit status/landing views instead of unsupported fallbacks (`_client/src/Ui/MainWindow.cpp`, `_client/src/Ui/Views/ModuleStatusView.cpp`) | Yes (`_client/tests/unit/MainWindowTest.cpp`) | Planned modules still need real end-to-end slices behind their landing views |
-| Module dispatch (non-users) | Defined | `inventory` now dispatches to a real module; `purchase`, `sales`, `management`, `analytics`, and `logs` still return planned/not-implemented errors (`_server/src/BusinessLogic/BusinessLogic.cpp`) | Yes (`_server/tests/component/BusinessLogicTest.cpp`) | Complete remaining modules |
-| Inventory: ProductType CRUD | Defined | Implemented across shared endpoint, server module/repository, Qt client wiring, and HTTP transport (`_common/include/common/Endpoints.hpp`, `_server/src/BusinessLogic/InventoryModule.cpp`, `_server/src/Database/ProductTypeRepository.cpp`, `_server/tests/component/HttpContractTest.cpp`, `_client/src/Network/ApiManager.cpp`, `_client/src/Ui/Models/ProductTypesModel.cpp`, `_client/src/Ui/Views/ProductTypesView.cpp`) | Yes (server unit + component + repository integration + HTTP contract + client unit + MainWindow smoke + ProductTypesView Qt workflow tests) | Add live fullstack GUI round-trip coverage and richer error-state/system validation |
-| Inventory: stock tracking | Defined | Implemented across shared endpoint, server module/repository, Qt client wiring, and smoke/runtime scripts (`InventoryModule`, `InventoryRepository`, `Stocks*`, `MainWindow`, smoke scripts) | Yes (server unit + component + repository integration + HTTP contract + client unit + MainWindow + StocksView Qt tests + smoke) | Broader inventory workflows and live interactive GUI/system coverage still missing |
-| Purchase | Defined | Not implemented end-to-end | No dedicated suite | High |
-| Sales | Defined | Not implemented end-to-end | No dedicated suite | High |
-| Management | Defined | Not implemented end-to-end | No dedicated suite | High |
-| Analytics | Defined | Not implemented | No dedicated suite | High |
-| Logs | Defined | Database table plus placeholder route only | No dedicated suite | High |
+| Users: login | Defined | Implemented through `UsersModule`, `ApiManager`, `DialogManager`, and desktop login flow | Yes (`UsersModuleTest`, `BusinessLogicTest`, `ApiManagerTest`, `DialogManagerTest`) | No dedicated self-profile flow |
+| Users: users CRUD | Defined | Implemented across server repositories/business logic and desktop MVVM/UI | Yes (server unit/component/integration + client unit/UI) | Broader live GUI/system coverage |
+| Users: roles CRUD | Defined | Implemented across server, API, and desktop roles view | Yes (`UsersModuleTest`, `ApiManagerTest`, `RepositoryIntegrationTest`, `RolesViewTest`, `MainWindowTest`) | No material functional gap |
+| Settings and localization | Implicitly required by branch goal | Implemented with `AppSettings`, `SettingsView`, startup loading in `main.cpp`, and EN/UA support through `TsTranslator` | Yes (`SettingsViewTest`, `MainWindowTest`) | Language switch is restart-applied, not live hot-swap |
+| Desktop module navigation | Defined | Every menu action opens a real workspace tab or implemented slice; lazy tab creation avoids upfront GUI load | Yes (`MainWindowTest`) | No unsupported menu actions remain |
+| Management: contacts/customers | Defined | Implemented via `/api/management/contacts`, `ManagementModule`, repositories, and `ManagementView` | Yes (server unit/component/integration + `ErpModelsTest`) | No company support yet |
+| Management: suppliers | Defined | Implemented via `/api/management/suppliers`, `ManagementModule`, repositories, and `ManagementView` | Yes (server unit/component/integration + `ErpModelsTest`) | No company support yet |
+| Management: employees | Defined | Implemented via `/api/management/employees`, `ManagementModule`, repositories, and `ManagementView` | Yes (server unit/component/integration + `ErpModelsTest`) | No employee-history view |
+| Inventory: ProductType CRUD | Defined | Implemented end-to-end across `_common`, `_server`, `_client`, and smoke/runtime paths | Yes (server unit + component + repository integration + HTTP contract + client unit + Qt workflow) | No barcode PDF/label generation yet |
+| Inventory: stock tracking | Defined | Implemented via `InventoryModule`, `InventoryRepository`, `Stocks*`, and smoke validation | Yes (server unit + component + repository integration + HTTP contract + client unit + Qt workflow + smoke) | No multi-storage/company-aware inventory |
+| Inventory: supplier product base | Defined | Implemented via `SuppliersProductInfoRepository`, `InventoryModule`, `SupplierCatalog*`, and desktop CSV import | Yes (server unit + repository integration + HTTP contract + `ApiManagerTest` + `ErpModelsTest`) | No XML/XLSX import or auto-create ProductTypes from invoices |
+| Purchase: orders and order records | Defined | Implemented via `/api/purchase/orders` and `/api/purchase/order-records`, real repositories/modules, and `PurchaseView` | Yes (server unit + component + integration + `ApiManagerTest` + `ErpModelsTest`) | No incoming invoice attachment workflow |
+| Purchase: goods receipts | Defined | Implemented via `/api/purchase/receipts`; receipt posting updates stock and marks orders received | Yes (`ErpModulesTest`, `HttpContractTest`, `ApiManagerTest`, `ErpModelsTest`) | No invoice file upload/registration flow |
+| Sales: orders and order records | Defined | Implemented via `/api/sales/orders` and `/api/sales/order-records`, repositories/modules, and `SalesView` | Yes (server unit + component + integration + `ApiManagerTest` + `ErpModelsTest`) | No stock decrement/posting on sales yet |
+| Sales: invoice export | Defined | Implemented as simple desktop text export/preview in `SalesView` | Partially (`MainWindowTest` covers workspace routing; no dedicated export test yet) | No HTML/PDF/XML export pipeline or print flow |
+| Logs | Defined | Implemented with `LogRepository`, `LogsModule`, audit writes from `BusinessLogic`, and desktop browsing in `LogsView` | Yes (`BusinessLogicTest`, `RepositoryIntegrationTest`, `HttpContractTest`, `ErpModulesTest`, `ErpModelsTest`) | No richer filtering/export/history partitioning |
+| Analytics | Defined | Implemented via read-only sales and inventory summary endpoints plus `AnalyticsView` | Yes (`BusinessLogicTest`, `HttpContractTest`, `ErpModulesTest`, `ApiManagerTest`, `ErpModelsTest`) | No advanced reporting or charting |
+| Companies | Defined in broader target docs | Not implemented | No | High |
 
 ## Architecture Baseline
 
-- Client: `MainWindow` now lazily hosts users, roles, ProductType, and stock flows through `ApiManager`, `UsersManagement*`, `ProductTypes*`, and `Stocks*`; every remaining menu action opens an explicit status/landing view instead of an unsupported warning path.
-- Server: `HttpServer/HttpTransaction` routes into `BusinessLogic`, which now dispatches to both `UsersModule` and `InventoryModule`.
-- Data access: `RepositoryManager` now serves `UserRepository`, `RoleRepository`, `ProductTypeRepository`, and `InventoryRepository` over SQLite.
-- Runtime configuration: both client and server now accept environment-based host/port settings; the server also accepts DB/bootstrap path overrides, and the client supports an optional auto-exit timer for offscreen smoke runs.
+- Client:
+  - `MainWindow` lazily hosts users, roles, management, purchasing, sales, inventory, logs, analytics, supplier catalog, and settings workspaces.
+  - `ApiManager` stays resource-oriented and reusable beyond the current desktop client.
+  - `AppSettings` persists desktop defaults locally; environment variables remain higher priority for runtime server settings.
+  - `TsTranslator` loads Ukrainian UI translations at startup when the saved language is `ua`; English remains the source language.
+- Server:
+  - `HttpServer/HttpTransaction` routes into `BusinessLogic`.
+  - `BusinessLogic` now dispatches real modules for `users`, `inventory`, `management`, `purchase`, `sales`, `logs`, and `analytics`.
+  - Non-GET non-logs mutations write audit entries through `LogRepository`.
+- Data access:
+  - `RepositoryManager` now serves repositories for users, roles, inventory, product types, contacts, suppliers, employees, supplier product mappings, purchase orders, purchase order records, sale orders, sale order records, and logs over SQLite.
 
 ## Quality/Process Baseline
 
-- Jenkins runs checkout, clean, Conan install, `python3 build.py docs`, CMake configure/build, `ctest`, the non-interactive inventory smoke script, the offscreen GUI startup smoke, and archives the built client/server binaries plus the bootstrap SQL and deployment runbook (`Jenkinsfile`).
-- VS Code docs workflow renders PlantUML and runs Doxygen via `scripts/vscode/run_task.sh docs`.
-- `python3 build.py docs` now checks markdown links, renders PlantUML when Docker is available, and runs Doxygen.
-- `python3 build.py smoke` runs `scripts/smoke/fullstack_inventory_smoke.sh` for an isolated server/API smoke path.
-- `python3 build.py smoke-gui` runs `scripts/smoke/fullstack_gui_startup_smoke.sh` for a minimal offscreen desktop runtime smoke path.
+- Jenkins runs checkout, clean, Conan install, `python3 build.py docs`, CMake configure/build, `ctest`, the non-interactive inventory smoke path, and the offscreen GUI startup smoke path.
+- `python3 build.py docs` validates markdown links, renders PlantUML when available, and runs Doxygen.
+- `python3 build.py smoke` runs the isolated inventory/API smoke path.
+- `python3 build.py smoke-gui` runs an offscreen client startup smoke against the real server.
 
 ## Test Coverage Focus (Current)
 
-- Users business logic happy paths and key validation paths.
-- ProductType business rules in `InventoryModule`: required fields, duplicate code handling, CRUD dispatch.
-- ProductType repository CRUD against a temporary SQLite database.
-- ProductType HTTP request/response contract through `HttpTransaction` and real `BusinessLogic`.
-- ProductType client API/model behavior in `_client/tests/unit/ApiManagerTest.cpp` and `_client/tests/unit/ProductTypesModelTest.cpp`.
-- Product management menu/tab workflow coverage in `_client/tests/unit/MainWindowTest.cpp`.
-- Full menu-routing coverage, including planned-module landing views and the dedicated roles tab, in `_client/tests/unit/MainWindowTest.cpp`.
-- Roles view workflow coverage for create/edit/delete interactions in `_client/tests/unit/RolesViewTest.cpp`.
-- ProductTypes view workflow coverage for create/edit/delete/filter interactions in `_client/tests/unit/ProductTypesViewTest.cpp`.
-- Stock tracking server rules, repository persistence, HTTP contracts, desktop view workflows, and smoke validation.
-- Gap: there is still no full interactive live client/server GUI round-trip test.
+- Users and roles business logic plus desktop management flows.
+- Inventory ProductType, stock, and supplier catalog contracts and repository behavior.
+- Management, purchase, sales, logs, and analytics business modules.
+- Purchase receipt posting into stock.
+- API contract coverage for management, supplier catalog, purchase, sales, logs, and analytics.
+- Desktop model coverage for management, supplier catalog, purchase, sales, logs, analytics, and settings.
+- Gap:
+  - no interactive full client/server GUI automation for purchase/sales/management workflows
+  - no dedicated automated test for sales invoice export file contents
 
 ## 30/60/90 Plan
 
 ### 30 Days
 
-1. Add one repeatable interactive fullstack GUI smoke path for the real Qt client against the real server.
-2. Tighten CI docs rendering so PlantUML is enforced instead of opportunistic.
-3. Prepare the first honest packaged distribution format beyond archived binaries.
+1. Add interactive fullstack GUI/system coverage for the main ERP workspaces, not just startup smoke.
+2. Add a dedicated automated test for sales invoice export output.
+3. Define the first honest packaged desktop distribution format beyond archived binaries.
 
 ### 60 Days
 
-1. Extend Inventory beyond basic stock CRUD into broader inventory record workflows.
-2. Add system-level client/server coverage for Inventory error states and refresh flows.
-3. Decide the first honest release bundle format beyond archived binaries.
+1. Resolve and implement company-aware storage and management if the business fields are finalized.
+2. Define incoming invoice registration/upload contracts and evidence-backed import formats.
+3. Decide whether sales posting should update inventory quantities in the baseline workflow.
 
 ### 90 Days
 
-1. Deliver second and third non-users slices (recommended: Purchase and Sales base CRUD).
-2. Add schema-compatibility coverage for non-users modules.
-3. Introduce packaging/publish steps and explicit release gates in CI.
+1. Implement barcode/label generation and printing with a justified rendering/output approach.
+2. Expand release automation from archived artifacts to an installable/packageable release.
+3. Resolve registration policy versus admin-only user provisioning and implement the chosen behavior.
 
 ## Acceptance Criteria For Resumed Development
 
-- Every new module must include:
-  - Business module + repository implementation.
-  - Endpoint wiring and serializer compatibility.
-  - At least one server unit test and one integration/contract test.
-  - Updated PlantUML and status matrix.
-- For the current Inventory baseline specifically, remaining completion gates are:
-  - Full live interactive client/server GUI workflow coverage.
-  - Release/documentation automation aligned with the actual docs toolchain.
+- Every new module or materially expanded slice must include:
+  - business module + repository implementation
+  - endpoint wiring and serializer compatibility
+  - at least one server unit test and one integration/contract test
+  - desktop/client coverage where a desktop flow exists
+  - updated PlantUML and status/requirements docs
+- Remaining major completion gates for the current ERP baseline are:
+  - companies support
+  - incoming invoices and barcode/label workflows
+  - richer sales export formats
+  - interactive end-to-end GUI/system validation
+  - a real deployable package/release path

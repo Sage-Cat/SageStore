@@ -2,7 +2,7 @@
 left to right direction
 skinparam packageStyle rectangle
 
-title SageStore System Context (Current Baseline)
+title SageStore System Context (Current ERP MVP)
 
 actor Administrator
 actor "ERP User" as User
@@ -14,12 +14,19 @@ database "SQLite Database" as Db
 rectangle "Jenkins CI" as CI
 
 Administrator --> Desktop : users and roles admin tasks
-User --> Desktop : login and product management
-Desktop --> Server : /api/users/*\n/api/inventory/product-types
+User --> Desktop : login, master data,\npurchasing, sales, inventory,\nanalytics, audit views
+Desktop --> Server : /api/users/*\n/api/inventory/*\n/api/management/*\n/api/purchase/*\n/api/sales/*\n/api/logs/*\n/api/analytics/*
 Consumer --> Server : same resource contracts
 Server --> Db : repositories
-CI --> Desktop : build + unit tests
-CI --> Server : build + ctest
+CI --> Desktop : build + Qt/unit smoke
+CI --> Server : build + unit/contract/integration
+
+note right of Desktop
+Desktop-only runtime features:
+- settings view
+- persisted server defaults
+- EN / UA language selection
+end note
 
 note bottom of Server
 Implemented resources:
@@ -27,6 +34,19 @@ Implemented resources:
 - users/users
 - users/roles
 - inventory/product-types
+- inventory/stocks
+- inventory/supplier-products
+- management/contacts
+- management/suppliers
+- management/employees
+- purchase/orders
+- purchase/order-records
+- purchase/receipts
+- sales/orders
+- sales/order-records
+- logs/entries
+- analytics/sales
+- analytics/inventory
 end note
 
 @enduml

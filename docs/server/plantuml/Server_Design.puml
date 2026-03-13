@@ -1,7 +1,7 @@
 @startuml
 skinparam componentStyle uml2
 
-title SageStore Server (Current)
+title SageStore Server (Current ERP MVP)
 
 package "SageStore Server" {
     [SageStoreServer] as APP
@@ -12,11 +12,26 @@ package "SageStore Server" {
     [BusinessLogic] as BL
     [UsersModule] as UM
     [InventoryModule] as IM
+    [ManagementModule] as MM
+    [PurchaseModule] as PM
+    [SalesModule] as SM
+    [LogsModule] as LM
+    [AnalyticsModule] as AM
 
     [RepositoryManager] as RM
     [UserRepository] as UR
     [RoleRepository] as RR
+    [InventoryRepository] as IR
     [ProductTypeRepository] as PTR
+    [SupplierRepository] as SR
+    [ContactRepository] as CR
+    [EmployeeRepository] as ER
+    [SupplierProductRepository] as SPR
+    [PurchaseOrderRepository] as POR
+    [PurchaseOrderRecordRepository] as PRR
+    [SalesOrderRepository] as SOR
+    [SalesOrderRecordRepository] as SRR
+    [LogRepository] as LR
     [SqliteDatabaseManager] as DB
 
     APP --> HTTP
@@ -29,17 +44,68 @@ package "SageStore Server" {
 
     BL --> UM
     BL --> IM
+    BL --> MM
+    BL --> PM
+    BL --> SM
+    BL --> LM
+    BL --> AM
 
     UM --> UR
     UM --> RR
+    IM --> IR
     IM --> PTR
+    IM --> SR
+    IM --> SPR
+    MM --> CR
+    MM --> SR
+    MM --> ER
+    PM --> POR
+    PM --> PRR
+    PM --> IR
+    PM --> UR
+    PM --> SR
+    PM --> ER
+    PM --> PTR
+    SM --> SOR
+    SM --> SRR
+    SM --> UR
+    SM --> CR
+    SM --> ER
+    SM --> PTR
+    LM --> LR
+    LM --> UR
+    AM --> SOR
+    AM --> SRR
+    AM --> IR
+    AM --> PTR
+    AM --> CR
 
     RM --> UR
     RM --> RR
+    RM --> IR
     RM --> PTR
+    RM --> SR
+    RM --> CR
+    RM --> ER
+    RM --> SPR
+    RM --> POR
+    RM --> PRR
+    RM --> SOR
+    RM --> SRR
+    RM --> LR
     UR --> DB
     RR --> DB
+    IR --> DB
     PTR --> DB
+    SR --> DB
+    CR --> DB
+    ER --> DB
+    SPR --> DB
+    POR --> DB
+    PRR --> DB
+    SOR --> DB
+    SRR --> DB
+    LR --> DB
 }
 
 @enduml
