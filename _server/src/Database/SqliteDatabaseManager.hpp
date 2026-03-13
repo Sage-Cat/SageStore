@@ -13,6 +13,9 @@ public:
 
     bool open() override;
     void close() override;
+    void beginTransaction() override;
+    void commitTransaction() override;
+    void rollbackTransaction() override;
 
     std::shared_ptr<IQueryResult> executeQuery(std::string_view query,
                                                const std::vector<std::string> &params) override;

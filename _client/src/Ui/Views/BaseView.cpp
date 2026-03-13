@@ -21,9 +21,9 @@ void BaseView::setupUi()
 {
     SPDLOG_TRACE("BaseView::setupUi");
     // Create buttons
-    m_addButton    = new QPushButton("Add", this);
-    m_deleteButton = new QPushButton("Delete", this);
-    m_editButton   = new QPushButton("Edit", this);
+    m_addButton    = new QPushButton(tr("Add"), this);
+    m_deleteButton = new QPushButton(tr("Delete"), this);
+    m_editButton   = new QPushButton(tr("Edit"), this);
     m_addButton->setObjectName("baseAddButton");
     m_deleteButton->setObjectName("baseDeleteButton");
     m_editButton->setObjectName("baseEditButton");
@@ -68,7 +68,7 @@ void BaseView::setupUi()
         "}");
 
     // Create a status label and spacer item for additional info
-    m_status = new QLabel("Status: ready", this);
+    m_status = new QLabel(tr("Status: ready"), this);
     m_status->setObjectName("baseStatusLabel");
     m_status->setStyleSheet("color: #475569; font-weight: 500;");
     m_additionalInfoSpacerItem =

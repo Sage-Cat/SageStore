@@ -1,5 +1,7 @@
 # Specify resource files
-set(RESOURCE_FILES "")
+set(RESOURCE_FILES
+    ${CLIENT_SOURCES_DIR}/resources/translations.qrc
+)
 
 # Create client executable
 add_executable(${CLIENT_NAME} ${ALL_CLIENT_SOURCES} ${RESOURCE_FILES})

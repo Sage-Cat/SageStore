@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/translations">
+        <file alias="SageStore_uk.ts">../../translations/SageStore_uk.ts</file>
+    </qresource>
+</RCC>

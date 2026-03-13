@@ -1,5 +1,8 @@
 #include <QApplication>
+#include <QLibraryInfo>
+#include <QLocale>
 #include <QTimer>
+#include <QTranslator>
 
 #include <cstdlib>
 #include <stdexcept>
@@ -8,6 +11,8 @@
 #include "Network/ApiManager.hpp"
 #include "Network/NetworkService.hpp"
 
+#include "Localization/TsTranslator.hpp"
+#include "Settings/AppSettings.hpp"
 #include "common/Network/JsonSerializer.hpp"
 
 #include "Ui/Dialogs/DialogManager.hpp"
@@ -18,27 +23,6 @@
 #include "common/SpdlogConfig.hpp"
 
 namespace {
-std::string envOrDefault(const char *name, const char *fallback)
-{
-    const char *value = std::getenv(name);
-    return value != nullptr && *value != '\0' ? value : fallback;
-}
-
-int envOrDefaultPort(const char *name, int fallback)
-{
-    const char *value = std::getenv(name);
-    if (value == nullptr || *value == '\0') {
-        return fallback;
-    }
-
-    try {
-        return std::stoi(value);
-    } catch (...) {
-        SPDLOG_WARN("Invalid port in {}='{}', using default {}", name, value, fallback);
-        return fallback;
-    }
-}
-
 int envOrDefaultNonNegativeInt(const char *name, int fallback)
 {
     const char *value = std::getenv(name);
@@ -63,16 +47,31 @@ int envOrDefaultNonNegativeInt(const char *name, int fallback)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    AppSettings::ensureApplicationMetadata();
     UiScale::configureApplication(app);
 
     SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
     SPDLOG_INFO("SageStoreClient starting");
 
+    const auto clientSettings = AppSettings::load();
+
+    TsTranslator appTranslator;
+    QTranslator qtTranslator;
+    if (clientSettings.language == "ua") {
+        if (appTranslator.loadFromResource(":/translations/SageStore_uk.ts")) {
+            app.installTranslator(&appTranslator);
+        } else {
+            SPDLOG_WARN("Unable to load application translation for Ukrainian");
+        }
+
+        if (qtTranslator.load(QLocale("uk_UA"), "qtbase", "_",
+                              QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+            app.installTranslator(&qtTranslator);
+        }
+    }
+
     // Networking
-    const NetworkService::ServerConfig serverConfig{
-        .scheme = envOrDefault("SAGESTORE_SERVER_SCHEME", "http"),
-        .address = envOrDefault("SAGESTORE_SERVER_ADDRESS", "127.0.0.1"),
-        .port = envOrDefaultPort("SAGESTORE_SERVER_PORT", 8001)};
+    const NetworkService::ServerConfig serverConfig = AppSettings::effectiveServerConfig();
     NetworkService networkService(serverConfig, std::make_unique<JsonSerializer>());
     ApiManager apiManager(networkService);
     networkService.init();
