@@ -7,6 +7,7 @@
 
 #include "Database/IRepository.hpp"
 
+#include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
 
 class RepositoryManager;
@@ -20,9 +21,14 @@ public:
 
 private:
     ResponseData getProductTypes() const;
+    ResponseData getStocks() const;
     void addProductType(const Dataset &request) const;
     void editProductType(const Dataset &request, const std::string &resourceId) const;
     void deleteProductType(const std::string &resourceId) const;
+    void addStock(const Dataset &request) const;
+    void editStock(const Dataset &request, const std::string &resourceId) const;
+    void deleteStock(const std::string &resourceId) const;
 
+    std::shared_ptr<IRepository<Common::Entities::Inventory>> m_inventoryRepository;
     std::shared_ptr<IRepository<Common::Entities::ProductType>> m_productTypesRepository;
 };

@@ -27,11 +27,13 @@ set(UI_SOURCES
     # Models
     ${CLIENT_SOURCES_DIR}/Ui/Models/BaseModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Models/ProductTypesModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Models/StocksModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Models/UsersManagementModel.cpp
 
     # ViewModels
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/BaseViewModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/ProductTypesViewModel.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/ViewModels/StocksViewModel.cpp
     ${CLIENT_SOURCES_DIR}/Ui/ViewModels/UsersManagementViewModel.cpp
     
     # Dialogs
@@ -43,6 +45,7 @@ set(UI_SOURCES
     # Views
     ${CLIENT_SOURCES_DIR}/Ui/Views/BaseView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/ProductTypesView.cpp
+    ${CLIENT_SOURCES_DIR}/Ui/Views/StocksView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/UsersView.cpp
     ${CLIENT_SOURCES_DIR}/Ui/Views/ViewStyles.hpp
 )

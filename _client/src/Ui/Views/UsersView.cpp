@@ -13,8 +13,6 @@ UsersView::UsersView(UsersManagementViewModel &viewModel, QWidget *parent)
     connect(&m_viewModel, &UsersManagementViewModel::usersChanged, this,
             &UsersView::onUsersChanged);
 
-    m_viewModel.fetchUsers();
-
     // We can't add new users this way for now
     // TODO: https://sageteam.atlassian.net/browse/SS-32
     m_addButton->setHidden(true);

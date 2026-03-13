@@ -1,28 +1,86 @@
 #include "Ui/Views/ProductTypesView.hpp"
 
+#include <QAbstractItemView>
 #include <QCheckBox>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDoubleValidator>
 #include <QFormLayout>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QItemSelectionModel>
+#include <QLabel>
 #include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QTableWidgetItem>
+#include <QVBoxLayout>
 
 #include "Ui/ViewModels/ProductTypesViewModel.hpp"
 
 #include "common/SpdlogConfig.hpp"
+
+namespace {
+bool matchesFilter(const DisplayData::ProductType &productType, const QString &filterText)
+{
+    if (filterText.isEmpty()) {
+        return true;
+    }
+
+    const QStringList haystack = {productType.code,        productType.name,  productType.barcode,
+                                  productType.unit,        productType.lastPrice,
+                                  productType.description, productType.isImported};
+
+    for (const auto &value : haystack) {
+        if (value.contains(filterText, Qt::CaseInsensitive)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+} // namespace
 
 ProductTypesView::ProductTypesView(ProductTypesViewModel &viewModel, QWidget *parent)
     : BaseView(viewModel, parent), m_viewModel(viewModel)
 {
     SPDLOG_TRACE("ProductTypesView::ProductTypesView");
 
+    m_addButton->setObjectName("productTypesAddButton");
+    m_editButton->setObjectName("productTypesEditButton");
+    m_deleteButton->setObjectName("productTypesDeleteButton");
+    m_dataTable->setObjectName("productTypesTable");
+    m_status->setObjectName("productTypesStatusLabel");
+
+    auto *filterLabel = new QLabel(tr("Filter"), this);
+    m_filterField     = new QLineEdit(this);
+    m_filterField->setObjectName("productTypesFilterField");
+    m_filterField->setPlaceholderText(
+        tr("Search by code, name, barcode, unit, description, or imported state"));
+    m_filterField->setClearButtonEnabled(true);
+
+    auto *filterRow = new QHBoxLayout;
+    filterRow->addWidget(filterLabel);
+    filterRow->addWidget(m_filterField);
+    m_mainLayout->insertLayout(1, filterRow);
+
+    m_dataTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_dataTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_dataTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_dataTable->setAlternatingRowColors(true);
+    m_dataTable->setSortingEnabled(true);
+    m_dataTable->verticalHeader()->setVisible(false);
+
     connect(m_addButton, &QPushButton::clicked, this, &ProductTypesView::onAddButtonClicked);
     connect(m_deleteButton, &QPushButton::clicked, this, &ProductTypesView::onDeleteButtonClicked);
     connect(m_editButton, &QPushButton::clicked, this, &ProductTypesView::onEditButtonClicked);
+    connect(m_filterField, &QLineEdit::textChanged, this, &ProductTypesView::onFilterTextChanged);
     connect(&m_viewModel, &ProductTypesViewModel::productTypesChanged, this,
             &ProductTypesView::onProductTypesChanged);
+    connect(m_dataTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            &ProductTypesView::onSelectionChanged);
 
-    m_viewModel.fetchProductTypes();
+    updateActionButtons();
+    updateStatus(0, 0);
 }
 
 void ProductTypesView::onAddButtonClicked()
@@ -70,12 +128,38 @@ void ProductTypesView::onEditButtonClicked()
 
 void ProductTypesView::onProductTypesChanged()
 {
-    fillTable(m_viewModel.productTypes());
+    m_allProductTypes = m_viewModel.productTypes();
+    applyFilter();
+}
+
+void ProductTypesView::onFilterTextChanged(const QString &text)
+{
+    Q_UNUSED(text);
+    applyFilter();
+}
+
+void ProductTypesView::onSelectionChanged() { updateActionButtons(); }
+
+void ProductTypesView::applyFilter()
+{
+    QVector<DisplayData::ProductType> filteredProductTypes;
+    const QString filterText = m_filterField->text().trimmed();
+
+    for (const auto &productType : m_allProductTypes) {
+        if (matchesFilter(productType, filterText)) {
+            filteredProductTypes.push_back(productType);
+        }
+    }
+
+    fillTable(filteredProductTypes);
+    updateStatus(filteredProductTypes.size(), m_allProductTypes.size());
 }
 
 void ProductTypesView::fillTable(const QVector<DisplayData::ProductType> &productTypes)
 {
-    m_dataTable->clear();
+    m_dataTable->setSortingEnabled(false);
+    m_dataTable->setUpdatesEnabled(false);
+    m_dataTable->clearContents();
     m_dataTable->setRowCount(productTypes.size());
     m_dataTable->setColumnCount(DisplayData::ProductType::VAR_COUNT);
     m_dataTable->setHorizontalHeaderLabels(
@@ -94,6 +178,9 @@ void ProductTypesView::fillTable(const QVector<DisplayData::ProductType> &produc
     }
 
     m_dataTable->setColumnHidden(0, true);
+    m_dataTable->setUpdatesEnabled(true);
+    m_dataTable->setSortingEnabled(true);
+    updateActionButtons();
 }
 
 bool ProductTypesView::showProductTypeDialog(DisplayData::ProductType &productType,
@@ -101,16 +188,29 @@ bool ProductTypesView::showProductTypeDialog(DisplayData::ProductType &productTy
 {
     QDialog dialog(this);
     dialog.setWindowTitle(title);
+    dialog.setObjectName("productTypeDialog");
+    dialog.setMinimumWidth(480);
 
-    auto *layout      = new QFormLayout(&dialog);
-    auto *codeField   = new QLineEdit(productType.code, &dialog);
-    auto *nameField   = new QLineEdit(productType.name, &dialog);
-    auto *barcodeField = new QLineEdit(productType.barcode, &dialog);
-    auto *unitField   = new QLineEdit(productType.unit, &dialog);
-    auto *priceField  = new QLineEdit(productType.lastPrice, &dialog);
-    auto *descriptionField = new QLineEdit(productType.description, &dialog);
+    auto *layout            = new QFormLayout(&dialog);
+    auto *codeField         = new QLineEdit(productType.code, &dialog);
+    auto *nameField         = new QLineEdit(productType.name, &dialog);
+    auto *barcodeField      = new QLineEdit(productType.barcode, &dialog);
+    auto *unitField         = new QLineEdit(productType.unit, &dialog);
+    auto *priceField        = new QLineEdit(productType.lastPrice, &dialog);
+    auto *descriptionField = new QPlainTextEdit(productType.description, &dialog);
     auto *importedCheckbox = new QCheckBox(&dialog);
     importedCheckbox->setChecked(productType.isImported.compare("Yes", Qt::CaseInsensitive) == 0);
+    priceField->setValidator(new QDoubleValidator(0.0, 1'000'000.0, 2, priceField));
+    descriptionField->setTabChangesFocus(true);
+    descriptionField->setFixedHeight(96);
+
+    codeField->setObjectName("productTypeCodeField");
+    nameField->setObjectName("productTypeNameField");
+    barcodeField->setObjectName("productTypeBarcodeField");
+    unitField->setObjectName("productTypeUnitField");
+    priceField->setObjectName("productTypePriceField");
+    descriptionField->setObjectName("productTypeDescriptionField");
+    importedCheckbox->setObjectName("productTypeImportedCheckbox");
 
     layout->addRow(tr("Code"), codeField);
     layout->addRow(tr("Name"), nameField);
@@ -123,7 +223,21 @@ bool ProductTypesView::showProductTypeDialog(DisplayData::ProductType &productTy
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
     layout->addWidget(buttons);
 
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, [this, &dialog, codeField, nameField,
+                                                            unitField, priceField]() {
+        if (codeField->text().trimmed().isEmpty() || nameField->text().trimmed().isEmpty() ||
+            unitField->text().trimmed().isEmpty()) {
+            emit errorOccurred(tr("Code, name, and unit are required."));
+            return;
+        }
+
+        if (!priceField->text().trimmed().isEmpty() && !priceField->hasAcceptableInput()) {
+            emit errorOccurred(tr("Last price must be a valid number."));
+            return;
+        }
+
+        dialog.accept();
+    });
     connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 
     if (dialog.exec() != QDialog::Accepted) {
@@ -135,8 +249,21 @@ bool ProductTypesView::showProductTypeDialog(DisplayData::ProductType &productTy
     productType.barcode     = barcodeField->text();
     productType.unit        = unitField->text();
     productType.lastPrice   = priceField->text();
-    productType.description = descriptionField->text();
+    productType.description = descriptionField->toPlainText();
     productType.isImported  = importedCheckbox->isChecked() ? "Yes" : "No";
 
     return true;
+}
+
+void ProductTypesView::updateStatus(int visibleCount, int totalCount)
+{
+    m_status->setText(tr("Status: showing %1 of %2 product types")
+                          .arg(QString::number(visibleCount), QString::number(totalCount)));
+}
+
+void ProductTypesView::updateActionButtons()
+{
+    const bool hasSelection = !m_dataTable->selectedItems().isEmpty();
+    m_editButton->setEnabled(hasSelection);
+    m_deleteButton->setEnabled(hasSelection);
 }

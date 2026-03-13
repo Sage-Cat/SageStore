@@ -11,10 +11,13 @@
 #include "MainMenuActions.hpp"
 
 #include "Ui/Models/ProductTypesModel.hpp"
+#include "Ui/Models/StocksModel.hpp"
 #include "Ui/Models/UsersManagementModel.hpp"
 #include "Ui/ViewModels/ProductTypesViewModel.hpp"
+#include "Ui/ViewModels/StocksViewModel.hpp"
 #include "Ui/ViewModels/UsersManagementViewModel.hpp"
 #include "Ui/Views/ProductTypesView.hpp"
+#include "Ui/Views/StocksView.hpp"
 #include "Ui/Views/UsersView.hpp"
 
 class ApiManager;
@@ -44,6 +47,9 @@ private: // --- General UI ---
 
 private: // --- MVVM ---
     void setupMVVM();
+    ProductTypesView *ensureProductTypesView();
+    StocksView *ensureStocksView();
+    UsersView *ensureUsersView();
 
 private:
     QApplication &m_app;
@@ -57,12 +63,17 @@ private:
 
     /* MVVM */
     // Product types
-    ProductTypesModel *m_productTypesModel;
-    ProductTypesViewModel *m_productTypesViewModel;
-    ProductTypesView *m_productTypesView;
+    ProductTypesModel *m_productTypesModel{nullptr};
+    ProductTypesViewModel *m_productTypesViewModel{nullptr};
+    ProductTypesView *m_productTypesView{nullptr};
+
+    // Stocks
+    StocksModel *m_stocksModel{nullptr};
+    StocksViewModel *m_stocksViewModel{nullptr};
+    StocksView *m_stocksView{nullptr};
 
     // UsersManagement
-    UsersManagementModel *m_usersManagementModel;
-    UsersManagementViewModel *m_usersManagementViewModel;
-    UsersView *m_usersView;
+    UsersManagementModel *m_usersManagementModel{nullptr};
+    UsersManagementViewModel *m_usersManagementViewModel{nullptr};
+    UsersView *m_usersView{nullptr};
 };

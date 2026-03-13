@@ -1,8 +1,12 @@
 #include "InventoryModule.hpp"
 
+#include <algorithm>
+#include <cctype>
+
 #include "Database/RepositoryManager.hpp"
 #include "ServerException.hpp"
 
+#include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
 #include "common/SpdlogConfig.hpp"
 
@@ -40,6 +44,30 @@ std::string normalizeBooleanFlag(std::string value)
     return "0";
 }
 
+std::string getRequiredNonNegativeInteger(const Dataset &request, const std::string &key,
+                                          const char *context)
+{
+    const auto value = getRequiredDatasetValue(request, key, context);
+    if (!std::all_of(value.begin(), value.end(), [](unsigned char c) { return std::isdigit(c); })) {
+        SPDLOG_ERROR("{} | Invalid integer for dataset key: {}", context, key);
+        throw ServerException(_M, "Invalid integer field: " + key);
+    }
+
+    return value;
+}
+
+std::string getRequiredPositiveInteger(const Dataset &request, const std::string &key,
+                                       const char *context)
+{
+    const auto value = getRequiredNonNegativeInteger(request, key, context);
+    if (value == "0") {
+        SPDLOG_ERROR("{} | Integer must be positive for dataset key: {}", context, key);
+        throw ServerException(_M, "Invalid positive integer field: " + key);
+    }
+
+    return value;
+}
+
 Common::Entities::ProductType buildProductType(const Dataset &request, const std::string &resourceId)
 {
     const auto code = getRequiredDatasetValue(request, Common::Entities::ProductType::CODE_KEY,
@@ -70,12 +98,29 @@ Common::Entities::ProductType buildProductType(const Dataset &request, const std
                                          .unit        = unit,
                                          .isImported  = normalizeBooleanFlag(isImported)};
 }
+
+Common::Entities::Inventory buildStock(const Dataset &request, const std::string &resourceId)
+{
+    return Common::Entities::Inventory{
+        .id = resourceId,
+        .productTypeId = getRequiredDatasetValue(request,
+                                                 Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY,
+                                                 "InventoryModule::buildStock"),
+        .quantityAvailable =
+            getRequiredNonNegativeInteger(request,
+                                          Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY,
+                                          "InventoryModule::buildStock"),
+        .employeeId = getRequiredPositiveInteger(request,
+                                                 Common::Entities::Inventory::EMPLOYEE_ID_KEY,
+                                                 "InventoryModule::buildStock")};
+}
 } // namespace
 
 InventoryModule::InventoryModule(RepositoryManager &repositoryManager)
 {
     SPDLOG_TRACE("InventoryModule::InventoryModule");
 
+    m_inventoryRepository    = std::move(repositoryManager.getInventoryRepository());
     m_productTypesRepository = std::move(repositoryManager.getProductTypeRepository());
 }
 
@@ -85,30 +130,53 @@ ResponseData InventoryModule::executeTask(const RequestData &requestData)
 {
     SPDLOG_TRACE("InventoryModule::executeTask");
 
-    if (requestData.submodule != "product-types") {
-        throw ServerException(_M, "Unrecognized inventory task");
+    if (requestData.submodule == "product-types") {
+        if (requestData.method == "GET") {
+            return getProductTypes();
+        }
+
+        if (requestData.method == "POST") {
+            addProductType(requestData.dataset);
+            return {};
+        }
+
+        if (requestData.method == "PUT") {
+            editProductType(requestData.dataset, requestData.resourceId);
+            return {};
+        }
+
+        if (requestData.method == "DELETE") {
+            deleteProductType(requestData.resourceId);
+            return {};
+        }
+
+        throw ServerException(_M, "Unrecognized method");
     }
 
-    if (requestData.method == "GET") {
-        return getProductTypes();
+    if (requestData.submodule == "stocks") {
+        if (requestData.method == "GET") {
+            return getStocks();
+        }
+
+        if (requestData.method == "POST") {
+            addStock(requestData.dataset);
+            return {};
+        }
+
+        if (requestData.method == "PUT") {
+            editStock(requestData.dataset, requestData.resourceId);
+            return {};
+        }
+
+        if (requestData.method == "DELETE") {
+            deleteStock(requestData.resourceId);
+            return {};
+        }
+
+        throw ServerException(_M, "Unrecognized method");
     }
 
-    if (requestData.method == "POST") {
-        addProductType(requestData.dataset);
-        return {};
-    }
-
-    if (requestData.method == "PUT") {
-        editProductType(requestData.dataset, requestData.resourceId);
-        return {};
-    }
-
-    if (requestData.method == "DELETE") {
-        deleteProductType(requestData.resourceId);
-        return {};
-    }
-
-    throw ServerException(_M, "Unrecognized method");
+    throw ServerException(_M, "Unrecognized inventory task");
 }
 
 ResponseData InventoryModule::getProductTypes() const
@@ -199,4 +267,97 @@ void InventoryModule::deleteProductType(const std::string &resourceId) const
     }
 
     m_productTypesRepository->deleteResource(resourceId);
+}
+
+ResponseData InventoryModule::getStocks() const
+{
+    SPDLOG_TRACE("InventoryModule::getStocks");
+
+    ResponseData response;
+    response.dataset[Common::Entities::Inventory::ID_KEY]                 = {};
+    response.dataset[Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY]    = {};
+    response.dataset[Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY] = {};
+    response.dataset[Common::Entities::Inventory::EMPLOYEE_ID_KEY]        = {};
+
+    const auto inventoryRecords = m_inventoryRepository->getAll();
+    for (const auto &stock : inventoryRecords) {
+        response.dataset[Common::Entities::Inventory::ID_KEY].emplace_back(stock.id);
+        response.dataset[Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY].emplace_back(
+            stock.productTypeId);
+        response.dataset[Common::Entities::Inventory::QUANTITY_AVAILABLE_KEY].emplace_back(
+            stock.quantityAvailable);
+        response.dataset[Common::Entities::Inventory::EMPLOYEE_ID_KEY].emplace_back(
+            stock.employeeId);
+    }
+
+    return response;
+}
+
+void InventoryModule::addStock(const Dataset &request) const
+{
+    SPDLOG_TRACE("InventoryModule::addStock");
+
+    const auto stock = buildStock(request, "");
+    if (m_productTypesRepository
+            ->getByField(Common::Entities::ProductType::ID_KEY, stock.productTypeId)
+            .empty()) {
+        throw ServerException(_M, "Referenced product type does not exist");
+    }
+
+    if (!m_inventoryRepository
+             ->getByField(Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY, stock.productTypeId)
+             .empty()) {
+        throw ServerException(_M, "Stock record for this product type already exists");
+    }
+
+    m_inventoryRepository->add(stock);
+}
+
+void InventoryModule::editStock(const Dataset &request, const std::string &resourceId) const
+{
+    SPDLOG_TRACE("InventoryModule::editStock");
+
+    if (resourceId.empty()) {
+        throw ServerException(_M, "Stock ID is empty");
+    }
+
+    if (m_inventoryRepository
+            ->getByField(Common::Entities::Inventory::ID_KEY, resourceId)
+            .empty()) {
+        throw ServerException(_M, "Stock record does not exist");
+    }
+
+    const auto stock = buildStock(request, resourceId);
+    if (m_productTypesRepository
+            ->getByField(Common::Entities::ProductType::ID_KEY, stock.productTypeId)
+            .empty()) {
+        throw ServerException(_M, "Referenced product type does not exist");
+    }
+
+    const auto stocksByProductType = m_inventoryRepository->getByField(
+        Common::Entities::Inventory::PRODUCT_TYPE_ID_KEY, stock.productTypeId);
+    for (const auto &existingStock : stocksByProductType) {
+        if (existingStock.id != resourceId) {
+            throw ServerException(_M, "Stock record for this product type already exists");
+        }
+    }
+
+    m_inventoryRepository->update(stock);
+}
+
+void InventoryModule::deleteStock(const std::string &resourceId) const
+{
+    SPDLOG_TRACE("InventoryModule::deleteStock");
+
+    if (resourceId.empty()) {
+        throw ServerException(_M, "Stock ID is empty");
+    }
+
+    if (m_inventoryRepository
+            ->getByField(Common::Entities::Inventory::ID_KEY, resourceId)
+            .empty()) {
+        throw ServerException(_M, "Stock record does not exist");
+    }
+
+    m_inventoryRepository->deleteResource(resourceId);
 }

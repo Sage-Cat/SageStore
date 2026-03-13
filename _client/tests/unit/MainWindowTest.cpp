@@ -16,27 +16,145 @@
 class MainWindowTest : public QObject {
     Q_OBJECT
 
-    MainWindow *mainWindow;
+    MainWindow *mainWindow{nullptr};
+    ApiManagerMock *apiManagerMock{nullptr};
+    DialogManagerMock *dialogManagerMock{nullptr};
 
-    QApplication &app;
-    ApiManagerMock *apiManagerMock;
-    DialogManagerMock *dialogManagerMock;
-
-public:
-    MainWindowTest(QApplication &app) : app(app)
+private slots:
+    void init()
     {
-        apiManagerMock     = new ApiManagerMock();
-        dialogManagerMock  = new DialogManagerMock(*apiManagerMock);
+        auto *application = qobject_cast<QApplication *>(QCoreApplication::instance());
+        QVERIFY(application != nullptr);
 
-        mainWindow = new MainWindow(app, *apiManagerMock, *dialogManagerMock);
+        apiManagerMock    = new ApiManagerMock();
+        dialogManagerMock = new DialogManagerMock(*apiManagerMock);
+        mainWindow        = new MainWindow(*application, *apiManagerMock, *dialogManagerMock);
     }
 
-    ~MainWindowTest()
+    void cleanup()
     {
         delete mainWindow;
+        delete dialogManagerMock;
         delete apiManagerMock;
+
+        mainWindow        = nullptr;
+        dialogManagerMock = nullptr;
+        apiManagerMock    = nullptr;
     }
 
+    void testMainWindowStartsWithoutDataFetch()
+    {
+        QCOMPARE(apiManagerMock->usersRequestCount(), 0);
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 0);
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 0);
+        QCOMPARE(apiManagerMock->stocksRequestCount(), 0);
+    }
+
+    void testShowLoginDialogOnInit()
+    {
+        QSignalSpy errorMessageSpy(dialogManagerMock, &DialogManagerMock::showLogDialog);
+        mainWindow->startUiProcess();
+        QCOMPARE(errorMessageSpy.count(), 1);
+    }
+
+    void testOpenProductManagementTabFromInventoryMenu()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        QCOMPARE(tabWidget->count(), 0);
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 0);
+
+        QAction *productManagementAction =
+            findMenuAction("Inventory",
+                           MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+        QVERIFY(productManagementAction != nullptr);
+
+        productManagementAction->trigger();
+
+        QCOMPARE(tabWidget->count(), 1);
+        QCOMPARE(tabWidget->tabText(0),
+                 MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 1);
+
+        productManagementAction->trigger();
+        QCOMPARE(tabWidget->count(), 1);
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 1);
+    }
+
+    void testOpenStockTrackingTabFetchesStockAndCatalogOnce()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        const int initialTabCount = tabWidget->count();
+        const int initialProductTypeRequests = apiManagerMock->productTypesRequestCount();
+        const int initialStockRequests       = apiManagerMock->stocksRequestCount();
+
+        QAction *stockTrackingAction =
+            findMenuAction("Inventory",
+                           MainMenuActions::NAMES.at(MainMenuActions::Type::STOCK_TRACKING));
+        QVERIFY(stockTrackingAction != nullptr);
+
+        stockTrackingAction->trigger();
+
+        QCOMPARE(tabWidget->count(), initialTabCount + 1);
+        QCOMPARE(tabWidget->tabText(tabWidget->currentIndex()),
+                 MainMenuActions::NAMES.at(MainMenuActions::Type::STOCK_TRACKING));
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), initialProductTypeRequests + 1);
+        QCOMPARE(apiManagerMock->stocksRequestCount(), initialStockRequests + 1);
+
+        stockTrackingAction->trigger();
+        QCOMPARE(tabWidget->count(), initialTabCount + 1);
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), initialProductTypeRequests + 1);
+        QCOMPARE(apiManagerMock->stocksRequestCount(), initialStockRequests + 1);
+    }
+
+    void testReopenStockTrackingTabRefreshesData()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+
+        QAction *stockTrackingAction =
+            findMenuAction("Inventory",
+                           MainMenuActions::NAMES.at(MainMenuActions::Type::STOCK_TRACKING));
+        QVERIFY(stockTrackingAction != nullptr);
+
+        stockTrackingAction->trigger();
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 1);
+        QCOMPARE(apiManagerMock->stocksRequestCount(), 1);
+
+        tabWidget->removeTab(tabWidget->currentIndex());
+        QCOMPARE(tabWidget->count(), 0);
+
+        stockTrackingAction->trigger();
+        QCOMPARE(apiManagerMock->productTypesRequestCount(), 2);
+        QCOMPARE(apiManagerMock->stocksRequestCount(), 2);
+    }
+
+    void testOpenUsersTabFetchesUsersAndRolesOnce()
+    {
+        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
+        QVERIFY(tabWidget != nullptr);
+        const int initialTabCount = tabWidget->count();
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 0);
+        QCOMPARE(apiManagerMock->usersRequestCount(), 0);
+
+        QAction *usersAction =
+            findMenuAction("Users", MainMenuActions::NAMES.at(MainMenuActions::Type::USERS));
+        QVERIFY(usersAction != nullptr);
+
+        usersAction->trigger();
+
+        QCOMPARE(tabWidget->count(), initialTabCount + 1);
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+        QCOMPARE(apiManagerMock->usersRequestCount(), 1);
+
+        usersAction->trigger();
+        QCOMPARE(tabWidget->count(), initialTabCount + 1);
+        QCOMPARE(apiManagerMock->rolesRequestCount(), 1);
+        QCOMPARE(apiManagerMock->usersRequestCount(), 1);
+    }
+
+private:
     QAction *findMenuAction(const QString &menuTitle, const QString &actionTitle) const
     {
         for (QAction *menuAction : mainWindow->menuBar()->actions()) {
@@ -53,42 +171,7 @@ public:
 
         return nullptr;
     }
-
-private slots:
-    void testShowLoginDialogOnInit()
-    {
-        QSignalSpy errorMessageSpy(dialogManagerMock, &DialogManagerMock::showLogDialog);
-        mainWindow->startUiProcess();
-        QCOMPARE(errorMessageSpy.count(), 1);
-    }
-
-    void testOpenProductManagementTabFromInventoryMenu()
-    {
-        auto *tabWidget = mainWindow->findChild<QTabWidget *>();
-        QVERIFY(tabWidget != nullptr);
-        QCOMPARE(tabWidget->count(), 0);
-
-        QAction *productManagementAction =
-            findMenuAction("Inventory",
-                           MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
-        QVERIFY(productManagementAction != nullptr);
-
-        productManagementAction->trigger();
-
-        QCOMPARE(tabWidget->count(), 1);
-        QCOMPARE(tabWidget->tabText(0),
-                 MainMenuActions::NAMES.at(MainMenuActions::Type::PRODUCT_MANAGEMENT));
-
-        productManagementAction->trigger();
-        QCOMPARE(tabWidget->count(), 1);
-    }
 };
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-    MainWindowTest tc(app);
-    return QTest::qExec(&tc, argc, argv);
-}
-
+QTEST_MAIN(MainWindowTest)
 #include "MainWindowTest.moc"

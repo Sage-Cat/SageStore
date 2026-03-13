@@ -6,6 +6,7 @@
 #include "DatabaseManagerMock.hpp"
 
 #include "common/Entities/Role.hpp"
+#include "common/Entities/Inventory.hpp"
 #include "common/Entities/ProductType.hpp"
 #include "common/Entities/User.hpp"
 
@@ -22,6 +23,8 @@ public:
                 (override));
     MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::Role>>, getRoleRepository, (),
                 (override));
+    MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::Inventory>>,
+                getInventoryRepository, (), (override));
     MOCK_METHOD(std::shared_ptr<IRepository<Common::Entities::ProductType>>,
                 getProductTypeRepository, (), (override));
 };

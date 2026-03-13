@@ -68,12 +68,30 @@ public:
 
         m_db.reset(dbRaw);
 
+        if (!enableForeignKeys()) {
+            SPDLOG_ERROR("Failed to enable SQLite foreign key enforcement.");
+            return false;
+        }
+
         if (!fileExists && !initializeDatabaseSchema()) {
             SPDLOG_ERROR("Failed to initialize database schema.");
             return false;
         }
 
         SPDLOG_INFO("Database opened successfully");
+        return true;
+    }
+
+    bool enableForeignKeys()
+    {
+        char *errMsg = nullptr;
+        if (sqlite3_exec(m_db.get(), "PRAGMA foreign_keys = ON;", nullptr, nullptr, &errMsg) !=
+            SQLITE_OK) {
+            SPDLOG_ERROR("Failed to enable foreign keys: {}", errMsg ? errMsg : "unknown");
+            sqlite3_free(errMsg);
+            return false;
+        }
+
         return true;
     }
 

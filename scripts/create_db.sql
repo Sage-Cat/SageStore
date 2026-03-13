@@ -96,6 +96,7 @@ CREATE TABLE Inventory (
   productTypeId INTEGER,
   quantityAvailable INTEGER,
   employeeId INTEGER,
+  UNIQUE (productTypeId),
   FOREIGN KEY (productTypeId) REFERENCES ProductType(id),
   FOREIGN KEY (employeeId) REFERENCES Employee(id)
 );

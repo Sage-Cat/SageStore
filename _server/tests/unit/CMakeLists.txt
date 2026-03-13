@@ -4,6 +4,7 @@ set(SERVER_UNIT_TESTS_SOURCE
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
@@ -37,6 +38,7 @@ set(INVENTORY_MODULE_TESTS_SOURCE
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/RoleRepository.cpp
@@ -64,12 +66,36 @@ target_link_libraries(InventoryModuleTest
 add_test(NAME Unit_InventoryModuleTest COMMAND InventoryModuleTest)
 message(STATUS "Adding unit test: InventoryModuleTest")
 
+# ------------------------- SERVER STARTUP CONFIG -------------------------
+set(SERVER_STARTUP_CONFIG_TESTS_SOURCE
+    ${SERVER_TESTS_DIR}/unit/ServerStartupConfigTest.cpp
+    ${SERVER_SOURCES_DIR}/ServerStartupConfig.cpp
+)
+
+add_executable(ServerStartupConfigTest ${SERVER_STARTUP_CONFIG_TESTS_SOURCE})
+
+target_include_directories(ServerStartupConfigTest PUBLIC
+    ${SERVER_SOURCES_DIR}
+    ${SERVER_TESTS_DIR}
+)
+
+target_link_libraries(ServerStartupConfigTest
+    PUBLIC
+    common
+    spdlog::spdlog
+    GTest::gtest
+    GTest::gtest_main
+)
+add_test(NAME Unit_ServerStartupConfigTest COMMAND ServerStartupConfigTest)
+message(STATUS "Adding unit test: ServerStartupConfigTest")
+
 # ------ PRODUCT INFO REPOSITORY TEST ------
 set(PRODUCT_INFO_TESTS_SOURCE
     ${SERVER_TESTS_DIR}/unit/ProductInfoRepositoryTest.cpp
     ${BUSINESS_SOURCES}
     ${SERVER_SOURCES_DIR}/ServerException.cpp
     ${SERVER_SOURCES_DIR}/Database/RepositoryManager.cpp
+    ${SERVER_SOURCES_DIR}/Database/InventoryRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductInfoRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/ProductTypeRepository.cpp
     ${SERVER_SOURCES_DIR}/Database/UserRepository.cpp
@@ -98,4 +124,3 @@ target_link_libraries(ProductInfoRepositoryTest
 )
 add_test(NAME Unit_ProductInfoRepositoryTest COMMAND ProductInfoRepositoryTest)
 message(STATUS "Adding unit test: ProductInfoRepositoryTest")
-

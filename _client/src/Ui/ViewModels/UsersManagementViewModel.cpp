@@ -57,6 +57,7 @@ void UsersManagementViewModel::onUsersChanged()
 void UsersManagementViewModel::onRolesChanged()
 {
     m_roles = m_model.roles();
+    onUsersChanged();
     emit rolesChanged();
 }
 

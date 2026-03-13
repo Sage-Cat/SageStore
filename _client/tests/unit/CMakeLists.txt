@@ -100,11 +100,74 @@ target_link_libraries(ProductTypesModelTest
 message(STATUS "Adding unit test: ProductTypesModelTest")
 add_test(NAME Unit_ProductTypesModelTest COMMAND ProductTypesModelTest)
 
+set(TEST_PRODUCT_TYPES_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/ProductTypesViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(ProductTypesViewTest ${TEST_PRODUCT_TYPES_VIEW_SOURCES})
+target_include_directories(ProductTypesViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(ProductTypesViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: ProductTypesViewTest")
+add_test(NAME Unit_ProductTypesViewTest COMMAND ProductTypesViewTest)
+
+set(TEST_STOCKS_MODEL_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/StocksModelTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(StocksModelTest ${TEST_STOCKS_MODEL_SOURCES})
+target_include_directories(StocksModelTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(StocksModelTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: StocksModelTest")
+add_test(NAME Unit_StocksModelTest COMMAND StocksModelTest)
+
+set(TEST_STOCKS_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/StocksViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(StocksViewTest ${TEST_STOCKS_VIEW_SOURCES})
+target_include_directories(StocksViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(StocksViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: StocksViewTest")
+add_test(NAME Unit_StocksViewTest COMMAND StocksViewTest)
+
 set_tests_properties(
     Unit_ApiManagerTest
     Unit_MainWindowTest
     Unit_DialogManagerTest
     Unit_UsersManagementModelTest
     Unit_ProductTypesModelTest
+    Unit_ProductTypesViewTest
+    Unit_StocksModelTest
+    Unit_StocksViewTest
     PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
 )
