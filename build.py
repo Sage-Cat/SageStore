@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -79,11 +80,11 @@ def cmake_configure(build_dir: Path, build_type: str, cmake_options: list[str]) 
 
 
 def cmake_build(build_dir: Path) -> None:
-    run_command(["cmake", "--build", str(build_dir), "--parallel"])
+    run_command(["cmake", "--build", ".", "--parallel"], cwd=build_dir)
 
 
 def ctest_run(build_dir: Path) -> None:
-    run_command(["ctest", "--test-dir", str(build_dir), "--output-on-failure", "--verbose"])
+    run_command(["ctest", "--output-on-failure", "--verbose"], cwd=build_dir)
 
 
 def doxygen_generate() -> None:
@@ -94,12 +95,46 @@ def docs_links_check() -> None:
     run_command(["python3", "scripts/check_docs_links.py"])
 
 
-def render_plantuml_if_available() -> None:
-    if shutil.which("docker") is None:
-        print("-> Skipping PlantUML render (docker not available)")
+def render_plantuml_with_jar(source_dir: Path, output_format: str, jar_path: Path) -> None:
+    puml_files = sorted(source_dir.rglob("*.puml"))
+    if not puml_files:
+        print(f"-> No .puml files found under {source_dir}")
         return
 
-    run_command(["bash", "scripts/plantuml/render_puml_docker.sh", "docs", "png"])
+    for puml_file in puml_files:
+        run_command(
+            [
+                "java",
+                "-Djava.awt.headless=true",
+                "-jar",
+                str(jar_path),
+                f"-t{output_format}",
+                str(puml_file),
+            ]
+        )
+        rendered_file = puml_file.with_suffix(f".{output_format}")
+        if rendered_file.parent.name == "plantuml" and rendered_file.exists():
+            rendered_file.replace(rendered_file.parent.parent / rendered_file.name)
+
+
+def render_plantuml_if_available() -> None:
+    docker_available = shutil.which("docker") is not None and subprocess.run(
+        ["docker", "info"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    ).returncode == 0
+
+    if docker_available:
+        run_command(["bash", "scripts/plantuml/render_puml_docker.sh", "docs", "png"])
+        return
+
+    plantuml_jar = os.environ.get("PLANTUML_JAR")
+    if plantuml_jar and shutil.which("java") and shutil.which("dot"):
+        jar_path = Path(plantuml_jar)
+        if jar_path.exists():
+            print(f"-> Rendering PlantUML with jar fallback: {jar_path}")
+            render_plantuml_with_jar(Path("docs"), "png", jar_path)
+            return
+
+    print("-> Skipping PlantUML render (docker daemon unavailable and PLANTUML_JAR fallback missing)")
 
 
 def smoke_run() -> None:
@@ -108,6 +143,10 @@ def smoke_run() -> None:
 
 def smoke_gui_run() -> None:
     run_command(["bash", "scripts/smoke/fullstack_gui_startup_smoke.sh"])
+
+
+def regression_run() -> None:
+    run_command(["bash", "scripts/smoke/offscreen_feature_regression.sh"])
 
 
 def build_target(target: str, build_type: str, clean: bool, run_tests: bool) -> None:
@@ -144,6 +183,7 @@ def parse_args() -> argparse.Namespace:
             "docs",
             "smoke",
             "smoke-gui",
+            "regression",
         ],
         help="Action to run.",
     )
@@ -198,8 +238,8 @@ def main() -> None:
         return
 
     if args.command == "docs":
-        docs_links_check()
         render_plantuml_if_available()
+        docs_links_check()
         doxygen_generate()
         return
 
@@ -209,6 +249,10 @@ def main() -> None:
 
     if args.command == "smoke-gui":
         smoke_gui_run()
+        return
+
+    if args.command == "regression":
+        regression_run()
         return
 
 

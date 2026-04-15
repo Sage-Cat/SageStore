@@ -143,6 +143,26 @@ target_link_libraries(ProductTypesViewTest
 message(STATUS "Adding unit test: ProductTypesViewTest")
 add_test(NAME Unit_ProductTypesViewTest COMMAND ProductTypesViewTest)
 
+set(TEST_USERS_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/UsersViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(UsersViewTest ${TEST_USERS_VIEW_SOURCES})
+target_include_directories(UsersViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(UsersViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: UsersViewTest")
+add_test(NAME Unit_UsersViewTest COMMAND UsersViewTest)
+
 set(TEST_ROLES_VIEW_SOURCES
     ${CLIENT_UNIT_TESTS_DIR}/RolesViewTest.cpp
     ${NETWORK_SOURCES}
@@ -162,6 +182,46 @@ target_link_libraries(RolesViewTest
 )
 message(STATUS "Adding unit test: RolesViewTest")
 add_test(NAME Unit_RolesViewTest COMMAND RolesViewTest)
+
+set(TEST_MANAGEMENT_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/ManagementViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(ManagementViewTest ${TEST_MANAGEMENT_VIEW_SOURCES})
+target_include_directories(ManagementViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(ManagementViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: ManagementViewTest")
+add_test(NAME Unit_ManagementViewTest COMMAND ManagementViewTest)
+
+set(TEST_SUPPLIER_CATALOG_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/SupplierCatalogViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(SupplierCatalogViewTest ${TEST_SUPPLIER_CATALOG_VIEW_SOURCES})
+target_include_directories(SupplierCatalogViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(SupplierCatalogViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: SupplierCatalogViewTest")
+add_test(NAME Unit_SupplierCatalogViewTest COMMAND SupplierCatalogViewTest)
 
 set(TEST_SETTINGS_VIEW_SOURCES
     ${CLIENT_UNIT_TESTS_DIR}/SettingsViewTest.cpp
@@ -243,6 +303,46 @@ target_link_libraries(SalesViewTest
 message(STATUS "Adding unit test: SalesViewTest")
 add_test(NAME Unit_SalesViewTest COMMAND SalesViewTest)
 
+set(TEST_PURCHASE_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/PurchaseViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(PurchaseViewTest ${TEST_PURCHASE_VIEW_SOURCES})
+target_include_directories(PurchaseViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(PurchaseViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: PurchaseViewTest")
+add_test(NAME Unit_PurchaseViewTest COMMAND PurchaseViewTest)
+
+set(TEST_ANALYTICS_VIEW_SOURCES
+    ${CLIENT_UNIT_TESTS_DIR}/AnalyticsViewTest.cpp
+    ${NETWORK_SOURCES}
+    ${UI_SOURCES}
+    ${MAIN_SOURCES}
+)
+add_executable(AnalyticsViewTest ${TEST_ANALYTICS_VIEW_SOURCES})
+target_include_directories(AnalyticsViewTest PUBLIC ${CLIENT_SOURCES_DIR} ${CLIENT_TEST_INCLUDE_DIR})
+target_link_libraries(AnalyticsViewTest
+    common
+    Qt6::Test
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    spdlog::spdlog
+)
+message(STATUS "Adding unit test: AnalyticsViewTest")
+add_test(NAME Unit_AnalyticsViewTest COMMAND AnalyticsViewTest)
+
 set(TEST_ERP_MODELS_SOURCES
     ${CLIENT_UNIT_TESTS_DIR}/ErpModelsTest.cpp
     ${NETWORK_SOURCES}
@@ -271,11 +371,16 @@ set_tests_properties(
     Unit_UsersManagementModelTest
     Unit_ProductTypesModelTest
     Unit_ProductTypesViewTest
+    Unit_UsersViewTest
     Unit_RolesViewTest
+    Unit_ManagementViewTest
+    Unit_SupplierCatalogViewTest
     Unit_SettingsViewTest
     Unit_StocksModelTest
     Unit_StocksViewTest
     Unit_SalesViewTest
+    Unit_PurchaseViewTest
+    Unit_AnalyticsViewTest
     Unit_ErpModelsTest
     PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
 )

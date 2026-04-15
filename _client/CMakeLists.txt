@@ -9,7 +9,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Locate Qt packages
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network Test)
 
 # Locate conan packages
 find_package(spdlog REQUIRED)
@@ -89,6 +89,10 @@ set(ALL_CLIENT_SOURCES
 # Adding main code and tests
 if (BUILD_CLIENT)
     add_subdirectory(src)
+endif()
+
+if(BUILD_CLIENT OR BUILD_TESTS)
+    add_subdirectory(tools/debug_cli)
 endif()
 
 if(BUILD_TESTS)

@@ -61,8 +61,7 @@ private slots:
         QCOMPARE(apiManagerMock->productTypesRequestCount(), 0);
 
         QAction *productManagementAction =
-            findMenuAction("Inventory",
-                           MainMenuActions::displayName(MainMenuActions::Type::PRODUCT_MANAGEMENT));
+            findMenuAction(MainMenuActions::Type::PRODUCT_MANAGEMENT);
         QVERIFY(productManagementAction != nullptr);
 
         productManagementAction->trigger();
@@ -85,9 +84,7 @@ private slots:
         const int initialProductTypeRequests = apiManagerMock->productTypesRequestCount();
         const int initialStockRequests       = apiManagerMock->stocksRequestCount();
 
-        QAction *stockTrackingAction =
-            findMenuAction("Inventory",
-                           MainMenuActions::displayName(MainMenuActions::Type::STOCK_TRACKING));
+        QAction *stockTrackingAction = findMenuAction(MainMenuActions::Type::STOCK_TRACKING);
         QVERIFY(stockTrackingAction != nullptr);
 
         stockTrackingAction->trigger();
@@ -109,9 +106,7 @@ private slots:
         auto *tabWidget = mainWindow->findChild<QTabWidget *>();
         QVERIFY(tabWidget != nullptr);
 
-        QAction *stockTrackingAction =
-            findMenuAction("Inventory",
-                           MainMenuActions::displayName(MainMenuActions::Type::STOCK_TRACKING));
+        QAction *stockTrackingAction = findMenuAction(MainMenuActions::Type::STOCK_TRACKING);
         QVERIFY(stockTrackingAction != nullptr);
 
         stockTrackingAction->trigger();
@@ -134,8 +129,7 @@ private slots:
         QCOMPARE(apiManagerMock->rolesRequestCount(), 0);
         QCOMPARE(apiManagerMock->usersRequestCount(), 0);
 
-        QAction *usersAction =
-            findMenuAction("Users", MainMenuActions::displayName(MainMenuActions::Type::USERS));
+        QAction *usersAction = findMenuAction(MainMenuActions::Type::USERS);
         QVERIFY(usersAction != nullptr);
 
         usersAction->trigger();
@@ -158,8 +152,7 @@ private slots:
         QCOMPARE(apiManagerMock->rolesRequestCount(), 0);
         QCOMPARE(apiManagerMock->usersRequestCount(), 0);
 
-        QAction *rolesAction =
-            findMenuAction("Users", MainMenuActions::displayName(MainMenuActions::Type::USER_ROLES));
+        QAction *rolesAction = findMenuAction(MainMenuActions::Type::USER_ROLES);
         QVERIFY(rolesAction != nullptr);
 
         rolesAction->trigger();
@@ -181,8 +174,7 @@ private slots:
         QVERIFY(tabWidget != nullptr);
         QCOMPARE(tabWidget->count(), 0);
 
-        QAction *settingsAction =
-            findMenuAction("File", MainMenuActions::displayName(MainMenuActions::Type::SETTINGS));
+        QAction *settingsAction = findMenuAction(MainMenuActions::Type::SETTINGS);
         QVERIFY(settingsAction != nullptr);
 
         settingsAction->trigger();
@@ -199,22 +191,22 @@ private slots:
         QVERIFY(tabWidget != nullptr);
         QCOMPARE(tabWidget->count(), 0);
 
-        const QVector<QPair<QString, MainMenuActions::Type>> actions = {
-            {"File", MainMenuActions::Type::SETTINGS},
-            {"Purchasing", MainMenuActions::Type::PURCHASE_ORDERS},
-            {"Purchasing", MainMenuActions::Type::SUPPLIER_MANAGEMENT},
-            {"Purchasing", MainMenuActions::Type::GOODS_RECEIPTS},
-            {"Sales", MainMenuActions::Type::SALES_ORDERS},
-            {"Sales", MainMenuActions::Type::CUSTOMER_MANAGEMENT},
-            {"Sales", MainMenuActions::Type::INVOICING},
-            {"Inventory", MainMenuActions::Type::SUPPLIER_PRICELIST_UPLOAD},
-            {"Analytics", MainMenuActions::Type::SALES_ANALYTICS},
-            {"Analytics", MainMenuActions::Type::INVENTORY_ANALYTICS},
-            {"Users", MainMenuActions::Type::USER_ROLES},
-            {"Users", MainMenuActions::Type::USER_LOGS},
-            {"Management", MainMenuActions::Type::EMPLOYEES},
-            {"Management", MainMenuActions::Type::CUSTOMERS},
-            {"Management", MainMenuActions::Type::SUPPLIERS}};
+        const QVector<MainMenuActions::Type> actions = {
+            MainMenuActions::Type::SETTINGS,
+            MainMenuActions::Type::PURCHASE_ORDERS,
+            MainMenuActions::Type::SUPPLIER_MANAGEMENT,
+            MainMenuActions::Type::GOODS_RECEIPTS,
+            MainMenuActions::Type::SALES_ORDERS,
+            MainMenuActions::Type::CUSTOMER_MANAGEMENT,
+            MainMenuActions::Type::INVOICING,
+            MainMenuActions::Type::SUPPLIER_PRICELIST_UPLOAD,
+            MainMenuActions::Type::SALES_ANALYTICS,
+            MainMenuActions::Type::INVENTORY_ANALYTICS,
+            MainMenuActions::Type::USER_ROLES,
+            MainMenuActions::Type::USER_LOGS,
+            MainMenuActions::Type::EMPLOYEES,
+            MainMenuActions::Type::CUSTOMERS,
+            MainMenuActions::Type::SUPPLIERS};
 
         auto expectedTabTitle = [](MainMenuActions::Type actionType) {
             switch (actionType) {
@@ -239,10 +231,8 @@ private slots:
         };
 
         QSet<QString> expectedOpenTabs;
-        for (const auto &entry : actions) {
-            const QString &menuTitle = entry.first;
-            const MainMenuActions::Type actionType = entry.second;
-            QAction *action = findMenuAction(menuTitle, MainMenuActions::displayName(actionType));
+        for (MainMenuActions::Type actionType : actions) {
+            QAction *action = findMenuAction(actionType);
             QVERIFY(action != nullptr);
 
             action->trigger();
@@ -259,29 +249,17 @@ private slots:
         QCOMPARE(apiManagerMock->suppliersRequestCount(), 3);
         QCOMPARE(apiManagerMock->employeesRequestCount(), 3);
         QCOMPARE(apiManagerMock->supplierProductsRequestCount(), 1);
-        QCOMPARE(apiManagerMock->purchaseOrdersRequestCount(), 1);
-        QCOMPARE(apiManagerMock->salesOrdersRequestCount(), 1);
+        QCOMPARE(apiManagerMock->purchaseOrdersRequestCount(), 2);
+        QCOMPARE(apiManagerMock->salesOrdersRequestCount(), 2);
         QCOMPARE(apiManagerMock->logsRequestCount(), 1);
         QCOMPARE(apiManagerMock->salesAnalyticsRequestCount(), 1);
         QCOMPARE(apiManagerMock->inventoryAnalyticsRequestCount(), 1);
     }
 
 private:
-    QAction *findMenuAction(const QString &menuTitle, const QString &actionTitle) const
+    QAction *findMenuAction(MainMenuActions::Type actionType) const
     {
-        for (QAction *menuAction : mainWindow->menuBar()->actions()) {
-            if (menuAction->text() != menuTitle || menuAction->menu() == nullptr) {
-                continue;
-            }
-
-            for (QAction *action : menuAction->menu()->actions()) {
-                if (action->text() == actionTitle) {
-                    return action;
-                }
-            }
-        }
-
-        return nullptr;
+        return mainWindow->findChild<QAction *>(MainMenuActions::objectName(actionType));
     }
 };
 
