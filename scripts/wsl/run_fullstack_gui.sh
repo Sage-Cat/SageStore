@@ -23,12 +23,14 @@ if [[ ! -x "${CLIENT_BIN}" ]]; then
     exit 1
 fi
 
-SERVER_START_WAIT_SEC="${SAGESTORE_SERVER_WAIT_SECONDS:-1}"
-
 if [[ "${DRY_RUN}" == "true" ]]; then
     echo "[sagestore-wsl] dry-run server=${SERVER_BIN} client=${CLIENT_BIN}"
     "${SCRIPT_DIR}/run_gui_app.sh" --dry-run "${CLIENT_BIN}"
     exit 0
+fi
+
+if [[ "${SAGESTORE_FORCE_CLIENT_AUTO_EXIT_MS:-0}" != "1" ]]; then
+    unset SAGESTORE_CLIENT_AUTO_EXIT_MS
 fi
 
 echo "[sagestore-wsl] starting server: ${SERVER_BIN}"
@@ -44,7 +46,6 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-sleep "${SERVER_START_WAIT_SEC}"
 if ! kill -0 "${SERVER_PID}" >/dev/null 2>&1; then
     echo "error: server process exited during startup (pid=${SERVER_PID})" >&2
     exit 1

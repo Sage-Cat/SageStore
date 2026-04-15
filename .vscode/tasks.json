@@ -90,6 +90,106 @@
         "run-client"
       ],
       "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Run Client + Server",
+      "detail": "Run server and launch client immediately.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "run-fullstack"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Build Windows Client",
+      "detail": "Sync repo to a Windows mirror and build the native Windows client.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "build-win-client"
+      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Build Windows Server",
+      "detail": "Sync repo to a Windows mirror and build the native Windows server.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "build-win-server"
+      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Build Windows Client + Server",
+      "detail": "Sync repo to a Windows mirror and build the native Windows client and server.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "build-win-all"
+      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Run Windows Client",
+      "detail": "Build the native Windows client in a Windows mirror and launch it.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "run-win-client"
+      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Run Windows Server",
+      "detail": "Build the native Windows server in a Windows mirror and launch it.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "run-win-server"
+      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SageStore: Run Windows Client + Server",
+      "detail": "Build the native Windows client and server in a Windows mirror and launch both.",
+      "type": "shell",
+      "command": "scripts/vscode/run_task.sh",
+      "args": [
+        "run-win-fullstack"
+      ],
+      "options": {
+        "env": {
+          "SAGESTORE_BUILD_TYPE": "${input:buildType}"
+        }
+      },
+      "problemMatcher": []
     }
   ]
 }
