@@ -2,14 +2,16 @@
 
 ## Snapshot
 
-- Date: 2026-03-13
+- Date: 2026-03-25
 - Current-state source of truth: `docs/Implementation_Status.md` plus the codebase and tests
 - Target-state source of truth: `docs/Project_Documentation.md`
+- Future-direction source of truth: `docs/Future_Architecture_and_Design_Roadmap.md`
 - Supporting evidence: `README.md`, `Jenkinsfile`, `scripts/create_db.sql`, existing PlantUML assets, build/test scripts, and the actual module wiring under `_client/`, `_server/`, and `_common/`
 
 ## Reconciliation Summary
 
 - The target product documentation still describes a broader ERP than the repository currently implements.
+- The future-state roadmap should stay separate from current-state truth so the repo can communicate both honestly.
 - Current end-to-end reality now includes:
   - users login
   - users CRUD
@@ -150,6 +152,15 @@
 2. Finalize and implement company-aware management/storage if the business fields are defined.
 3. Define incoming invoice, barcode, and richer invoice export contracts before implementing them.
 4. Package the current baseline into a real release format instead of archived binaries only.
+
+Longer-horizon sequencing, architecture direction, and design-system guidance live in
+`docs/Future_Architecture_and_Design_Roadmap.md`, where the next steps are organized as:
+
+1. baseline hardening and release readiness
+2. master data and inventory truth
+3. procurement completion and ingestion workflows
+4. sales fulfillment and document outputs
+5. analytics, operability, and platform extension
 
 ## Architecture Diagram Set
 

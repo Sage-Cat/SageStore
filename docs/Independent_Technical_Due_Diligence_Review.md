@@ -3,6 +3,11 @@
 Date: 2026-02-18
 Reviewer mode: repository-only evidence (local clone)
 
+> Historical note: this review reflects the repository snapshot that existed on
+> February 18, 2026. The implementation has moved on materially since then. For the
+> current state of the repo, use `docs/Implementation_Status.md` and
+> `docs/Requirements_Baseline.md`.
+
 ## Evidence snapshot
 
 - `git branch -a` output: only `work` exists.
@@ -35,4 +40,3 @@ Reviewer mode: repository-only evidence (local clone)
 - `42d4108` (2024-05-19) add RESTful for users
 - `2f701eb` (2024-04-26) add build.py
 - `13a7f8f` (2024-04-14) add CONTRIBUTING.md
-

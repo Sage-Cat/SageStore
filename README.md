@@ -80,6 +80,13 @@ That keeps the current desktop product usable while preserving a clean path for 
 
 For the current evidence-based status, see [docs/Implementation_Status.md](docs/Implementation_Status.md) and [docs/Requirements_Baseline.md](docs/Requirements_Baseline.md).
 
+The documentation set is intentionally split:
+
+- `docs/Implementation_Status.md` is the current implementation truth
+- `docs/Requirements_Baseline.md` reconciles current scope vs target scope
+- `docs/Future_Architecture_and_Design_Roadmap.md` defines future phases, architecture direction, and desktop design-system improvement
+- `docs/Project_Documentation.md` remains the broader target/reference product design
+
 ## Current Limits
 
 SageStore is intentionally presented as an implemented MVP baseline, not as a finished all-in-one business product.
@@ -92,6 +99,11 @@ The following broader product goals are still incomplete or only partially reali
 - richer packaging and installer automation
 - live language hot-swap without restart
 - broader export/reporting depth beyond the current baseline
+
+The next planned progression is to harden and package the current baseline first, then
+complete missing ERP foundations such as companies, storage ownership, document
+processing, and richer sales/invoice workflows. The longer-horizon phase model lives in
+[docs/Future_Architecture_and_Design_Roadmap.md](docs/Future_Architecture_and_Design_Roadmap.md).
 
 ## Quick Start
 
@@ -146,7 +158,11 @@ Manual run:
 Useful documentation entry points:
 
 - [docs/Implementation_Status.md](docs/Implementation_Status.md)
+- [docs/ERP_Readiness_Assessment.md](docs/ERP_Readiness_Assessment.md)
+- [docs/ERP_Testing_Strategy.md](docs/ERP_Testing_Strategy.md)
 - [docs/Requirements_Baseline.md](docs/Requirements_Baseline.md)
+- [docs/Future_Architecture_and_Design_Roadmap.md](docs/Future_Architecture_and_Design_Roadmap.md)
+- [docs/Project_Documentation.md](docs/Project_Documentation.md)
 - [docs/Deployment_Runbook.md](docs/Deployment_Runbook.md)
 - [docs/architecture/](docs/architecture/)
 - [docs/client/](docs/client/)

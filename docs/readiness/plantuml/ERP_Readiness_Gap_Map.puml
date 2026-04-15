@@ -1,0 +1,51 @@
+@startuml
+title SageStore ERP Readiness Gap Map
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Implemented ERP MVP" {
+  [Qt Desktop Client]
+  [HTTP Server]
+  [SQLite Repositories]
+  [Inventory / Purchase / Sales / Management / Logs / Analytics]
+}
+
+package "Missing ERP Foundations" {
+  [Company Ownership]
+  [Storage Scope]
+  [Stock Movement Ledger]
+  [Documents / Attachments]
+  [Import / Export Jobs]
+  [Installer / Upgrade Path]
+  [Generic Product Attributes Activation]
+}
+
+package "Validation and Release" {
+  [Qt Unit Tests]
+  [Server Unit + Contract Tests]
+  [GUI Startup Smoke]
+  [Live GUI Fullstack Tests]
+}
+
+[Qt Desktop Client] --> [HTTP Server]
+[HTTP Server] --> [SQLite Repositories]
+[Inventory / Purchase / Sales / Management / Logs / Analytics] --> [Company Ownership]
+[Inventory / Purchase / Sales / Management / Logs / Analytics] --> [Storage Scope]
+[Inventory / Purchase / Sales / Management / Logs / Analytics] --> [Stock Movement Ledger]
+[Inventory / Purchase / Sales / Management / Logs / Analytics] --> [Documents / Attachments]
+[Inventory / Purchase / Sales / Management / Logs / Analytics] --> [Import / Export Jobs]
+[HTTP Server] --> [Installer / Upgrade Path]
+[Inventory / Purchase / Sales / Management / Logs / Analytics] --> [Generic Product Attributes Activation]
+
+[Qt Unit Tests] --> [Qt Desktop Client]
+[Server Unit + Contract Tests] --> [HTTP Server]
+[GUI Startup Smoke] --> [Qt Desktop Client]
+[Live GUI Fullstack Tests] --> [Qt Desktop Client]
+[Live GUI Fullstack Tests] --> [HTTP Server]
+
+note right of [Live GUI Fullstack Tests]
+This turn adds live GUI workflow coverage
+without introducing a second UI automation stack.
+end note
+@enduml

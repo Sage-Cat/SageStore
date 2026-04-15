@@ -1,0 +1,51 @@
+@startuml
+title Company and Storage Model
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class Company {
+  +id
+  +name
+  +legalInfo
+  +status
+}
+
+class Storage {
+  +id
+  +companyId
+  +name
+  +kind
+  +address
+}
+
+class ProductType {
+  +id
+  +code
+  +barcode
+  +name
+}
+
+class InventoryBalance {
+  +storageId
+  +productTypeId
+  +quantityOnHand
+}
+
+class Contact
+class Supplier
+class Employee
+
+Company "1" -- "*" Storage
+Storage "1" -- "*" InventoryBalance
+ProductType "1" -- "*" InventoryBalance
+Company "1" -- "*" Contact : owns / relates >
+Company "1" -- "*" Supplier : contracts >
+Company "1" -- "*" Employee : employs >
+
+note bottom of InventoryBalance
+Current code stores one Inventory row per ProductType
+and uses employeeId as metadata. That is not enough
+for multi-store or multi-company stock ownership.
+end note
+@enduml

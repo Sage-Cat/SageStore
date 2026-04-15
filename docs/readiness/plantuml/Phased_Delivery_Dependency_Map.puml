@@ -1,0 +1,30 @@
+@startuml
+title Phased Delivery Dependency Map
+
+skinparam shadowing false
+skinparam rectangle {
+  RoundCorner 10
+}
+
+rectangle "Phase 1\nHardening and release confidence" as P1
+rectangle "Phase 2\nCompany and storage scope" as P2
+rectangle "Phase 3\nStock movement truth" as P3
+rectangle "Phase 4\nDocuments and job pipelines" as P4
+rectangle "Phase 5\nInstallable product and domain profiles" as P5
+
+P1 --> P2
+P2 --> P3
+P3 --> P4
+P1 --> P5
+P4 --> P5
+
+note right of P3
+Do not implement rich document automation
+before ownership and stock semantics are stable.
+end note
+
+note right of P5
+Autoparts-specific profile work belongs here,
+after generic catalog and document foundations exist.
+end note
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+skinparam packageStyle rectangle
+top to bottom direction
+
+rectangle "Release Gates" as Release {
+  artifact "build.py docs"
+  artifact "docs link check"
+  artifact "package/install checks"
+  artifact "smoke scripts"
+}
+
+rectangle "Workflow System Tests" as System {
+  artifact "Qt Test + real server process"
+  artifact "login + inventory workflow"
+  artifact "future purchase/sales/management flows"
+}
+
+rectangle "Contract + Integration Tests" as Contract {
+  artifact "HTTP contract tests"
+  artifact "repository integration tests"
+  artifact "temp SQLite bootstrap"
+}
+
+rectangle "Fast Local Tests" as Fast {
+  artifact "GTest module/unit tests"
+  artifact "Qt widget/view-model tests"
+  artifact "normalization/validation rules"
+}
+
+Fast --> Contract
+Contract --> System
+System --> Release
+
+note right of System
+Primary UI automation choice:
+Qt Test with widget object names.
+No extra UI framework is required yet.
+end note
+
+note right of Release
+Shipping confidence depends on all four
+layers, not only the smoke scripts.
+end note
+@enduml

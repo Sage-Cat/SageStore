@@ -1,0 +1,23 @@
+@startuml
+title Document Processing Pipeline
+
+start
+:Register upload or export request;
+:Create Document / Job record;
+:Store raw artifact metadata;
+:Parse with format adapter;
+if (Validation passed?) then (yes)
+  :Build preview and reconciliation result;
+  if (Operator confirms commit?) then (yes)
+    :Execute business command;
+    :Write audit trail and artifact links;
+    :Mark job completed;
+  else (no)
+    :Mark job canceled;
+  endif
+else (no)
+  :Persist validation errors;
+  :Mark job failed;
+endif
+stop
+@enduml

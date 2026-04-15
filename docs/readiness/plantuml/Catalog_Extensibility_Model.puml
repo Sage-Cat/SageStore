@@ -1,0 +1,51 @@
+@startuml
+title Catalog Extensibility Model
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class ProductType {
+  +id
+  +code
+  +barcode
+  +name
+  +unit
+}
+
+class ProductInfo {
+  +id
+  +productTypeId
+  +name
+  +value
+}
+
+class SuppliersProductInfo {
+  +id
+  +supplierId
+  +productTypeId
+  +code
+}
+
+class CatalogProfile {
+  +name
+  +namespace
+}
+
+class AutoPartsProfile {
+  +brand
+  +oemNumber
+  +fitment
+  +analogCodes
+}
+
+ProductType "1" -- "*" ProductInfo
+ProductType "1" -- "*" SuppliersProductInfo
+CatalogProfile <|-- AutoPartsProfile
+CatalogProfile ..> ProductInfo : constrains attribute names
+
+note bottom of ProductInfo
+Use generic attributes first.
+Autoparts becomes a profile over ProductInfo,
+not a fork of the core catalog schema.
+end note
+@enduml

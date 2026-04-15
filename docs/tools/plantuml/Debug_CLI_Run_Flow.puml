@@ -1,0 +1,45 @@
+@startuml
+
+actor Codex
+participant "SageStoreDebugCli" as CLI
+participant "Server Controller" as ServerCtl
+participant "SageStoreServer" as Server
+participant "Client Session" as Client
+participant "DialogManager / StartupController" as Startup
+participant "MainWindow" as MainWindow
+participant "Artifact Manager" as Artifacts
+
+Codex -> CLI : run --scenario flow.json --artifact-dir out/
+CLI -> ServerCtl : spawnIfRequested()
+ServerCtl -> Server : start process
+ServerCtl -> Server : GET /api/system/health until ready
+Server --> ServerCtl : status=ok, ready=true
+
+CLI -> Client : startOffscreen()
+Client -> Startup : show login dialog
+CLI -> Client : login(admin, admin123)
+Client -> Startup : submit login
+Startup -> Server : POST /api/users/login
+Server --> Startup : login success dataset
+Startup -> MainWindow : create/show main window
+
+CLI -> Client : triggerMenu(PRODUCT_MANAGEMENT)
+Client -> MainWindow : QAction::trigger()
+MainWindow -> Server : GET /api/inventory/product-types
+Server --> MainWindow : dataset
+
+CLI -> Client : waitTableRows(productTypesTable, >=1)
+Client --> CLI : success
+
+CLI -> Artifacts : dump state + capture screenshot
+Artifacts --> CLI : paths
+
+CLI --> Codex : result JSON + artifact references
+
+alt step failure
+  CLI -> Artifacts : capture failure screenshot/state
+  Artifacts --> CLI : failure artifact paths
+  CLI --> Codex : ok=false with diagnostics
+end
+
+@enduml

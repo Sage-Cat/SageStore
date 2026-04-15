@@ -1,0 +1,71 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+left to right direction
+
+package "Generic ERP Core" {
+  class Company
+  class StorageLocation
+  class Contact
+  class Supplier
+  class Employee
+  class ProductType
+  class ProductAttributeTemplate
+  class ProductAttributeValue
+  class SupplierProduct
+  class PurchaseOrder
+  class GoodsReceipt
+  class SalesOrder
+  class SalesInvoice
+  class StockLedgerEntry
+  class Attachment
+  class BackgroundJob
+}
+
+package "Optional Domain Pack: Auto Parts" {
+  class CatalogBrand
+  class OemReference
+  class VehicleCompatibility
+}
+
+Company "1" -- "*" StorageLocation : owns >
+Company "1" -- "*" Contact
+Company "1" -- "*" Supplier
+Company "1" -- "*" Employee
+
+ProductType "1" -- "*" ProductAttributeValue
+ProductAttributeTemplate "1" -- "*" ProductAttributeValue
+Supplier "1" -- "*" SupplierProduct
+ProductType "1" -- "*" SupplierProduct
+
+PurchaseOrder "1" -- "*" GoodsReceipt : fulfilled by >
+ProductType "1" -- "*" StockLedgerEntry
+StorageLocation "1" -- "*" StockLedgerEntry
+Company "1" -- "*" StockLedgerEntry
+
+PurchaseOrder "1" -- "*" Attachment
+GoodsReceipt "1" -- "*" Attachment
+SalesInvoice "1" -- "*" Attachment
+BackgroundJob "1" -- "*" Attachment : produces/consumes >
+
+SalesOrder "1" -- "*" SalesInvoice : exports from >
+SalesOrder "1" -- "*" StockLedgerEntry : reserves/posts >
+GoodsReceipt "1" -- "*" StockLedgerEntry : receives >
+
+CatalogBrand "1" -- "*" ProductType
+ProductType "1" -- "*" OemReference
+ProductType "1" -- "*" VehicleCompatibility
+
+note bottom of ProductType
+Keep the core product model generic.
+Auto-parts semantics extend it through
+attributes, OEM references, and fitment.
+end note
+
+note bottom of StockLedgerEntry
+Inventory availability should be derived
+from ledger events, not stored only as one
+mutable quantity row.
+end note
+@enduml

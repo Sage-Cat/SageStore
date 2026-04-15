@@ -2,12 +2,12 @@
 
 ## Scope
 
-This runbook covers the current honest deployment shape of SageStore on March 13, 2026:
+This runbook covers the current honest deployment shape of SageStore on March 31, 2026:
 
 - build the desktop client and server locally
 - run the server with environment-based configuration
 - launch the client against the configured server
-- validate the installation with the inventory API smoke and the offscreen GUI startup smoke
+- validate the installation with the health probe, the inventory API smoke, and the offscreen GUI startup smoke
 
 It does not describe NSIS/Inno packaging because the repository does not implement that yet.
 
@@ -86,6 +86,12 @@ export SAGESTORE_SERVER_PORT=18081
 ./build/_client/SageStoreClient
 ```
 
+### Basic server health probe
+
+```bash
+curl http://127.0.0.1:8001/api/system/health
+```
+
 ### WSL GUI launch
 
 Client only:
@@ -141,13 +147,15 @@ scripts/smoke/fullstack_gui_startup_smoke.sh
 ## CI / Artifact Reality
 
 - Jenkins now runs `python3 build.py docs`, CMake build/test, the inventory smoke script, and an offscreen GUI startup smoke.
+- `ctest` now also includes Qt-driven client/server workflow tests for inventory CRUD, management contact creation, purchase receipt posting, sales invoice preview/export, and broad workspace loading.
 - Successful Jenkins runs archive the built client/server binaries, the bootstrap SQL file, and this deployment runbook.
 - No installer bundle or publish stage exists yet.
 
 ## Known Limits
 
-- No live automated Qt client against a real server path exists yet.
+- Live automated Qt client/server coverage now exists for inventory product management, management contact creation, purchase receipt posting, sales invoice preview/export, and broad workspace loading, but users/roles CRUD, supplier/employee CRUD, sales posting/cancel flows, auth-failure flows, and installed-binary workflows still need the same depth.
 - ProductType and stock tracking are the current desktop inventory slices.
 - The GUI smoke validates startup/runtime only; it does not drive an interactive end-to-end user workflow.
+- `/api/system/health` provides only a basic readiness signal; it does not replace migration, backup/restore, or packaged install validation.
 - Archived CI outputs are not a self-contained bundle; the binaries still rely on external Qt/Conan/system shared libraries.
-- Packaging and release publishing remain manual.
+- Packaging, migration discipline, backup/restore, and release publishing remain manual.

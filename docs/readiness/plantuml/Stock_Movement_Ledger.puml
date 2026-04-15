@@ -1,0 +1,39 @@
+@startuml
+title Stock Movement Ledger
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class StockMovement {
+  +id
+  +productTypeId
+  +storageId
+  +documentType
+  +documentId
+  +direction
+  +quantity
+  +timestamp
+}
+
+class InventoryBalance {
+  +storageId
+  +productTypeId
+  +quantityOnHand
+}
+
+class PurchaseReceipt
+class SalesPosting
+class Transfer
+class Correction
+
+PurchaseReceipt --> StockMovement : creates +
+SalesPosting --> StockMovement : creates -
+Transfer --> StockMovement : creates +/- pair
+Correction --> StockMovement : creates delta
+StockMovement --> InventoryBalance : projects to
+
+note right of StockMovement
+Primary truth should be why stock changed.
+InventoryBalance remains the fast current-state view.
+end note
+@enduml
