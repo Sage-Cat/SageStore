@@ -6,6 +6,27 @@
 
 #include "Ui/Models/SalesModel.hpp"
 
+namespace {
+QString translateSalesStatus(const QString &status, const QObject *context)
+{
+    const QString normalized = status.trimmed();
+    if (normalized.compare(QStringLiteral("Draft"), Qt::CaseInsensitive) == 0 ||
+        normalized == QStringLiteral("Чернетка")) {
+        return context->tr("Draft");
+    }
+    if (normalized.compare(QStringLiteral("Confirmed"), Qt::CaseInsensitive) == 0 ||
+        normalized == QStringLiteral("Підтверджено")) {
+        return context->tr("Confirmed");
+    }
+    if (normalized.compare(QStringLiteral("Invoiced"), Qt::CaseInsensitive) == 0 ||
+        normalized == QStringLiteral("Виставлено рахунок")) {
+        return context->tr("Invoiced");
+    }
+
+    return normalized;
+}
+} // namespace
+
 SalesViewModel::SalesViewModel(SalesModel &model, QObject *parent)
     : BaseViewModel(model, parent), m_model(model)
 {
@@ -82,23 +103,27 @@ QString SalesViewModel::productTypeLabel(const QString &productTypeId) const
 
 QString SalesViewModel::buildInvoicePreview(const QString &orderId) const
 {
-    const auto orderIt = std::find_if(m_model.orders().begin(), m_model.orders().end(),
+    const QVector<Common::Entities::SaleOrder> orders = m_model.orders();
+    const auto orderIt = std::find_if(orders.cbegin(), orders.cend(),
                                       [&](const auto &order) {
                                           return QString::fromStdString(order.id) == orderId;
                                       });
-    if (orderIt == m_model.orders().end()) {
+    if (orderIt == orders.cend()) {
         return {};
     }
 
     QString preview;
     QTextStream stream(&preview);
-    stream << "SageStore Invoice\n";
-    stream << "Order ID: " << QString::fromStdString(orderIt->id) << "\n";
-    stream << "Date: " << QString::fromStdString(orderIt->date) << "\n";
-    stream << "Customer: " << contactLabel(QString::fromStdString(orderIt->contactId)) << "\n";
-    stream << "Handled by: " << employeeLabel(QString::fromStdString(orderIt->employeeId)) << "\n";
-    stream << "Status: " << QString::fromStdString(orderIt->status) << "\n\n";
-    stream << "Items:\n";
+    stream << tr("SageStore Invoice") << "\n";
+    stream << tr("Order ID") << ": " << QString::fromStdString(orderIt->id) << "\n";
+    stream << tr("Date") << ": " << QString::fromStdString(orderIt->date) << "\n";
+    stream << tr("Customer") << ": " << contactLabel(QString::fromStdString(orderIt->contactId))
+           << "\n";
+    stream << tr("Handled by") << ": "
+           << employeeLabel(QString::fromStdString(orderIt->employeeId)) << "\n";
+    stream << tr("Status") << ": "
+           << translateSalesStatus(QString::fromStdString(orderIt->status), this) << "\n\n";
+    stream << tr("Items") << ":\n";
 
     double total = 0.0;
     for (const auto &record : m_model.orderRecords()) {
@@ -106,10 +131,11 @@ QString SalesViewModel::buildInvoicePreview(const QString &orderId) const
         const int quantity = QString::fromStdString(record.quantity).toInt();
         total += price * static_cast<double>(quantity);
         stream << " - " << productTypeLabel(QString::fromStdString(record.productTypeId)) << " | "
-               << quantity << " x " << price << " = " << (price * quantity) << "\n";
+               << quantity << " x " << QString::number(price, 'f', 2) << " = "
+               << QString::number(price * quantity, 'f', 2) << "\n";
     }
 
-    stream << "\nTotal: " << total << "\n";
+    stream << "\n" << tr("Total") << ": " << QString::number(total, 'f', 2) << "\n";
     return preview;
 }
 

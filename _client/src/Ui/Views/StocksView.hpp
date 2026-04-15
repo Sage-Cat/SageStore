@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QLineEdit>
+#include <QTableWidgetItem>
 #include <QVector>
 
 #include "Ui/DisplayData/InventoryStock.hpp"
@@ -17,7 +18,7 @@ public:
 private slots:
     void onAddButtonClicked();
     void onDeleteButtonClicked();
-    void onEditButtonClicked();
+    void onItemChanged(QTableWidgetItem *item);
     void onFilterTextChanged(const QString &text);
     void onStocksChanged();
     void onSelectionChanged();
@@ -25,11 +26,12 @@ private slots:
 private:
     void applyFilter();
     void fillTable(const QVector<DisplayData::InventoryStock> &stocks);
+    void persistRow(int row);
     void updateStatus(int visibleCount, int totalCount);
     void updateActionButtons();
-    bool showStockDialog(DisplayData::InventoryStock &stock, const QString &title);
 
     StocksViewModel &m_viewModel;
     QLineEdit *m_filterField{nullptr};
     QVector<DisplayData::InventoryStock> m_allStocks;
+    bool m_isSyncingTable{false};
 };

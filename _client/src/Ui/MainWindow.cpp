@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QScreen>
+#include <QStyleFactory>
 #include <QVBoxLayout>
 
 #include "Ui/Dialogs/DialogManager.hpp"
@@ -20,13 +21,25 @@ MainWindow::MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &
     : QMainWindow(parent), m_app(app), m_apiManager(apiClient), m_dialogManager(dialogManager),
       m_tabWidget(new QTabWidget(this)), m_statusBar(new QStatusBar(this))
 {
+    if (QStyleFactory::keys().contains(QStringLiteral("Fusion"))) {
+        m_app.setStyle(QStringLiteral("Fusion"));
+    }
     setupUi();
     setupMenu();
     setupMVVM();
 }
 
+void MainWindow::startUiProcess()
+{
+    show();
+    raise();
+    activateWindow();
+    m_dialogManager.showLoginDialog();
+}
+
 void MainWindow::setupUi()
 {
+    setObjectName("mainWindow");
     const QScreen *primaryScreen = m_app.primaryScreen();
     const QRect availableGeometry =
         primaryScreen ? primaryScreen->availableGeometry() : QRect();
@@ -44,6 +57,7 @@ void MainWindow::setupUi()
     connect(this, &MainWindow::menuActionTriggered, this, &MainWindow::handleMainMenuAction);
 
     m_tabWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_tabWidget->setObjectName("mainWindowTabs");
     m_tabWidget->setTabsClosable(true);
     m_tabWidget->setDocumentMode(true);
     connect(m_tabWidget, &QTabWidget::tabCloseRequested, m_tabWidget, &QTabWidget::removeTab);
@@ -58,28 +72,259 @@ void MainWindow::setupUi()
     setStatusBar(m_statusBar);
 
     setStyleSheet(R"(
-        QMainWindow { background-color: #f4efe7; }
-        QMenuBar { background-color: #34504f; color: #f5efe6; }
-        QMenuBar::item { padding: 6px 10px; background: transparent; }
-        QMenuBar::item:selected { background: #496a68; border-radius: 4px; }
-        QMenu { background-color: #fffaf2; border: 1px solid #d8cdbd; }
-        QMenu::item:selected { background-color: #e3d5bd; }
-        QTabWidget::pane {
-            border: 1px solid #d8cdbd;
-            background-color: #fffaf2;
+        QMainWindow {
+            background-color: #f4faf6;
+            color: #0f172a;
+        }
+        QWidget {
+            color: #0f172a;
+            font-size: 14px;
+        }
+        QMenuBar {
+            background-color: #ffffff;
+            color: #0f172a;
+            border-bottom: 1px solid #d7e6dc;
+            padding: 6px 10px;
+        }
+        QMenuBar::item {
+            padding: 8px 14px;
+            margin: 2px 4px;
+            background: transparent;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        QMenuBar::item:selected {
+            background: #e8f7ed;
+            color: #166534;
+        }
+        QMenu {
+            background-color: #ffffff;
+            border: 1px solid #d7e6dc;
+            border-radius: 12px;
+            padding: 6px;
+        }
+        QMenu::item {
+            padding: 8px 12px;
             border-radius: 8px;
+        }
+        QMenu::item:selected {
+            background-color: #ecfdf3;
+            color: #166534;
+        }
+        QTabWidget::pane {
+            border: 1px solid #d7e6dc;
+            background-color: #ffffff;
+            border-radius: 16px;
             top: -1px;
         }
         QTabBar::tab {
-            background: #d9cfbf;
-            color: #2f3736;
-            padding: 8px 14px;
-            margin-right: 4px;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            background: #e7efe9;
+            color: #4b6353;
+            padding: 10px 16px;
+            margin-right: 6px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: 600;
         }
-        QTabBar::tab:selected { background: #fffaf2; }
-        QStatusBar { background: #e9dfd1; color: #4a433b; }
+        QTabBar::tab:selected {
+            background: #ffffff;
+            color: #166534;
+        }
+        QTabBar::tab:hover:!selected {
+            background: #dbeee0;
+        }
+        QStatusBar {
+            background: #ffffff;
+            color: #64748b;
+            border-top: 1px solid #d7e6dc;
+        }
+        QFrame[card='true'], QWidget[card='true'] {
+            background-color: #ffffff;
+            border: 1px solid #d7e6dc;
+            border-radius: 18px;
+        }
+        QWidget[metricCard='true'] {
+            background-color: #ffffff;
+            border: 1px solid #d7e6dc;
+            border-radius: 18px;
+        }
+        QLabel[muted='true'] {
+            color: #64748b;
+        }
+        QLabel[sectionTitle='true'] {
+            color: #244235;
+            font-weight: 700;
+        }
+        QLabel[metricCaption='true'] {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        QPushButton {
+            background-color: #16a34a;
+            color: #ffffff;
+            border: 0;
+            border-radius: 11px;
+            padding: 8px 15px;
+            font-weight: 600;
+        }
+        QPushButton:hover {
+            background-color: #15803d;
+        }
+        QPushButton:pressed {
+            background-color: #166534;
+        }
+        QPushButton[destructive='true'],
+        QPushButton#baseDeleteButton {
+            background-color: #dc2626;
+        }
+        QPushButton[destructive='true']:hover,
+        QPushButton#baseDeleteButton:hover {
+            background-color: #b91c1c;
+        }
+        QPushButton:disabled {
+            background-color: #cdd9d1;
+            color: #ffffff;
+        }
+        QLineEdit, QComboBox, QDateEdit, QSpinBox, QDoubleSpinBox, QPlainTextEdit {
+            background-color: #ffffff;
+            border: 1px solid #d1e4d7;
+            border-radius: 10px;
+            padding: 7px 10px;
+            selection-background-color: #dcfce7;
+            selection-color: #0f172a;
+        }
+        QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QSpinBox:focus,
+        QDoubleSpinBox:focus, QPlainTextEdit:focus {
+            border: 1px solid #22c55e;
+        }
+        QComboBox {
+            min-height: 26px;
+            padding: 4px 26px 4px 10px;
+        }
+        QComboBox QAbstractItemView {
+            background: #ffffff;
+            border: 1px solid #d1e4d7;
+            border-radius: 10px;
+            selection-background-color: #dcfce7;
+            selection-color: #166534;
+            outline: 0;
+            padding: 2px;
+        }
+        QComboBox QAbstractItemView::item {
+            min-height: 24px;
+            padding: 4px 10px;
+            margin: 1px 2px;
+            border-radius: 6px;
+        }
+        QTableWidget {
+            background-color: #ffffff;
+            alternate-background-color: #f7fbf8;
+            border: 1px solid #d7e6dc;
+            border-radius: 14px;
+            gridline-color: #e5efe8;
+            selection-background-color: #dcfce7;
+            selection-color: #0f172a;
+        }
+        QTableWidget::item {
+            padding: 6px;
+        }
+        QTableWidget::item:selected {
+            color: #14532d;
+        }
+        QTableWidget QLineEdit[tableEditor='true'],
+        QTableWidget QAbstractSpinBox[tableEditor='true'] {
+            margin: 0;
+            min-height: 0px;
+            padding: 0 8px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: #f8fffa;
+            selection-background-color: #bbf7d0;
+            selection-color: #0f172a;
+        }
+        QTableWidget QLineEdit[tableEditor='true']:focus,
+        QTableWidget QAbstractSpinBox[tableEditor='true']:focus {
+            border: 1px solid #22c55e;
+            background: #ffffff;
+        }
+        QTableWidget QAbstractSpinBox[tableEditor='true'] QLineEdit {
+            margin: 0;
+            padding: 0 6px;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+        QTableWidget QComboBox[tableEditor='true'] {
+            margin: 0;
+            min-height: 0px;
+            padding: 0 22px 0 8px;
+            border: 1px solid #d7e6dc;
+            border-radius: 8px;
+            background: #f8fffa;
+            selection-background-color: #bbf7d0;
+            selection-color: #0f172a;
+        }
+        QTableWidget QComboBox[tableEditor='true']:focus,
+        QTableWidget QComboBox[tableEditor='true']:on {
+            border: 1px solid #22c55e;
+            background: #ffffff;
+        }
+        QTableWidget QComboBox[tableEditor='true'] QAbstractItemView {
+            background: #ffffff;
+            border: 1px solid #d7e6dc;
+            border-radius: 8px;
+            selection-background-color: #dcfce7;
+            selection-color: #166534;
+            outline: 0;
+            padding: 2px;
+        }
+        QAbstractItemView[tableComboPopup='true'] {
+            background: #ffffff;
+            border: 1px solid #d7e6dc;
+            border-radius: 8px;
+            selection-background-color: #dcfce7;
+            selection-color: #166534;
+            outline: 0;
+            padding: 2px;
+        }
+        QFrame[tableComboPopupContainer='true'] {
+            background: #ffffff;
+            border: 0;
+            margin: 0;
+            padding: 0;
+        }
+        QAbstractItemView[tableComboPopup='true']::item {
+            min-height: 24px;
+            padding: 4px 10px;
+            margin: 1px 2px;
+            border-radius: 6px;
+        }
+        QHeaderView::section {
+            background-color: #f2f8f3;
+            color: #244235;
+            padding: 8px;
+            border: 0;
+            border-bottom: 1px solid #d7e6dc;
+            font-weight: 700;
+        }
+        QTableCornerButton::section {
+            background-color: #f2f8f3;
+            border: 0;
+            border-bottom: 1px solid #d7e6dc;
+            border-right: 1px solid #d7e6dc;
+        }
+        QProgressBar {
+            border: 1px solid #d7e6dc;
+            border-radius: 999px;
+            background-color: #edf4ef;
+            text-align: center;
+            min-height: 18px;
+        }
+        QProgressBar::chunk {
+            background-color: #16a34a;
+            border-radius: 999px;
+        }
     )");
 }
 
@@ -244,6 +489,7 @@ QMenu *MainWindow::createModuleMenu(const QString &menuTitle,
     auto menu = new QMenu(menuTitle, this);
     for (auto actionType : actions) {
         auto action = new QAction(MainMenuActions::displayName(actionType), menu);
+        action->setObjectName(MainMenuActions::objectName(actionType));
         connect(action, &QAction::triggered,
                 [this, actionType]() { emit menuActionTriggered(actionType); });
         menu->addAction(action);

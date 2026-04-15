@@ -26,6 +26,7 @@ signals:
 protected:
     // setup
     virtual void setupUi();
+    void enableInlineEditing();
 
     // layputs
     QVBoxLayout *m_mainLayout;
@@ -35,7 +36,6 @@ protected:
     // buttons
     QPushButton *m_addButton;
     QPushButton *m_deleteButton;
-    QPushButton *m_editButton;
 
     // data table
     QTableWidget *m_dataTable;

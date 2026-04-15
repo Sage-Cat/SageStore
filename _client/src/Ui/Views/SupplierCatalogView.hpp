@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QTableWidgetItem>
 #include <QTableWidget>
 #include <QVector>
 #include <QWidget>
@@ -23,8 +24,8 @@ signals:
 private slots:
     void onSupplierProductsChanged();
     void onAddClicked();
-    void onEditClicked();
     void onDeleteClicked();
+    void onItemChanged(QTableWidgetItem *item);
     void onImportCsvClicked();
     void onFilterChanged(const QString &text);
     void onSelectionChanged();
@@ -34,18 +35,17 @@ private:
     void applyFilter();
     void updateActionButtons();
     void updateStatus(int visibleCount, int totalCount);
+    void persistRow(int row);
     void fillTable(const QVector<Common::Entities::SuppliersProductInfo> &supplierProducts);
-    bool showSupplierProductDialog(Common::Entities::SuppliersProductInfo &supplierProduct,
-                                   const QString &title);
     bool importCsvFile(const QString &filePath);
 
     SupplierCatalogViewModel &m_viewModel;
     QLineEdit *m_filterField{nullptr};
     QPushButton *m_addButton{nullptr};
-    QPushButton *m_editButton{nullptr};
     QPushButton *m_deleteButton{nullptr};
     QPushButton *m_importButton{nullptr};
     QTableWidget *m_table{nullptr};
     QLabel *m_statusLabel{nullptr};
     QVector<Common::Entities::SuppliersProductInfo> m_allSupplierProducts;
+    bool m_isSyncingTable{false};
 };

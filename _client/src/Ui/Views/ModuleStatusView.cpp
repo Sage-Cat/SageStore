@@ -36,6 +36,7 @@ QWidget *createCard(const ModuleStatusView::Section &section, QWidget *parent)
     layout->setContentsMargins(16, 16, 16, 16);
 
     card->setObjectName("moduleStatusCard");
+    card->setProperty("card", true);
     return card;
 }
 } // namespace
@@ -60,6 +61,7 @@ ModuleStatusView::ModuleStatusView(const QString &title, const QString &statusBa
 
     auto *summaryLabel = new QLabel(summary, this);
     summaryLabel->setObjectName("moduleStatusSummary");
+    summaryLabel->setProperty("muted", true);
     summaryLabel->setWordWrap(true);
 
     mainLayout->addLayout(headerRow);
@@ -72,38 +74,26 @@ ModuleStatusView::ModuleStatusView(const QString &title, const QString &statusBa
 
     setObjectName("moduleStatusView");
     setStyleSheet(
-        "#moduleStatusView {"
-        " background-color: #fffaf2;"
-        "}"
+        "#moduleStatusView { background-color: transparent; }"
         "#moduleStatusTitle {"
-        " color: #233130;"
+        " color: #0f172a;"
         " font-size: 24px;"
         " font-weight: 700;"
         "}"
         "#moduleStatusBadge {"
-        " background-color: #d7eadf;"
-        " color: #204739;"
+        " background-color: #dbeafe;"
+        " color: #1d4ed8;"
         " border-radius: 999px;"
         " padding: 6px 12px;"
         " font-weight: 600;"
         "}"
-        "#moduleStatusSummary {"
-        " color: #4a544d;"
-        " font-size: 14px;"
-        " line-height: 1.4;"
-        "}"
-        "#moduleStatusCard {"
-        " background-color: #f6efe4;"
-        " border: 1px solid #d8cdbd;"
-        " border-radius: 12px;"
-        "}"
         "#moduleStatusCardTitle {"
-        " color: #2f3736;"
+        " color: #0f172a;"
         " font-size: 15px;"
         " font-weight: 700;"
         "}"
         "#moduleStatusCardBody {"
-        " color: #5a5045;"
+        " color: #475569;"
         " font-size: 13px;"
         "}"
     );

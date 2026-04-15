@@ -1,10 +1,10 @@
 #include "Ui/Views/ManagementView.hpp"
 
+#include "Ui/Views/TableInteractionHelpers.hpp"
+
 #include <QAbstractItemView>
 #include <QComboBox>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QFormLayout>
+#include <QDateTime>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -21,6 +21,45 @@ bool containsInsensitive(const QString &haystack, const QString &needle)
 {
     return haystack.contains(needle, Qt::CaseInsensitive);
 }
+
+QString canonicalContactType(const QString &type)
+{
+    const QString normalized = type.trimmed();
+    if (normalized.compare(QStringLiteral("Customer"), Qt::CaseInsensitive) == 0 ||
+        normalized == QStringLiteral("Клієнт")) {
+        return QStringLiteral("Customer");
+    }
+    if (normalized.compare(QStringLiteral("Client"), Qt::CaseInsensitive) == 0) {
+        return QStringLiteral("Client");
+    }
+    if (normalized.compare(QStringLiteral("Partner"), Qt::CaseInsensitive) == 0 ||
+        normalized == QStringLiteral("Партнер")) {
+        return QStringLiteral("Partner");
+    }
+
+    return normalized;
+}
+
+QString displayContactType(const std::string &type)
+{
+    const QString canonical = canonicalContactType(QString::fromStdString(type));
+    if (canonical == QStringLiteral("Customer")) {
+        return QObject::tr("Customer");
+    }
+    if (canonical == QStringLiteral("Client")) {
+        return QObject::tr("Client");
+    }
+    if (canonical == QStringLiteral("Partner")) {
+        return QObject::tr("Partner");
+    }
+
+    return canonical;
+}
+
+QString defaultEntitySuffix()
+{
+    return QDateTime::currentDateTimeUtc().toString(QStringLiteral("hhmmsszzz"));
+}
 } // namespace
 
 ManagementView::ManagementView(ManagementViewModel &viewModel, QWidget *parent)
@@ -28,6 +67,20 @@ ManagementView::ManagementView(ManagementViewModel &viewModel, QWidget *parent)
 {
     setupUi();
     connectSignals();
+    installComboDelegate(
+        m_contactsUi.table, 2, QStringLiteral("managementContactTypeCombo"),
+        [](const QModelIndex &) {
+            return QVector<TableComboChoice>{
+                {QObject::tr("Customer"), QStringLiteral("Customer")},
+                {QObject::tr("Client"), QStringLiteral("Client")},
+                {QObject::tr("Partner"), QStringLiteral("Partner")}};
+        },
+        [this](const QModelIndex &index, const TableComboChoice &) {
+            if (m_isSyncingTable) {
+                return;
+            }
+            persistContactRow(index.row());
+        });
 }
 
 void ManagementView::showSection(Section section)
@@ -62,8 +115,6 @@ ManagementView::CrudUi ManagementView::createCrudSection(const QString &objectPr
 
     ui.addButton = new QPushButton(tr("Add"), ui.page);
     ui.addButton->setObjectName(objectPrefix + "AddButton");
-    ui.editButton = new QPushButton(tr("Edit"), ui.page);
-    ui.editButton->setObjectName(objectPrefix + "EditButton");
     ui.deleteButton = new QPushButton(tr("Delete"), ui.page);
     ui.deleteButton->setObjectName(objectPrefix + "DeleteButton");
 
@@ -71,7 +122,6 @@ ManagementView::CrudUi ManagementView::createCrudSection(const QString &objectPr
     filterRow->addWidget(ui.filterField);
 
     buttonsRow->addWidget(ui.addButton);
-    buttonsRow->addWidget(ui.editButton);
     buttonsRow->addWidget(ui.deleteButton);
     buttonsRow->addStretch();
 
@@ -79,14 +129,15 @@ ManagementView::CrudUi ManagementView::createCrudSection(const QString &objectPr
     ui.table->setObjectName(objectPrefix + "Table");
     ui.table->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui.table->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui.table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui.table->setAlternatingRowColors(true);
-    ui.table->setSortingEnabled(true);
+    ui.table->setSortingEnabled(false);
     ui.table->verticalHeader()->setVisible(false);
     ui.table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    configureEditableTable(ui.table, objectPrefix + QStringLiteral("InlineEditor"));
 
     ui.statusLabel = new QLabel(tr("Status: ready"), ui.page);
     ui.statusLabel->setObjectName(objectPrefix + "StatusLabel");
+    ui.statusLabel->setProperty("muted", true);
 
     layout->addLayout(filterRow);
     layout->addLayout(buttonsRow);
@@ -107,8 +158,10 @@ void ManagementView::setupUi()
            "records are reused by purchasing, sales, stock, and reporting workflows."),
         headerCard);
 
+    headerCard->setProperty("card", true);
     titleLabel->setObjectName("managementTitleLabel");
     summaryLabel->setObjectName("managementSummaryLabel");
+    summaryLabel->setProperty("muted", true);
     summaryLabel->setWordWrap(true);
 
     headerLayout->addWidget(titleLabel);
@@ -136,17 +189,8 @@ void ManagementView::setupUi()
 
     setObjectName("managementView");
     setStyleSheet(
-        "#managementView { background-color: #fffaf2; }"
-        "QFrame { background-color: #f6efe4; border: 1px solid #d8cdbd; border-radius: 12px; }"
-        "#managementTitleLabel { color: #233130; font-size: 24px; font-weight: 700; }"
-        "#managementSummaryLabel { color: #4a544d; }"
-        "QLineEdit, QComboBox { background-color: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; }"
-        "QPushButton { background-color: #1d4ed8; color: white; border: 0; border-radius: 6px; padding: 6px 12px; }"
-        "QPushButton:hover { background-color: #1e40af; }"
-        "QPushButton[destructive='true'] { background-color: #b91c1c; }"
-        "QPushButton[destructive='true']:hover { background-color: #991b1b; }"
-        "QTableWidget { background-color: #fbfbfd; alternate-background-color: #f1f4f8; border: 1px solid #d7dde7; border-radius: 8px; }"
-        "QHeaderView::section { background-color: #e8eef6; color: #0f172a; padding: 6px; border: 0; border-bottom: 1px solid #d7dde7; font-weight: 600; }");
+        "#managementView { background-color: transparent; }"
+        "#managementTitleLabel { color: #0f172a; font-size: 24px; font-weight: 700; }");
 }
 
 void ManagementView::connectSignals()
@@ -160,33 +204,40 @@ void ManagementView::connectSignals()
             &ManagementView::onEmployeesChanged);
 
     connect(m_contactsUi.addButton, &QPushButton::clicked, this, &ManagementView::onContactAdd);
-    connect(m_contactsUi.editButton, &QPushButton::clicked, this, &ManagementView::onContactEdit);
     connect(m_contactsUi.deleteButton, &QPushButton::clicked, this,
             &ManagementView::onContactDelete);
     connect(m_contactsUi.filterField, &QLineEdit::textChanged, this,
             &ManagementView::refreshContacts);
     connect(m_contactsUi.table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            &ManagementView::refreshContacts);
+            [this](const QItemSelection &, const QItemSelection &) {
+                updateActionButtons(m_contactsUi);
+            });
+    connect(m_contactsUi.table, &QTableWidget::itemChanged, this,
+            &ManagementView::onContactItemChanged);
 
     connect(m_suppliersUi.addButton, &QPushButton::clicked, this, &ManagementView::onSupplierAdd);
-    connect(m_suppliersUi.editButton, &QPushButton::clicked, this,
-            &ManagementView::onSupplierEdit);
     connect(m_suppliersUi.deleteButton, &QPushButton::clicked, this,
             &ManagementView::onSupplierDelete);
     connect(m_suppliersUi.filterField, &QLineEdit::textChanged, this,
             &ManagementView::refreshSuppliers);
     connect(m_suppliersUi.table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            &ManagementView::refreshSuppliers);
+            [this](const QItemSelection &, const QItemSelection &) {
+                updateActionButtons(m_suppliersUi);
+            });
+    connect(m_suppliersUi.table, &QTableWidget::itemChanged, this,
+            &ManagementView::onSupplierItemChanged);
 
     connect(m_employeesUi.addButton, &QPushButton::clicked, this, &ManagementView::onEmployeeAdd);
-    connect(m_employeesUi.editButton, &QPushButton::clicked, this,
-            &ManagementView::onEmployeeEdit);
     connect(m_employeesUi.deleteButton, &QPushButton::clicked, this,
             &ManagementView::onEmployeeDelete);
     connect(m_employeesUi.filterField, &QLineEdit::textChanged, this,
             &ManagementView::refreshEmployees);
     connect(m_employeesUi.table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            &ManagementView::refreshEmployees);
+            [this](const QItemSelection &, const QItemSelection &) {
+                updateActionButtons(m_employeesUi);
+            });
+    connect(m_employeesUi.table, &QTableWidget::itemChanged, this,
+            &ManagementView::onEmployeeItemChanged);
 }
 
 void ManagementView::styleSection(CrudUi &ui) const
@@ -198,7 +249,6 @@ void ManagementView::styleSection(CrudUi &ui) const
 void ManagementView::updateActionButtons(CrudUi &ui) const
 {
     const bool hasSelection = !ui.table->selectedItems().isEmpty();
-    ui.editButton->setEnabled(hasSelection);
     ui.deleteButton->setEnabled(hasSelection);
 }
 
@@ -231,8 +281,9 @@ void ManagementView::applyContactsFilter()
     const QString filter = m_contactsUi.filterField->text().trimmed();
     QVector<Common::Entities::Contact> filtered;
     for (const auto &contact : m_allContacts) {
-        const QStringList haystack = {QString::fromStdString(contact.name),
-                                      QString::fromStdString(contact.type),
+        const QString canonicalType = canonicalContactType(QString::fromStdString(contact.type));
+        const QStringList haystack = {QString::fromStdString(contact.name), canonicalType,
+                                      displayContactType(contact.type),
                                       QString::fromStdString(contact.email),
                                       QString::fromStdString(contact.phone)};
         if (filter.isEmpty() || std::any_of(haystack.begin(), haystack.end(), [&](const QString &value) {
@@ -294,7 +345,7 @@ void ManagementView::applyEmployeesFilter()
 
 void ManagementView::fillContactsTable(const QVector<Common::Entities::Contact> &contacts)
 {
-    m_contactsUi.table->setSortingEnabled(false);
+    m_isSyncingTable = true;
     m_contactsUi.table->clearContents();
     m_contactsUi.table->setRowCount(contacts.size());
     m_contactsUi.table->setColumnCount(5);
@@ -303,21 +354,28 @@ void ManagementView::fillContactsTable(const QVector<Common::Entities::Contact> 
 
     for (int row = 0; row < contacts.size(); ++row) {
         const auto &contact = contacts[row];
-        m_contactsUi.table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(contact.id)));
-        m_contactsUi.table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(contact.name)));
-        m_contactsUi.table->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(contact.type)));
-        m_contactsUi.table->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(contact.email)));
-        m_contactsUi.table->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(contact.phone)));
+        const QString contactType = canonicalContactType(QString::fromStdString(contact.type));
+        m_contactsUi.table->setItem(row, 0,
+                                    createReadOnlyTableItem(QString::fromStdString(contact.id)));
+        m_contactsUi.table->setItem(row, 1,
+                                    createEditableTableItem(QString::fromStdString(contact.name)));
+        m_contactsUi.table->setItem(
+            row, 2, createComboTableItem(displayContactType(contact.type), contactType));
+        m_contactsUi.table->setItem(row, 3,
+                                    createEditableTableItem(QString::fromStdString(contact.email)));
+        m_contactsUi.table->setItem(row, 4,
+                                    createEditableTableItem(QString::fromStdString(contact.phone)));
     }
 
     m_contactsUi.table->setColumnHidden(0, true);
-    m_contactsUi.table->setSortingEnabled(true);
+    refreshPersistentComboEditors(m_contactsUi.table);
+    m_isSyncingTable = false;
     updateActionButtons(m_contactsUi);
 }
 
 void ManagementView::fillSuppliersTable(const QVector<Common::Entities::Supplier> &suppliers)
 {
-    m_suppliersUi.table->setSortingEnabled(false);
+    m_isSyncingTable = true;
     m_suppliersUi.table->clearContents();
     m_suppliersUi.table->setRowCount(suppliers.size());
     m_suppliersUi.table->setColumnCount(5);
@@ -326,21 +384,27 @@ void ManagementView::fillSuppliersTable(const QVector<Common::Entities::Supplier
 
     for (int row = 0; row < suppliers.size(); ++row) {
         const auto &supplier = suppliers[row];
-        m_suppliersUi.table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(supplier.id)));
-        m_suppliersUi.table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(supplier.name)));
-        m_suppliersUi.table->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(supplier.number)));
-        m_suppliersUi.table->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(supplier.email)));
-        m_suppliersUi.table->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(supplier.address)));
+        m_suppliersUi.table->setItem(row, 0,
+                                     createReadOnlyTableItem(QString::fromStdString(supplier.id)));
+        m_suppliersUi.table->setItem(row, 1,
+                                     createEditableTableItem(QString::fromStdString(supplier.name)));
+        m_suppliersUi.table->setItem(
+            row, 2, createEditableTableItem(QString::fromStdString(supplier.number)));
+        m_suppliersUi.table->setItem(row, 3,
+                                     createEditableTableItem(QString::fromStdString(supplier.email)));
+        m_suppliersUi.table->setItem(
+            row, 4, createEditableTableItem(QString::fromStdString(supplier.address)));
+
     }
 
     m_suppliersUi.table->setColumnHidden(0, true);
-    m_suppliersUi.table->setSortingEnabled(true);
+    m_isSyncingTable = false;
     updateActionButtons(m_suppliersUi);
 }
 
 void ManagementView::fillEmployeesTable(const QVector<Common::Entities::Employee> &employees)
 {
-    m_employeesUi.table->setSortingEnabled(false);
+    m_isSyncingTable = true;
     m_employeesUi.table->clearContents();
     m_employeesUi.table->setRowCount(employees.size());
     m_employeesUi.table->setColumnCount(5);
@@ -349,169 +413,96 @@ void ManagementView::fillEmployeesTable(const QVector<Common::Entities::Employee
 
     for (int row = 0; row < employees.size(); ++row) {
         const auto &employee = employees[row];
-        m_employeesUi.table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(employee.id)));
-        m_employeesUi.table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(employee.name)));
-        m_employeesUi.table->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(employee.number)));
-        m_employeesUi.table->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(employee.email)));
-        m_employeesUi.table->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(employee.address)));
+        m_employeesUi.table->setItem(row, 0,
+                                     createReadOnlyTableItem(QString::fromStdString(employee.id)));
+        m_employeesUi.table->setItem(row, 1,
+                                     createEditableTableItem(QString::fromStdString(employee.name)));
+        m_employeesUi.table->setItem(
+            row, 2, createEditableTableItem(QString::fromStdString(employee.number)));
+        m_employeesUi.table->setItem(row, 3,
+                                     createEditableTableItem(QString::fromStdString(employee.email)));
+        m_employeesUi.table->setItem(
+            row, 4, createEditableTableItem(QString::fromStdString(employee.address)));
+
     }
 
     m_employeesUi.table->setColumnHidden(0, true);
-    m_employeesUi.table->setSortingEnabled(true);
+    m_isSyncingTable = false;
     updateActionButtons(m_employeesUi);
 }
 
-bool ManagementView::showContactDialog(Common::Entities::Contact &contact, const QString &title)
+void ManagementView::onContactItemChanged(QTableWidgetItem *item)
 {
-    QDialog dialog(this);
-    dialog.setWindowTitle(title);
-    dialog.setMinimumWidth(420);
-
-    auto *layout = new QFormLayout(&dialog);
-    auto *nameField = new QLineEdit(QString::fromStdString(contact.name), &dialog);
-    auto *typeBox = new QComboBox(&dialog);
-    auto *emailField = new QLineEdit(QString::fromStdString(contact.email), &dialog);
-    auto *phoneField = new QLineEdit(QString::fromStdString(contact.phone), &dialog);
-
-    typeBox->setEditable(true);
-    typeBox->addItems({tr("Customer"), tr("Client"), tr("Partner")});
-    typeBox->setCurrentText(contact.type.empty() ? tr("Customer")
-                                                 : QString::fromStdString(contact.type));
-
-    layout->addRow(tr("Name"), nameField);
-    layout->addRow(tr("Type"), typeBox);
-    layout->addRow(tr("Email"), emailField);
-    layout->addRow(tr("Phone"), phoneField);
-
-    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    layout->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, [this, &dialog, nameField]() {
-        if (nameField->text().trimmed().isEmpty()) {
-            emit errorOccurred(tr("Name is required."));
-            return;
-        }
-        dialog.accept();
-    });
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return false;
+    if (m_isSyncingTable || item == nullptr) {
+        return;
     }
 
-    contact.name  = nameField->text().trimmed().toStdString();
-    contact.type  = typeBox->currentText().trimmed().toStdString();
-    contact.email = emailField->text().trimmed().toStdString();
-    contact.phone = phoneField->text().trimmed().toStdString();
-    return true;
+    const QString currentValue = item->text().trimmed();
+
+    if (item->column() == 1 && currentValue.isEmpty()) {
+        emit errorOccurred(tr("Name is required."));
+        restoreItemText(m_contactsUi.table, item, item->data(Qt::UserRole).toString());
+        return;
+    }
+
+    if (item->column() == 1 || item->column() == 3 || item->column() == 4) {
+        if (restoreIfUnchanged(m_contactsUi.table, item, currentValue)) {
+            return;
+        }
+        persistContactRow(item->row());
+    }
 }
 
-bool ManagementView::showSupplierDialog(Common::Entities::Supplier &supplier, const QString &title)
+void ManagementView::onSupplierItemChanged(QTableWidgetItem *item)
 {
-    QDialog dialog(this);
-    dialog.setWindowTitle(title);
-    dialog.setMinimumWidth(440);
-
-    auto *layout = new QFormLayout(&dialog);
-    auto *nameField = new QLineEdit(QString::fromStdString(supplier.name), &dialog);
-    auto *numberField = new QLineEdit(QString::fromStdString(supplier.number), &dialog);
-    auto *emailField = new QLineEdit(QString::fromStdString(supplier.email), &dialog);
-    auto *addressField = new QLineEdit(QString::fromStdString(supplier.address), &dialog);
-
-    layout->addRow(tr("Name"), nameField);
-    layout->addRow(tr("Number"), numberField);
-    layout->addRow(tr("Email"), emailField);
-    layout->addRow(tr("Address"), addressField);
-
-    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    layout->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, [this, &dialog, nameField]() {
-        if (nameField->text().trimmed().isEmpty()) {
-            emit errorOccurred(tr("Name is required."));
-            return;
-        }
-        dialog.accept();
-    });
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return false;
+    if (m_isSyncingTable || item == nullptr) {
+        return;
     }
 
-    supplier.name    = nameField->text().trimmed().toStdString();
-    supplier.number  = numberField->text().trimmed().toStdString();
-    supplier.email   = emailField->text().trimmed().toStdString();
-    supplier.address = addressField->text().trimmed().toStdString();
-    return true;
+    const QString currentValue = item->text().trimmed();
+
+    if (item->column() == 1 && currentValue.isEmpty()) {
+        emit errorOccurred(tr("Name is required."));
+        restoreItemText(m_suppliersUi.table, item, item->data(Qt::UserRole).toString());
+        return;
+    }
+
+    if (item->column() >= 1 && item->column() <= 4) {
+        if (restoreIfUnchanged(m_suppliersUi.table, item, currentValue)) {
+            return;
+        }
+        persistSupplierRow(item->row());
+    }
 }
 
-bool ManagementView::showEmployeeDialog(Common::Entities::Employee &employee, const QString &title)
+void ManagementView::onEmployeeItemChanged(QTableWidgetItem *item)
 {
-    QDialog dialog(this);
-    dialog.setWindowTitle(title);
-    dialog.setMinimumWidth(440);
-
-    auto *layout = new QFormLayout(&dialog);
-    auto *nameField = new QLineEdit(QString::fromStdString(employee.name), &dialog);
-    auto *numberField = new QLineEdit(QString::fromStdString(employee.number), &dialog);
-    auto *emailField = new QLineEdit(QString::fromStdString(employee.email), &dialog);
-    auto *addressField = new QLineEdit(QString::fromStdString(employee.address), &dialog);
-
-    layout->addRow(tr("Name"), nameField);
-    layout->addRow(tr("Number"), numberField);
-    layout->addRow(tr("Email"), emailField);
-    layout->addRow(tr("Address"), addressField);
-
-    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    layout->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, [this, &dialog, nameField]() {
-        if (nameField->text().trimmed().isEmpty()) {
-            emit errorOccurred(tr("Name is required."));
-            return;
-        }
-        dialog.accept();
-    });
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return false;
+    if (m_isSyncingTable || item == nullptr) {
+        return;
     }
 
-    employee.name    = nameField->text().trimmed().toStdString();
-    employee.number  = numberField->text().trimmed().toStdString();
-    employee.email   = emailField->text().trimmed().toStdString();
-    employee.address = addressField->text().trimmed().toStdString();
-    return true;
+    const QString currentValue = item->text().trimmed();
+
+    if (item->column() == 1 && currentValue.isEmpty()) {
+        emit errorOccurred(tr("Name is required."));
+        restoreItemText(m_employeesUi.table, item, item->data(Qt::UserRole).toString());
+        return;
+    }
+
+    if (item->column() >= 1 && item->column() <= 4) {
+        if (restoreIfUnchanged(m_employeesUi.table, item, currentValue)) {
+            return;
+        }
+        persistEmployeeRow(item->row());
+    }
 }
 
 void ManagementView::onContactAdd()
 {
     Common::Entities::Contact contact;
+    contact.name = tr("New customer %1").arg(defaultEntitySuffix()).toStdString();
     contact.type = "Customer";
-    if (showContactDialog(contact, tr("Create customer"))) {
-        m_viewModel.createContact(contact);
-    }
-}
-
-void ManagementView::onContactEdit()
-{
-    const auto selected = m_contactsUi.table->selectedItems();
-    if (selected.isEmpty()) {
-        return;
-    }
-
-    const int row = selected.first()->row();
-    Common::Entities::Contact contact{
-        .id = m_contactsUi.table->item(row, 0)->text().toStdString(),
-        .name = m_contactsUi.table->item(row, 1)->text().toStdString(),
-        .type = m_contactsUi.table->item(row, 2)->text().toStdString(),
-        .email = m_contactsUi.table->item(row, 3)->text().toStdString(),
-        .phone = m_contactsUi.table->item(row, 4)->text().toStdString()};
-    if (showContactDialog(contact, tr("Edit customer"))) {
-        m_viewModel.editContact(contact);
-    }
+    m_viewModel.createContact(contact);
 }
 
 void ManagementView::onContactDelete()
@@ -525,28 +516,8 @@ void ManagementView::onContactDelete()
 void ManagementView::onSupplierAdd()
 {
     Common::Entities::Supplier supplier;
-    if (showSupplierDialog(supplier, tr("Create supplier"))) {
-        m_viewModel.createSupplier(supplier);
-    }
-}
-
-void ManagementView::onSupplierEdit()
-{
-    const auto selected = m_suppliersUi.table->selectedItems();
-    if (selected.isEmpty()) {
-        return;
-    }
-
-    const int row = selected.first()->row();
-    Common::Entities::Supplier supplier{
-        .id = m_suppliersUi.table->item(row, 0)->text().toStdString(),
-        .name = m_suppliersUi.table->item(row, 1)->text().toStdString(),
-        .number = m_suppliersUi.table->item(row, 2)->text().toStdString(),
-        .email = m_suppliersUi.table->item(row, 3)->text().toStdString(),
-        .address = m_suppliersUi.table->item(row, 4)->text().toStdString()};
-    if (showSupplierDialog(supplier, tr("Edit supplier"))) {
-        m_viewModel.editSupplier(supplier);
-    }
+    supplier.name = tr("New supplier %1").arg(defaultEntitySuffix()).toStdString();
+    m_viewModel.createSupplier(supplier);
 }
 
 void ManagementView::onSupplierDelete()
@@ -560,28 +531,8 @@ void ManagementView::onSupplierDelete()
 void ManagementView::onEmployeeAdd()
 {
     Common::Entities::Employee employee;
-    if (showEmployeeDialog(employee, tr("Create employee"))) {
-        m_viewModel.createEmployee(employee);
-    }
-}
-
-void ManagementView::onEmployeeEdit()
-{
-    const auto selected = m_employeesUi.table->selectedItems();
-    if (selected.isEmpty()) {
-        return;
-    }
-
-    const int row = selected.first()->row();
-    Common::Entities::Employee employee{
-        .id = m_employeesUi.table->item(row, 0)->text().toStdString(),
-        .name = m_employeesUi.table->item(row, 1)->text().toStdString(),
-        .number = m_employeesUi.table->item(row, 2)->text().toStdString(),
-        .email = m_employeesUi.table->item(row, 3)->text().toStdString(),
-        .address = m_employeesUi.table->item(row, 4)->text().toStdString()};
-    if (showEmployeeDialog(employee, tr("Edit employee"))) {
-        m_viewModel.editEmployee(employee);
-    }
+    employee.name = tr("New employee %1").arg(defaultEntitySuffix()).toStdString();
+    m_viewModel.createEmployee(employee);
 }
 
 void ManagementView::onEmployeeDelete()
@@ -590,4 +541,105 @@ void ManagementView::onEmployeeDelete()
     if (!selected.isEmpty()) {
         m_viewModel.deleteEmployee(m_employeesUi.table->item(selected.first()->row(), 0)->text());
     }
+}
+
+void ManagementView::persistContactRow(int row)
+{
+    auto *idItem = m_contactsUi.table->item(row, 0);
+    auto *nameItem = m_contactsUi.table->item(row, 1);
+    auto *typeItem = m_contactsUi.table->item(row, 2);
+    auto *emailItem = m_contactsUi.table->item(row, 3);
+    auto *phoneItem = m_contactsUi.table->item(row, 4);
+    if (idItem == nullptr || nameItem == nullptr || typeItem == nullptr || emailItem == nullptr ||
+        phoneItem == nullptr) {
+        return;
+    }
+
+    const QString name = nameItem->text().trimmed();
+    if (name.isEmpty()) {
+        emit errorOccurred(tr("Name is required."));
+        restoreItemText(m_contactsUi.table, nameItem, nameItem->data(Qt::UserRole).toString());
+        return;
+    }
+
+    Common::Entities::Contact contact{.id = idItem->text().toStdString(),
+                                      .name = name.toStdString(),
+                                      .type = typeItem->data(Qt::UserRole).toString().toStdString(),
+                                      .email = emailItem->text().trimmed().toStdString(),
+                                      .phone = phoneItem->text().trimmed().toStdString()};
+    {
+        const QSignalBlocker blocker(m_contactsUi.table);
+        nameItem->setData(Qt::UserRole, name);
+        emailItem->setData(Qt::UserRole, emailItem->text().trimmed());
+        phoneItem->setData(Qt::UserRole, phoneItem->text().trimmed());
+    }
+    m_viewModel.editContact(contact);
+}
+
+void ManagementView::persistSupplierRow(int row)
+{
+    auto *idItem = m_suppliersUi.table->item(row, 0);
+    auto *nameItem = m_suppliersUi.table->item(row, 1);
+    auto *numberItem = m_suppliersUi.table->item(row, 2);
+    auto *emailItem = m_suppliersUi.table->item(row, 3);
+    auto *addressItem = m_suppliersUi.table->item(row, 4);
+    if (idItem == nullptr || nameItem == nullptr || numberItem == nullptr ||
+        emailItem == nullptr || addressItem == nullptr) {
+        return;
+    }
+
+    const QString name = nameItem->text().trimmed();
+    if (name.isEmpty()) {
+        emit errorOccurred(tr("Name is required."));
+        restoreItemText(m_suppliersUi.table, nameItem, nameItem->data(Qt::UserRole).toString());
+        return;
+    }
+
+    Common::Entities::Supplier supplier{.id = idItem->text().toStdString(),
+                                        .name = name.toStdString(),
+                                        .number = numberItem->text().trimmed().toStdString(),
+                                        .email = emailItem->text().trimmed().toStdString(),
+                                        .address = addressItem->text().trimmed().toStdString()};
+    {
+        const QSignalBlocker blocker(m_suppliersUi.table);
+        nameItem->setData(Qt::UserRole, name);
+        numberItem->setData(Qt::UserRole, numberItem->text().trimmed());
+        emailItem->setData(Qt::UserRole, emailItem->text().trimmed());
+        addressItem->setData(Qt::UserRole, addressItem->text().trimmed());
+    }
+    m_viewModel.editSupplier(supplier);
+}
+
+void ManagementView::persistEmployeeRow(int row)
+{
+    auto *idItem = m_employeesUi.table->item(row, 0);
+    auto *nameItem = m_employeesUi.table->item(row, 1);
+    auto *numberItem = m_employeesUi.table->item(row, 2);
+    auto *emailItem = m_employeesUi.table->item(row, 3);
+    auto *addressItem = m_employeesUi.table->item(row, 4);
+    if (idItem == nullptr || nameItem == nullptr || numberItem == nullptr ||
+        emailItem == nullptr || addressItem == nullptr) {
+        return;
+    }
+
+    const QString name = nameItem->text().trimmed();
+    if (name.isEmpty()) {
+        emit errorOccurred(tr("Name is required."));
+        restoreItemText(m_employeesUi.table, nameItem, nameItem->data(Qt::UserRole).toString());
+        return;
+    }
+
+    Common::Entities::Employee employee{.id = idItem->text().toStdString(),
+                                        .name = name.toStdString(),
+                                        .number = numberItem->text().trimmed().toStdString(),
+                                        .email = emailItem->text().trimmed().toStdString(),
+                                        .address = addressItem->text().trimmed().toStdString()};
+    {
+        const QSignalBlocker blocker(m_employeesUi.table);
+        nameItem->setData(Qt::UserRole, name);
+        numberItem->setData(Qt::UserRole, numberItem->text().trimmed());
+        emailItem->setData(Qt::UserRole, emailItem->text().trimmed());
+        addressItem->setData(Qt::UserRole, addressItem->text().trimmed());
+    }
+    m_viewModel.editEmployee(employee);
 }

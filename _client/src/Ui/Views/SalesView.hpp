@@ -1,10 +1,13 @@
 #pragma once
 
+#include <functional>
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QTableWidget>
+#include <QTableWidgetItem>
 #include <QTabWidget>
 #include <QVector>
 #include <QWidget>
@@ -19,10 +22,13 @@ class SalesView : public QWidget {
 
 public:
     enum class Section { Orders, Invoices };
+    using InvoiceExportPathProvider =
+        std::function<QString(QWidget *, const QString &, const QString &, const QString &)>;
 
     explicit SalesView(SalesViewModel &viewModel, QWidget *parent = nullptr);
 
     void showSection(Section section);
+    void setInvoiceExportPathProvider(InvoiceExportPathProvider provider);
 
 signals:
     void errorOccurred(const QString &message);
@@ -32,16 +38,17 @@ private slots:
     void onOrderRecordsChanged();
     void onReferenceDataChanged();
     void onAddOrder();
-    void onEditOrder();
     void onDeleteOrder();
     void onAddRecord();
-    void onEditRecord();
     void onDeleteRecord();
     void onOrdersSelectionChanged();
+    void onOrderRecordsSelectionChanged();
     void onInvoiceSelectionChanged();
     void onOrdersFilterChanged(const QString &text);
     void onInvoicesFilterChanged(const QString &text);
     void onExportInvoice();
+    void onOrdersTableItemChanged(QTableWidgetItem *item);
+    void onOrderRecordsTableItemChanged(QTableWidgetItem *item);
 
 private:
     enum class RecordsContext { None, Orders, Invoices };
@@ -49,24 +56,22 @@ private:
     void setupUi();
     void applyOrdersFilter();
     void applyInvoicesFilter();
-    void fillOrdersTable(QTableWidget *table, const QVector<Common::Entities::SaleOrder> &orders) const;
+    void fillOrdersTable(QTableWidget *table, const QVector<Common::Entities::SaleOrder> &orders);
     void fillRecordsTable(QTableWidget *table,
-                          const QVector<Common::Entities::SalesOrderRecord> &records) const;
+                          const QVector<Common::Entities::SalesOrderRecord> &records);
     void updateActions();
     void updateInvoicePreview();
     QString selectedOrderId(QTableWidget *table) const;
-    bool showOrderDialog(Common::Entities::SaleOrder &order, const QString &title);
-    bool showOrderRecordDialog(Common::Entities::SalesOrderRecord &record, const QString &title);
+    void persistOrderRow(int row);
+    void persistOrderRecordRow(int row);
 
     SalesViewModel &m_viewModel;
     QTabWidget *m_tabs{nullptr};
     QLineEdit *m_ordersFilterField{nullptr};
     QPushButton *m_addOrderButton{nullptr};
-    QPushButton *m_editOrderButton{nullptr};
     QPushButton *m_deleteOrderButton{nullptr};
     QTableWidget *m_ordersTable{nullptr};
     QPushButton *m_addRecordButton{nullptr};
-    QPushButton *m_editRecordButton{nullptr};
     QPushButton *m_deleteRecordButton{nullptr};
     QTableWidget *m_orderRecordsTable{nullptr};
     QLabel *m_ordersStatusLabel{nullptr};
@@ -77,8 +82,10 @@ private:
     QTableWidget *m_invoiceRecordsTable{nullptr};
     QPlainTextEdit *m_invoicePreview{nullptr};
     QLabel *m_invoicesStatusLabel{nullptr};
+    InvoiceExportPathProvider m_invoiceExportPathProvider;
 
     QVector<Common::Entities::SaleOrder> m_allOrders;
     QVector<Common::Entities::SalesOrderRecord> m_currentRecords;
     RecordsContext m_recordsContext{RecordsContext::None};
+    bool m_isSyncingTables{false};
 };

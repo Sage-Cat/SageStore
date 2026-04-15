@@ -1,20 +1,18 @@
 #include "Ui/Views/PurchaseView.hpp"
 
+#include "Ui/Views/TableInteractionHelpers.hpp"
+
 #include <QAbstractItemView>
-#include <QDateEdit>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QDoubleSpinBox>
-#include <QFormLayout>
+#include <QComboBox>
+#include <QDate>
 #include <QFrame>
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QItemSelectionModel>
-#include <QDate>
-#include <QSpinBox>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
 #include <algorithm>
+#include <limits>
 
 #include "Ui/ViewModels/PurchaseViewModel.hpp"
 
@@ -52,12 +50,204 @@ QString displayStatus(const std::string &status)
     }
     return canonical;
 }
+
+bool isLockedPurchaseStatus(const QString &status)
+{
+    return canonicalStatus(status) == QStringLiteral("Received");
+}
+
+bool isValidIsoDate(const QString &text)
+{
+    return QDate::fromString(text.trimmed(), QStringLiteral("yyyy-MM-dd")).isValid();
+}
+
+bool parsePositiveInteger(const QString &text, QString *normalized = nullptr)
+{
+    bool ok = false;
+    const int value = text.trimmed().toInt(&ok);
+    if (!ok || value <= 0) {
+        return false;
+    }
+
+    if (normalized != nullptr) {
+        *normalized = QString::number(value);
+    }
+    return true;
+}
+
+bool parseNonNegativeDecimal(const QString &text, QString *normalized = nullptr)
+{
+    bool ok = false;
+    const double value = text.trimmed().toDouble(&ok);
+    if (!ok || value < 0.0) {
+        return false;
+    }
+
+    if (normalized != nullptr) {
+        *normalized = QString::number(value, 'f', 2);
+    }
+    return true;
+}
+
+const Common::Entities::PurchaseOrder *findOrderById(
+    const QVector<Common::Entities::PurchaseOrder> &orders, const QString &orderId)
+{
+    const auto orderIt =
+        std::find_if(orders.cbegin(), orders.cend(), [&orderId](const auto &order) {
+            return QString::fromStdString(order.id) == orderId;
+        });
+    return orderIt != orders.cend() ? &(*orderIt) : nullptr;
+}
+
+const Common::Entities::PurchaseOrderRecord *findOrderRecordById(
+    const QVector<Common::Entities::PurchaseOrderRecord> &records, const QString &recordId)
+{
+    const auto recordIt =
+        std::find_if(records.cbegin(), records.cend(), [&recordId](const auto &record) {
+            return QString::fromStdString(record.id) == recordId;
+        });
+    return recordIt != records.cend() ? &(*recordIt) : nullptr;
+}
+
+bool matchesOrderSnapshot(const Common::Entities::PurchaseOrder &order, const QString &date,
+                          const QString &userId, const QString &supplierId, const QString &status)
+{
+    return QString::fromStdString(order.date) == date &&
+           QString::fromStdString(order.userId) == userId &&
+           QString::fromStdString(order.supplierId) == supplierId &&
+           canonicalStatus(QString::fromStdString(order.status)) == canonicalStatus(status);
+}
+
+bool matchesOrderRecordSnapshot(const Common::Entities::PurchaseOrderRecord &record,
+                                const QString &productTypeId, const QString &quantity,
+                                const QString &price)
+{
+    QString normalizedRecordQuantity = QString::fromStdString(record.quantity);
+    QString normalizedRecordPrice    = QString::fromStdString(record.price);
+    parsePositiveInteger(normalizedRecordQuantity, &normalizedRecordQuantity);
+    parseNonNegativeDecimal(normalizedRecordPrice, &normalizedRecordPrice);
+
+    return QString::fromStdString(record.productTypeId) == productTypeId &&
+           normalizedRecordQuantity == quantity && normalizedRecordPrice == price;
+}
 } // namespace
 
 PurchaseView::PurchaseView(PurchaseViewModel &viewModel, QWidget *parent)
     : QWidget(parent), m_viewModel(viewModel)
 {
     setupUi();
+    installComboDelegate(
+        m_ordersTable, 3, QStringLiteral("purchaseOrderUserCombo"),
+        [this](const QModelIndex &) {
+            QVector<TableComboChoice> choices;
+            const auto users = m_viewModel.users();
+            choices.reserve(users.size());
+            for (const auto &user : users) {
+                choices.push_back(
+                    {QString::fromStdString(user.username), QString::fromStdString(user.id)});
+            }
+            return choices;
+        },
+        [this](const QModelIndex &index, const TableComboChoice &choice) {
+            if (m_isSyncingTables) {
+                return;
+            }
+
+            auto *userIdItem = m_ordersTable->item(index.row(), 2);
+            if (userIdItem == nullptr || choice.value.toString().isEmpty()) {
+                return;
+            }
+
+            {
+                const QSignalBlocker blocker(m_ordersTable);
+                userIdItem->setText(choice.value.toString());
+                userIdItem->setData(Qt::UserRole, choice.value);
+            }
+            persistOrderRow(index.row());
+        });
+    installComboDelegate(
+        m_ordersTable, 5, QStringLiteral("purchaseOrderSupplierCombo"),
+        [this](const QModelIndex &) {
+            QVector<TableComboChoice> choices;
+            const auto suppliers = m_viewModel.suppliers();
+            choices.reserve(suppliers.size());
+            for (const auto &supplier : suppliers) {
+                choices.push_back(
+                    {QString::fromStdString(supplier.name), QString::fromStdString(supplier.id)});
+            }
+            return choices;
+        },
+        [this](const QModelIndex &index, const TableComboChoice &choice) {
+            if (m_isSyncingTables) {
+                return;
+            }
+
+            auto *supplierIdItem = m_ordersTable->item(index.row(), 4);
+            if (supplierIdItem == nullptr || choice.value.toString().isEmpty()) {
+                return;
+            }
+
+            {
+                const QSignalBlocker blocker(m_ordersTable);
+                supplierIdItem->setText(choice.value.toString());
+                supplierIdItem->setData(Qt::UserRole, choice.value);
+            }
+            persistOrderRow(index.row());
+        });
+    installComboDelegate(
+        m_ordersTable, 6, QStringLiteral("purchaseOrderStatusCombo"),
+        [this](const QModelIndex &index) {
+            QVector<TableComboChoice> choices{
+                {tr("Draft"), QStringLiteral("Draft")},
+                {tr("Ordered"), QStringLiteral("Ordered")}};
+
+            const auto *statusItem = m_ordersTable->item(index.row(), 6);
+            const QString currentStatus =
+                statusItem != nullptr ? statusItem->data(Qt::UserRole).toString() : QString();
+            if (!currentStatus.isEmpty() &&
+                std::none_of(choices.cbegin(), choices.cend(), [&](const TableComboChoice &choice) {
+                    return choice.value.toString() == currentStatus;
+                })) {
+                choices.push_back({statusItem->text(), currentStatus});
+            }
+            return choices;
+        },
+        [this](const QModelIndex &index, const TableComboChoice &) {
+            if (m_isSyncingTables) {
+                return;
+            }
+            persistOrderRow(index.row());
+        });
+    installComboDelegate(
+        m_orderRecordsTable, 3, QStringLiteral("purchaseRecordProductTypeCombo"),
+        [this](const QModelIndex &) {
+            QVector<TableComboChoice> choices;
+            const auto productTypes = m_viewModel.productTypes();
+            choices.reserve(productTypes.size());
+            for (const auto &productType : productTypes) {
+                choices.push_back({QString::fromStdString(productType.code) + QStringLiteral(" | ") +
+                                       QString::fromStdString(productType.name),
+                                   QString::fromStdString(productType.id)});
+            }
+            return choices;
+        },
+        [this](const QModelIndex &index, const TableComboChoice &choice) {
+            if (m_isSyncingTables) {
+                return;
+            }
+
+            auto *productTypeIdItem = m_orderRecordsTable->item(index.row(), 2);
+            if (productTypeIdItem == nullptr || choice.value.toString().isEmpty()) {
+                return;
+            }
+
+            {
+                const QSignalBlocker blocker(m_orderRecordsTable);
+                productTypeIdItem->setText(choice.value.toString());
+                productTypeIdItem->setData(Qt::UserRole, choice.value);
+            }
+            persistOrderRecordRow(index.row());
+        });
 
     connect(this, &PurchaseView::errorOccurred, &m_viewModel, &PurchaseViewModel::errorOccurred);
     connect(&m_viewModel, &PurchaseViewModel::ordersChanged, this, &PurchaseView::onOrdersChanged);
@@ -69,10 +259,8 @@ PurchaseView::PurchaseView(PurchaseViewModel &viewModel, QWidget *parent)
             &PurchaseView::onPurchaseReceiptPosted);
 
     connect(m_addOrderButton, &QPushButton::clicked, this, &PurchaseView::onAddOrder);
-    connect(m_editOrderButton, &QPushButton::clicked, this, &PurchaseView::onEditOrder);
     connect(m_deleteOrderButton, &QPushButton::clicked, this, &PurchaseView::onDeleteOrder);
     connect(m_addRecordButton, &QPushButton::clicked, this, &PurchaseView::onAddRecord);
-    connect(m_editRecordButton, &QPushButton::clicked, this, &PurchaseView::onEditRecord);
     connect(m_deleteRecordButton, &QPushButton::clicked, this, &PurchaseView::onDeleteRecord);
     connect(m_receiveButton, &QPushButton::clicked, this, &PurchaseView::onReceiveOrder);
 
@@ -81,8 +269,16 @@ PurchaseView::PurchaseView(PurchaseViewModel &viewModel, QWidget *parent)
             &PurchaseView::onReceiptsFilterChanged);
     connect(m_ordersTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &PurchaseView::onOrdersSelectionChanged);
+    connect(m_orderRecordsTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            &PurchaseView::onOrderRecordsSelectionChanged);
     connect(m_receiptOrdersTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &PurchaseView::onReceiptOrdersSelectionChanged);
+    connect(m_ordersTable, &QTableWidget::itemChanged, this,
+            &PurchaseView::onOrdersTableItemChanged);
+    connect(m_orderRecordsTable, &QTableWidget::itemChanged, this,
+            &PurchaseView::onOrderRecordsTableItemChanged);
+    connect(m_receiptEmployeeBox, qOverload<int>(&QComboBox::currentIndexChanged), this,
+            [this](int) { updateReceiptActions(); });
 }
 
 void PurchaseView::showSection(Section section)
@@ -100,7 +296,9 @@ void PurchaseView::setupUi()
         tr("Manage purchase orders, line items, and receipt posting into stock. Supplier and "
            "product master data are reused directly from the shared ERP directories."),
         headerCard);
+    headerCard->setProperty("card", true);
     summaryLabel->setWordWrap(true);
+    summaryLabel->setProperty("muted", true);
     titleLabel->setObjectName("purchaseTitleLabel");
 
     headerLayout->addWidget(titleLabel);
@@ -120,53 +318,54 @@ void PurchaseView::setupUi()
     m_ordersFilterField->setClearButtonEnabled(true);
     m_addOrderButton = new QPushButton(tr("Add Order"), ordersPage);
     m_addOrderButton->setObjectName("purchaseAddOrderButton");
-    m_editOrderButton = new QPushButton(tr("Edit Order"), ordersPage);
-    m_editOrderButton->setObjectName("purchaseEditOrderButton");
     m_deleteOrderButton = new QPushButton(tr("Delete Order"), ordersPage);
     m_deleteOrderButton->setObjectName("purchaseDeleteOrderButton");
     m_deleteOrderButton->setProperty("destructive", true);
     ordersToolbar->addWidget(new QLabel(tr("Filter"), ordersPage));
     ordersToolbar->addWidget(m_ordersFilterField);
     ordersToolbar->addWidget(m_addOrderButton);
-    ordersToolbar->addWidget(m_editOrderButton);
     ordersToolbar->addWidget(m_deleteOrderButton);
 
     m_ordersTable = new QTableWidget(ordersPage);
     m_ordersTable->setObjectName("purchaseOrdersTable");
     m_ordersTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_ordersTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_ordersTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_ordersTable->setAlternatingRowColors(true);
-    m_ordersTable->setSortingEnabled(true);
+    m_ordersTable->setSortingEnabled(false);
     m_ordersTable->verticalHeader()->setVisible(false);
     m_ordersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    configureEditableTable(m_ordersTable, QStringLiteral("purchaseInlineEditor"));
+    installDateEditDelegate(m_ordersTable, 1, QStringLiteral("yyyy-MM-dd"),
+                            QStringLiteral("purchaseOrderDateEditor"));
 
     auto *recordsToolbar = new QHBoxLayout;
     m_addRecordButton = new QPushButton(tr("Add Line"), ordersPage);
     m_addRecordButton->setObjectName("purchaseAddRecordButton");
-    m_editRecordButton = new QPushButton(tr("Edit Line"), ordersPage);
-    m_editRecordButton->setObjectName("purchaseEditRecordButton");
     m_deleteRecordButton = new QPushButton(tr("Delete Line"), ordersPage);
     m_deleteRecordButton->setObjectName("purchaseDeleteRecordButton");
     m_deleteRecordButton->setProperty("destructive", true);
     recordsToolbar->addWidget(new QLabel(tr("Order lines"), ordersPage));
     recordsToolbar->addStretch();
     recordsToolbar->addWidget(m_addRecordButton);
-    recordsToolbar->addWidget(m_editRecordButton);
     recordsToolbar->addWidget(m_deleteRecordButton);
 
     m_orderRecordsTable = new QTableWidget(ordersPage);
     m_orderRecordsTable->setObjectName("purchaseOrderRecordsTable");
     m_orderRecordsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_orderRecordsTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_orderRecordsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_orderRecordsTable->setAlternatingRowColors(true);
-    m_orderRecordsTable->setSortingEnabled(true);
+    m_orderRecordsTable->setSortingEnabled(false);
     m_orderRecordsTable->verticalHeader()->setVisible(false);
     m_orderRecordsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    configureEditableTable(m_orderRecordsTable, QStringLiteral("purchaseInlineEditor"));
+    installSpinBoxDelegate(m_orderRecordsTable, 4, 1, std::numeric_limits<int>::max(),
+                           QStringLiteral("purchaseQuantityEditor"));
+    installDoubleSpinBoxDelegate(m_orderRecordsTable, 5, 0.0, 1000000000.0, 2, 0.25,
+                                 QStringLiteral("purchasePriceEditor"));
 
     m_ordersStatusLabel = new QLabel(tr("Status: ready"), ordersPage);
     m_ordersStatusLabel->setObjectName("purchaseOrdersStatusLabel");
+    m_ordersStatusLabel->setProperty("muted", true);
 
     ordersLayout->addLayout(ordersToolbar);
     ordersLayout->addWidget(m_ordersTable);
@@ -198,24 +397,25 @@ void PurchaseView::setupUi()
     m_receiptOrdersTable->setObjectName("purchaseReceiptOrdersTable");
     m_receiptOrdersTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_receiptOrdersTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_receiptOrdersTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_receiptOrdersTable->setAlternatingRowColors(true);
-    m_receiptOrdersTable->setSortingEnabled(true);
+    m_receiptOrdersTable->setSortingEnabled(false);
     m_receiptOrdersTable->verticalHeader()->setVisible(false);
     m_receiptOrdersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    configureReadOnlyTable(m_receiptOrdersTable);
 
     m_receiptRecordsTable = new QTableWidget(receiptsPage);
     m_receiptRecordsTable->setObjectName("purchaseReceiptRecordsTable");
     m_receiptRecordsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_receiptRecordsTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_receiptRecordsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_receiptRecordsTable->setAlternatingRowColors(true);
-    m_receiptRecordsTable->setSortingEnabled(true);
+    m_receiptRecordsTable->setSortingEnabled(false);
     m_receiptRecordsTable->verticalHeader()->setVisible(false);
     m_receiptRecordsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    configureReadOnlyTable(m_receiptRecordsTable);
 
     m_receiptsStatusLabel = new QLabel(tr("Status: ready"), receiptsPage);
     m_receiptsStatusLabel->setObjectName("purchaseReceiptsStatusLabel");
+    m_receiptsStatusLabel->setProperty("muted", true);
 
     receiptsLayout->addLayout(receiptsToolbar);
     receiptsLayout->addWidget(m_receiptOrdersTable);
@@ -230,16 +430,8 @@ void PurchaseView::setupUi()
 
     setObjectName("purchaseView");
     setStyleSheet(
-        "#purchaseView { background-color: #fffaf2; }"
-        "QFrame { background-color: #f6efe4; border: 1px solid #d8cdbd; border-radius: 12px; }"
-        "#purchaseTitleLabel { color: #233130; font-size: 24px; font-weight: 700; }"
-        "QLineEdit, QComboBox, QDateEdit, QSpinBox, QDoubleSpinBox { background-color: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; }"
-        "QPushButton { background-color: #1d4ed8; color: white; border: 0; border-radius: 6px; padding: 6px 12px; }"
-        "QPushButton:hover { background-color: #1e40af; }"
-        "QPushButton[destructive='true'] { background-color: #b91c1c; }"
-        "QPushButton[destructive='true']:hover { background-color: #991b1b; }"
-        "QTableWidget { background-color: #fbfbfd; alternate-background-color: #f1f4f8; border: 1px solid #d7dde7; border-radius: 8px; }"
-        "QHeaderView::section { background-color: #e8eef6; color: #0f172a; padding: 6px; border: 0; border-bottom: 1px solid #d7dde7; font-weight: 600; }");
+        "#purchaseView { background-color: transparent; }"
+        "#purchaseTitleLabel { color: #0f172a; font-size: 24px; font-weight: 700; }");
 
     updateOrdersActions();
     updateReceiptActions();
@@ -261,6 +453,7 @@ void PurchaseView::onOrderRecordsChanged()
     } else if (m_recordsContext == RecordsContext::Receipts) {
         fillRecordsTable(m_receiptRecordsTable, m_currentRecords);
     }
+    updateOrdersActions();
     updateStatus();
 }
 
@@ -274,6 +467,8 @@ void PurchaseView::onReferenceDataChanged()
     } else if (m_recordsContext == RecordsContext::Receipts) {
         fillRecordsTable(m_receiptRecordsTable, m_currentRecords);
     }
+    updateOrdersActions();
+    updateReceiptActions();
 }
 
 void PurchaseView::onPurchaseReceiptPosted()
@@ -284,28 +479,17 @@ void PurchaseView::onPurchaseReceiptPosted()
 
 void PurchaseView::onAddOrder()
 {
-    Common::Entities::PurchaseOrder order;
-    if (showOrderDialog(order, tr("Create purchase order"))) {
-        m_viewModel.createOrder(order);
-    }
-}
-
-void PurchaseView::onEditOrder()
-{
-    const auto selected = m_ordersTable->selectedItems();
-    if (selected.isEmpty()) {
+    if (m_viewModel.users().isEmpty() || m_viewModel.suppliers().isEmpty()) {
+        emit errorOccurred(tr("Users and suppliers must exist before creating purchase orders."));
         return;
     }
-    const int row = selected.first()->row();
-    Common::Entities::PurchaseOrder order{
-        .id = m_ordersTable->item(row, 0)->text().toStdString(),
-        .date = m_ordersTable->item(row, 1)->text().toStdString(),
-        .userId = m_ordersTable->item(row, 2)->text().toStdString(),
-        .supplierId = m_ordersTable->item(row, 4)->text().toStdString(),
-        .status = m_ordersTable->item(row, 6)->data(Qt::UserRole).toString().toStdString()};
-    if (showOrderDialog(order, tr("Edit purchase order"))) {
-        m_viewModel.editOrder(order);
-    }
+
+    Common::Entities::PurchaseOrder order;
+    order.date = QDate::currentDate().toString(QStringLiteral("yyyy-MM-dd")).toStdString();
+    order.userId = m_viewModel.users().front().id;
+    order.supplierId = m_viewModel.suppliers().front().id;
+    order.status = "Draft";
+    m_viewModel.createOrder(order);
 }
 
 void PurchaseView::onDeleteOrder()
@@ -324,30 +508,22 @@ void PurchaseView::onAddRecord()
         return;
     }
 
-    Common::Entities::PurchaseOrderRecord record;
-    record.orderId = orderId.toStdString();
-    if (showOrderRecordDialog(record, tr("Create purchase order line"))) {
-        m_viewModel.createOrderRecord(record);
-    }
-}
-
-void PurchaseView::onEditRecord()
-{
-    const auto selected = m_orderRecordsTable->selectedItems();
-    if (selected.isEmpty()) {
+    if (isLockedPurchaseStatus(selectedOrderStatus(m_ordersTable))) {
+        emit errorOccurred(tr("Received purchase orders cannot be edited."));
         return;
     }
 
-    const int row = selected.first()->row();
-    Common::Entities::PurchaseOrderRecord record{
-        .id = m_orderRecordsTable->item(row, 0)->text().toStdString(),
-        .orderId = m_orderRecordsTable->item(row, 1)->text().toStdString(),
-        .productTypeId = m_orderRecordsTable->item(row, 2)->text().toStdString(),
-        .quantity = m_orderRecordsTable->item(row, 4)->text().toStdString(),
-        .price = m_orderRecordsTable->item(row, 5)->text().toStdString()};
-    if (showOrderRecordDialog(record, tr("Edit purchase order line"))) {
-        m_viewModel.editOrderRecord(record);
+    if (m_viewModel.productTypes().isEmpty()) {
+        emit errorOccurred(tr("Product types must exist before creating purchase lines."));
+        return;
     }
+
+    Common::Entities::PurchaseOrderRecord record;
+    record.orderId = orderId.toStdString();
+    record.productTypeId = m_viewModel.productTypes().front().id;
+    record.quantity = "1";
+    record.price = "0.00";
+    m_viewModel.createOrderRecord(record);
 }
 
 void PurchaseView::onDeleteRecord()
@@ -394,9 +570,13 @@ void PurchaseView::onOrdersSelectionChanged()
         m_recordsContext = RecordsContext::Orders;
         m_viewModel.fetchOrderRecords(orderId);
     } else {
+        m_currentRecords.clear();
         fillRecordsTable(m_orderRecordsTable, {});
+        updateOrdersActions();
     }
 }
+
+void PurchaseView::onOrderRecordsSelectionChanged() { updateOrdersActions(); }
 
 void PurchaseView::onReceiptOrdersSelectionChanged()
 {
@@ -406,8 +586,62 @@ void PurchaseView::onReceiptOrdersSelectionChanged()
         m_recordsContext = RecordsContext::Receipts;
         m_viewModel.fetchOrderRecords(orderId);
     } else {
+        m_currentRecords.clear();
         fillRecordsTable(m_receiptRecordsTable, {});
+        updateReceiptActions();
     }
+}
+
+void PurchaseView::onOrdersTableItemChanged(QTableWidgetItem *item)
+{
+    if (m_isSyncingTables || item == nullptr || item->column() != 1) {
+        return;
+    }
+
+    const QString date = item->text().trimmed();
+    if (!isValidIsoDate(date)) {
+        emit errorOccurred(tr("Date must use the YYYY-MM-DD format."));
+        restoreItemText(m_ordersTable, item, item->data(Qt::UserRole).toString());
+        return;
+    }
+    if (restoreIfUnchanged(m_ordersTable, item, date)) {
+        return;
+    }
+
+    persistOrderRow(item->row());
+}
+
+void PurchaseView::onOrderRecordsTableItemChanged(QTableWidgetItem *item)
+{
+    if (m_isSyncingTables || item == nullptr) {
+        return;
+    }
+
+    if (item->column() == 4) {
+        QString normalized;
+        if (!parsePositiveInteger(item->text(), &normalized)) {
+            emit errorOccurred(tr("Quantity must be a positive integer."));
+            restoreItemText(m_orderRecordsTable, item, item->data(Qt::UserRole).toString());
+            return;
+        }
+        if (restoreIfUnchanged(m_orderRecordsTable, item, normalized)) {
+            return;
+        }
+    } else if (item->column() == 5) {
+        QString normalized;
+        if (!parseNonNegativeDecimal(item->text(), &normalized)) {
+            emit errorOccurred(tr("Price must be a non-negative number."));
+            restoreItemText(m_orderRecordsTable, item, item->data(Qt::UserRole).toString());
+            return;
+        }
+        if (restoreIfUnchanged(m_orderRecordsTable, item, normalized)) {
+            return;
+        }
+    } else {
+        return;
+    }
+
+    persistOrderRecordRow(item->row());
 }
 
 void PurchaseView::applyOrdersFilter()
@@ -458,9 +692,9 @@ void PurchaseView::applyReceiptsFilter()
 }
 
 void PurchaseView::fillOrdersTable(
-    QTableWidget *table, const QVector<Common::Entities::PurchaseOrder> &orders) const
+    QTableWidget *table, const QVector<Common::Entities::PurchaseOrder> &orders)
 {
-    table->setSortingEnabled(false);
+    m_isSyncingTables = true;
     table->clearContents();
     table->setRowCount(orders.size());
     table->setColumnCount(7);
@@ -473,27 +707,32 @@ void PurchaseView::fillOrdersTable(
         const QString userId = QString::fromStdString(order.userId);
         const QString supplierId = QString::fromStdString(order.supplierId);
         const QString orderStatus = canonicalStatus(QString::fromStdString(order.status));
-        table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(order.id)));
-        table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(order.date)));
-        table->setItem(row, 2, new QTableWidgetItem(userId));
-        table->setItem(row, 3, new QTableWidgetItem(m_viewModel.userLabel(userId)));
-        table->setItem(row, 4, new QTableWidgetItem(supplierId));
-        table->setItem(row, 5, new QTableWidgetItem(m_viewModel.supplierLabel(supplierId)));
-        auto *statusItem = new QTableWidgetItem(displayStatus(order.status));
-        statusItem->setData(Qt::UserRole, orderStatus);
-        table->setItem(row, 6, statusItem);
+        const bool editableOrder = table == m_ordersTable && !isLockedPurchaseStatus(orderStatus);
+        table->setItem(row, 0, createReadOnlyTableItem(QString::fromStdString(order.id)));
+        table->setItem(row, 1, editableOrder
+                                   ? createEditableTableItem(QString::fromStdString(order.date))
+                                   : createReadOnlyTableItem(QString::fromStdString(order.date)));
+        table->setItem(row, 2, createReadOnlyTableItem(userId));
+        table->setItem(row, 3,
+                       createComboTableItem(m_viewModel.userLabel(userId), userId, editableOrder));
+        table->setItem(row, 4, createReadOnlyTableItem(supplierId));
+        table->setItem(row, 5, createComboTableItem(m_viewModel.supplierLabel(supplierId),
+                                                    supplierId, editableOrder));
+        table->setItem(row, 6,
+                       createComboTableItem(displayStatus(order.status), orderStatus, editableOrder));
     }
 
     table->setColumnHidden(0, true);
     table->setColumnHidden(2, true);
     table->setColumnHidden(4, true);
-    table->setSortingEnabled(true);
+    refreshPersistentComboEditors(table);
+    m_isSyncingTables = false;
 }
 
 void PurchaseView::fillRecordsTable(
-    QTableWidget *table, const QVector<Common::Entities::PurchaseOrderRecord> &records) const
+    QTableWidget *table, const QVector<Common::Entities::PurchaseOrderRecord> &records)
 {
-    table->setSortingEnabled(false);
+    m_isSyncingTables = true;
     table->clearContents();
     table->setRowCount(records.size());
     table->setColumnCount(6);
@@ -504,29 +743,38 @@ void PurchaseView::fillRecordsTable(
     for (int row = 0; row < records.size(); ++row) {
         const auto &record = records[row];
         const QString productTypeId = QString::fromStdString(record.productTypeId);
-        table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(record.id)));
-        table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(record.orderId)));
-        table->setItem(row, 2, new QTableWidgetItem(productTypeId));
-        table->setItem(row, 3, new QTableWidgetItem(m_viewModel.productTypeLabel(productTypeId)));
-        table->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(record.quantity)));
-        table->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(record.price)));
+        const bool editableRecords =
+            table == m_orderRecordsTable && !isLockedPurchaseStatus(selectedOrderStatus(m_ordersTable));
+        table->setItem(row, 0, createReadOnlyTableItem(QString::fromStdString(record.id)));
+        table->setItem(row, 1, createReadOnlyTableItem(QString::fromStdString(record.orderId)));
+        table->setItem(row, 2, createReadOnlyTableItem(productTypeId));
+        table->setItem(row, 3,
+                       createComboTableItem(m_viewModel.productTypeLabel(productTypeId),
+                                            productTypeId, editableRecords));
+        table->setItem(row, 4, editableRecords
+                                   ? createEditableTableItem(QString::fromStdString(record.quantity))
+                                   : createReadOnlyTableItem(QString::fromStdString(record.quantity)));
+        table->setItem(row, 5, editableRecords
+                                   ? createEditableTableItem(QString::fromStdString(record.price))
+                                   : createReadOnlyTableItem(QString::fromStdString(record.price)));
     }
 
     table->setColumnHidden(0, true);
     table->setColumnHidden(1, true);
     table->setColumnHidden(2, true);
-    table->setSortingEnabled(true);
+    refreshPersistentComboEditors(table);
+    m_isSyncingTables = false;
 }
 
 void PurchaseView::updateOrdersActions()
 {
     const bool hasOrderSelection = !m_ordersTable->selectedItems().isEmpty();
+    const bool selectedOrderIsReceived =
+        selectedOrderStatus(m_ordersTable) == QStringLiteral("Received");
     const bool hasRecordSelection = !m_orderRecordsTable->selectedItems().isEmpty();
-    m_editOrderButton->setEnabled(hasOrderSelection);
-    m_deleteOrderButton->setEnabled(hasOrderSelection);
-    m_addRecordButton->setEnabled(hasOrderSelection);
-    m_editRecordButton->setEnabled(hasRecordSelection);
-    m_deleteRecordButton->setEnabled(hasRecordSelection);
+    m_deleteOrderButton->setEnabled(hasOrderSelection && !selectedOrderIsReceived);
+    m_addRecordButton->setEnabled(hasOrderSelection && !selectedOrderIsReceived);
+    m_deleteRecordButton->setEnabled(hasRecordSelection && !selectedOrderIsReceived);
 }
 
 void PurchaseView::updateReceiptActions()
@@ -570,126 +818,117 @@ QString PurchaseView::selectedOrderId(QTableWidget *table) const
     return table->item(selected.first()->row(), 0)->text();
 }
 
-bool PurchaseView::showOrderDialog(Common::Entities::PurchaseOrder &order, const QString &title)
+QString PurchaseView::selectedOrderStatus(QTableWidget *table) const
 {
-    if (m_viewModel.users().isEmpty() || m_viewModel.suppliers().isEmpty()) {
-        emit errorOccurred(tr("Users and suppliers must exist before creating purchase orders."));
-        return false;
+    const auto selected = table->selectedItems();
+    if (selected.isEmpty()) {
+        return {};
     }
 
-    QDialog dialog(this);
-    dialog.setWindowTitle(title);
-    dialog.setMinimumWidth(460);
-
-    auto *layout = new QFormLayout(&dialog);
-    auto *dateEdit = new QDateEdit(&dialog);
-    auto *userBox = new QComboBox(&dialog);
-    auto *supplierBox = new QComboBox(&dialog);
-    auto *statusBox = new QComboBox(&dialog);
-
-    dateEdit->setCalendarPopup(true);
-    dateEdit->setDisplayFormat("yyyy-MM-dd");
-    dateEdit->setDate(order.date.empty() ? QDate::currentDate()
-                                         : QDate::fromString(QString::fromStdString(order.date),
-                                                             "yyyy-MM-dd"));
-
-    for (const auto &user : m_viewModel.users()) {
-        userBox->addItem(QString::fromStdString(user.username), QString::fromStdString(user.id));
-    }
-    for (const auto &supplier : m_viewModel.suppliers()) {
-        supplierBox->addItem(QString::fromStdString(supplier.name),
-                             QString::fromStdString(supplier.id));
-    }
-    statusBox->addItem(tr("Draft"), QStringLiteral("Draft"));
-    statusBox->addItem(tr("Ordered"), QStringLiteral("Ordered"));
-    statusBox->addItem(tr("Received"), QStringLiteral("Received"));
-
-    if (!order.userId.empty()) {
-        userBox->setCurrentIndex(userBox->findData(QString::fromStdString(order.userId)));
-    }
-    if (!order.supplierId.empty()) {
-        supplierBox->setCurrentIndex(
-            supplierBox->findData(QString::fromStdString(order.supplierId)));
-    }
-    if (!order.status.empty()) {
-        statusBox->setCurrentIndex(
-            statusBox->findData(canonicalStatus(QString::fromStdString(order.status))));
-    } else {
-        statusBox->setCurrentIndex(statusBox->findData(QStringLiteral("Draft")));
+    auto *statusItem = table->item(selected.first()->row(), 6);
+    if (statusItem == nullptr) {
+        return {};
     }
 
-    layout->addRow(tr("Date"), dateEdit);
-    layout->addRow(tr("User"), userBox);
-    layout->addRow(tr("Supplier"), supplierBox);
-    layout->addRow(tr("Status"), statusBox);
-
-    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    layout->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return false;
-    }
-
-    order.date = dateEdit->date().toString("yyyy-MM-dd").toStdString();
-    order.userId = userBox->currentData().toString().toStdString();
-    order.supplierId = supplierBox->currentData().toString().toStdString();
-    order.status = statusBox->currentData().toString().toStdString();
-    return true;
+    return statusItem->data(Qt::UserRole).toString();
 }
 
-bool PurchaseView::showOrderRecordDialog(Common::Entities::PurchaseOrderRecord &record,
-                                         const QString &title)
+void PurchaseView::persistOrderRow(int row)
 {
-    if (m_viewModel.productTypes().isEmpty()) {
-        emit errorOccurred(tr("Product types must exist before creating purchase lines."));
-        return false;
+    auto *idItem = m_ordersTable->item(row, 0);
+    auto *dateItem = m_ordersTable->item(row, 1);
+    auto *userIdItem = m_ordersTable->item(row, 2);
+    auto *supplierIdItem = m_ordersTable->item(row, 4);
+    auto *statusItem = m_ordersTable->item(row, 6);
+    if (idItem == nullptr || dateItem == nullptr || userIdItem == nullptr ||
+        supplierIdItem == nullptr || statusItem == nullptr) {
+        return;
     }
 
-    QDialog dialog(this);
-    dialog.setWindowTitle(title);
-    dialog.setMinimumWidth(420);
-
-    auto *layout = new QFormLayout(&dialog);
-    auto *productTypeBox = new QComboBox(&dialog);
-    auto *quantityBox = new QSpinBox(&dialog);
-    auto *priceBox = new QDoubleSpinBox(&dialog);
-
-    quantityBox->setRange(1, 1'000'000);
-    priceBox->setRange(0.0, 1'000'000.0);
-    priceBox->setDecimals(2);
-
-    for (const auto &productType : m_viewModel.productTypes()) {
-        productTypeBox->addItem(
-            QString::fromStdString(productType.code) + " | " + QString::fromStdString(productType.name),
-            QString::fromStdString(productType.id));
+    const QString date = dateItem->text().trimmed();
+    if (!isValidIsoDate(date)) {
+        emit errorOccurred(tr("Date must use the YYYY-MM-DD format."));
+        restoreItemText(m_ordersTable, dateItem, dateItem->data(Qt::UserRole).toString());
+        return;
     }
 
-    if (!record.productTypeId.empty()) {
-        productTypeBox->setCurrentIndex(
-            productTypeBox->findData(QString::fromStdString(record.productTypeId)));
-    }
-    quantityBox->setValue(record.quantity.empty() ? 1 : QString::fromStdString(record.quantity).toInt());
-    priceBox->setValue(record.price.empty() ? 0.0 : QString::fromStdString(record.price).toDouble());
-
-    layout->addRow(tr("Product type"), productTypeBox);
-    layout->addRow(tr("Quantity"), quantityBox);
-    layout->addRow(tr("Price"), priceBox);
-
-    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    layout->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return false;
+    const QString userId = userIdItem->text().trimmed();
+    const QString supplierId = supplierIdItem->text().trimmed();
+    const QString status = statusItem->data(Qt::UserRole).toString().trimmed();
+    if (userId.isEmpty() || supplierId.isEmpty() || status.isEmpty()) {
+        emit errorOccurred(tr("Purchase order references must stay assigned."));
+        return;
     }
 
-    record.productTypeId = productTypeBox->currentData().toString().toStdString();
-    record.quantity = QString::number(quantityBox->value()).toStdString();
-    record.price = QString::number(priceBox->value(), 'f', 2).toStdString();
-    return true;
+    Common::Entities::PurchaseOrder order{.id = idItem->text().toStdString(),
+                                          .date = date.toStdString(),
+                                          .userId = userId.toStdString(),
+                                          .supplierId = supplierId.toStdString(),
+                                          .status = status.toStdString()};
+    {
+        const QSignalBlocker blocker(m_ordersTable);
+        dateItem->setData(Qt::UserRole, date);
+    }
+
+    if (const auto *existingOrder = findOrderById(m_allOrders, idItem->text());
+        existingOrder != nullptr &&
+        matchesOrderSnapshot(*existingOrder, date, userId, supplierId, status)) {
+        return;
+    }
+
+    m_viewModel.editOrder(order);
+}
+
+void PurchaseView::persistOrderRecordRow(int row)
+{
+    auto *idItem = m_orderRecordsTable->item(row, 0);
+    auto *orderIdItem = m_orderRecordsTable->item(row, 1);
+    auto *productTypeIdItem = m_orderRecordsTable->item(row, 2);
+    auto *quantityItem = m_orderRecordsTable->item(row, 4);
+    auto *priceItem = m_orderRecordsTable->item(row, 5);
+    if (idItem == nullptr || orderIdItem == nullptr || productTypeIdItem == nullptr ||
+        quantityItem == nullptr || priceItem == nullptr) {
+        return;
+    }
+
+    const QString productTypeId = productTypeIdItem->text().trimmed();
+    QString normalizedQuantity;
+    QString normalizedPrice;
+    if (productTypeId.isEmpty()) {
+        emit errorOccurred(tr("Product type is required."));
+        return;
+    }
+    if (!parsePositiveInteger(quantityItem->text(), &normalizedQuantity)) {
+        emit errorOccurred(tr("Quantity must be a positive integer."));
+        restoreItemText(m_orderRecordsTable, quantityItem,
+                        quantityItem->data(Qt::UserRole).toString());
+        return;
+    }
+    if (!parseNonNegativeDecimal(priceItem->text(), &normalizedPrice)) {
+        emit errorOccurred(tr("Price must be a non-negative number."));
+        restoreItemText(m_orderRecordsTable, priceItem, priceItem->data(Qt::UserRole).toString());
+        return;
+    }
+
+    {
+        const QSignalBlocker blocker(m_orderRecordsTable);
+        quantityItem->setText(normalizedQuantity);
+        priceItem->setText(normalizedPrice);
+        quantityItem->setData(Qt::UserRole, normalizedQuantity);
+        priceItem->setData(Qt::UserRole, normalizedPrice);
+    }
+
+    if (const auto *existingRecord = findOrderRecordById(m_currentRecords, idItem->text());
+        existingRecord != nullptr &&
+        matchesOrderRecordSnapshot(*existingRecord, productTypeId, normalizedQuantity,
+                                   normalizedPrice)) {
+        return;
+    }
+
+    Common::Entities::PurchaseOrderRecord record{.id = idItem->text().toStdString(),
+                                                 .orderId = orderIdItem->text().toStdString(),
+                                                 .productTypeId = productTypeId.toStdString(),
+                                                 .quantity = normalizedQuantity.toStdString(),
+                                                 .price = normalizedPrice.toStdString()};
+    m_viewModel.editOrderRecord(record);
 }

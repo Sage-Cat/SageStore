@@ -9,6 +9,7 @@
 LoginDialog::LoginDialog(BaseDialog *parent) : BaseDialog(parent)
 {
     SPDLOG_TRACE("LoginDialog::LoginDialog");
+    setObjectName("loginDialog");
 
     initFields();
     initButtonsAndLinks();
@@ -37,6 +38,8 @@ void LoginDialog::initFields()
 
     m_usernameField = new QLineEdit(this);
     m_passwordField = new QLineEdit(this);
+    m_usernameField->setObjectName("loginUsernameField");
+    m_passwordField->setObjectName("loginPasswordField");
     m_passwordField->setEchoMode(QLineEdit::Password);
 }
 
@@ -46,6 +49,8 @@ void LoginDialog::initButtonsAndLinks()
 
     m_loginButton  = new QPushButton(tr("Login"), this);
     m_registerLink = new QLabel(tr("<a href='#'>Register</a>"), this);
+    m_loginButton->setObjectName("loginSubmitButton");
+    m_registerLink->setObjectName("loginRegisterLink");
 
     m_registerLink->setTextFormat(Qt::RichText);
     m_registerLink->setTextInteractionFlags(Qt::TextBrowserInteraction);

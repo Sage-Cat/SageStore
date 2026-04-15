@@ -56,8 +56,8 @@ DisplayData::ProductType ProductTypesViewModel::convertToDisplayProductType(
     displayProductType.description = QString::fromStdString(productType.description);
     displayProductType.lastPrice   = QString::fromStdString(productType.lastPrice);
     displayProductType.unit        = QString::fromStdString(productType.unit);
-    displayProductType.isImported  =
-        productType.isImported == "1" ? "Yes" : "No";
+    displayProductType.isImported =
+        productType.isImported == "1" ? tr("Yes") : tr("No");
 
     return displayProductType;
 }
@@ -73,8 +73,10 @@ Common::Entities::ProductType ProductTypesViewModel::convertToCommonProductType(
     commonProductType.description = productType.description.toStdString();
     commonProductType.lastPrice   = productType.lastPrice.toStdString();
     commonProductType.unit        = productType.unit.toStdString();
-    commonProductType.isImported =
-        (productType.isImported.compare("Yes", Qt::CaseInsensitive) == 0) ? "1" : "0";
+    const bool isImported =
+        productType.isImported.compare(tr("Yes"), Qt::CaseInsensitive) == 0 ||
+        productType.isImported.compare("Yes", Qt::CaseInsensitive) == 0;
+    commonProductType.isImported = isImported ? "1" : "0";
 
     return commonProductType;
 }

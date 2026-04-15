@@ -47,6 +47,7 @@ void LogsView::setupUi()
 
     m_statusLabel = new QLabel(tr("Status: ready"), this);
     m_statusLabel->setObjectName("logsStatusLabel");
+    m_statusLabel->setProperty("muted", true);
 
     layout->addLayout(toolbar);
     layout->addWidget(m_table);
@@ -54,11 +55,8 @@ void LogsView::setupUi()
 
     setObjectName("logsView");
     setStyleSheet(
-        "#logsView { background-color: #fffaf2; }"
-        "#logsTitleLabel { color: #233130; font-size: 22px; font-weight: 700; }"
-        "QLineEdit { background-color: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; }"
-        "QTableWidget { background-color: #fbfbfd; alternate-background-color: #f1f4f8; border: 1px solid #d7dde7; border-radius: 8px; }"
-        "QHeaderView::section { background-color: #e8eef6; color: #0f172a; padding: 6px; border: 0; border-bottom: 1px solid #d7dde7; font-weight: 600; }");
+        "#logsView { background-color: transparent; }"
+        "#logsTitleLabel { color: #0f172a; font-size: 22px; font-weight: 700; }");
 }
 
 void LogsView::onLogsChanged()
