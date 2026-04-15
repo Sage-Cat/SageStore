@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QTableWidgetItem>
 #include <QVector>
 
 #include "Ui/DisplayData/Entities.hpp"
@@ -16,15 +17,15 @@ public:
 private slots:
     void onAddButtonClicked();
     void onDeleteButtonClicked();
-    void onEditButtonClicked();
+    void onItemChanged(QTableWidgetItem *item);
     void onRolesChanged();
     void onSelectionChanged();
 
 private:
     void fillTable(const QVector<DisplayData::Role> &roles);
-    bool showRoleDialog(DisplayData::Role &role, const QString &title);
     void updateActionButtons();
     void updateStatus(int roleCount);
 
     UsersManagementViewModel &m_viewModel;
+    bool m_isSyncingTable{false};
 };

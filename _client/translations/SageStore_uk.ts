@@ -202,6 +202,10 @@
     <context>
         <name>RolesView</name>
         <message>
+            <source>ID</source>
+            <translation>ID</translation>
+        </message>
+        <message>
             <source>Create role</source>
             <translation>Створити роль</translation>
         </message>
@@ -224,6 +228,10 @@
     </context>
     <context>
         <name>ProductTypesView</name>
+        <message>
+            <source>ID</source>
+            <translation>ID</translation>
+        </message>
         <message>
             <source>Filter</source>
             <translation>Фільтр</translation>
@@ -284,6 +292,10 @@
     <context>
         <name>StocksView</name>
         <message>
+            <source>ID</source>
+            <translation>ID</translation>
+        </message>
+        <message>
             <source>Filter</source>
             <translation>Фільтр</translation>
         </message>
@@ -318,6 +330,14 @@
         <message>
             <source>Employee ID</source>
             <translation>ID працівника</translation>
+        </message>
+        <message>
+            <source>Product Type ID</source>
+            <translation>ID типу товару</translation>
+        </message>
+        <message>
+            <source>Product</source>
+            <translation>Товар</translation>
         </message>
         <message>
             <source>Quantity and employee ID are required.</source>
@@ -393,6 +413,10 @@
             <translation>Панель аналітики</translation>
         </message>
         <message>
+            <source>Track the goods lifecycle from purchasing to stock and sales, with revenue, cost, margin, and stock-health snapshots grounded in the current baseline data.</source>
+            <translation>Відстежуйте життєвий цикл товарів від закупівлі до складу та продажів, використовуючи зрізи доходу, витрат, маржі й стану запасів на основі поточних базових даних.</translation>
+        </message>
+        <message>
             <source>Sales</source>
             <translation>Продажі</translation>
         </message>
@@ -407,6 +431,110 @@
         <message>
             <source>Value</source>
             <translation>Значення</translation>
+        </message>
+        <message>
+            <source>Revenue</source>
+            <translation>Дохід</translation>
+        </message>
+        <message>
+            <source>Gross Profit</source>
+            <translation>Валовий прибуток</translation>
+        </message>
+        <message>
+            <source>Gross Margin</source>
+            <translation>Валова маржа</translation>
+        </message>
+        <message>
+            <source>Customers</source>
+            <translation>Клієнти</translation>
+        </message>
+        <message>
+            <source>Income Balance</source>
+            <translation>Баланс доходів</translation>
+        </message>
+        <message>
+            <source>Purchase Cost</source>
+            <translation>Собівартість закупівель</translation>
+        </message>
+        <message>
+            <source>Draft</source>
+            <translation>Чернетка</translation>
+        </message>
+        <message>
+            <source>Confirmed</source>
+            <translation>Підтверджено</translation>
+        </message>
+        <message>
+            <source>Invoiced</source>
+            <translation>Виставлено рахунок</translation>
+        </message>
+        <message>
+            <source>Sales Metrics</source>
+            <translation>Показники продажів</translation>
+        </message>
+        <message>
+            <source>Units Available</source>
+            <translation>Доступні одиниці</translation>
+        </message>
+        <message>
+            <source>Inventory Value</source>
+            <translation>Вартість запасів</translation>
+        </message>
+        <message>
+            <source>Purchase Spend</source>
+            <translation>Витрати на закупівлю</translation>
+        </message>
+        <message>
+            <source>Product Types</source>
+            <translation>Типи товарів</translation>
+        </message>
+        <message>
+            <source>Purchase Orders</source>
+            <translation>Замовлення постачання</translation>
+        </message>
+        <message>
+            <source>Received Orders</source>
+            <translation>Отримані замовлення</translation>
+        </message>
+        <message>
+            <source>Stock Records</source>
+            <translation>Записи залишків</translation>
+        </message>
+        <message>
+            <source>Zero Stock</source>
+            <translation>Нульовий залишок</translation>
+        </message>
+        <message>
+            <source>Goods Flow Health</source>
+            <translation>Стан товарного потоку</translation>
+        </message>
+        <message>
+            <source>Receipt Completion</source>
+            <translation>Завершеність надходжень</translation>
+        </message>
+        <message>
+            <source>Imported Mix</source>
+            <translation>Частка імпортованих</translation>
+        </message>
+        <message>
+            <source>Stock Health</source>
+            <translation>Стан запасів</translation>
+        </message>
+        <message>
+            <source>Inventory Metrics</source>
+            <translation>Показники складу</translation>
+        </message>
+        <message>
+            <source>%1% complete</source>
+            <translation>%1% завершено</translation>
+        </message>
+        <message>
+            <source>%1% imported</source>
+            <translation>%1% імпортовано</translation>
+        </message>
+        <message>
+            <source>%1% healthy</source>
+            <translation>%1% у нормі</translation>
         </message>
     </context>
     <context>
@@ -1058,6 +1186,214 @@
         <message>
             <source>CSV file did not contain valid supplier catalog rows.</source>
             <translation>CSV-файл не містить коректних рядків каталогу постачальника.</translation>
+        </message>
+    </context>
+    <context>
+        <name>ProductTypesViewModel</name>
+        <message>
+            <source>Yes</source>
+            <translation>Так</translation>
+        </message>
+        <message>
+            <source>No</source>
+            <translation>Ні</translation>
+        </message>
+    </context>
+    <context>
+        <name>AnalyticsViewModel</name>
+        <message>
+            <source>Total orders</source>
+            <translation>Усього замовлень</translation>
+        </message>
+        <message>
+            <source>Total order lines</source>
+            <translation>Усього позицій</translation>
+        </message>
+        <message>
+            <source>Unique customers</source>
+            <translation>Унікальні клієнти</translation>
+        </message>
+        <message>
+            <source>Revenue</source>
+            <translation>Дохід</translation>
+        </message>
+        <message>
+            <source>Purchase cost</source>
+            <translation>Собівартість закупівель</translation>
+        </message>
+        <message>
+            <source>Gross profit</source>
+            <translation>Валовий прибуток</translation>
+        </message>
+        <message>
+            <source>Gross margin</source>
+            <translation>Валова маржа</translation>
+        </message>
+        <message>
+            <source>Average order value</source>
+            <translation>Середня вартість замовлення</translation>
+        </message>
+        <message>
+            <source>Draft orders</source>
+            <translation>Чернетки замовлень</translation>
+        </message>
+        <message>
+            <source>Confirmed orders</source>
+            <translation>Підтверджені замовлення</translation>
+        </message>
+        <message>
+            <source>Invoiced orders</source>
+            <translation>Виставлені рахунки</translation>
+        </message>
+        <message>
+            <source>Product types</source>
+            <translation>Типи товарів</translation>
+        </message>
+        <message>
+            <source>Stock records</source>
+            <translation>Записи залишків</translation>
+        </message>
+        <message>
+            <source>Units available</source>
+            <translation>Доступні одиниці</translation>
+        </message>
+        <message>
+            <source>Zero-stock records</source>
+            <translation>Записи з нульовим залишком</translation>
+        </message>
+        <message>
+            <source>Imported product types</source>
+            <translation>Імпортовані типи товарів</translation>
+        </message>
+        <message>
+            <source>Purchase orders</source>
+            <translation>Замовлення постачання</translation>
+        </message>
+        <message>
+            <source>Open purchase orders</source>
+            <translation>Відкриті замовлення постачання</translation>
+        </message>
+        <message>
+            <source>Received purchase orders</source>
+            <translation>Отримані замовлення постачання</translation>
+        </message>
+        <message>
+            <source>Purchase spend</source>
+            <translation>Витрати на закупівлю</translation>
+        </message>
+        <message>
+            <source>Inventory value</source>
+            <translation>Вартість запасів</translation>
+        </message>
+        <message>
+            <source>%1%</source>
+            <translation>%1%</translation>
+        </message>
+    </context>
+    <context>
+        <name>SalesViewModel</name>
+        <message>
+            <source>Draft</source>
+            <translation>Чернетка</translation>
+        </message>
+        <message>
+            <source>Confirmed</source>
+            <translation>Підтверджено</translation>
+        </message>
+        <message>
+            <source>Invoiced</source>
+            <translation>Виставлено рахунок</translation>
+        </message>
+        <message>
+            <source>SageStore Invoice</source>
+            <translation>Рахунок SageStore</translation>
+        </message>
+        <message>
+            <source>Order ID</source>
+            <translation>ID замовлення</translation>
+        </message>
+        <message>
+            <source>Date</source>
+            <translation>Дата</translation>
+        </message>
+        <message>
+            <source>Customer</source>
+            <translation>Клієнт</translation>
+        </message>
+        <message>
+            <source>Handled by</source>
+            <translation>Відповідальний</translation>
+        </message>
+        <message>
+            <source>Status</source>
+            <translation>Статус</translation>
+        </message>
+        <message>
+            <source>Items</source>
+            <translation>Позиції</translation>
+        </message>
+        <message>
+            <source>Total</source>
+            <translation>Разом</translation>
+        </message>
+    </context>
+    <context>
+        <name>UsersView</name>
+        <message>
+            <source>Create user</source>
+            <translation>Створити користувача</translation>
+        </message>
+        <message>
+            <source>Edit user</source>
+            <translation>Редагувати користувача</translation>
+        </message>
+        <message>
+            <source>Create at least one role before managing users.</source>
+            <translation>Створіть щонайменше одну роль перед керуванням користувачами.</translation>
+        </message>
+        <message>
+            <source>Leave blank to keep current password</source>
+            <translation>Залиште порожнім, щоб зберегти поточний пароль</translation>
+        </message>
+        <message>
+            <source>Required</source>
+            <translation>Обов&apos;язково</translation>
+        </message>
+        <message>
+            <source>Username</source>
+            <translation>Ім&apos;я користувача</translation>
+        </message>
+        <message>
+            <source>Password</source>
+            <translation>Пароль</translation>
+        </message>
+        <message>
+            <source>Role</source>
+            <translation>Роль</translation>
+        </message>
+        <message>
+            <source>Username is required.</source>
+            <translation>Потрібно вказати ім&apos;я користувача.</translation>
+        </message>
+        <message>
+            <source>Password is required for new users.</source>
+            <translation>Для нових користувачів потрібно вказати пароль.</translation>
+        </message>
+        <message>
+            <source>ID</source>
+            <translation>ID</translation>
+        </message>
+        <message>
+            <source>Role ID</source>
+            <translation>ID ролі</translation>
+        </message>
+        <message>
+            <source>Role name</source>
+            <translation>Назва ролі</translation>
+        </message>
+        <message>
+            <source>Status: %1 users available</source>
+            <translation>Стан: доступно користувачів %1</translation>
         </message>
     </context>
 </TS>

@@ -1,6 +1,39 @@
 #include "DialogManager.hpp"
 
+#include <QGuiApplication>
+#include <QScreen>
+
 #include "common/SpdlogConfig.hpp"
+
+namespace {
+void centerWindowOnPrimaryScreen(QWidget *widget)
+{
+    if (widget == nullptr) {
+        return;
+    }
+
+    const QScreen *screen = widget->screen();
+    if (screen == nullptr) {
+        screen = QGuiApplication::primaryScreen();
+    }
+    if (screen == nullptr) {
+        return;
+    }
+
+    const QRect availableGeometry = screen->availableGeometry();
+    if (!availableGeometry.isValid()) {
+        return;
+    }
+
+    widget->adjustSize();
+    const QSize targetSize = widget->size().isValid() && !widget->size().isEmpty()
+                                 ? widget->size()
+                                 : widget->sizeHint();
+    const QPoint centeredPosition =
+        availableGeometry.center() - QPoint(targetSize.width() / 2, targetSize.height() / 2);
+    widget->move(centeredPosition);
+}
+} // namespace
 
 DialogManager::DialogManager(ApiManager &apiManager, QObject *parent)
     : QObject(parent), m_apiManager(apiManager)
@@ -29,6 +62,8 @@ void DialogManager::showLoginDialog()
     m_registrationDialog->hide();
     m_loginDialog->setWindowModality(Qt::ApplicationModal);
     m_loginDialog->showWithPresetData("admin", "admin123");
+    centerWindowOnPrimaryScreen(m_loginDialog);
+    m_loginDialog->raise();
     m_loginDialog->activateWindow();
 }
 
@@ -38,6 +73,8 @@ void DialogManager::showRegistrationDialog()
     m_loginDialog->hide();
     m_registrationDialog->setWindowModality(Qt::ApplicationModal);
     m_registrationDialog->showWithPresetData("newuser", "123");
+    centerWindowOnPrimaryScreen(m_registrationDialog);
+    m_registrationDialog->raise();
     m_registrationDialog->activateWindow();
 }
 
@@ -55,6 +92,7 @@ void DialogManager::setupDialogs()
     m_loginDialog        = new LoginDialog();
     m_registrationDialog = new RegistrationDialog();
     m_messageDialog      = new QMessageBox();
+    m_messageDialog->setObjectName("dialogManagerMessageBox");
 }
 
 void DialogManager::setupDialogConnections()
@@ -72,6 +110,8 @@ void DialogManager::setupDialogConnections()
     connect(m_registrationDialog, &RegistrationDialog::loginRequested, [this]() {
         m_registrationDialog->hide();
         m_loginDialog->show();
+        centerWindowOnPrimaryScreen(m_loginDialog);
+        m_loginDialog->raise();
         m_loginDialog->activateWindow();
     });
     connect(m_registrationDialog, &QDialog::rejected, this,
@@ -141,5 +181,7 @@ void DialogManager::onRegistrationDialogRejected()
 
     m_registrationDialog->hide();
     m_loginDialog->show();
+    centerWindowOnPrimaryScreen(m_loginDialog);
+    m_loginDialog->raise();
     m_loginDialog->activateWindow();
 }

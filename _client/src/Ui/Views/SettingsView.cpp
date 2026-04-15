@@ -22,6 +22,7 @@ SettingsView::SettingsView(QWidget *parent) : QWidget(parent)
 
     header->setObjectName("settingsTitleLabel");
     summary->setObjectName("settingsSummaryLabel");
+    summary->setProperty("muted", true);
     summary->setWordWrap(true);
 
     m_languageCombo = new QComboBox(card);
@@ -50,6 +51,7 @@ SettingsView::SettingsView(QWidget *parent) : QWidget(parent)
 
     m_statusLabel = new QLabel(tr("Status: ready"), card);
     m_statusLabel->setObjectName("settingsStatusLabel");
+    m_statusLabel->setProperty("muted", true);
     m_statusLabel->setWordWrap(true);
 
     actionsLayout->addWidget(saveButton);
@@ -68,41 +70,11 @@ SettingsView::SettingsView(QWidget *parent) : QWidget(parent)
     mainLayout->setContentsMargins(18, 18, 18, 18);
 
     card->setObjectName("settingsCard");
+    card->setProperty("card", true);
     setObjectName("settingsView");
     setStyleSheet(
-        "#settingsView {"
-        " background-color: #fffaf2;"
-        "}"
-        "#settingsCard {"
-        " background-color: #f6efe4;"
-        " border: 1px solid #d8cdbd;"
-        " border-radius: 12px;"
-        "}"
-        "#settingsTitleLabel {"
-        " color: #233130;"
-        " font-size: 24px;"
-        " font-weight: 700;"
-        "}"
-        "#settingsSummaryLabel, #settingsStatusLabel {"
-        " color: #4a544d;"
-        "}"
-        "QLineEdit, QSpinBox, QComboBox {"
-        " background-color: white;"
-        " border: 1px solid #cbd5e1;"
-        " border-radius: 6px;"
-        " padding: 6px;"
-        "}"
-        "QPushButton#settingsSaveButton {"
-        " background-color: #1d4ed8;"
-        " color: white;"
-        " border: 0;"
-        " border-radius: 6px;"
-        " padding: 8px 14px;"
-        "}"
-        "QPushButton#settingsSaveButton:hover {"
-        " background-color: #1e40af;"
-        "}"
-    );
+        "#settingsView { background-color: transparent; }"
+        "#settingsTitleLabel { color: #0f172a; font-size: 24px; font-weight: 700; }");
 
     connect(saveButton, &QPushButton::clicked, this, &SettingsView::saveSettings);
 

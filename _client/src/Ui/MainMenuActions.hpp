@@ -50,8 +50,31 @@ inline const std::map<Type, const char *> SOURCE_TEXTS = {
     {Type::CUSTOMERS, "Customers"},
     {Type::SUPPLIERS, "Suppliers"}};
 
+inline const std::map<Type, const char *> OBJECT_NAMES = {
+    {Type::SETTINGS, "mainMenuActionSettings"},
+    {Type::EXIT, "mainMenuActionExit"},
+    {Type::PURCHASE_ORDERS, "mainMenuActionPurchaseOrders"},
+    {Type::SUPPLIER_MANAGEMENT, "mainMenuActionSupplierManagement"},
+    {Type::GOODS_RECEIPTS, "mainMenuActionGoodsReceipts"},
+    {Type::SALES_ORDERS, "mainMenuActionSalesOrders"},
+    {Type::CUSTOMER_MANAGEMENT, "mainMenuActionCustomerManagement"},
+    {Type::INVOICING, "mainMenuActionInvoicing"},
+    {Type::PRODUCT_MANAGEMENT, "mainMenuActionProductManagement"},
+    {Type::SUPPLIER_PRICELIST_UPLOAD, "mainMenuActionSupplierPricelistUpload"},
+    {Type::STOCK_TRACKING, "mainMenuActionStockTracking"},
+    {Type::SALES_ANALYTICS, "mainMenuActionSalesAnalytics"},
+    {Type::INVENTORY_ANALYTICS, "mainMenuActionInventoryAnalytics"},
+    {Type::USERS, "mainMenuActionUsers"},
+    {Type::USER_ROLES, "mainMenuActionUserRoles"},
+    {Type::USER_LOGS, "mainMenuActionUserLogs"},
+    {Type::EMPLOYEES, "mainMenuActionEmployees"},
+    {Type::CUSTOMERS, "mainMenuActionCustomers"},
+    {Type::SUPPLIERS, "mainMenuActionSuppliers"}};
+
 inline QString displayName(Type type)
 {
     return QCoreApplication::translate("MainMenuActions", SOURCE_TEXTS.at(type));
 }
+
+inline QString objectName(Type type) { return QString::fromLatin1(OBJECT_NAMES.at(type)); }
 } // namespace MainMenuActions

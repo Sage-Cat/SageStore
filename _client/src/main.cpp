@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QTranslator>
 
+#include <algorithm>
+#include <cctype>
 #include <cstdlib>
 #include <memory>
 #include <stdexcept>
@@ -18,7 +20,6 @@
 
 #include "Ui/Dialogs/DialogManager.hpp"
 #include "Ui/MainWindow.hpp"
-#include "Ui/StartupController.hpp"
 #include "Ui/UiScale.hpp"
 #include "Ui/Views/BaseView.hpp"
 
@@ -44,6 +45,30 @@ int envOrDefaultNonNegativeInt(const char *name, int fallback)
         return fallback;
     }
 }
+
+bool envOrDefaultBool(const char *name, bool fallback)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || *value == '\0') {
+        return fallback;
+    }
+
+    std::string normalized(value);
+    std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+
+    if (normalized == "1" || normalized == "true" || normalized == "yes" || normalized == "on" ||
+        normalized == "enable" || normalized == "enabled") {
+        return true;
+    }
+    if (normalized == "0" || normalized == "false" || normalized == "no" || normalized == "off" ||
+        normalized == "disable" || normalized == "disabled") {
+        return false;
+    }
+
+    SPDLOG_WARN("Invalid boolean in {}='{}', using default {}", name, value, fallback);
+    return fallback;
+}
 } // namespace
 
 int main(int argc, char *argv[])
@@ -52,7 +77,8 @@ int main(int argc, char *argv[])
     AppSettings::ensureApplicationMetadata();
     UiScale::configureApplication(app);
 
-    SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
+    SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>(
+        {.loggerName = "SageStoreClient", .logFileStem = "sagestore-client"});
     SPDLOG_INFO("SageStoreClient starting");
 
     const auto clientSettings = AppSettings::load();
@@ -78,10 +104,17 @@ int main(int argc, char *argv[])
     ApiManager apiManager(networkService);
     networkService.init();
 
+    const bool autoExitForced = envOrDefaultBool("SAGESTORE_FORCE_CLIENT_AUTO_EXIT_MS", false);
+    const auto platformName = app.platformName().toStdString();
+    const bool offscreen = (platformName == "offscreen");
+
     const int autoExitMs = envOrDefaultNonNegativeInt("SAGESTORE_CLIENT_AUTO_EXIT_MS", 0);
-    if (autoExitMs > 0) {
+    if (autoExitMs > 0 && (autoExitForced || offscreen)) {
         SPDLOG_INFO("Client auto-exit enabled after {} ms", autoExitMs);
         QTimer::singleShot(autoExitMs, &app, &QCoreApplication::quit);
+    } else if (autoExitMs > 0) {
+        SPDLOG_INFO("Client auto-exit ignored for interactive platform '{}' (not offscreen)",
+                    platformName);
     }
 
     // Dialog windows
@@ -90,17 +123,11 @@ int main(int argc, char *argv[])
     QObject::connect(&dialogManager, &DialogManager::loginCancelled, &app,
                      &QCoreApplication::quit);
 
-    std::unique_ptr<MainWindow> mainWindow;
-    StartupController startupController(dialogManager, [&]() {
-        mainWindow = std::make_unique<MainWindow>(app, apiManager, dialogManager);
-        return mainWindow.get();
-    });
-    startupController.start();
+    MainWindow mainWindow(app, apiManager, dialogManager);
+    mainWindow.startUiProcess();
 
-    // Handle closing
-    QObject::connect(&app, &QCoreApplication::aboutToQuit, []() {
-        SPDLOG_INFO("SageStoreClient finished with code=0");
-    });
-
-    return app.exec();
+    const int exitCode = app.exec();
+    SPDLOG_INFO("SageStoreClient finished with code={}", exitCode);
+    SpdlogConfig::shutdown();
+    return exitCode;
 }

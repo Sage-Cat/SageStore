@@ -9,6 +9,7 @@
 RegistrationDialog::RegistrationDialog(BaseDialog *parent) : BaseDialog(parent)
 {
     SPDLOG_TRACE("RegistrationDialog::RegistrationDialog");
+    setObjectName("registrationDialog");
 
     initFields();
     initButtonsAndLinks();
@@ -45,6 +46,9 @@ void RegistrationDialog::initFields()
     m_usernameField        = new QLineEdit(this);
     m_passwordField        = new QLineEdit(this);
     m_confirmPasswordField = new QLineEdit(this);
+    m_usernameField->setObjectName("registrationUsernameField");
+    m_passwordField->setObjectName("registrationPasswordField");
+    m_confirmPasswordField->setObjectName("registrationConfirmPasswordField");
     m_passwordField->setEchoMode(QLineEdit::Password);
     m_confirmPasswordField->setEchoMode(QLineEdit::Password);
 }
@@ -55,6 +59,8 @@ void RegistrationDialog::initButtonsAndLinks()
 
     m_registerButton = new QPushButton(tr("Register"), this);
     m_loginLink      = new QLabel(tr("<a href='#'>Login</a>"), this);
+    m_registerButton->setObjectName("registrationSubmitButton");
+    m_loginLink->setObjectName("registrationLoginLink");
     m_loginLink->setTextFormat(Qt::RichText);
     m_loginLink->setTextInteractionFlags(Qt::TextBrowserInteraction);
     m_loginLink->setOpenExternalLinks(false);

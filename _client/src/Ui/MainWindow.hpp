@@ -50,6 +50,7 @@ public:
     explicit MainWindow(QApplication &app, ApiManager &apiClient, DialogManager &dialogManager,
                         QWidget *parent = nullptr);
     ~MainWindow() = default;
+    void startUiProcess();
 
 signals:
     void menuActionTriggered(MainMenuActions::Type actionType);

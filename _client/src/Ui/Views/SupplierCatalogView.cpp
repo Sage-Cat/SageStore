@@ -1,12 +1,12 @@
 #include "Ui/Views/SupplierCatalogView.hpp"
 
+#include "Ui/Views/TableInteractionHelpers.hpp"
+
 #include <QAbstractItemView>
 #include <QComboBox>
-#include <QDialog>
-#include <QDialogButtonBox>
+#include <QDateTime>
 #include <QFile>
 #include <QFileDialog>
-#include <QFormLayout>
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QItemSelectionModel>
@@ -42,18 +42,77 @@ SupplierCatalogView::SupplierCatalogView(SupplierCatalogViewModel &viewModel, QW
     : QWidget(parent), m_viewModel(viewModel)
 {
     setupUi();
+    installComboDelegate(
+        m_table, 2, QStringLiteral("supplierCatalogSupplierCombo"),
+        [this](const QModelIndex &) {
+            QVector<TableComboChoice> choices;
+            const auto suppliers = m_viewModel.suppliers();
+            choices.reserve(suppliers.size());
+            for (const auto &supplier : suppliers) {
+                choices.push_back(
+                    {QString::fromStdString(supplier.name), QString::fromStdString(supplier.id)});
+            }
+            return choices;
+        },
+        [this](const QModelIndex &index, const TableComboChoice &choice) {
+            if (m_isSyncingTable) {
+                return;
+            }
+
+            auto *supplierIdItem = m_table->item(index.row(), 1);
+            if (supplierIdItem == nullptr || choice.value.toString().isEmpty()) {
+                return;
+            }
+
+            {
+                const QSignalBlocker blocker(m_table);
+                supplierIdItem->setText(choice.value.toString());
+                supplierIdItem->setData(Qt::UserRole, choice.value);
+            }
+            persistRow(index.row());
+        });
+    installComboDelegate(
+        m_table, 4, QStringLiteral("supplierCatalogProductTypeCombo"),
+        [this](const QModelIndex &) {
+            QVector<TableComboChoice> choices;
+            const auto productTypes = m_viewModel.productTypes();
+            choices.reserve(productTypes.size());
+            for (const auto &productType : productTypes) {
+                choices.push_back({QString::fromStdString(productType.code) + QStringLiteral(" | ") +
+                                       QString::fromStdString(productType.name),
+                                   QString::fromStdString(productType.id)});
+            }
+            return choices;
+        },
+        [this](const QModelIndex &index, const TableComboChoice &choice) {
+            if (m_isSyncingTable) {
+                return;
+            }
+
+            auto *productTypeIdItem = m_table->item(index.row(), 3);
+            if (productTypeIdItem == nullptr || choice.value.toString().isEmpty()) {
+                return;
+            }
+
+            {
+                const QSignalBlocker blocker(m_table);
+                productTypeIdItem->setText(choice.value.toString());
+                productTypeIdItem->setData(Qt::UserRole, choice.value);
+            }
+            persistRow(index.row());
+        });
 
     connect(this, &SupplierCatalogView::errorOccurred, &m_viewModel,
             &SupplierCatalogViewModel::errorOccurred);
     connect(&m_viewModel, &SupplierCatalogViewModel::supplierProductsChanged, this,
             &SupplierCatalogView::onSupplierProductsChanged);
     connect(m_addButton, &QPushButton::clicked, this, &SupplierCatalogView::onAddClicked);
-    connect(m_editButton, &QPushButton::clicked, this, &SupplierCatalogView::onEditClicked);
     connect(m_deleteButton, &QPushButton::clicked, this, &SupplierCatalogView::onDeleteClicked);
     connect(m_importButton, &QPushButton::clicked, this, &SupplierCatalogView::onImportCsvClicked);
     connect(m_filterField, &QLineEdit::textChanged, this, &SupplierCatalogView::onFilterChanged);
     connect(m_table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &SupplierCatalogView::onSelectionChanged);
+    connect(m_table, &QTableWidget::itemChanged, this, &SupplierCatalogView::onItemChanged);
 }
 
 void SupplierCatalogView::setupUi()
@@ -71,8 +130,6 @@ void SupplierCatalogView::setupUi()
 
     m_addButton = new QPushButton(tr("Add"), this);
     m_addButton->setObjectName("supplierCatalogAddButton");
-    m_editButton = new QPushButton(tr("Edit"), this);
-    m_editButton->setObjectName("supplierCatalogEditButton");
     m_deleteButton = new QPushButton(tr("Delete"), this);
     m_deleteButton->setObjectName("supplierCatalogDeleteButton");
     m_deleteButton->setProperty("destructive", true);
@@ -83,7 +140,6 @@ void SupplierCatalogView::setupUi()
     toolbar->addStretch();
     toolbar->addWidget(m_filterField);
     toolbar->addWidget(m_addButton);
-    toolbar->addWidget(m_editButton);
     toolbar->addWidget(m_deleteButton);
     toolbar->addWidget(m_importButton);
 
@@ -91,14 +147,15 @@ void SupplierCatalogView::setupUi()
     m_table->setObjectName("supplierCatalogTable");
     m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_table->setAlternatingRowColors(true);
-    m_table->setSortingEnabled(true);
+    m_table->setSortingEnabled(false);
     m_table->verticalHeader()->setVisible(false);
     m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    configureEditableTable(m_table, QStringLiteral("supplierCatalogInlineEditor"));
 
     m_statusLabel = new QLabel(tr("Status: ready"), this);
     m_statusLabel->setObjectName("supplierCatalogStatusLabel");
+    m_statusLabel->setProperty("muted", true);
 
     layout->addLayout(toolbar);
     layout->addWidget(m_table);
@@ -106,15 +163,8 @@ void SupplierCatalogView::setupUi()
 
     setObjectName("supplierCatalogView");
     setStyleSheet(
-        "#supplierCatalogView { background-color: #fffaf2; }"
-        "#supplierCatalogTitleLabel { color: #233130; font-size: 22px; font-weight: 700; }"
-        "QLineEdit, QComboBox { background-color: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; }"
-        "QPushButton { background-color: #1d4ed8; color: white; border: 0; border-radius: 6px; padding: 6px 12px; }"
-        "QPushButton:hover { background-color: #1e40af; }"
-        "QPushButton[destructive='true'] { background-color: #b91c1c; }"
-        "QPushButton[destructive='true']:hover { background-color: #991b1b; }"
-        "QTableWidget { background-color: #fbfbfd; alternate-background-color: #f1f4f8; border: 1px solid #d7dde7; border-radius: 8px; }"
-        "QHeaderView::section { background-color: #e8eef6; color: #0f172a; padding: 6px; border: 0; border-bottom: 1px solid #d7dde7; font-weight: 600; }");
+        "#supplierCatalogView { background-color: transparent; }"
+        "#supplierCatalogTitleLabel { color: #0f172a; font-size: 22px; font-weight: 700; }");
 
     updateActionButtons();
 }
@@ -127,28 +177,17 @@ void SupplierCatalogView::onSupplierProductsChanged()
 
 void SupplierCatalogView::onAddClicked()
 {
-    Common::Entities::SuppliersProductInfo supplierProduct;
-    if (showSupplierProductDialog(supplierProduct, tr("Create supplier catalog mapping"))) {
-        m_viewModel.createSupplierProduct(supplierProduct);
-    }
-}
-
-void SupplierCatalogView::onEditClicked()
-{
-    const auto selected = m_table->selectedItems();
-    if (selected.isEmpty()) {
+    if (m_viewModel.suppliers().isEmpty() || m_viewModel.productTypes().isEmpty()) {
+        emit errorOccurred(tr("Suppliers and product types must exist before catalog mapping."));
         return;
     }
 
-    const int row = selected.first()->row();
-    Common::Entities::SuppliersProductInfo supplierProduct{
-        .id = m_table->item(row, 0)->text().toStdString(),
-        .supplierID = m_table->item(row, 1)->text().toStdString(),
-        .productTypeId = m_table->item(row, 3)->text().toStdString(),
-        .code = m_table->item(row, 5)->text().toStdString()};
-    if (showSupplierProductDialog(supplierProduct, tr("Edit supplier catalog mapping"))) {
-        m_viewModel.editSupplierProduct(supplierProduct);
-    }
+    const QString token = QDateTime::currentDateTimeUtc().toString(QStringLiteral("hhmmsszzz"));
+    Common::Entities::SuppliersProductInfo supplierProduct;
+    supplierProduct.supplierID = m_viewModel.suppliers().first().id;
+    supplierProduct.productTypeId = m_viewModel.productTypes().first().id;
+    supplierProduct.code = QStringLiteral("CODE-%1").arg(token).toStdString();
+    m_viewModel.createSupplierProduct(supplierProduct);
 }
 
 void SupplierCatalogView::onDeleteClicked()
@@ -180,6 +219,32 @@ void SupplierCatalogView::onFilterChanged(const QString &text)
 
 void SupplierCatalogView::onSelectionChanged() { updateActionButtons(); }
 
+void SupplierCatalogView::onItemChanged(QTableWidgetItem *item)
+{
+    if (m_isSyncingTable || item == nullptr || item->column() != 5) {
+        return;
+    }
+
+    const QString currentValue = item->text().trimmed();
+    if (currentValue.isEmpty()) {
+        restoreItemText(m_table, item, item->data(Qt::UserRole).toString());
+        emit errorOccurred(tr("Supplier code is required."));
+        return;
+    }
+    if (restoreIfUnchanged(m_table, item, currentValue)) {
+        return;
+    }
+
+    if (item->text() != currentValue) {
+        restoreItemText(m_table, item, currentValue);
+    }
+    {
+        const QSignalBlocker blocker(m_table);
+        item->setData(Qt::UserRole, currentValue);
+    }
+    persistRow(item->row());
+}
+
 void SupplierCatalogView::applyFilter()
 {
     QVector<Common::Entities::SuppliersProductInfo> filtered;
@@ -197,7 +262,6 @@ void SupplierCatalogView::applyFilter()
 void SupplierCatalogView::updateActionButtons()
 {
     const bool hasSelection = !m_table->selectedItems().isEmpty();
-    m_editButton->setEnabled(hasSelection);
     m_deleteButton->setEnabled(hasSelection);
 }
 
@@ -211,7 +275,7 @@ void SupplierCatalogView::updateStatus(int visibleCount, int totalCount)
 void SupplierCatalogView::fillTable(
     const QVector<Common::Entities::SuppliersProductInfo> &supplierProducts)
 {
-    m_table->setSortingEnabled(false);
+    m_isSyncingTable = true;
     m_table->clearContents();
     m_table->setRowCount(supplierProducts.size());
     m_table->setColumnCount(6);
@@ -223,83 +287,42 @@ void SupplierCatalogView::fillTable(
         const auto &supplierProduct = supplierProducts[row];
         const QString supplierId = QString::fromStdString(supplierProduct.supplierID);
         const QString productTypeId = QString::fromStdString(supplierProduct.productTypeId);
-        m_table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(supplierProduct.id)));
-        m_table->setItem(row, 1, new QTableWidgetItem(supplierId));
-        m_table->setItem(row, 2, new QTableWidgetItem(m_viewModel.supplierLabel(supplierId)));
-        m_table->setItem(row, 3, new QTableWidgetItem(productTypeId));
+        m_table->setItem(row, 0, createReadOnlyTableItem(QString::fromStdString(supplierProduct.id)));
+        m_table->setItem(row, 1, createReadOnlyTableItem(supplierId));
+        m_table->setItem(row, 2,
+                         createComboTableItem(m_viewModel.supplierLabel(supplierId), supplierId));
+        m_table->setItem(row, 3, createReadOnlyTableItem(productTypeId));
         m_table->setItem(row, 4,
-                         new QTableWidgetItem(m_viewModel.productTypeLabel(productTypeId)));
-        m_table->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(supplierProduct.code)));
+                         createComboTableItem(m_viewModel.productTypeLabel(productTypeId),
+                                              productTypeId));
+        m_table->setItem(row, 5,
+                         createEditableTableItem(QString::fromStdString(supplierProduct.code)));
     }
 
     m_table->setColumnHidden(0, true);
     m_table->setColumnHidden(1, true);
     m_table->setColumnHidden(3, true);
-    m_table->setSortingEnabled(true);
+    refreshPersistentComboEditors(m_table);
+    m_isSyncingTable = false;
     updateActionButtons();
 }
 
-bool SupplierCatalogView::showSupplierProductDialog(
-    Common::Entities::SuppliersProductInfo &supplierProduct, const QString &title)
+void SupplierCatalogView::persistRow(int row)
 {
-    const auto suppliers = m_viewModel.suppliers();
-    const auto productTypes = m_viewModel.productTypes();
-    if (suppliers.isEmpty() || productTypes.isEmpty()) {
-        emit errorOccurred(tr("Suppliers and product types must exist before catalog mapping."));
-        return false;
+    if (row < 0) {
+        return;
     }
 
-    QDialog dialog(this);
-    dialog.setWindowTitle(title);
-    dialog.setMinimumWidth(460);
-
-    auto *layout = new QFormLayout(&dialog);
-    auto *supplierBox = new QComboBox(&dialog);
-    auto *productTypeBox = new QComboBox(&dialog);
-    auto *codeField = new QLineEdit(QString::fromStdString(supplierProduct.code), &dialog);
-
-    for (const auto &supplier : suppliers) {
-        supplierBox->addItem(QString::fromStdString(supplier.name), QString::fromStdString(supplier.id));
+    Common::Entities::SuppliersProductInfo supplierProduct{
+        .id = m_table->item(row, 0)->text().toStdString(),
+        .supplierID = m_table->item(row, 1)->text().toStdString(),
+        .productTypeId = m_table->item(row, 3)->text().toStdString(),
+        .code = m_table->item(row, 5)->text().trimmed().toStdString()};
+    if (supplierProduct.code.empty()) {
+        emit errorOccurred(tr("Supplier code is required."));
+        return;
     }
-    for (const auto &productType : productTypes) {
-        productTypeBox->addItem(
-            QString::fromStdString(productType.code) + " | " + QString::fromStdString(productType.name),
-            QString::fromStdString(productType.id));
-    }
-
-    if (!supplierProduct.supplierID.empty()) {
-        supplierBox->setCurrentIndex(
-            supplierBox->findData(QString::fromStdString(supplierProduct.supplierID)));
-    }
-    if (!supplierProduct.productTypeId.empty()) {
-        productTypeBox->setCurrentIndex(
-            productTypeBox->findData(QString::fromStdString(supplierProduct.productTypeId)));
-    }
-
-    layout->addRow(tr("Supplier"), supplierBox);
-    layout->addRow(tr("Product type"), productTypeBox);
-    layout->addRow(tr("Supplier code"), codeField);
-
-    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    layout->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, &dialog, [this, &dialog, codeField]() {
-        if (codeField->text().trimmed().isEmpty()) {
-            emit errorOccurred(tr("Supplier code is required."));
-            return;
-        }
-        dialog.accept();
-    });
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return false;
-    }
-
-    supplierProduct.supplierID = supplierBox->currentData().toString().toStdString();
-    supplierProduct.productTypeId = productTypeBox->currentData().toString().toStdString();
-    supplierProduct.code = codeField->text().trimmed().toStdString();
-    return true;
+    m_viewModel.editSupplierProduct(supplierProduct);
 }
 
 bool SupplierCatalogView::importCsvFile(const QString &filePath)

@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTableWidget>
+#include <QTableWidgetItem>
 #include <QVector>
 #include <QWidget>
 
@@ -32,15 +33,15 @@ private slots:
     void onContactsChanged();
     void onSuppliersChanged();
     void onEmployeesChanged();
+    void onContactItemChanged(QTableWidgetItem *item);
+    void onSupplierItemChanged(QTableWidgetItem *item);
+    void onEmployeeItemChanged(QTableWidgetItem *item);
 
     void onContactAdd();
-    void onContactEdit();
     void onContactDelete();
     void onSupplierAdd();
-    void onSupplierEdit();
     void onSupplierDelete();
     void onEmployeeAdd();
-    void onEmployeeEdit();
     void onEmployeeDelete();
 
     void refreshContacts();
@@ -52,7 +53,6 @@ private:
         QWidget *page{nullptr};
         QLineEdit *filterField{nullptr};
         QPushButton *addButton{nullptr};
-        QPushButton *editButton{nullptr};
         QPushButton *deleteButton{nullptr};
         QTableWidget *table{nullptr};
         QLabel *statusLabel{nullptr};
@@ -70,10 +70,9 @@ private:
     void fillContactsTable(const QVector<Common::Entities::Contact> &contacts);
     void fillSuppliersTable(const QVector<Common::Entities::Supplier> &suppliers);
     void fillEmployeesTable(const QVector<Common::Entities::Employee> &employees);
-
-    bool showContactDialog(Common::Entities::Contact &contact, const QString &title);
-    bool showSupplierDialog(Common::Entities::Supplier &supplier, const QString &title);
-    bool showEmployeeDialog(Common::Entities::Employee &employee, const QString &title);
+    void persistContactRow(int row);
+    void persistSupplierRow(int row);
+    void persistEmployeeRow(int row);
 
     ManagementViewModel &m_viewModel;
     QTabWidget *m_sections{nullptr};
@@ -83,4 +82,5 @@ private:
     QVector<Common::Entities::Contact> m_allContacts;
     QVector<Common::Entities::Supplier> m_allSuppliers;
     QVector<Common::Entities::Employee> m_allEmployees;
+    bool m_isSyncingTable{false};
 };
