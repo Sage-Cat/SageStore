@@ -1,14 +1,27 @@
 #include "HttpTransaction.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <vector>
 
+#include <boost/asio/error.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include "common/Network/IDataSerializer.hpp"
 
 #include "common/Endpoints.hpp"
 #include "common/SpdlogConfig.hpp"
+
+namespace {
+bool isExpectedConnectionCloseError(const boost::beast::error_code &ec)
+{
+    return ec == http::error::end_of_stream ||
+           ec == boost::asio::error::operation_aborted ||
+           ec == boost::asio::error::not_connected || ec == boost::asio::error::eof ||
+           ec == boost::asio::error::connection_reset ||
+           ec == boost::system::errc::make_error_code(boost::system::errc::not_connected);
+}
+} // namespace
 
 HttpTransaction::HttpTransaction(unsigned long long id, boost::asio::ip::tcp::socket socket,
                                  std::unique_ptr<IDataSerializer> serializer,
@@ -42,6 +55,9 @@ void HttpTransaction::do_read()
                      [self = shared_from_this()](boost::beast::error_code ec, std::size_t) {
                          if (!ec) {
                              self->handle_request();
+                         } else if (isExpectedConnectionCloseError(ec)) {
+                             SPDLOG_DEBUG("[Transaction ID: {}] - Ignoring read close condition: {}",
+                                          self->m_id, ec.message());
                          } else {
                              SPDLOG_ERROR(
                                  "[Transaction ID: {}] - HttpTransaction::do_read::async_read "
@@ -58,17 +74,23 @@ void HttpTransaction::handle_request()
 
     // Parse request
     auto segments = parseEndpoint(m_request.target());
+    const auto requestBody = beast::buffers_to_string(m_request.body().data());
+    const bool hasRequestBody =
+        std::any_of(requestBody.cbegin(), requestBody.cend(), [](unsigned char character) {
+            return !std::isspace(character);
+        });
 
-    // Check for valid
-    if (m_request.body().size() != 0) {
-        auto bodyStr = beast::buffers_to_string(m_request.body().data());
-        SPDLOG_DEBUG("[Transaction ID: {}] SERVER received data: {}", m_id, bodyStr);
+    if (hasRequestBody) {
+        SPDLOG_DEBUG("[Transaction ID: {}] SERVER received data: {}", m_id, requestBody);
     }
 
     // Prepare RequestData
     RequestData rd;
     if (segments.size() >= 3) {
-        auto dataset = m_serializer->deserialize(beast::buffers_to_string(m_request.body().data()));
+        Dataset dataset;
+        if (hasRequestBody) {
+            dataset = m_serializer->deserialize(requestBody);
+        }
 
         rd = RequestData{.module     = segments[Endpoints::Segments::MODULE],
                          .submodule  = segments[Endpoints::Segments::SUBMODULE],
@@ -128,11 +150,23 @@ void HttpTransaction::do_response(ResponseData data)
 
 void HttpTransaction::do_close()
 {
-    SPDLOG_TRACE("HttpTransaction::do_close");
+    SPDLOG_TRACE("[Transaction ID: {}] - HttpTransaction::do_close", m_id);
     boost::beast::error_code ec;
-    m_stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-    if (ec) {
+    m_stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_send, ec);
+    if (ec && !isExpectedConnectionCloseError(ec)) {
         SPDLOG_ERROR("[Transaction ID: {}] - Shutdown error: {}", m_id, ec.message());
+    } else if (ec) {
+        SPDLOG_DEBUG("[Transaction ID: {}] - Ignoring shutdown close condition: {}", m_id,
+                     ec.message());
+    }
+
+    ec = {};
+    m_stream.socket().close(ec);
+    if (ec && !isExpectedConnectionCloseError(ec)) {
+        SPDLOG_ERROR("[Transaction ID: {}] - Close error: {}", m_id, ec.message());
+    } else if (ec) {
+        SPDLOG_DEBUG("[Transaction ID: {}] - Ignoring socket close condition: {}", m_id,
+                     ec.message());
     }
     // Transaction is automatically restored by itself without Server
     // participation

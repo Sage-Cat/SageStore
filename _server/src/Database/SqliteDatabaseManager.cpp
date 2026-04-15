@@ -14,6 +14,23 @@
 
 #define _M "SqliteDatabaseManager"
 
+namespace {
+std::string buildDatabaseErrorMessage(sqlite3 *database, int stepResult)
+{
+    const int extendedErrorCode = sqlite3_extended_errcode(database);
+    const std::string sqliteError = sqlite3_errmsg(database);
+
+    if (extendedErrorCode == SQLITE_CONSTRAINT_FOREIGNKEY ||
+        (stepResult == SQLITE_CONSTRAINT &&
+         sqliteError.find("FOREIGN KEY constraint failed") != std::string::npos)) {
+        return "Operation violates referential integrity constraints. "
+               "The resource is referenced by other records.";
+    }
+
+    return "SQL error: " + sqliteError;
+}
+} // namespace
+
 class SqliteQueryResult : public IQueryResult {
     std::unique_ptr<sqlite3_stmt, decltype(&sqlite3_finalize)> stmt;
 
@@ -29,7 +46,7 @@ public:
             return false;
         } else {
             const std::string errorMsg =
-                "SQL error: " + std::string(sqlite3_errmsg(sqlite3_db_handle(stmt.get())));
+                buildDatabaseErrorMessage(sqlite3_db_handle(stmt.get()), stepResult);
             SPDLOG_ERROR(errorMsg);
             throw ServerException(_M, errorMsg);
         }

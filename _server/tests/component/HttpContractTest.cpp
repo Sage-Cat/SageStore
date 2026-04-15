@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <filesystem>
 #include <limits>
@@ -9,6 +10,7 @@
 
 #include "BusinessLogic/BusinessLogic.hpp"
 #include "Database/ContactRepository.hpp"
+#include "Database/EmployeeRepository.hpp"
 #include "Database/InventoryRepository.hpp"
 #include "Database/LogRepository.hpp"
 #include "Database/ProductTypeRepository.hpp"
@@ -33,8 +35,40 @@
 #include "common/Entities/Supplier.hpp"
 #include "common/Entities/SuppliersProductInfo.hpp"
 #include "common/Keys.hpp"
+#include "common/Network/IDataSerializer.hpp"
 #include "common/Network/JsonSerializer.hpp"
 #include "common/SpdlogConfig.hpp"
+
+namespace {
+struct SerializerCounters {
+    int serializeCalls{0};
+    int deserializeCalls{0};
+};
+
+class CountingJsonSerializer : public IDataSerializer {
+public:
+    explicit CountingJsonSerializer(std::shared_ptr<SerializerCounters> counters)
+        : m_counters(std::move(counters))
+    {
+    }
+
+    std::string serialize(const Dataset &dataset) override
+    {
+        ++m_counters->serializeCalls;
+        return m_delegate.serialize(dataset);
+    }
+
+    Dataset deserialize(const std::string &serializedData) override
+    {
+        ++m_counters->deserializeCalls;
+        return m_delegate.deserialize(serializedData);
+    }
+
+private:
+    std::shared_ptr<SerializerCounters> m_counters;
+    JsonSerializer m_delegate;
+};
+} // namespace
 
 class HttpContractTest : public ::testing::Test {
 protected:
@@ -52,6 +86,7 @@ protected:
         m_inventoryRepository    = m_repositoryManager->getInventoryRepository();
         m_productTypeRepository  = m_repositoryManager->getProductTypeRepository();
         m_contactRepository      = m_repositoryManager->getContactRepository();
+        m_employeeRepository     = m_repositoryManager->getEmployeeRepository();
         m_supplierRepository     = m_repositoryManager->getSupplierRepository();
         m_logRepository          = m_repositoryManager->getLogRepository();
         m_purchaseOrderRepository = m_repositoryManager->getPurchaseOrderRepository();
@@ -71,6 +106,7 @@ protected:
         m_purchaseOrderRepository.reset();
         m_logRepository.reset();
         m_supplierRepository.reset();
+        m_employeeRepository.reset();
         m_contactRepository.reset();
         m_inventoryRepository.reset();
         m_productTypeRepository.reset();
@@ -81,9 +117,15 @@ protected:
         std::filesystem::remove(m_dbPath, errorCode);
     }
 
-    http::response<http::string_body> performRequest(http::verb verb, const std::string &target,
-                                                     const Dataset &dataset = {})
+    http::response<http::string_body>
+    performRequestWithSerializer(http::verb verb, const std::string &target,
+                                 std::unique_ptr<IDataSerializer> serverSerializer,
+                                 const Dataset &dataset = {})
     {
+        if (serverSerializer == nullptr) {
+            serverSerializer = std::make_unique<JsonSerializer>();
+        }
+
         asio::io_context serverIoc;
         tcp::acceptor acceptor(serverIoc, tcp::endpoint{asio::ip::make_address("127.0.0.1"), 0});
         const auto endpoint = acceptor.local_endpoint();
@@ -96,7 +138,7 @@ protected:
         acceptor.accept(serverSocket);
 
         auto transaction = std::make_shared<HttpTransaction>(
-            1ULL, std::move(serverSocket), std::make_unique<JsonSerializer>(),
+            1ULL, std::move(serverSocket), std::move(serverSerializer),
             [this](RequestData requestData, BusinessLogicCallback callback) {
                 m_businessLogic->executeTask(std::move(requestData), std::move(callback));
             });
@@ -125,6 +167,13 @@ protected:
 
         serverThread.join();
         return response;
+    }
+
+    http::response<http::string_body> performRequest(http::verb verb, const std::string &target,
+                                                     const Dataset &dataset = {})
+    {
+        return performRequestWithSerializer(verb, target, std::make_unique<JsonSerializer>(),
+                                            dataset);
     }
 
     Dataset deserializeResponseBody(const std::string &body) const
@@ -181,6 +230,21 @@ protected:
         return created.empty() ? std::string{} : created.front().id;
     }
 
+    std::string createEmployeeAndReturnId(const std::string &name)
+    {
+        m_employeeRepository->add(Common::Entities::Employee{
+            .id = "",
+            .name = name,
+            .number = "EMP-" + name,
+            .email = name + "@employee.test",
+            .address = "Employee street"});
+
+        const auto created =
+            m_employeeRepository->getByField(Common::Entities::Employee::NAME_KEY, name);
+        EXPECT_EQ(created.size(), 1U);
+        return created.empty() ? std::string{} : created.front().id;
+    }
+
     std::string createPurchaseOrderAndReturnId(const std::string &date, const std::string &supplierId,
                                                const std::string &status)
     {
@@ -216,6 +280,7 @@ protected:
     std::shared_ptr<IRepository<Common::Entities::Inventory>> m_inventoryRepository;
     std::shared_ptr<IRepository<Common::Entities::ProductType>> m_productTypeRepository;
     std::shared_ptr<IRepository<Common::Entities::Contact>> m_contactRepository;
+    std::shared_ptr<IRepository<Common::Entities::Employee>> m_employeeRepository;
     std::shared_ptr<IRepository<Common::Entities::Supplier>> m_supplierRepository;
     std::shared_ptr<IRepository<Common::Entities::Log>> m_logRepository;
     std::shared_ptr<IRepository<Common::Entities::PurchaseOrder>> m_purchaseOrderRepository;
@@ -257,6 +322,71 @@ TEST_F(HttpContractTest, GetProductTypes_ReturnsSerializedDataset)
     EXPECT_EQ(*std::next(names.begin(), static_cast<long>(itemIndex)), "Brake cleaner");
 }
 
+TEST_F(HttpContractTest, GetProductTypes_EmptyBodySkipsServerDeserialization)
+{
+    auto counters = std::make_shared<SerializerCounters>();
+
+    const auto response =
+        performRequestWithSerializer(http::verb::get, Endpoints::Inventory::PRODUCT_TYPES,
+                                     std::make_unique<CountingJsonSerializer>(counters));
+
+    EXPECT_EQ(response.result(), http::status::ok);
+    EXPECT_EQ(counters->deserializeCalls, 0);
+}
+
+TEST_F(HttpContractTest, JsonSerializer_WhitespaceDocumentReturnsEmptyDataset)
+{
+    JsonSerializer serializer;
+    const auto dataset = serializer.deserialize("  \n\t  ");
+    EXPECT_TRUE(dataset.empty());
+}
+
+TEST_F(HttpContractTest, GetHealth_ReturnsReadyStatus)
+{
+    const auto response = performRequest(http::verb::get, Endpoints::System::HEALTH);
+
+    EXPECT_EQ(response.result(), http::status::ok);
+
+    const auto dataset = deserializeResponseBody(response.body());
+    ASSERT_TRUE(dataset.contains("status"));
+    ASSERT_TRUE(dataset.contains("service"));
+    ASSERT_TRUE(dataset.contains("ready"));
+    EXPECT_EQ(dataset.at("status").front(), "ok");
+    EXPECT_EQ(dataset.at("service").front(), "SageStoreServer");
+    EXPECT_EQ(dataset.at("ready").front(), "true");
+}
+
+TEST_F(HttpContractTest, ClientDisconnectBeforeRequestDoesNotInvokeBusinessLogic)
+{
+    asio::io_context serverIoc;
+    tcp::acceptor acceptor(serverIoc, tcp::endpoint{asio::ip::make_address("127.0.0.1"), 0});
+    const auto endpoint = acceptor.local_endpoint();
+
+    asio::io_context clientIoc;
+    tcp::socket clientSocket(clientIoc);
+    clientSocket.connect(endpoint);
+
+    tcp::socket serverSocket(serverIoc);
+    acceptor.accept(serverSocket);
+
+    std::atomic_bool businessTaskInvoked{false};
+    auto transaction = std::make_shared<HttpTransaction>(
+        1ULL, std::move(serverSocket), std::make_unique<JsonSerializer>(),
+        [&businessTaskInvoked](RequestData, BusinessLogicCallback) {
+            businessTaskInvoked.store(true);
+        });
+
+    transaction->start();
+    std::thread serverThread([&serverIoc]() { serverIoc.run(); });
+
+    boost::system::error_code errorCode;
+    clientSocket.shutdown(tcp::socket::shutdown_both, errorCode);
+    clientSocket.close(errorCode);
+
+    serverThread.join();
+    EXPECT_FALSE(businessTaskInvoked.load());
+}
+
 TEST_F(HttpContractTest, PostProductType_PersistsEntity)
 {
     const Dataset requestBody{
@@ -279,6 +409,29 @@ TEST_F(HttpContractTest, PostProductType_PersistsEntity)
     ASSERT_EQ(created.size(), 1U);
     EXPECT_EQ(created.front().name, "Transmission oil");
     EXPECT_EQ(created.front().isImported, "1");
+}
+
+TEST_F(HttpContractTest, PostProductType_WithBodyStillDeserializesOnServer)
+{
+    auto counters = std::make_shared<SerializerCounters>();
+
+    const Dataset requestBody{
+        {Common::Entities::ProductType::CODE_KEY, {"PT-HTTP-DESER"}},
+        {Common::Entities::ProductType::BARCODE_KEY, {"9988776655"}},
+        {Common::Entities::ProductType::NAME_KEY, {"Deserializer check"}},
+        {Common::Entities::ProductType::DESCRIPTION_KEY, {"Deserializer check"}},
+        {Common::Entities::ProductType::LAST_PRICE_KEY, {"25.00"}},
+        {Common::Entities::ProductType::UNIT_KEY, {"pcs"}},
+        {Common::Entities::ProductType::IS_IMPORTED_KEY, {"0"}},
+    };
+
+    const auto response =
+        performRequestWithSerializer(http::verb::post, Endpoints::Inventory::PRODUCT_TYPES,
+                                     std::make_unique<CountingJsonSerializer>(counters),
+                                     requestBody);
+
+    EXPECT_EQ(response.result(), http::status::ok);
+    EXPECT_EQ(counters->deserializeCalls, 1);
 }
 
 TEST_F(HttpContractTest, PutProductType_UpdatesExistingEntity)
@@ -344,6 +497,30 @@ TEST_F(HttpContractTest, DeleteProductType_RemovesExistingEntity)
     const auto deleted = m_productTypeRepository->getByField(
         Common::Entities::ProductType::CODE_KEY, "PT-HTTP-4");
     EXPECT_TRUE(deleted.empty());
+}
+
+TEST_F(HttpContractTest, DeleteProductType_EmptyBodySkipsServerDeserialization)
+{
+    m_productTypeRepository->add(Common::Entities::ProductType{.id = "",
+                                                               .code = "PT-HTTP-DELETE-DESER",
+                                                               .barcode = "918273645",
+                                                               .name = "Delete deser check",
+                                                               .description = "Delete deser check",
+                                                               .lastPrice = "1.00",
+                                                               .unit = "pcs",
+                                                               .isImported = "0"});
+    const auto existing = m_productTypeRepository->getByField(
+        Common::Entities::ProductType::CODE_KEY, "PT-HTTP-DELETE-DESER");
+    ASSERT_EQ(existing.size(), 1U);
+
+    auto counters = std::make_shared<SerializerCounters>();
+    const auto response = performRequestWithSerializer(
+        http::verb::delete_,
+        std::string(Endpoints::Inventory::PRODUCT_TYPES) + "/" + existing.front().id,
+        std::make_unique<CountingJsonSerializer>(counters));
+
+    EXPECT_EQ(response.result(), http::status::ok);
+    EXPECT_EQ(counters->deserializeCalls, 0);
 }
 
 TEST_F(HttpContractTest, PutProductType_ReturnsErrorWhenEntityMissing)
@@ -517,6 +694,36 @@ TEST_F(HttpContractTest, DeleteStock_ReturnsErrorWhenStockDoesNotExist)
 
     const auto dataset = deserializeResponseBody(response.body());
     ASSERT_TRUE(dataset.contains(Keys::_ERROR));
+}
+
+TEST_F(HttpContractTest, DeleteEmployee_ReturnsFriendlyErrorWhenReferencedByOtherRecords)
+{
+    const auto employeeId = createEmployeeAndReturnId("HttpContract employee");
+    ASSERT_FALSE(employeeId.empty());
+    const auto productTypeId = createProductTypeAndReturnId("PT-HTTP-EMPLOYEE-DELETE");
+    ASSERT_FALSE(productTypeId.empty());
+
+    m_inventoryRepository->add(Common::Entities::Inventory{
+        .id = "",
+        .productTypeId = productTypeId,
+        .quantityAvailable = "3",
+        .employeeId = employeeId});
+
+    const auto response =
+        performRequest(http::verb::delete_,
+                       std::string(Endpoints::Management::EMPLOYEES) + "/" + employeeId);
+    EXPECT_EQ(response.result(), http::status::ok);
+
+    const auto dataset = deserializeResponseBody(response.body());
+    ASSERT_TRUE(dataset.contains(Keys::_ERROR));
+    const auto &errors = dataset.at(Keys::_ERROR);
+    ASSERT_GE(errors.size(), 2U);
+    EXPECT_EQ(*errors.begin(), "SqliteDatabaseManager");
+    const auto messageIt = std::next(errors.begin());
+    EXPECT_EQ(*messageIt,
+              "Operation violates referential integrity constraints. "
+              "The resource is referenced by other records.");
+    EXPECT_EQ(messageIt->find("FOREIGN KEY constraint failed"), std::string::npos);
 }
 
 TEST_F(HttpContractTest, GetContacts_ReturnsSerializedDataset)
@@ -1028,6 +1235,26 @@ TEST_F(HttpContractTest, GetSalesAnalytics_ReturnsComputedMetrics)
     EXPECT_EQ(dataset.at(AnalyticsKeys::Sales::TOTAL_ORDER_LINES).front(), "1");
     EXPECT_EQ(dataset.at(AnalyticsKeys::Sales::UNIQUE_CUSTOMERS).front(), "1");
     EXPECT_DOUBLE_EQ(std::stod(dataset.at(AnalyticsKeys::Sales::TOTAL_REVENUE).front()), 10.99);
+    EXPECT_DOUBLE_EQ(std::stod(dataset.at(AnalyticsKeys::Sales::TOTAL_PURCHASE_COST).front()), 10.99);
+    EXPECT_DOUBLE_EQ(std::stod(dataset.at(AnalyticsKeys::Sales::GROSS_PROFIT).front()), 0.0);
+    EXPECT_EQ(dataset.at(AnalyticsKeys::Sales::CONFIRMED_ORDERS).front(), "0");
+    EXPECT_EQ(dataset.at(AnalyticsKeys::Sales::INVOICED_ORDERS).front(), "0");
+}
+
+TEST_F(HttpContractTest, GetInventoryAnalytics_ReturnsComputedMetrics)
+{
+    const auto response = performRequest(http::verb::get, Endpoints::Analytics::INVENTORY);
+    EXPECT_EQ(response.result(), http::status::ok);
+
+    const auto dataset = deserializeResponseBody(response.body());
+    ASSERT_TRUE(dataset.contains(AnalyticsKeys::Inventory::TOTAL_PRODUCT_TYPES));
+    EXPECT_EQ(dataset.at(AnalyticsKeys::Inventory::TOTAL_PRODUCT_TYPES).front(), "1");
+    EXPECT_EQ(dataset.at(AnalyticsKeys::Inventory::TOTAL_PURCHASE_ORDERS).front(), "1");
+    EXPECT_EQ(dataset.at(AnalyticsKeys::Inventory::RECEIVED_PURCHASE_ORDERS).front(), "0");
+    EXPECT_DOUBLE_EQ(std::stod(dataset.at(AnalyticsKeys::Inventory::TOTAL_PURCHASE_SPEND).front()),
+                     10.99);
+    EXPECT_DOUBLE_EQ(
+        std::stod(dataset.at(AnalyticsKeys::Inventory::INVENTORY_VALUE_ESTIMATE).front()), 0.0);
 }
 
 TEST_F(HttpContractTest, GetLogsEntries_ReturnsSerializedDataset)

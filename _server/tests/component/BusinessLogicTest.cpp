@@ -243,6 +243,10 @@ TEST_F(BusinessLogicTest, AnalyticsModuleGetSalesMetrics)
         .WillOnce(Return(std::vector<Common::Entities::SalesOrderRecord>{
             Common::Entities::SalesOrderRecord{
                 .id = "9", .orderId = "8", .productTypeId = "1", .quantity = "2", .price = "5.5"}}));
+    EXPECT_CALL(*purchaseOrderRecordsRepositoryMock, getAll())
+        .WillOnce(Return(std::vector<Common::Entities::PurchaseOrderRecord>{
+            Common::Entities::PurchaseOrderRecord{
+                .id = "4", .orderId = "3", .productTypeId = "1", .quantity = "2", .price = "2.0"}}));
     EXPECT_CALL(*logsRepositoryMock, add(_)).Times(0);
 
     const auto response = executeTask(requestData);
@@ -250,6 +254,8 @@ TEST_F(BusinessLogicTest, AnalyticsModuleGetSalesMetrics)
     EXPECT_EQ(response.dataset.at(AnalyticsKeys::Sales::TOTAL_ORDERS).front(), "1");
     EXPECT_DOUBLE_EQ(std::stod(response.dataset.at(AnalyticsKeys::Sales::TOTAL_REVENUE).front()),
                      11.0);
+    EXPECT_DOUBLE_EQ(std::stod(response.dataset.at(AnalyticsKeys::Sales::GROSS_PROFIT).front()),
+                     7.0);
 }
 
 TEST_F(BusinessLogicTest, LogsModuleGetEntries)

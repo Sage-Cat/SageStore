@@ -7,6 +7,9 @@ set(TEST_BUSINESS_LOGIC_SOURCES
 )
 
 add_executable(BusinessLogicTest ${TEST_BUSINESS_LOGIC_SOURCES})
+set_target_properties(BusinessLogicTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/component"
+)
 
 target_include_directories(BusinessLogicTest PUBLIC
     ${SERVER_SOURCES_DIR}
@@ -28,6 +31,10 @@ target_link_libraries(BusinessLogicTest
 )
 add_test(NAME Component_BusinessLogicTest COMMAND BusinessLogicTest)
 message(STATUS "Adding component test: BusinessLogicTest")
+set_tests_properties(
+    Component_BusinessLogicTest
+    PROPERTIES LABELS "server;component;offscreen_regression"
+)
 
 
 # ------------------------- REPOSITORY INTEGRATION -------------------------
@@ -38,6 +45,9 @@ set(TEST_REPOSITORY_INTEGRATION_SOURCES
 )
 
 add_executable(RepositoryIntegrationTest ${TEST_REPOSITORY_INTEGRATION_SOURCES})
+set_target_properties(RepositoryIntegrationTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/component"
+)
 
 target_include_directories(RepositoryIntegrationTest PUBLIC
     ${SERVER_SOURCES_DIR}
@@ -62,6 +72,10 @@ target_compile_definitions(RepositoryIntegrationTest PRIVATE
 
 add_test(NAME Component_RepositoryIntegrationTest COMMAND RepositoryIntegrationTest)
 message(STATUS "Adding component test: RepositoryIntegrationTest")
+set_tests_properties(
+    Component_RepositoryIntegrationTest
+    PROPERTIES LABELS "server;component;integration;offscreen_regression"
+)
 
 
 # ------------------------- HTTP CONTRACT -------------------------
@@ -75,6 +89,9 @@ if(NOT TARGET HttpContractTest)
     )
 
     add_executable(HttpContractTest ${TEST_HTTP_CONTRACT_SOURCES})
+    set_target_properties(HttpContractTest PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/component"
+    )
 
     target_include_directories(HttpContractTest PUBLIC
         ${SERVER_SOURCES_DIR}
@@ -99,4 +116,8 @@ if(NOT TARGET HttpContractTest)
 
     add_test(NAME Component_HttpContractTest COMMAND HttpContractTest)
     message(STATUS "Adding component test: HttpContractTest")
+    set_tests_properties(
+        Component_HttpContractTest
+        PROPERTIES LABELS "server;component;contract;offscreen_regression"
+    )
 endif()

@@ -1,5 +1,8 @@
 #include "common/Network/JsonSerializer.hpp"
 
+#include <algorithm>
+#include <cctype>
+
 #include "common/SpdlogConfig.hpp"
 #include <nlohmann/json.hpp>
 
@@ -37,6 +40,14 @@ Dataset JsonSerializer::deserialize(const std::string &serializedData)
     SPDLOG_TRACE("JsonSerializer::deserialize");
 
     Dataset dataset;
+    const bool hasNonWhitespace =
+        std::any_of(serializedData.cbegin(), serializedData.cend(), [](unsigned char character) {
+            return !std::isspace(character);
+        });
+    if (!hasNonWhitespace) {
+        return dataset;
+    }
+
     try {
         auto jsonObject = json::parse(serializedData, nullptr, false);
 

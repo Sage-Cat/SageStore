@@ -13,6 +13,7 @@
 #include "PurchaseModule.hpp"
 #include "ServerException.hpp"
 #include "SalesModule.hpp"
+#include "SystemModule.hpp"
 #include "UsersModule.hpp"
 
 #include "common/Entities/Log.hpp"
@@ -46,6 +47,7 @@ BusinessLogic::BusinessLogic(RepositoryManager &repositoryManager)
 {
     m_logRepository = repositoryManager.getLogRepository();
     m_modules.emplace("users", std::make_unique<UsersModule>(repositoryManager));
+    m_modules.emplace("system", std::make_unique<SystemModule>());
     m_modules.emplace("inventory", std::make_unique<InventoryModule>(repositoryManager));
     m_modules.emplace("management", std::make_unique<ManagementModule>(repositoryManager));
     m_modules.emplace("purchase", std::make_unique<PurchaseModule>(repositoryManager));

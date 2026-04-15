@@ -7,6 +7,9 @@ set(SERVER_UNIT_TESTS_SOURCE
 )
 
 add_executable(UsersModuleTest ${SERVER_UNIT_TESTS_SOURCE})
+set_target_properties(UsersModuleTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/unit"
+)
 
 target_include_directories(UsersModuleTest PUBLIC
     ${SERVER_SOURCES_DIR}
@@ -38,6 +41,9 @@ set(INVENTORY_MODULE_TESTS_SOURCE
 )
 
 add_executable(InventoryModuleTest ${INVENTORY_MODULE_TESTS_SOURCE})
+set_target_properties(InventoryModuleTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/unit"
+)
 
 target_include_directories(InventoryModuleTest PUBLIC
     ${SERVER_SOURCES_DIR}
@@ -69,6 +75,9 @@ set(ERP_MODULE_TESTS_SOURCE
 )
 
 add_executable(ErpModulesTest ${ERP_MODULE_TESTS_SOURCE})
+set_target_properties(ErpModulesTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/unit"
+)
 
 target_include_directories(ErpModulesTest PUBLIC
     ${SERVER_SOURCES_DIR}
@@ -98,6 +107,9 @@ set(SERVER_STARTUP_CONFIG_TESTS_SOURCE
 )
 
 add_executable(ServerStartupConfigTest ${SERVER_STARTUP_CONFIG_TESTS_SOURCE})
+set_target_properties(ServerStartupConfigTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/unit"
+)
 
 target_include_directories(ServerStartupConfigTest PUBLIC
     ${SERVER_SOURCES_DIR}
@@ -124,9 +136,11 @@ set(PRODUCT_INFO_TESTS_SOURCE
 )
 
 add_executable(ProductInfoRepositoryTest ${PRODUCT_INFO_TESTS_SOURCE})
+set_target_properties(ProductInfoRepositoryTest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SERVER_BUILD_DIR}/tests/unit"
+)
 
 target_include_directories(ProductInfoRepositoryTest PUBLIC
-    ${PRODUCT_INFO_TESTS_SOURCE}
     ${SERVER_TESTS_DIR}
     ${SERVER_SOURCES_DIR}
 )
