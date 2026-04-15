@@ -1,14 +1,6 @@
-#include <functional>
-
-#include <QApplication>
-#include <QCheckBox>
-#include <QDialog>
-#include <QDialogButtonBox>
 #include <QLineEdit>
-#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QTableWidget>
-#include <QTimer>
 #include <QtTest>
 
 #include "Ui/Models/ProductTypesModel.hpp"
@@ -16,6 +8,7 @@
 #include "Ui/Views/ProductTypesView.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
+#include "wrappers/TableUiTestHelpers.hpp"
 
 class ProductTypesViewTest : public QObject {
     Q_OBJECT
@@ -58,39 +51,15 @@ private slots:
 
     void testAddProductTypeFromView()
     {
-        openDialogAndFill([](QDialog *dialog) {
-            auto *codeField = dialog->findChild<QLineEdit *>("productTypeCodeField");
-            auto *nameField = dialog->findChild<QLineEdit *>("productTypeNameField");
-            auto *barcodeField = dialog->findChild<QLineEdit *>("productTypeBarcodeField");
-            auto *unitField = dialog->findChild<QLineEdit *>("productTypeUnitField");
-            auto *priceField = dialog->findChild<QLineEdit *>("productTypePriceField");
-            auto *descriptionField = dialog->findChild<QPlainTextEdit *>("productTypeDescriptionField");
-            auto *importedCheckbox = dialog->findChild<QCheckBox *>("productTypeImportedCheckbox");
-            auto *buttons = dialog->findChild<QDialogButtonBox *>();
-
-            QVERIFY(codeField != nullptr);
-            QVERIFY(nameField != nullptr);
-            QVERIFY(barcodeField != nullptr);
-            QVERIFY(unitField != nullptr);
-            QVERIFY(priceField != nullptr);
-            QVERIFY(descriptionField != nullptr);
-            QVERIFY(importedCheckbox != nullptr);
-            QVERIFY(buttons != nullptr);
-
-            codeField->setText("PT-003");
-            nameField->setText("Air filter");
-            barcodeField->setText("789");
-            unitField->setText("pcs");
-            priceField->setText("8.25");
-            descriptionField->setPlainText("Cabin air filter");
-            importedCheckbox->setChecked(true);
-            QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
-        });
-
         QTest::mouseClick(addButton(), Qt::LeftButton);
 
         QTRY_COMPARE(table()->rowCount(), 3);
-        QVERIFY(findRowByCode("PT-003") >= 0);
+        const int row = table()->rowCount() - 1;
+        QVERIFY(table()->item(row, 1)->text().startsWith("PT-"));
+        QVERIFY(table()->item(row, 2)->text().startsWith("New product "));
+        QCOMPARE(table()->item(row, 4)->text(), QString("pcs"));
+        QCOMPARE(table()->item(row, 5)->text(), QString("0.00"));
+        QCOMPARE(table()->item(row, 6)->text(), QString("No"));
     }
 
     void testEditProductTypeFromView()
@@ -99,26 +68,25 @@ private slots:
         QVERIFY(row >= 0);
         table()->selectRow(row);
 
-        openDialogAndFill([](QDialog *dialog) {
-            auto *nameField = dialog->findChild<QLineEdit *>("productTypeNameField");
-            auto *priceField = dialog->findChild<QLineEdit *>("productTypePriceField");
-            auto *buttons = dialog->findChild<QDialogButtonBox *>();
-
-            QVERIFY(nameField != nullptr);
-            QVERIFY(priceField != nullptr);
-            QVERIFY(buttons != nullptr);
-
-            nameField->setText("Engine Oil Pro");
-            priceField->setText("11.99");
-            QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
-        });
-
-        QTest::mouseClick(editButton(), Qt::LeftButton);
+        TableUiTestHelpers::editTextCell(table(), row, 2, "Engine Oil Pro");
+        TableUiTestHelpers::editTextCell(table(), row, 5, "11.99");
 
         const int editedRow = findRowByCode("PT-001");
         QVERIFY(editedRow >= 0);
         QCOMPARE(table()->item(editedRow, 2)->text(), QString("Engine Oil Pro"));
         QCOMPARE(table()->item(editedRow, 5)->text(), QString("11.99"));
+    }
+
+    void testDoubleClickRowOpensEditor()
+    {
+        const int row = findRowByCode("PT-001");
+        QVERIFY(row >= 0);
+
+        TableUiTestHelpers::editTextCell(table(), row, 2, "Engine Oil Inline");
+
+        const int editedRow = findRowByCode("PT-001");
+        QVERIFY(editedRow >= 0);
+        QCOMPARE(table()->item(editedRow, 2)->text(), QString("Engine Oil Inline"));
     }
 
     void testDeleteProductTypeFromView()
@@ -148,13 +116,6 @@ private:
         return button;
     }
 
-    QPushButton *editButton() const
-    {
-        auto *button = view->findChild<QPushButton *>("productTypesEditButton");
-        Q_ASSERT(button != nullptr);
-        return button;
-    }
-
     QPushButton *deleteButton() const
     {
         auto *button = view->findChild<QPushButton *>("productTypesDeleteButton");
@@ -173,25 +134,6 @@ private:
 
         return -1;
     }
-
-    void openDialogAndFill(const std::function<void(QDialog *)> &fillDialog)
-    {
-        QTimer::singleShot(0, [fillDialog]() {
-            auto *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
-            if (dialog == nullptr) {
-                for (auto *widget : QApplication::topLevelWidgets()) {
-                    dialog = qobject_cast<QDialog *>(widget);
-                    if (dialog != nullptr) {
-                        break;
-                    }
-                }
-            }
-
-            Q_ASSERT(dialog != nullptr);
-            fillDialog(dialog);
-        });
-    }
-
     ApiManagerMock *apiManagerMock{nullptr};
     ProductTypesModel *productTypesModel{nullptr};
     ProductTypesViewModel *viewModel{nullptr};

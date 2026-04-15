@@ -1,13 +1,7 @@
-#include <functional>
-
-#include <QApplication>
 #include <QComboBox>
-#include <QDialog>
-#include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
-#include <QTimer>
 #include <QtTest>
 
 #include "Ui/Models/StocksModel.hpp"
@@ -15,6 +9,7 @@
 #include "Ui/Views/StocksView.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
+#include "wrappers/TableUiTestHelpers.hpp"
 
 class StocksViewTest : public QObject {
     Q_OBJECT
@@ -61,51 +56,33 @@ private slots:
 
     void testAddStockFromView()
     {
-        openDialogAndFill([](QDialog *dialog) {
-            auto *productTypeBox = dialog->findChild<QComboBox *>("stockProductTypeCombo");
-            auto *quantityField  = dialog->findChild<QLineEdit *>("stockQuantityField");
-            auto *employeeField  = dialog->findChild<QLineEdit *>("stockEmployeeIdField");
-            auto *buttons        = dialog->findChild<QDialogButtonBox *>();
-
-            QVERIFY(productTypeBox != nullptr);
-            QVERIFY(quantityField != nullptr);
-            QVERIFY(employeeField != nullptr);
-            QVERIFY(buttons != nullptr);
-
-            productTypeBox->setCurrentIndex(1);
-            quantityField->setText("14");
-            employeeField->setText("2");
-            QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
-        });
-
         QTest::mouseClick(addButton(), Qt::LeftButton);
 
         QTRY_COMPARE(table()->rowCount(), 2);
-        QVERIFY(findRowByProductLabel("PT-002 | Brake fluid") >= 0);
+        const int row = findRowByProductLabel("PT-002 | Brake fluid");
+        QVERIFY(row >= 0);
+        QCOMPARE(table()->item(row, 3)->text(), QString("0"));
+        QCOMPARE(table()->item(row, 4)->text(), QString("1"));
     }
 
     void testEditStockFromView()
     {
         table()->selectRow(0);
 
-        openDialogAndFill([](QDialog *dialog) {
-            auto *quantityField = dialog->findChild<QLineEdit *>("stockQuantityField");
-            auto *employeeField = dialog->findChild<QLineEdit *>("stockEmployeeIdField");
-            auto *buttons       = dialog->findChild<QDialogButtonBox *>();
-
-            QVERIFY(quantityField != nullptr);
-            QVERIFY(employeeField != nullptr);
-            QVERIFY(buttons != nullptr);
-
-            quantityField->setText("19");
-            employeeField->setText("3");
-            QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
-        });
-
-        QTest::mouseClick(editButton(), Qt::LeftButton);
+        TableUiTestHelpers::editTextCell(table(), 0, 3, "19");
+        TableUiTestHelpers::editTextCell(table(), 0, 4, "3");
 
         QCOMPARE(table()->item(0, 3)->text(), QString("19"));
         QCOMPARE(table()->item(0, 4)->text(), QString("3"));
+    }
+
+    void testUnchangedQuantityEditDoesNotPersist()
+    {
+        const int editCountBefore = apiManagerMock->stockEditCount();
+        TableUiTestHelpers::editTextCell(table(), 0, 3, "10");
+
+        QTRY_COMPARE(apiManagerMock->stockEditCount(), editCountBefore);
+        QCOMPARE(table()->item(0, 3)->text(), QString("10"));
     }
 
     void testDeleteStockFromView()
@@ -132,13 +109,6 @@ private:
         return button;
     }
 
-    QPushButton *editButton() const
-    {
-        auto *button = view->findChild<QPushButton *>("stocksEditButton");
-        Q_ASSERT(button != nullptr);
-        return button;
-    }
-
     QPushButton *deleteButton() const
     {
         auto *button = view->findChild<QPushButton *>("stocksDeleteButton");
@@ -157,25 +127,6 @@ private:
 
         return -1;
     }
-
-    void openDialogAndFill(const std::function<void(QDialog *)> &fillDialog)
-    {
-        QTimer::singleShot(0, [fillDialog]() {
-            auto *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
-            if (dialog == nullptr) {
-                for (auto *widget : QApplication::topLevelWidgets()) {
-                    dialog = qobject_cast<QDialog *>(widget);
-                    if (dialog != nullptr) {
-                        break;
-                    }
-                }
-            }
-
-            Q_ASSERT(dialog != nullptr);
-            fillDialog(dialog);
-        });
-    }
-
     ApiManagerMock *apiManagerMock{nullptr};
     StocksModel *stocksModel{nullptr};
     StocksViewModel *viewModel{nullptr};

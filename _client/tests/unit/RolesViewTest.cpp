@@ -1,12 +1,5 @@
-#include <functional>
-
-#include <QApplication>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
-#include <QTimer>
 #include <QtTest>
 
 #include "Ui/Models/UsersManagementModel.hpp"
@@ -14,6 +7,7 @@
 #include "Ui/Views/RolesView.hpp"
 
 #include "mocks/ApiManagerMock.hpp"
+#include "wrappers/TableUiTestHelpers.hpp"
 
 class RolesViewTest : public QObject {
     Q_OBJECT
@@ -44,21 +38,11 @@ private slots:
 
     void testAddRoleFromView()
     {
-        openDialogAndFill([](QDialog *dialog) {
-            auto *nameField = dialog->findChild<QLineEdit *>("roleNameField");
-            auto *buttons   = dialog->findChild<QDialogButtonBox *>();
-
-            QVERIFY(nameField != nullptr);
-            QVERIFY(buttons != nullptr);
-
-            nameField->setText("Auditor");
-            QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
-        });
-
         QTest::mouseClick(addButton(), Qt::LeftButton);
 
         QTRY_COMPARE(table()->rowCount(), 3);
-        QVERIFY(findRowByName("Auditor") >= 0);
+        const int row = table()->rowCount() - 1;
+        QVERIFY(table()->item(row, 1)->text().startsWith("New role "));
     }
 
     void testEditRoleFromView()
@@ -67,22 +51,23 @@ private slots:
         QVERIFY(row >= 0);
         table()->selectRow(row);
 
-        openDialogAndFill([](QDialog *dialog) {
-            auto *nameField = dialog->findChild<QLineEdit *>("roleNameField");
-            auto *buttons   = dialog->findChild<QDialogButtonBox *>();
-
-            QVERIFY(nameField != nullptr);
-            QVERIFY(buttons != nullptr);
-
-            nameField->setText("Inventory Lead");
-            QTest::mouseClick(buttons->button(QDialogButtonBox::Ok), Qt::LeftButton);
-        });
-
-        QTest::mouseClick(editButton(), Qt::LeftButton);
+        TableUiTestHelpers::editTextCell(table(), row, 1, "Inventory Lead");
 
         const int editedRow = findRowByName("Inventory Lead");
         QVERIFY(editedRow >= 0);
         QCOMPARE(table()->item(editedRow, 1)->text(), QString("Inventory Lead"));
+    }
+
+    void testUnchangedRoleEditDoesNotPersist()
+    {
+        const int row = findRowByName("Manager");
+        QVERIFY(row >= 0);
+
+        const int editCountBefore = apiManagerMock->roleEditCount();
+        TableUiTestHelpers::editTextCell(table(), row, 1, "Manager");
+
+        QTRY_COMPARE(apiManagerMock->roleEditCount(), editCountBefore);
+        QCOMPARE(table()->item(row, 1)->text(), QString("Manager"));
     }
 
     void testDeleteRoleFromView()
@@ -112,13 +97,6 @@ private:
         return button;
     }
 
-    QPushButton *editButton() const
-    {
-        auto *button = view->findChild<QPushButton *>("rolesEditButton");
-        Q_ASSERT(button != nullptr);
-        return button;
-    }
-
     QPushButton *deleteButton() const
     {
         auto *button = view->findChild<QPushButton *>("rolesDeleteButton");
@@ -137,25 +115,6 @@ private:
 
         return -1;
     }
-
-    void openDialogAndFill(const std::function<void(QDialog *)> &fillDialog)
-    {
-        QTimer::singleShot(0, [fillDialog]() {
-            auto *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
-            if (dialog == nullptr) {
-                for (auto *widget : QApplication::topLevelWidgets()) {
-                    dialog = qobject_cast<QDialog *>(widget);
-                    if (dialog != nullptr) {
-                        break;
-                    }
-                }
-            }
-
-            Q_ASSERT(dialog != nullptr);
-            fillDialog(dialog);
-        });
-    }
-
     ApiManagerMock *apiManagerMock{nullptr};
     UsersManagementModel *model{nullptr};
     UsersManagementViewModel *viewModel{nullptr};

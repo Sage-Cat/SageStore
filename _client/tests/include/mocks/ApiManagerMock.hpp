@@ -89,16 +89,60 @@ public:
     int logsRequestCount() const { return m_getLogsCalls; }
     int salesAnalyticsRequestCount() const { return m_getSalesAnalyticsCalls; }
     int inventoryAnalyticsRequestCount() const { return m_getInventoryAnalyticsCalls; }
+    int roleEditCount() const { return m_editRoleCalls; }
+    int userEditCount() const { return m_editUserCalls; }
+    int stockEditCount() const { return m_editStockCalls; }
+    int supplierProductEditCount() const { return m_editSupplierProductCalls; }
+    int contactEditCount() const { return m_editContactCalls; }
+    int supplierEditCount() const { return m_editSupplierCalls; }
+    int employeeEditCount() const { return m_editEmployeeCalls; }
+    int purchaseOrderEditCount() const { return m_editPurchaseOrderCalls; }
+    int purchaseOrderRecordEditCount() const { return m_editPurchaseOrderRecordCalls; }
+    int salesOrderEditCount() const { return m_editSalesOrderCalls; }
+    int salesOrderRecordEditCount() const { return m_editSalesOrderRecordCalls; }
+    int productTypeEditCount() const { return m_editProductTypeCalls; }
 
     void setSalesOrders(std::vector<Common::Entities::SaleOrder> orders)
     {
         m_salesOrders = std::move(orders);
     }
 
+    void setPurchaseOrders(std::vector<Common::Entities::PurchaseOrder> orders)
+    {
+        m_purchaseOrders = std::move(orders);
+    }
+
 public slots:
-    void addUser(const Common::Entities::User &) override { emit userAdded(); }
-    void editUser(const Common::Entities::User &) override { emit userEdited(); }
-    void deleteUser(const QString &) override { emit userDeleted(); }
+    void addUser(const Common::Entities::User &user) override
+    {
+        auto created = user;
+        created.id = std::to_string(m_nextUserId++);
+        m_users.push_back(created);
+        emit userAdded();
+    }
+
+    void editUser(const Common::Entities::User &user) override
+    {
+        ++m_editUserCalls;
+        auto it = std::find_if(m_users.begin(), m_users.end(),
+                               [&user](const auto &existingUser) {
+                                   return existingUser.id == user.id;
+                               });
+        if (it != m_users.end()) {
+            it->username = user.username;
+            it->roleId = user.roleId;
+            if (!user.password.empty()) {
+                it->password = user.password;
+            }
+        }
+        emit userEdited();
+    }
+
+    void deleteUser(const QString &id) override
+    {
+        std::erase_if(m_users, [&id](const auto &user) { return user.id == id.toStdString(); });
+        emit userDeleted();
+    }
     void getUsers() override
     {
         ++m_getUsersCalls;
@@ -107,6 +151,7 @@ public slots:
 
     void editRole(const Common::Entities::Role &role) override
     {
+        ++m_editRoleCalls;
         auto it = std::find_if(m_roles.begin(), m_roles.end(),
                                [&role](const auto &existingRole) {
                                    return existingRole.id == role.id;
@@ -153,6 +198,7 @@ public slots:
 
     void editProductType(const Common::Entities::ProductType &productType) override
     {
+        ++m_editProductTypeCalls;
         auto it = std::find_if(m_productTypes.begin(), m_productTypes.end(),
                                [&productType](const auto &existingProductType) {
                                    return existingProductType.id == productType.id;
@@ -186,6 +232,7 @@ public slots:
 
     void editStock(const Common::Entities::Inventory &stock) override
     {
+        ++m_editStockCalls;
         auto it = std::find_if(m_stocks.begin(), m_stocks.end(),
                                [&stock](const auto &existingStock) {
                                    return existingStock.id == stock.id;
@@ -218,6 +265,7 @@ public slots:
 
     void editSupplierProduct(const Common::Entities::SuppliersProductInfo &supplierProduct) override
     {
+        ++m_editSupplierProductCalls;
         auto it = std::find_if(m_supplierProducts.begin(), m_supplierProducts.end(),
                                [&supplierProduct](const auto &existingItem) {
                                    return existingItem.id == supplierProduct.id;
@@ -252,6 +300,7 @@ public slots:
 
     void editContact(const Common::Entities::Contact &contact) override
     {
+        ++m_editContactCalls;
         auto it = std::find_if(m_contacts.begin(), m_contacts.end(),
                                [&contact](const auto &existingContact) {
                                    return existingContact.id == contact.id;
@@ -286,6 +335,7 @@ public slots:
 
     void editSupplier(const Common::Entities::Supplier &supplier) override
     {
+        ++m_editSupplierCalls;
         auto it = std::find_if(m_suppliers.begin(), m_suppliers.end(),
                                [&supplier](const auto &existingSupplier) {
                                    return existingSupplier.id == supplier.id;
@@ -320,6 +370,7 @@ public slots:
 
     void editEmployee(const Common::Entities::Employee &employee) override
     {
+        ++m_editEmployeeCalls;
         auto it = std::find_if(m_employees.begin(), m_employees.end(),
                                [&employee](const auto &existingEmployee) {
                                    return existingEmployee.id == employee.id;
@@ -354,6 +405,7 @@ public slots:
 
     void editPurchaseOrder(const Common::Entities::PurchaseOrder &order) override
     {
+        ++m_editPurchaseOrderCalls;
         auto it = std::find_if(m_purchaseOrders.begin(), m_purchaseOrders.end(),
                                [&order](const auto &existingOrder) {
                                    return existingOrder.id == order.id;
@@ -401,6 +453,7 @@ public slots:
 
     void editPurchaseOrderRecord(const Common::Entities::PurchaseOrderRecord &record) override
     {
+        ++m_editPurchaseOrderRecordCalls;
         auto it = std::find_if(m_purchaseOrderRecords.begin(), m_purchaseOrderRecords.end(),
                                [&record](const auto &existingRecord) {
                                    return existingRecord.id == record.id;
@@ -474,6 +527,7 @@ public slots:
 
     void editSalesOrder(const Common::Entities::SaleOrder &order) override
     {
+        ++m_editSalesOrderCalls;
         auto it = std::find_if(m_salesOrders.begin(), m_salesOrders.end(),
                                [&order](const auto &existingOrder) {
                                    return existingOrder.id == order.id;
@@ -521,6 +575,7 @@ public slots:
 
     void editSalesOrderRecord(const Common::Entities::SalesOrderRecord &record) override
     {
+        ++m_editSalesOrderRecordCalls;
         auto it = std::find_if(m_salesOrderRecords.begin(), m_salesOrderRecords.end(),
                                [&record](const auto &existingRecord) {
                                    return existingRecord.id == record.id;
@@ -551,8 +606,14 @@ public slots:
         emit salesAnalyticsReady({{AnalyticsKeys::Sales::TOTAL_ORDERS, "1"},
                                   {AnalyticsKeys::Sales::TOTAL_ORDER_LINES, "1"},
                                   {AnalyticsKeys::Sales::TOTAL_REVENUE, "31.50"},
+                                  {AnalyticsKeys::Sales::TOTAL_PURCHASE_COST, "10.50"},
+                                  {AnalyticsKeys::Sales::GROSS_PROFIT, "21.00"},
+                                  {AnalyticsKeys::Sales::GROSS_MARGIN_PERCENT, "66.67"},
                                   {AnalyticsKeys::Sales::AVERAGE_ORDER_VALUE, "31.50"},
-                                  {AnalyticsKeys::Sales::UNIQUE_CUSTOMERS, "1"}});
+                                  {AnalyticsKeys::Sales::UNIQUE_CUSTOMERS, "1"},
+                                  {AnalyticsKeys::Sales::DRAFT_ORDERS, "0"},
+                                  {AnalyticsKeys::Sales::CONFIRMED_ORDERS, "1"},
+                                  {AnalyticsKeys::Sales::INVOICED_ORDERS, "0"}});
     }
 
     void getInventoryAnalytics() override
@@ -562,7 +623,12 @@ public slots:
                                       {AnalyticsKeys::Inventory::TOTAL_STOCK_RECORDS, "1"},
                                       {AnalyticsKeys::Inventory::TOTAL_UNITS_AVAILABLE, "10"},
                                       {AnalyticsKeys::Inventory::IMPORTED_PRODUCT_TYPES, "1"},
-                                      {AnalyticsKeys::Inventory::ZERO_STOCK_RECORDS, "0"}});
+                                      {AnalyticsKeys::Inventory::ZERO_STOCK_RECORDS, "0"},
+                                      {AnalyticsKeys::Inventory::TOTAL_PURCHASE_ORDERS, "1"},
+                                      {AnalyticsKeys::Inventory::OPEN_PURCHASE_ORDERS, "1"},
+                                      {AnalyticsKeys::Inventory::RECEIVED_PURCHASE_ORDERS, "0"},
+                                      {AnalyticsKeys::Inventory::TOTAL_PURCHASE_SPEND, "52.50"},
+                                      {AnalyticsKeys::Inventory::INVENTORY_VALUE_ESTIMATE, "105.00"}});
     }
 
     void emitError(const QString &errorMessage) { emit errorOccurred(errorMessage); }
@@ -583,7 +649,20 @@ private:
     int m_getLogsCalls{0};
     int m_getSalesAnalyticsCalls{0};
     int m_getInventoryAnalyticsCalls{0};
+    int m_editRoleCalls{0};
+    int m_editUserCalls{0};
+    int m_editProductTypeCalls{0};
+    int m_editStockCalls{0};
+    int m_editSupplierProductCalls{0};
+    int m_editContactCalls{0};
+    int m_editSupplierCalls{0};
+    int m_editEmployeeCalls{0};
+    int m_editPurchaseOrderCalls{0};
+    int m_editPurchaseOrderRecordCalls{0};
+    int m_editSalesOrderCalls{0};
+    int m_editSalesOrderRecordCalls{0};
 
+    int m_nextUserId{3};
     int m_nextRoleId{3};
     int m_nextProductTypeId{3};
     int m_nextStockId{2};

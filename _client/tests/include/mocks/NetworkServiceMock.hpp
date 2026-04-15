@@ -139,14 +139,25 @@ public:
             serverResponse = {{AnalyticsKeys::Sales::TOTAL_ORDERS, {"1"}},
                               {AnalyticsKeys::Sales::TOTAL_ORDER_LINES, {"1"}},
                               {AnalyticsKeys::Sales::TOTAL_REVENUE, {"31.50"}},
+                              {AnalyticsKeys::Sales::TOTAL_PURCHASE_COST, {"10.50"}},
+                              {AnalyticsKeys::Sales::GROSS_PROFIT, {"21.00"}},
+                              {AnalyticsKeys::Sales::GROSS_MARGIN_PERCENT, {"66.67"}},
                               {AnalyticsKeys::Sales::AVERAGE_ORDER_VALUE, {"31.50"}},
-                              {AnalyticsKeys::Sales::UNIQUE_CUSTOMERS, {"1"}}};
+                              {AnalyticsKeys::Sales::UNIQUE_CUSTOMERS, {"1"}},
+                              {AnalyticsKeys::Sales::DRAFT_ORDERS, {"0"}},
+                              {AnalyticsKeys::Sales::CONFIRMED_ORDERS, {"1"}},
+                              {AnalyticsKeys::Sales::INVOICED_ORDERS, {"0"}}};
         } else if (endpoint == Endpoints::Analytics::INVENTORY && method == Method::GET) {
             serverResponse = {{AnalyticsKeys::Inventory::TOTAL_PRODUCT_TYPES, {"2"}},
                               {AnalyticsKeys::Inventory::TOTAL_STOCK_RECORDS, {"2"}},
                               {AnalyticsKeys::Inventory::TOTAL_UNITS_AVAILABLE, {"14"}},
                               {AnalyticsKeys::Inventory::IMPORTED_PRODUCT_TYPES, {"1"}},
-                              {AnalyticsKeys::Inventory::ZERO_STOCK_RECORDS, {"0"}}};
+                              {AnalyticsKeys::Inventory::ZERO_STOCK_RECORDS, {"0"}},
+                              {AnalyticsKeys::Inventory::TOTAL_PURCHASE_ORDERS, {"1"}},
+                              {AnalyticsKeys::Inventory::OPEN_PURCHASE_ORDERS, {"1"}},
+                              {AnalyticsKeys::Inventory::RECEIVED_PURCHASE_ORDERS, {"0"}},
+                              {AnalyticsKeys::Inventory::TOTAL_PURCHASE_SPEND, {"52.50"}},
+                              {AnalyticsKeys::Inventory::INVENTORY_VALUE_ESTIMATE, {"105.00"}}};
         }
         emit responseReceived(endpoint, method, serverResponse);
     }
