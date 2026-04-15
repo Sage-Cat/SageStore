@@ -3,12 +3,17 @@
 ## Comprehensive Documentation for Design, Development, and Deployment Phases
 
 - **Prepared by:** Volodymyr Pavlenko
-- **Date:** February 18, 2026
-- **Version:** 3.2
+- **Date:** March 25, 2026
+- **Version:** 3.4
 
-> Implementation note: this document captures target product scope.  
-> Current implementation status and delivery plan are tracked in `docs/Implementation_Status.md`.
-> Requirements reconciliation, terminology normalization, and gap analysis are tracked in `docs/Requirements_Baseline.md`.
+> Interpretation note: this document captures target product scope and reference
+> design intent, not the authoritative current implementation snapshot.
+> Current implementation status and near-term delivery plan are tracked in
+> `docs/Implementation_Status.md`.
+> Requirements reconciliation, terminology normalization, and gap analysis are tracked
+> in `docs/Requirements_Baseline.md`.
+> Future phases, architecture direction, and desktop design-system evolution are
+> tracked in `docs/Future_Architecture_and_Design_Roadmap.md`.
 
 ---
 
@@ -63,6 +68,7 @@
   - [Executive Summary](#executive-summary)
   - [Quality Assurance Plans](#quality-assurance-plans)
     - [Testing Phases](#testing-phases)
+  - [Future Architecture and Design Direction](#future-architecture-and-design-direction)
   - [Document Versioning](#document-versioning)
 
 
@@ -100,6 +106,11 @@
 ---
 
 ## Feature Breakdown
+
+> Scope note: this table is a target/reference capability map. It intentionally mixes
+> implemented baseline capabilities with planned next-phase and later-direction items.
+> Use `docs/Implementation_Status.md` for current implementation truth and
+> `docs/Future_Architecture_and_Design_Roadmap.md` for phased delivery direction.
 
 | **Module**     | **Submodule**            | **Functionality**                                     | **Additional Features**                                                                    |
 | -------------- | ------------------------ | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -263,6 +274,11 @@ The server architecture for the SageStore Management System aims to provide a ro
 
 ## Dataset specification
 
+> Reference note: this section preserves an early target/reference data-shape model.
+> It should not be treated as the authoritative current transport or endpoint-contract
+> specification. For current implementation truth, use `docs/Implementation_Status.md`
+> plus the shared contract definitions under `_common/`.
+
 The structure is defined as follows:
 
 ### Components
@@ -345,7 +361,10 @@ If error key exists, it mean that error occured (even if message is empty).
 
 ## REST API
 
-Below you could find spesification for different RESTful API request-response. 
+Below you could find a reference overview for the target REST API families.
+For current implemented coverage and gaps, use `docs/Implementation_Status.md` and
+`docs/Requirements_Baseline.md`. For precise current route constants and canonical
+endpoint grouping, use `_common/include/common/Endpoints.hpp`.
 
 ### Config
 
@@ -373,7 +392,10 @@ As for the cases of simple entity name `User`, it just means that all keys must 
 
 About arrays: Request or Response is array of entities if it's specified as `array<User>`
 
-> Implementation status: only `Users` endpoints are currently wired end-to-end in server and client code.
+> Current implementation note: end-to-end endpoint families now exist for `users`,
+> `inventory`, `management`, `purchase`, `sales`, `analytics`, and `logs`.
+> This section remains a broader target/reference view and should not be treated as the
+> precise current contract specification.
 
 #### Users
 
@@ -459,7 +481,9 @@ About arrays: Request or Response is array of entities if it's specified as `arr
 
 ## Deployment Phase
 
-Still in development
+Current deployment reality is documented in `docs/Deployment_Runbook.md`.
+Packaged installation, publish automation, and broader operational workflows remain
+future work.
 
 ## Executive Summary
 
@@ -470,7 +494,29 @@ The aim of this project is to develop a comprehensive software solution for smal
 ### Testing Phases
 
 - Unit Testing
-- Manual Testing
+- Component and contract testing
+- Repository integration testing
+- Desktop Qt model/view/workflow testing
+- Fullstack smoke validation
+- Manual testing for behaviors not yet automated
+
+## Future Architecture and Design Direction
+
+This document remains the broad target/reference design. The phased modernization path
+is intentionally split into `docs/Future_Architecture_and_Design_Roadmap.md` so the
+repository can keep current-state truth and future-state direction separate.
+
+The main forward directions are:
+
+- deepen the current modular monolith instead of forcing a premature rewrite
+- keep APIs consumer-agnostic and resource-oriented
+- formalize transactional workflows and status transitions
+- complete missing ERP core gaps such as companies, document flows, and inventory-aware
+  sales behavior
+- standardize the desktop UX around shared workspace, table, form, and validation
+  patterns
+- improve release readiness, operability, and test depth before broad platform
+  expansion
 
 ## Document Versioning
 
@@ -486,3 +532,4 @@ The aim of this project is to develop a comprehensive software solution for smal
 | 20/02/2024 | 3.1     | REST revision. Finishing docs structure                           | Pavlenko Volodymyr |
 | 20/05/2024 | 3.2     | Add Purchase spesific docs                                        | Pavlenko Volodymyr |
 | 01/12/2024 | 3.3     | General update                                                     | Pavlenko Volodymyr |
+| 25/03/2026 | 3.4     | Clarify current-vs-target docs posture and add roadmap reference  | Pavlenko Volodymyr |

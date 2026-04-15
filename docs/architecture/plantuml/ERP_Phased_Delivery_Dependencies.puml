@@ -1,0 +1,64 @@
+@startuml
+skinparam packageStyle rectangle
+left to right direction
+
+rectangle "Phase 1\nRelease Hardening" as P1 {
+  note as P1N
+  - Qt client/server system tests
+  - package/install direction
+  - migration discipline
+  - health and backup basics
+  end note
+}
+
+rectangle "Phase 2\nOwnership + Stock Truth" as P2 {
+  note as P2N
+  - Company
+  - StorageLocation
+  - stock ledger
+  - generic catalog attributes
+  end note
+}
+
+rectangle "Phase 3\nProcurement Completion" as P3 {
+  note as P3N
+  - incoming invoices
+  - attachments
+  - preview/validate/commit
+  - background jobs
+  end note
+}
+
+rectangle "Phase 4\nSales Fulfillment" as P4 {
+  note as P4N
+  - reservation/posting policy
+  - rendered invoice outputs
+  - stronger audit trail
+  end note
+}
+
+rectangle "Phase 5\nPlatform Extension" as P5 {
+  note as P5N
+  - analytics depth
+  - integrations
+  - installer polish
+  - autoparts domain pack
+  end note
+}
+
+P1 --> P2
+P2 --> P3
+P2 --> P4
+P3 --> P4
+P4 --> P5
+
+note bottom of P2
+Do not add multi-company behavior before
+ownership and storage rules are explicit.
+end note
+
+note bottom of P3
+Do not automate invoices or labels before
+product identity and stock truth are stable.
+end note
+@enduml

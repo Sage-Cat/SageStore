@@ -1,0 +1,41 @@
+@startuml
+title Testing Pyramid and Fullstack Architecture
+
+skinparam shadowing false
+
+rectangle "build.py / ctest" as Build
+
+package "Fast feedback" {
+  [Server Unit Tests]
+  [Repository Integration Tests]
+  [HTTP Contract Tests]
+  [Qt Model/View Tests]
+}
+
+package "System confidence" {
+  [GUI Startup Smoke]
+  [Qt Live Fullstack Tests]
+  [Package / Migration Smokes]
+}
+
+rectangle "FullstackServerHarness\n(QProcess + temp DB + live HTTP)" as Harness
+rectangle "Qt Test / QTest / QSignalSpy" as QtTest
+
+Build --> [Server Unit Tests]
+Build --> [Repository Integration Tests]
+Build --> [HTTP Contract Tests]
+Build --> [Qt Model/View Tests]
+Build --> [GUI Startup Smoke]
+Build --> [Qt Live Fullstack Tests]
+Build --> [Package / Migration Smokes]
+
+QtTest --> [Qt Model/View Tests]
+QtTest --> [Qt Live Fullstack Tests]
+Harness --> [Qt Live Fullstack Tests]
+
+note right of [Qt Live Fullstack Tests]
+Implemented this turn:
+- main workspace loading against live server
+- invoice export verification against live server
+end note
+@enduml

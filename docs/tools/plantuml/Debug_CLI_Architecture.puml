@@ -1,0 +1,63 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Codex
+actor Developer
+
+package "SageStoreDebugCli" {
+  [CLI Parser]
+  [Scenario Runner]
+  [Result Writer]
+  [Artifact Manager]
+
+  package "Server Surface" {
+    [HTTP Request Runner]
+    [Server Process Controller]
+  }
+
+  package "Client Surface" {
+    [Offscreen Qt Runtime]
+    [UI Session]
+    [Widget State Dumper]
+    [Screenshot Capture]
+  }
+}
+
+package "SageStore Runtime" {
+  [SageStoreServer]
+  [NetworkService + ApiManager]
+  [DialogManager + StartupController]
+  [MainWindow + Views]
+}
+
+database "SQLite Test DB" as DB
+folder "Artifacts\nJSON + PNG" as Artifacts
+
+Codex --> [CLI Parser]
+Developer --> [CLI Parser]
+[CLI Parser] --> [Scenario Runner]
+[Scenario Runner] --> [HTTP Request Runner]
+[Scenario Runner] --> [Server Process Controller]
+[Scenario Runner] --> [Offscreen Qt Runtime]
+[Scenario Runner] --> [Result Writer]
+[Scenario Runner] --> [Artifact Manager]
+
+[Server Process Controller] --> [SageStoreServer]
+[HTTP Request Runner] --> [SageStoreServer]
+[SageStoreServer] --> DB
+
+[Offscreen Qt Runtime] --> [NetworkService + ApiManager]
+[Offscreen Qt Runtime] --> [DialogManager + StartupController]
+[Offscreen Qt Runtime] --> [MainWindow + Views]
+[NetworkService + ApiManager] --> [SageStoreServer]
+
+[Widget State Dumper] --> [MainWindow + Views]
+[Screenshot Capture] --> [MainWindow + Views]
+[Artifact Manager] --> [Widget State Dumper]
+[Artifact Manager] --> [Screenshot Capture]
+[Artifact Manager] --> Artifacts
+[Result Writer] --> Artifacts
+
+@enduml
