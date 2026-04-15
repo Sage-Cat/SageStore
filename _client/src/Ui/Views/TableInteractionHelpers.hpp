@@ -141,9 +141,9 @@ inline int defaultInlineEditorRowHeight()
     return UiScale::scalePx(36);
 }
 
-class TableComboProxyStyle : public QProxyStyle {
+class ComboPopupProxyStyle : public QProxyStyle {
 public:
-    explicit TableComboProxyStyle(const QString &baseStyleKey) : QProxyStyle(baseStyleKey) {}
+    explicit ComboPopupProxyStyle(const QString &baseStyleKey) : QProxyStyle(baseStyleKey) {}
 
     int styleHint(StyleHint hint, const QStyleOption *option = nullptr,
                   const QWidget *widget = nullptr,
@@ -160,13 +160,15 @@ public:
     }
 };
 
-inline void configureTableComboPopupContainer(QWidget *popupWindow, int minimumWidth)
+inline void configureComboPopupContainer(QWidget *popupWindow, int minimumWidth,
+                                         const char *containerProperty)
 {
     if (popupWindow == nullptr) {
         return;
     }
 
-    popupWindow->setProperty("tableComboPopupContainer", true);
+    Q_ASSERT(containerProperty != nullptr);
+    popupWindow->setProperty(containerProperty, true);
     popupWindow->setAttribute(Qt::WA_StyledBackground, true);
     popupWindow->setContentsMargins(0, 0, 0, 0);
     popupWindow->setMinimumHeight(0);
@@ -183,16 +185,25 @@ inline void configureTableComboPopupContainer(QWidget *popupWindow, int minimumW
     }
 }
 
-class TableComboBox : public QComboBox {
+inline void configureTableComboPopupContainer(QWidget *popupWindow, int minimumWidth)
+{
+    configureComboPopupContainer(popupWindow, minimumWidth, "tableComboPopupContainer");
+}
+
+class PopupListComboBox : public QComboBox {
 public:
-    explicit TableComboBox(QWidget *parent = nullptr) : QComboBox(parent) {}
+    PopupListComboBox(const char *popupContainerProperty, QWidget *parent = nullptr)
+        : QComboBox(parent), m_popupContainerProperty(popupContainerProperty)
+    {
+        Q_ASSERT(m_popupContainerProperty != nullptr);
+    }
 
 protected:
     void showPopup() override
     {
         for (QWidget *topLevel : QApplication::topLevelWidgets()) {
             if (topLevel != nullptr && topLevel->isVisible() &&
-                topLevel->property("tableComboPopupContainer").toBool()) {
+                topLevel->property(m_popupContainerProperty).toBool()) {
                 topLevel->hide();
             }
         }
@@ -200,7 +211,7 @@ protected:
         QComboBox::showPopup();
 
         if (auto *popupWindow = popupContainer(); popupWindow != nullptr) {
-            configureTableComboPopupContainer(popupWindow, width());
+            configureComboPopupContainer(popupWindow, width(), m_popupContainerProperty);
             popupWindow->updateGeometry();
             popupWindow->update();
         }
@@ -211,6 +222,24 @@ private:
     {
         auto *popupView = view();
         return popupView != nullptr ? popupView->window() : nullptr;
+    }
+
+    const char *m_popupContainerProperty;
+};
+
+class FormComboBox : public PopupListComboBox {
+public:
+    explicit FormComboBox(QWidget *parent = nullptr)
+        : PopupListComboBox("comboPopupContainer", parent)
+    {
+    }
+};
+
+class TableComboBox : public PopupListComboBox {
+public:
+    explicit TableComboBox(QWidget *parent = nullptr)
+        : PopupListComboBox("tableComboPopupContainer", parent)
+    {
     }
 };
 
@@ -229,22 +258,15 @@ inline void styleTableEditorWidget(QWidget *editor, const QString &objectName = 
     editor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-inline void configureTableComboBox(QComboBox *combo, const QString &objectName = {})
+inline void configureComboPopupView(QComboBox *combo, const char *popupProperty)
 {
     Q_ASSERT(combo != nullptr);
-    styleTableEditorWidget(combo, objectName, true);
-    combo->setEditable(false);
-    combo->setFrame(false);
-    combo->setInsertPolicy(QComboBox::NoInsert);
-    combo->setMaxVisibleItems(12);
-    combo->setMinimumContentsLength(1);
-    combo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    auto *popupStyle = new TableComboProxyStyle(QApplication::style()->name());
+    Q_ASSERT(popupProperty != nullptr);
+    auto *popupStyle = new ComboPopupProxyStyle(QApplication::style()->name());
     popupStyle->setParent(combo);
     combo->setStyle(popupStyle);
     auto *popupView = new QListView(combo);
-    popupView->setProperty("tableComboPopup", true);
+    popupView->setProperty(popupProperty, true);
     popupView->setFrameShape(QFrame::NoFrame);
     popupView->setUniformItemSizes(true);
     popupView->setSpacing(0);
@@ -258,6 +280,36 @@ inline void configureTableComboBox(QComboBox *combo, const QString &objectName =
     popupView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     popupView->setContentsMargins(0, 0, 0, 0);
     combo->setView(popupView);
+}
+
+inline void configureFormComboBox(QComboBox *combo, const QString &objectName = {})
+{
+    Q_ASSERT(combo != nullptr);
+    if (!objectName.isEmpty()) {
+        combo->setObjectName(objectName);
+    }
+
+    combo->setAttribute(Qt::WA_StyledBackground, true);
+    combo->setEditable(false);
+    combo->setInsertPolicy(QComboBox::NoInsert);
+    combo->setMaxVisibleItems(12);
+    combo->setMinimumContentsLength(1);
+    combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    configureComboPopupView(combo, "comboPopup");
+}
+
+inline void configureTableComboBox(QComboBox *combo, const QString &objectName = {})
+{
+    Q_ASSERT(combo != nullptr);
+    styleTableEditorWidget(combo, objectName, true);
+    combo->setEditable(false);
+    combo->setFrame(false);
+    combo->setInsertPolicy(QComboBox::NoInsert);
+    combo->setMaxVisibleItems(12);
+    combo->setMinimumContentsLength(1);
+    combo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    configureComboPopupView(combo, "tableComboPopup");
 }
 
 class TableInlineEditorDelegateBase : public QStyledItemDelegate {

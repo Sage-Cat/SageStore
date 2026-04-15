@@ -382,8 +382,8 @@ void PurchaseView::setupUi()
     m_receiptsFilterField->setPlaceholderText(
         tr("Search open receipts by date, supplier, or status"));
     m_receiptsFilterField->setClearButtonEnabled(true);
-    m_receiptEmployeeBox = new QComboBox(receiptsPage);
-    m_receiptEmployeeBox->setObjectName("purchaseReceiptEmployeeBox");
+    m_receiptEmployeeBox = new FormComboBox(receiptsPage);
+    configureFormComboBox(m_receiptEmployeeBox, QStringLiteral("purchaseReceiptEmployeeBox"));
     m_receiveButton = new QPushButton(tr("Receive to Stock"), receiptsPage);
     m_receiveButton->setObjectName("purchaseReceiveButton");
 

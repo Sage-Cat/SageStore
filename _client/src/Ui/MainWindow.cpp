@@ -83,7 +83,7 @@ void MainWindow::setupUi()
         QMenuBar {
             background-color: #ffffff;
             color: #0f172a;
-            border-bottom: 1px solid #d7e6dc;
+            border-bottom: 1px solid #bccfc4;
             padding: 6px 10px;
         }
         QMenuBar::item {
@@ -99,7 +99,7 @@ void MainWindow::setupUi()
         }
         QMenu {
             background-color: #ffffff;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 12px;
             padding: 6px;
         }
@@ -112,16 +112,20 @@ void MainWindow::setupUi()
             color: #166534;
         }
         QTabWidget::pane {
-            border: 1px solid #d7e6dc;
+            border-left: 1px solid #bccfc4;
+            border-right: 1px solid #bccfc4;
+            border-bottom: 1px solid #bccfc4;
+            border-top: 0;
             background-color: #ffffff;
             border-radius: 16px;
-            top: -1px;
         }
         QTabBar::tab {
             background: #e7efe9;
             color: #4b6353;
             padding: 10px 16px;
             margin-right: 6px;
+            border: 1px solid #c2d3c8;
+            border-bottom: 0;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
             font-weight: 600;
@@ -129,23 +133,25 @@ void MainWindow::setupUi()
         QTabBar::tab:selected {
             background: #ffffff;
             color: #166534;
+            border-color: #bccfc4;
         }
         QTabBar::tab:hover:!selected {
             background: #dbeee0;
+            border-color: #b6cabc;
         }
         QStatusBar {
             background: #ffffff;
             color: #64748b;
-            border-top: 1px solid #d7e6dc;
+            border-top: 1px solid #bccfc4;
         }
         QFrame[card='true'], QWidget[card='true'] {
             background-color: #ffffff;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 18px;
         }
         QWidget[metricCard='true'] {
             background-color: #ffffff;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 18px;
         }
         QLabel[muted='true'] {
@@ -188,7 +194,7 @@ void MainWindow::setupUi()
         }
         QLineEdit, QComboBox, QDateEdit, QSpinBox, QDoubleSpinBox, QPlainTextEdit {
             background-color: #ffffff;
-            border: 1px solid #d1e4d7;
+            border: 1px solid #b7cbc0;
             border-radius: 10px;
             padding: 7px 10px;
             selection-background-color: #dcfce7;
@@ -202,27 +208,35 @@ void MainWindow::setupUi()
             min-height: 26px;
             padding: 4px 26px 4px 10px;
         }
-        QComboBox QAbstractItemView {
+        QComboBox QAbstractItemView,
+        QAbstractItemView[comboPopup='true'] {
             background: #ffffff;
-            border: 1px solid #d1e4d7;
+            border: 1px solid #b7cbc0;
             border-radius: 10px;
             selection-background-color: #dcfce7;
             selection-color: #166534;
             outline: 0;
             padding: 2px;
         }
-        QComboBox QAbstractItemView::item {
+        QComboBox QAbstractItemView::item,
+        QAbstractItemView[comboPopup='true']::item {
             min-height: 24px;
             padding: 4px 10px;
             margin: 1px 2px;
             border-radius: 6px;
         }
+        QFrame[comboPopupContainer='true'] {
+            background: #ffffff;
+            border: 0;
+            margin: 0;
+            padding: 0;
+        }
         QTableWidget {
             background-color: #ffffff;
             alternate-background-color: #f7fbf8;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 14px;
-            gridline-color: #e5efe8;
+            gridline-color: #d3ded7;
             selection-background-color: #dcfce7;
             selection-color: #0f172a;
         }
@@ -259,7 +273,7 @@ void MainWindow::setupUi()
             margin: 0;
             min-height: 0px;
             padding: 0 22px 0 8px;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 8px;
             background: #f8fffa;
             selection-background-color: #bbf7d0;
@@ -272,7 +286,7 @@ void MainWindow::setupUi()
         }
         QTableWidget QComboBox[tableEditor='true'] QAbstractItemView {
             background: #ffffff;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 8px;
             selection-background-color: #dcfce7;
             selection-color: #166534;
@@ -281,7 +295,7 @@ void MainWindow::setupUi()
         }
         QAbstractItemView[tableComboPopup='true'] {
             background: #ffffff;
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 8px;
             selection-background-color: #dcfce7;
             selection-color: #166534;
@@ -305,17 +319,17 @@ void MainWindow::setupUi()
             color: #244235;
             padding: 8px;
             border: 0;
-            border-bottom: 1px solid #d7e6dc;
+            border-bottom: 1px solid #bccfc4;
             font-weight: 700;
         }
         QTableCornerButton::section {
             background-color: #f2f8f3;
             border: 0;
-            border-bottom: 1px solid #d7e6dc;
-            border-right: 1px solid #d7e6dc;
+            border-bottom: 1px solid #bccfc4;
+            border-right: 1px solid #bccfc4;
         }
         QProgressBar {
-            border: 1px solid #d7e6dc;
+            border: 1px solid #bccfc4;
             border-radius: 999px;
             background-color: #edf4ef;
             text-align: center;

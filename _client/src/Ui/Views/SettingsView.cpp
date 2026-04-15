@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 
 #include "Settings/AppSettings.hpp"
+#include "Ui/Views/TableInteractionHelpers.hpp"
 
 SettingsView::SettingsView(QWidget *parent) : QWidget(parent)
 {
@@ -25,8 +26,8 @@ SettingsView::SettingsView(QWidget *parent) : QWidget(parent)
     summary->setProperty("muted", true);
     summary->setWordWrap(true);
 
-    m_languageCombo = new QComboBox(card);
-    m_languageCombo->setObjectName("settingsLanguageCombo");
+    m_languageCombo = new FormComboBox(card);
+    configureFormComboBox(m_languageCombo, QStringLiteral("settingsLanguageCombo"));
     m_languageCombo->addItem(tr("English"), "en");
     m_languageCombo->addItem(tr("Ukrainian"), "ua");
 

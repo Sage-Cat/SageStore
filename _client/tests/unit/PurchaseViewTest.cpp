@@ -5,6 +5,7 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QStyleOptionComboBox>
+#include <QTabWidget>
 #include <QTableWidget>
 #include <QtTest>
 
@@ -274,6 +275,46 @@ private slots:
         QTRY_VERIFY(TableUiTestHelpers::visibleComboPopupContainers().isEmpty());
     }
 
+    void testReceiptEmployeeComboUsesDedicatedPopupListView()
+    {
+        tabs()->setCurrentIndex(1);
+
+        auto *employeeCombo = receiptEmployeeBox();
+        QVERIFY(employeeCombo != nullptr);
+        QVERIFY(employeeCombo->count() > 0);
+
+        QStyleOptionComboBox option;
+        option.initFrom(employeeCombo);
+        option.editable = employeeCombo->isEditable();
+        QCOMPARE(employeeCombo->style()->styleHint(QStyle::SH_ComboBox_Popup, &option,
+                                                   employeeCombo),
+                 0);
+
+        auto *popupView = qobject_cast<QListView *>(employeeCombo->view());
+        QVERIFY(popupView != nullptr);
+        QVERIFY(popupView->property("comboPopup").toBool());
+        QCOMPARE(popupView->horizontalScrollBarPolicy(), Qt::ScrollBarAlwaysOff);
+
+        QWidget *popupContainer = TableUiTestHelpers::showComboPopup(employeeCombo);
+        QVERIFY(popupContainer != nullptr);
+        QVERIFY(popupContainer->property("comboPopupContainer").toBool());
+        auto *popupFrame = qobject_cast<QFrame *>(popupContainer);
+        QVERIFY(popupFrame != nullptr);
+        QCOMPARE(popupFrame->frameShape(), QFrame::NoFrame);
+
+        const QImage popupImage = TableUiTestHelpers::grabWidgetImage(popupContainer);
+        QVERIFY(!popupImage.isNull());
+        QVERIFY(popupImage.width() >= employeeCombo->width());
+        QVERIFY(popupImage.height() > 8);
+
+        const double darkRatio = TableUiTestHelpers::darkPixelRatio(popupImage);
+        QVERIFY2(darkRatio < 0.18,
+                 qPrintable(QStringLiteral("Popup image dark ratio too high: %1")
+                                .arg(QString::number(darkRatio, 'f', 3))));
+
+        TableUiTestHelpers::hideComboPopup(employeeCombo);
+    }
+
     void testReceivedOrdersBecomeReadOnlyAfterReceipt()
     {
         view->showSection(PurchaseView::Section::Receipts);
@@ -352,6 +393,20 @@ private:
         auto *button = view->findChild<QPushButton *>("purchaseReceiveButton");
         Q_ASSERT(button != nullptr);
         return button;
+    }
+
+    QTabWidget *tabs() const
+    {
+        auto *tabWidget = view->findChild<QTabWidget *>("purchaseTabs");
+        Q_ASSERT(tabWidget != nullptr);
+        return tabWidget;
+    }
+
+    QComboBox *receiptEmployeeBox() const
+    {
+        auto *combo = view->findChild<QComboBox *>("purchaseReceiptEmployeeBox");
+        Q_ASSERT(combo != nullptr);
+        return combo;
     }
     ApiManagerMock *apiManagerMock{nullptr};
     PurchaseModel *purchaseModel{nullptr};
