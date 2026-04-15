@@ -1,5 +1,6 @@
 third_party/
 build/
+build-win/
 .vscode/*
 !.vscode/tasks.json
 !.vscode/settings.json
@@ -9,3 +10,4 @@ build/
 CMakeLists.txt.user
 CMakeUserPresets.json
 docs/doxygen_generated
+logs/

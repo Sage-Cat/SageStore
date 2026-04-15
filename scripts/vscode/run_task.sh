@@ -41,6 +41,16 @@ run_cmd() {
     "$@"
 }
 
+require_command() {
+    local command_name="$1"
+    local hint="$2"
+    if ! command -v "${command_name}" >/dev/null 2>&1; then
+        printf "%b\n" "error: command not found: ${command_name}" >&2
+        printf "%b\n" "hint: ${hint}" >&2
+        exit 1
+    fi
+}
+
 require_executable() {
     local binary="$1"
     local hint="$2"
@@ -122,6 +132,35 @@ run_client() {
     exec "${gui_runner}" "${client_bin}"
 }
 
+run_fullstack() {
+    local fullstack_runner="${REPO_ROOT}/scripts/wsl/run_fullstack_gui.sh"
+
+    require_executable "${fullstack_runner}" "Ensure scripts/wsl/run_fullstack_gui.sh exists and is executable."
+
+    stage "Run server and launch client immediately"
+    exec "${fullstack_runner}"
+}
+
+run_windows_native_task() {
+    local task_name="$1"
+    local windows_runner="${REPO_ROOT}/scripts/windows/native_tasks.ps1"
+    local windows_runner_path=""
+
+    require_command powershell.exe "Install or expose Windows PowerShell from WSL."
+    require_command wslpath "Ensure this task is launched from WSL."
+
+    if [[ ! -f "${windows_runner}" ]]; then
+        printf "%b\n" "error: task runner not found: ${windows_runner}" >&2
+        exit 1
+    fi
+
+    windows_runner_path="$(wslpath -w "${windows_runner}")"
+
+    stage "Run Windows-native task (${task_name})"
+    exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${windows_runner_path}" \
+        -Task "${task_name}" -BuildType "${BUILD_TYPE}"
+}
+
 usage() {
     cat <<'USAGE'
 Usage: scripts/vscode/run_task.sh <command>
@@ -133,6 +172,13 @@ Commands:
   test            Run all CTest tests
   run-server      Run server executable only
   run-client      Run client executable only
+  run-fullstack   Run server and launch client immediately
+  build-win-client Build Windows-native client in a Windows mirror workspace
+  build-win-server Build Windows-native server in a Windows mirror workspace
+  build-win-all    Build Windows-native client and server in a Windows mirror workspace
+  run-win-client   Build and launch Windows-native client
+  run-win-server   Build and launch Windows-native server
+  run-win-fullstack Build and launch Windows-native server and client
 USAGE
 }
 
@@ -157,6 +203,27 @@ main() {
             ;;
         run-client)
             run_client
+            ;;
+        run-fullstack)
+            run_fullstack
+            ;;
+        build-win-client)
+            run_windows_native_task "build-win-client"
+            ;;
+        build-win-server)
+            run_windows_native_task "build-win-server"
+            ;;
+        build-win-all)
+            run_windows_native_task "build-win-all"
+            ;;
+        run-win-client)
+            run_windows_native_task "run-win-client"
+            ;;
+        run-win-server)
+            run_windows_native_task "run-win-server"
+            ;;
+        run-win-fullstack)
+            run_windows_native_task "run-win-fullstack"
             ;;
         -h|--help|help|"")
             usage
