@@ -1,14 +1,19 @@
 #include <QComboBox>
+#include <QFrame>
 #include <QLabel>
+#include <QListView>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSettings>
 #include <QSpinBox>
+#include <QStyleOptionComboBox>
 #include <QTemporaryDir>
 #include <QtTest>
 
 #include "Settings/AppSettings.hpp"
 #include "Ui/Views/SettingsView.hpp"
+
+#include "wrappers/TableUiTestHelpers.hpp"
 
 class SettingsViewTest : public QObject {
     Q_OBJECT
@@ -73,6 +78,54 @@ private slots:
         QCOMPARE(savedSettings.address, QString("erp.local"));
         QCOMPARE(savedSettings.port, 9443);
         QVERIFY(statusLabel->text().contains("saved", Qt::CaseInsensitive));
+    }
+
+    void testLanguageComboPopupUsesDedicatedListViewWithoutDarkOverlay()
+    {
+        auto *languageCombo = view->findChild<QComboBox *>("settingsLanguageCombo");
+        QVERIFY(languageCombo != nullptr);
+
+        QStyleOptionComboBox option;
+        option.initFrom(languageCombo);
+        option.editable = languageCombo->isEditable();
+        QCOMPARE(languageCombo->style()->styleHint(QStyle::SH_ComboBox_Popup, &option,
+                                                   languageCombo),
+                 0);
+
+        auto *popupView = qobject_cast<QListView *>(languageCombo->view());
+        QVERIFY(popupView != nullptr);
+        QVERIFY(popupView->property("comboPopup").toBool());
+        QCOMPARE(popupView->horizontalScrollBarPolicy(), Qt::ScrollBarAlwaysOff);
+
+        QWidget *popupContainer = TableUiTestHelpers::showComboPopup(languageCombo);
+        QVERIFY(popupContainer != nullptr);
+        QVERIFY(popupContainer->property("comboPopupContainer").toBool());
+
+        auto *popupFrame = qobject_cast<QFrame *>(popupContainer);
+        QVERIFY(popupFrame != nullptr);
+        QCOMPARE(popupFrame->frameShape(), QFrame::NoFrame);
+
+        int visibleScrollerCount = 0;
+        for (auto *child : popupContainer->findChildren<QWidget *>()) {
+            if (QString::fromLatin1(child->metaObject()->className()) ==
+                    QStringLiteral("QComboBoxPrivateScroller") &&
+                child->isVisible()) {
+                ++visibleScrollerCount;
+            }
+        }
+        QCOMPARE(visibleScrollerCount, 0);
+
+        const QImage popupImage = TableUiTestHelpers::grabWidgetImage(popupContainer);
+        QVERIFY(!popupImage.isNull());
+        QVERIFY(popupImage.width() >= languageCombo->width());
+        QVERIFY(popupImage.height() > 8);
+
+        const double darkRatio = TableUiTestHelpers::darkPixelRatio(popupImage);
+        QVERIFY2(darkRatio < 0.18,
+                 qPrintable(QStringLiteral("Popup image dark ratio too high: %1")
+                                .arg(QString::number(darkRatio, 'f', 3))));
+
+        TableUiTestHelpers::hideComboPopup(languageCombo);
     }
 
 private:
