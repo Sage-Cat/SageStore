@@ -24,6 +24,7 @@ set(BUSINESS_SOURCES
 
     # Modules
     ${SERVER_SOURCES_DIR}/BusinessLogic/UsersModule.cpp
+    ${SERVER_SOURCES_DIR}/BusinessLogic/SystemModule.cpp
     ${SERVER_SOURCES_DIR}/BusinessLogic/InventoryModule.cpp
     ${SERVER_SOURCES_DIR}/BusinessLogic/ManagementModule.cpp
     ${SERVER_SOURCES_DIR}/BusinessLogic/PurchaseModule.cpp

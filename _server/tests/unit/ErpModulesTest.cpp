@@ -10,6 +10,7 @@
 #include "BusinessLogic/ManagementModule.hpp"
 #include "BusinessLogic/PurchaseModule.hpp"
 #include "BusinessLogic/SalesModule.hpp"
+#include "BusinessLogic/SystemModule.hpp"
 #include "ServerException.hpp"
 #include "mocks/RepositoryManagerMock.hpp"
 #include "mocks/RepositoryMock.hpp"
@@ -80,6 +81,24 @@ TEST_F(ManagementModuleTest, AddContactDefaultsTypeToCustomer)
     EXPECT_NO_THROW(module->executeTask(requestData));
 }
 
+TEST_F(ManagementModuleTest, AddContactNormalizesLocalizedTypeToCanonicalValue)
+{
+    const RequestData requestData{
+        .module = "management",
+        .submodule = "contacts",
+        .method = "POST",
+        .resourceId = "",
+        .dataset = {{Common::Entities::Contact::NAME_KEY, {"Wholesale buyer"}},
+                    {Common::Entities::Contact::TYPE_KEY, {"Клієнт"}}}};
+
+    EXPECT_CALL(*contactsRepositoryMock,
+                add(Truly([](const Common::Entities::Contact &contact) {
+                    return contact.name == "Wholesale buyer" && contact.type == "Customer";
+                })));
+
+    EXPECT_NO_THROW(module->executeTask(requestData));
+}
+
 TEST_F(ManagementModuleTest, EditEmployeeFailsWhenEmployeeDoesNotExist)
 {
     const RequestData requestData{
@@ -94,6 +113,24 @@ TEST_F(ManagementModuleTest, EditEmployeeFailsWhenEmployeeDoesNotExist)
         .WillOnce(Return(std::vector<Common::Entities::Employee>{}));
 
     EXPECT_THROW(module->executeTask(requestData), ServerException);
+}
+
+TEST(SystemModuleTest, GetHealthReturnsReadyStatus)
+{
+    SystemModule module;
+    const ResponseData response = module.executeTask(RequestData{
+        .module = "system",
+        .submodule = "health",
+        .method = "GET",
+        .resourceId = "",
+        .dataset = {}});
+
+    ASSERT_EQ(response.dataset.at("status").size(), 1U);
+    ASSERT_EQ(response.dataset.at("service").size(), 1U);
+    ASSERT_EQ(response.dataset.at("ready").size(), 1U);
+    EXPECT_EQ(response.dataset.at("status").front(), "ok");
+    EXPECT_EQ(response.dataset.at("service").front(), "SageStoreServer");
+    EXPECT_EQ(response.dataset.at("ready").front(), "true");
 }
 
 class PurchaseModuleTest : public ::testing::Test {
@@ -740,6 +777,10 @@ protected:
     std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::SaleOrder>>> salesOrdersRepositoryMock;
     std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::SalesOrderRecord>>>
         salesOrderRecordsRepositoryMock;
+    std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::PurchaseOrder>>>
+        purchaseOrdersRepositoryMock;
+    std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::PurchaseOrderRecord>>>
+        purchaseOrderRecordsRepositoryMock;
     std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::Inventory>>> inventoryRepositoryMock;
     std::shared_ptr<NiceMock<RepositoryMock<Common::Entities::ProductType>>>
         productTypesRepositoryMock;
@@ -751,6 +792,10 @@ protected:
             std::make_shared<NiceMock<RepositoryMock<Common::Entities::SaleOrder>>>();
         salesOrderRecordsRepositoryMock =
             std::make_shared<NiceMock<RepositoryMock<Common::Entities::SalesOrderRecord>>>();
+        purchaseOrdersRepositoryMock =
+            std::make_shared<NiceMock<RepositoryMock<Common::Entities::PurchaseOrder>>>();
+        purchaseOrderRecordsRepositoryMock =
+            std::make_shared<NiceMock<RepositoryMock<Common::Entities::PurchaseOrderRecord>>>();
         inventoryRepositoryMock       =
             std::make_shared<NiceMock<RepositoryMock<Common::Entities::Inventory>>>();
         productTypesRepositoryMock    =
@@ -760,6 +805,10 @@ protected:
             .WillRepeatedly(Return(salesOrdersRepositoryMock));
         EXPECT_CALL(*repositoryManagerMock, getSalesOrderRecordRepository())
             .WillRepeatedly(Return(salesOrderRecordsRepositoryMock));
+        EXPECT_CALL(*repositoryManagerMock, getPurchaseOrderRepository())
+            .WillRepeatedly(Return(purchaseOrdersRepositoryMock));
+        EXPECT_CALL(*repositoryManagerMock, getPurchaseOrderRecordRepository())
+            .WillRepeatedly(Return(purchaseOrderRecordsRepositoryMock));
         EXPECT_CALL(*repositoryManagerMock, getInventoryRepository())
             .WillRepeatedly(Return(inventoryRepositoryMock));
         EXPECT_CALL(*repositoryManagerMock, getProductTypeRepository())
@@ -788,6 +837,12 @@ TEST_F(AnalyticsModuleTest, GetSalesAnalyticsAggregatesMetrics)
                 .id = "1", .orderId = "1", .productTypeId = "5", .quantity = "2", .price = "10.5"},
             Common::Entities::SalesOrderRecord{
                 .id = "2", .orderId = "2", .productTypeId = "6", .quantity = "1", .price = "4.0"}}));
+    EXPECT_CALL(*purchaseOrderRecordsRepositoryMock, getAll())
+        .WillOnce(Return(std::vector<Common::Entities::PurchaseOrderRecord>{
+            Common::Entities::PurchaseOrderRecord{
+                .id = "1", .orderId = "10", .productTypeId = "5", .quantity = "2", .price = "3.0"},
+            Common::Entities::PurchaseOrderRecord{
+                .id = "2", .orderId = "11", .productTypeId = "6", .quantity = "1", .price = "2.0"}}));
 
     const auto response = module->executeTask(requestData);
     ASSERT_TRUE(response.dataset.contains(AnalyticsKeys::Sales::TOTAL_ORDERS));
@@ -798,6 +853,11 @@ TEST_F(AnalyticsModuleTest, GetSalesAnalyticsAggregatesMetrics)
                      25.0);
     EXPECT_DOUBLE_EQ(
         std::stod(response.dataset.at(AnalyticsKeys::Sales::AVERAGE_ORDER_VALUE).front()), 12.5);
+    EXPECT_DOUBLE_EQ(
+        std::stod(response.dataset.at(AnalyticsKeys::Sales::TOTAL_PURCHASE_COST).front()), 8.0);
+    EXPECT_DOUBLE_EQ(std::stod(response.dataset.at(AnalyticsKeys::Sales::GROSS_PROFIT).front()),
+                     17.0);
+    EXPECT_EQ(response.dataset.at(AnalyticsKeys::Sales::INVOICED_ORDERS).front(), "2");
 }
 
 int main(int argc, char **argv)

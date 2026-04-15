@@ -2,7 +2,9 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include <cstddef>
+#include <string>
+
 #include <spdlog/spdlog.h>
 
 namespace SpdlogConfig {
@@ -16,9 +18,21 @@ enum class LogLevel {
     Off      = SPDLOG_LEVEL_OFF
 };
 
-template <LogLevel level> inline void init()
+struct Options {
+    std::string loggerName{"SageStore"};
+    std::string logFileStem{"sagestore"};
+    std::string logDirectory{};
+    bool enableConsole{true};
+    bool enableFile{true};
+    std::size_t maxFileSizeBytes{5U * 1024U * 1024U};
+    std::size_t maxFileCount{5U};
+};
+
+void initialize(spdlog::level::level_enum level, const Options &options = {});
+void shutdown();
+
+template <LogLevel level> inline void init(const Options &options = {})
 {
-    spdlog::default_logger()->set_level(static_cast<spdlog::level::level_enum>(level));
-    spdlog::set_pattern("[%t] [%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");
+    initialize(static_cast<spdlog::level::level_enum>(level), options);
 }
 } // namespace SpdlogConfig

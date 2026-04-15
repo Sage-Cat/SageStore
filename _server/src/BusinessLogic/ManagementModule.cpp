@@ -6,12 +6,29 @@
 #define _M "ManagementModule"
 
 namespace {
+std::string normalizeContactType(const std::string &value)
+{
+    if (value == "Customer" || value == "Клієнт") {
+        return "Customer";
+    }
+    if (value == "Client") {
+        return "Client";
+    }
+    if (value == "Partner" || value == "Партнер") {
+        return "Partner";
+    }
+
+    return value;
+}
+
 Common::Entities::Contact buildContact(const Dataset &request, const std::string &resourceId)
 {
     auto type =
         ModuleUtils::getOptionalDatasetValue(request, Common::Entities::Contact::TYPE_KEY);
     if (type.empty()) {
         type = "Customer";
+    } else {
+        type = normalizeContactType(type);
     }
 
     return Common::Entities::Contact{

@@ -13,7 +13,8 @@
 
 int main()
 {
-    SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>();
+    SpdlogConfig::init<SpdlogConfig::LogLevel::Trace>(
+        {.loggerName = "SageStoreServer", .logFileStem = "sagestore-server"});
     SPDLOG_INFO("SageStoreServer started");
 
     const std::string serverAddress =
@@ -36,6 +37,8 @@ int main()
     SageStoreServer server(repositoryManager, businessLogicFacade, httpServer);
     server.run();
 
-    SPDLOG_INFO("SageStoreServer finished with code=0");
-    return 0;
+    constexpr int exitCode = 0;
+    SPDLOG_INFO("SageStoreServer finished with code={}", exitCode);
+    SpdlogConfig::shutdown();
+    return exitCode;
 }
