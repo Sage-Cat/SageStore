@@ -44,6 +44,81 @@ function Get-BuildDir([string]$MirrorRoot) {
     return (Join-Path $MirrorRoot "build-win")
 }
 
+function Normalize-Path([string]$Path) {
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $null
+    }
+
+    return [System.IO.Path]::GetFullPath($Path)
+}
+
+function Test-PathWithinRoot([string]$Path, [string]$Root) {
+    $normalizedPath = Normalize-Path $Path
+    $normalizedRoot = Normalize-Path $Root
+    if ([string]::IsNullOrWhiteSpace($normalizedPath) -or
+        [string]::IsNullOrWhiteSpace($normalizedRoot)) {
+        return $false
+    }
+
+    $separator = [string][System.IO.Path]::DirectorySeparatorChar
+    if (-not $normalizedRoot.EndsWith($separator)) {
+        $normalizedRoot = $normalizedRoot + $separator
+    }
+
+    return $normalizedPath.StartsWith($normalizedRoot, [System.StringComparison]::OrdinalIgnoreCase)
+}
+
+function Get-BuildExecutableNames() {
+    return @(
+        "SageStoreClient.exe",
+        "SageStoreServer.exe",
+        "SageStoreDebugCli.exe"
+    )
+}
+
+function Get-LockingBuildProcesses([string]$BuildDir, [string[]]$ExecutableNames) {
+    if (-not $ExecutableNames -or $ExecutableNames.Count -eq 0) {
+        return @()
+    }
+
+    $filter = ($ExecutableNames | ForEach-Object { "Name = '{0}'" -f $_ }) -join " OR "
+    $processes = Get-CimInstance Win32_Process -Filter $filter -ErrorAction SilentlyContinue
+    if (-not $processes) {
+        return @()
+    }
+
+    $matches = @()
+    foreach ($process in $processes) {
+        if (-not $process.ExecutablePath) {
+            continue
+        }
+
+        if (-not (Test-PathWithinRoot $process.ExecutablePath $BuildDir)) {
+            continue
+        }
+
+        $matches += [PSCustomObject]@{
+            ProcessId = [int]$process.ProcessId
+            Name = [string]$process.Name
+            ExecutablePath = (Normalize-Path $process.ExecutablePath)
+        }
+    }
+
+    return $matches
+}
+
+function Stop-LockingBuildProcesses([string]$MirrorRoot) {
+    $buildDir = Get-BuildDir $MirrorRoot
+    $lockingProcesses = Get-LockingBuildProcesses $buildDir (Get-BuildExecutableNames)
+
+    foreach ($process in $lockingProcesses) {
+        Write-Host ("[sagestore-windows] stopping locked build target {0} (pid={1})" -f `
+                $process.ExecutablePath, $process.ProcessId)
+        Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
+        Wait-Process -Id $process.ProcessId -Timeout 5 -ErrorAction SilentlyContinue
+    }
+}
+
 function Sync-RepoToMirror([string]$RepoRoot, [string]$MirrorRoot) {
     Write-Stage "Sync repo to Windows mirror"
     New-Item -ItemType Directory -Force -Path $MirrorRoot | Out-Null
@@ -225,6 +300,7 @@ function Ensure-Build([string]$Mode, [string]$BuildType) {
     $mingwBinDir = Get-MingwBinDir
     $gccMajorVersion = Get-GccMajorVersion $mingwBinDir
 
+    Stop-LockingBuildProcesses $mirrorRoot
     Sync-RepoToMirror $repoRoot $mirrorRoot
     Initialize-WindowsBuildEnvironment $qtRoot $mingwBinDir
     Invoke-ConanInstall $mirrorRoot $BuildType $gccMajorVersion
