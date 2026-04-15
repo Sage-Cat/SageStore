@@ -39,34 +39,34 @@ That keeps the current desktop product usable while preserving a clean path for 
 <table>
   <tr>
     <td width="50%">
-      <img src="docs/readme/settings-overview.png" alt="Settings and localization" width="100%">
-      <br>
-      <strong>Configure the client once</strong>
-      <br>
-      Operators can save connection defaults and choose the desktop UI language between English and Ukrainian.
-    </td>
-    <td width="50%">
-      <img src="docs/readme/product-management.png" alt="Product management" width="100%">
-      <br>
-      <strong>Maintain product master data</strong>
-      <br>
-      Product types carry the identifiers the rest of the application relies on, including code, barcode, unit, description, and pricing fields.
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
       <img src="docs/readme/purchasing-workflow.png" alt="Purchasing workflow" width="100%">
       <br>
       <strong>Process purchasing workflows</strong>
       <br>
-      Buyers can create purchase orders, add line items, and move received goods into tracked stock.
+      Buyers can create purchase orders, adjust line items inline, and prepare receipts against shared supplier and product data.
     </td>
     <td width="50%">
-      <img src="docs/readme/supplier-catalog.png" alt="Supplier catalog" width="100%">
+      <img src="docs/readme/sales-workflow.png" alt="Sales workflow" width="100%">
       <br>
-      <strong>Normalize supplier data</strong>
+      <strong>Run sales and invoicing</strong>
       <br>
-      Supplier product codes can be mapped back to internal product types, including CSV-driven import workflows for catalog maintenance.
+      Operators can manage sales orders, reuse shared customer and employee records, and progress invoice-ready states from one workspace.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/readme/analytics-dashboard.png" alt="Analytics dashboard" width="100%">
+      <br>
+      <strong>Track revenue and stock signals</strong>
+      <br>
+      The analytics dashboard surfaces revenue, margin, order pipeline, and inventory-facing summaries grounded in the current baseline data.
+    </td>
+    <td width="50%">
+      <img src="docs/readme/master-data.png" alt="Master data workspace" width="100%">
+      <br>
+      <strong>Maintain shared master data</strong>
+      <br>
+      Customers, suppliers, and employees are managed in one shared directory that feeds purchasing, sales, stock, and reporting flows.
     </td>
   </tr>
 </table>
