@@ -26,7 +26,7 @@
 - [x] Establish baseline docs/link checks and native build/test/smoke results.
 - [x] Implement and test narrow, high-confidence fixes.
 - [x] Add and validate GitHub Actions with pinned actions, minimal permissions, and a timeout.
-- [ ] Review diff, commits, metadata, push, and verify remote/CI status.
+- [x] Review diff, commits, metadata, push, and verify remote/CI status.
 
 ## Risks and mitigations
 
@@ -54,3 +54,10 @@
   and sensitive-data logging; added handler contract coverage.
 - 2026-08-17: Fixed system-Boost test linking and GCC 13/system-fmt portability, then passed a
   clean Ubuntu 24.04 native build, all 31 CTest tests, both smoke scripts, docs links, and Go tests.
+- 2026-08-17: Upgraded `chi` to 5.2.2 to resolve the open moderate Dependabot alert and
+  disabled persisted GitHub checkout credentials; pushed normally and verified the exact-SHA CI.
+
+Final review: the repository remains an honestly labeled, validated ERP MVP rather than a
+production release. The existing architecture diagrams and screenshots are adequate. Remaining
+production blockers are the documented authentication/authorization/TLS design, schema migration
+and backup support, packaging, and incomplete company/storage/document workflows.
