@@ -16,9 +16,9 @@ func main() {
 
 	r.Post("/register", web.PostUserRegister)
 	r.Post("/login", web.PostUserLogin)
-	log.Println("Server start at localhost")
+	log.Println("Inspector listening on http://127.0.0.1:8081")
 
-	webServer := web.NewWebServer(":8081", *r)
+	webServer := web.NewWebServer("127.0.0.1:8081", *r)
 	if err := webServer.Start(); err != nil {
 		log.Fatalf("Failed to start web server: %s", err)
 	}

@@ -3,122 +3,85 @@ package web
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"inspector/templates"
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
-var Body = []byte{}
+const maxUpstreamResponseBytes = 1 << 20
 
-func PostUserLogin(w http.ResponseWriter, r *http.Request) {
+var (
+	storeServerBaseURL = "http://127.0.0.1:8001"
+	storeHTTPClient    = &http.Client{Timeout: 10 * time.Second}
+)
 
-	var UrlString string = "http://localhost:8001/api/users/login"
-	r.ParseForm()
-	formData := make(map[string][]string)
-	for key, values := range r.Form {
-		formData[key] = values
-	}
-	NewUser := User{
-		Username: formData["username"],
-		Password: formData["password"],
-	}
-	NewUser.HashPasswords()
-
-	jsonData, err := json.Marshal(NewUser)
+func renderLoginPage(w http.ResponseWriter, body string) {
+	t, err := template.ParseFS(templates.FS, "loginpage.html")
 	if err != nil {
-		fmt.Println("JSON marshal err-:", err)
+		log.Printf("parse login template: %v", err)
+		http.Error(w, "Unable to render inspector page", http.StatusInternalServerError)
 		return
 	}
 
-	if r.Method == http.MethodPost {
-		req, err := http.NewRequest("POST", UrlString, bytes.NewBuffer(jsonData))
-		if err != nil {
-			log.Println(err)
-		}
-
-		req.Header.Set("Content-type", "application/json")
-
-		cli := &http.Client{}
-		res, err := cli.Do(req)
-		if err != nil {
-			log.Println(err)
-		}
-
-		log.Println(res.Status)
-		log.Println(res.Header)
-		log.Println(NewUser)
-
-		Body, _ = io.ReadAll(res.Body)
-		defer res.Body.Close()
-		t, err := template.ParseFS(templates.FS, "loginpage.html")
-		if err != nil {
-			panic(err)
-		}
-
-		t.Execute(w, string(Body))
-	}
-	if r.Method == http.MethodGet {
-		t, err := template.ParseFS(templates.FS, "loginpage.html")
-		if err != nil {
-			panic(err)
-		}
-		t.Execute(w, string(Body))
+	if err := t.Execute(w, body); err != nil {
+		log.Printf("render login template: %v", err)
 	}
 }
 
-func PostUserRegister(w http.ResponseWriter, r *http.Request) {
-
-	var UrlString string = "http://localhost:8001/api/users/register"
-
-	r.ParseForm()
-
-	formData := make(map[string][]string)
-
-	for key, values := range r.Form {
-		formData[key] = values
-	}
-	NewUser := User{
-		Username: formData["username"],
-		Password: formData["password"],
-	}
-	NewUser.HashPasswords()
-
-	jsonData, err := json.Marshal(NewUser)
-	if err != nil {
-		fmt.Println("JSON marshal err-:", err)
+func forwardUserRequest(w http.ResponseWriter, r *http.Request, endpoint string) {
+	if r.Method != http.MethodPost {
+		renderLoginPage(w, "")
 		return
 	}
-	if r.Method == http.MethodPost {
-		req, err := http.NewRequest("POST", UrlString, bytes.NewBuffer(jsonData))
-		if err != nil {
-			log.Println(err)
-		}
 
-		req.Header.Set("Content-type", "application/json")
-
-		cli := &http.Client{}
-		res, err := cli.Do(req)
-		if err != nil {
-			log.Println(err)
-		}
-
-		defer res.Body.Close()
-
-		log.Println(res.Status)
-		log.Println(NewUser)
-		log.Println(res.Header)
-
-		Body, _ = io.ReadAll(res.Body)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		return
 	}
 
-	t, err := template.ParseFS(templates.FS, "loginpage.html")
+	user := User{Username: r.Form["username"], Password: r.Form["password"]}
+	user.HashPasswords()
+	jsonData, err := json.Marshal(user)
 	if err != nil {
-		panic(err)
+		log.Printf("encode user request: %v", err)
+		http.Error(w, "Unable to encode request", http.StatusInternalServerError)
+		return
 	}
 
-	t.Execute(w, string(Body))
+	req, err := http.NewRequestWithContext(
+		r.Context(), http.MethodPost, storeServerBaseURL+endpoint, bytes.NewReader(jsonData))
+	if err != nil {
+		log.Printf("create SageStore request: %v", err)
+		http.Error(w, "Unable to create upstream request", http.StatusInternalServerError)
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
 
+	response, err := storeHTTPClient.Do(req)
+	if err != nil {
+		log.Printf("SageStore request failed: %v", err)
+		http.Error(w, "SageStore server is unavailable", http.StatusBadGateway)
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(io.LimitReader(response.Body, maxUpstreamResponseBytes))
+	if err != nil {
+		log.Printf("read SageStore response: %v", err)
+		http.Error(w, "Unable to read upstream response", http.StatusBadGateway)
+		return
+	}
+
+	renderLoginPage(w, string(body))
+}
+
+func PostUserLogin(w http.ResponseWriter, r *http.Request) {
+	forwardUserRequest(w, r, "/api/users/login")
+}
+
+func PostUserRegister(w http.ResponseWriter, r *http.Request) {
+	forwardUserRequest(w, r, "/api/users/users")
 }

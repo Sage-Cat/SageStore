@@ -81,7 +81,10 @@ void HttpTransaction::handle_request()
         });
 
     if (hasRequestBody) {
-        SPDLOG_DEBUG("[Transaction ID: {}] SERVER received data: {}", m_id, requestBody);
+        // Request datasets can contain password verifiers and other sensitive business data.
+        // Keep enough metadata for diagnostics without persisting payload contents in logs.
+        SPDLOG_DEBUG("[Transaction ID: {}] SERVER received payload ({} bytes)", m_id,
+                     requestBody.size());
     }
 
     // Prepare RequestData
@@ -134,7 +137,8 @@ void HttpTransaction::do_response(ResponseData data)
 
     beast::ostream(m_response.body()) << serializedData;
 
-    SPDLOG_DEBUG("[Transaction ID: {}] SERVER sent data: {}", m_id, serializedData);
+    SPDLOG_DEBUG("[Transaction ID: {}] SERVER sent payload ({} bytes)", m_id,
+                 serializedData.size());
 
     // Ensure the response is fully sent before closing the transaction
     auto self = shared_from_this();

@@ -42,6 +42,11 @@ python3 build.py smoke-gui
 
 ## Runtime Configuration
 
+The current server is suitable for local development and trusted-loopback demos only. It
+does not yet provide TLS, sessions/tokens, request authorization, or a password KDF. Keep
+the default loopback bind, do not expose the HTTP port to an untrusted network, and replace
+the seeded demo account before using non-demo data.
+
 ### Server environment variables
 
 | Variable | Default | Purpose |

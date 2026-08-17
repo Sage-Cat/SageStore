@@ -94,6 +94,7 @@ SageStore is intentionally presented as an implemented MVP baseline, not as a fi
 The following broader product goals are still incomplete or only partially realized:
 
 - companies support
+- production-grade authentication, authorization, and encrypted transport
 - barcode label generation and printing
 - incoming invoice upload/attachment workflows
 - richer packaging and installer automation

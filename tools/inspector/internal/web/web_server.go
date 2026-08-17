@@ -16,6 +16,5 @@ func NewWebServer(addr string, handler chi.Mux) *WebServer {
 }
 
 func (s *WebServer) Start() error {
-	http.HandleFunc("/", http.NotFound) // Define route handler
 	return http.ListenAndServe(s.addr, s.handler)
 }

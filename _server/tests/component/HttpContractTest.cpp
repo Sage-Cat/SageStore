@@ -6,7 +6,11 @@
 #include <filesystem>
 #include <limits>
 #include <memory>
+#include <sstream>
 #include <thread>
+
+#include <spdlog/logger.h>
+#include <spdlog/sinks/ostream_sink.h>
 
 #include "BusinessLogic/BusinessLogic.hpp"
 #include "Database/ContactRepository.hpp"
@@ -34,6 +38,7 @@
 #include "common/Entities/SalesOrderRecord.hpp"
 #include "common/Entities/Supplier.hpp"
 #include "common/Entities/SuppliersProductInfo.hpp"
+#include "common/Entities/User.hpp"
 #include "common/Keys.hpp"
 #include "common/Network/IDataSerializer.hpp"
 #include "common/Network/JsonSerializer.hpp"
@@ -67,6 +72,20 @@ public:
 private:
     std::shared_ptr<SerializerCounters> m_counters;
     JsonSerializer m_delegate;
+};
+
+class ScopedDefaultLogger {
+public:
+    explicit ScopedDefaultLogger(std::shared_ptr<spdlog::logger> logger)
+        : m_previous(spdlog::default_logger())
+    {
+        spdlog::set_default_logger(std::move(logger));
+    }
+
+    ~ScopedDefaultLogger() { spdlog::set_default_logger(std::move(m_previous)); }
+
+private:
+    std::shared_ptr<spdlog::logger> m_previous;
 };
 } // namespace
 
@@ -354,6 +373,27 @@ TEST_F(HttpContractTest, GetHealth_ReturnsReadyStatus)
     EXPECT_EQ(dataset.at("status").front(), "ok");
     EXPECT_EQ(dataset.at("service").front(), "SageStoreServer");
     EXPECT_EQ(dataset.at("ready").front(), "true");
+}
+
+TEST_F(HttpContractTest, Login_DoesNotWritePasswordVerifierToLogs)
+{
+    std::ostringstream capturedLogs;
+    auto sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(capturedLogs);
+    auto logger = std::make_shared<spdlog::logger>("HttpContractSensitiveDataTest", sink);
+    logger->set_level(spdlog::level::debug);
+    ScopedDefaultLogger scopedLogger(logger);
+
+    constexpr char passwordVerifier[] =
+        "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+    const Dataset requestBody{{Common::Entities::User::USERNAME_KEY, {"admin"}},
+                              {Common::Entities::User::PASSWORD_KEY, {passwordVerifier}}};
+
+    const auto response = performRequest(http::verb::post, Endpoints::Users::LOGIN, requestBody);
+    logger->flush();
+
+    EXPECT_EQ(response.result(), http::status::ok);
+    EXPECT_EQ(capturedLogs.str().find(passwordVerifier), std::string::npos);
+    EXPECT_NE(capturedLogs.str().find("SERVER received payload"), std::string::npos);
 }
 
 TEST_F(HttpContractTest, ClientDisconnectBeforeRequestDoesNotInvokeBusinessLogic)

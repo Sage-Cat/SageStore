@@ -90,6 +90,8 @@
   - clean runtime logs for the Debug CLI regression scenarios
   - selector-failure JSON reporting plus automatic failure artifacts
 - Gap:
+  - authentication uses an unsalted client-side SHA-256 verifier and the HTTP API has no
+    sessions, request authorization, or TLS; deployment is limited to trusted loopback use
   - no live auth failure/registration workflow coverage yet
   - no live GUI/system CRUD coverage yet for users/roles, suppliers, employees, purchase-order editing, or sales posting/cancel flows
   - no installed-binary/package validation yet
