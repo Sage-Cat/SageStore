@@ -38,3 +38,7 @@ target_compile_definitions(SageStoreDebugCli PRIVATE
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(SageStoreDebugCli PRIVATE -Wall -Wextra -Werror)
 endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(SageStoreDebugCli PRIVATE -Wno-error=array-bounds)
+endif()

@@ -55,6 +55,9 @@
 
 ## Quality/Process Baseline
 
+- GitHub Actions validates documentation links, Go inspector tests, a native Ubuntu build,
+  the full CTest suite, and both API and offscreen GUI startup smoke paths for `master` and
+  pull requests.
 - Jenkins runs checkout, clean, Conan install, `python3 build.py docs`, CMake configure/build, `ctest`, the non-interactive inventory smoke path, and the offscreen GUI startup smoke path.
 - `python3 build.py docs` validates markdown links, renders PlantUML when available, and runs Doxygen.
 - `python3 build.py smoke` runs the isolated inventory/API smoke path.

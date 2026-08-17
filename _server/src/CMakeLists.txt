@@ -35,3 +35,7 @@ add_custom_command(
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${SERVER_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(${SERVER_NAME} PRIVATE -Wno-error=array-bounds)
+endif()

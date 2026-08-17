@@ -26,3 +26,10 @@ set_target_properties(${CLIENT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CLIEN
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${CLIENT_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()
+
+# GCC 13 can report a false-positive array-bounds warning from Ubuntu's fmt 9
+# headers under optimization. Keep the diagnostic visible without letting a
+# third-party header fail native system-package builds.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(${CLIENT_NAME} PRIVATE -Wno-error=array-bounds)
+endif()

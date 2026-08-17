@@ -19,7 +19,7 @@ target_include_directories(BusinessLogicTest PUBLIC
 target_link_libraries(BusinessLogicTest 
     PUBLIC
     common
-    boost::boost 
+    boost_common
     spdlog::spdlog 
     SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
@@ -57,7 +57,7 @@ target_include_directories(RepositoryIntegrationTest PUBLIC
 target_link_libraries(RepositoryIntegrationTest
     PUBLIC
     common
-    boost::boost
+    boost_common
     spdlog::spdlog
     SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
@@ -101,7 +101,7 @@ if(NOT TARGET HttpContractTest)
     target_link_libraries(HttpContractTest
         PUBLIC
         common
-        boost::boost
+        boost_common
         spdlog::spdlog
         SQLite::SQLite3
         $<$<PLATFORM_ID:Windows>:Ws2_32>

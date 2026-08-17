@@ -1,5 +1,7 @@
 # SageStore
 
+[![CI](https://github.com/Sage-Cat/SageStore/actions/workflows/ci.yml/badge.svg)](https://github.com/Sage-Cat/SageStore/actions/workflows/ci.yml)
+
 SageStore is a desktop business-operations MVP for small goods-selling operations. It combines a Qt client, a consumer-agnostic HTTP server, and SQLite persistence to support everyday workflows across inventory, purchasing, sales, access control, analytics, and audit visibility.
 
 **Current stage:** validated MVP baseline, not yet a packaged production release or a feature-complete business suite.
@@ -174,6 +176,10 @@ Markdown link validation:
 ```bash
 python3 scripts/check_docs_links.py
 ```
+
+GitHub Actions validates documentation links, the Go inspector, a native Ubuntu
+client/server/test build, the full CTest suite, and the API and offscreen GUI startup smoke
+paths. Jenkins remains available for the existing self-hosted build and artifact workflow.
 
 ## Contributing
 

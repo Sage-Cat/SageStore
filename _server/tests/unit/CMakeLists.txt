@@ -19,7 +19,7 @@ target_include_directories(UsersModuleTest PUBLIC
 target_link_libraries(UsersModuleTest 
     PUBLIC
     common
-    boost::boost 
+    boost_common
     spdlog::spdlog 
     SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
@@ -53,7 +53,7 @@ target_include_directories(InventoryModuleTest PUBLIC
 target_link_libraries(InventoryModuleTest
     PUBLIC
     common
-    boost::boost
+    boost_common
     spdlog::spdlog
     SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
@@ -87,7 +87,7 @@ target_include_directories(ErpModulesTest PUBLIC
 target_link_libraries(ErpModulesTest
     PUBLIC
     common
-    boost::boost
+    boost_common
     spdlog::spdlog
     SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>
@@ -148,7 +148,7 @@ target_include_directories(ProductInfoRepositoryTest PUBLIC
 target_link_libraries(ProductInfoRepositoryTest 
     PUBLIC
     common
-    boost::boost 
+    boost_common
     spdlog::spdlog 
     SQLite::SQLite3
     $<$<PLATFORM_ID:Windows>:Ws2_32>

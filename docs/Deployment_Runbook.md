@@ -16,7 +16,8 @@ It does not describe NSIS/Inno packaging because the repository does not impleme
 - Conan available in `PATH`
 - CMake 3.22+
 - Ninja
-- Qt 6.6.x runtime/build dependencies
+- Qt 6 development/runtime dependencies (Ubuntu CI uses 6.4.x; Conan resolves 6.6.2)
+- OpenGL development headers (`libgl-dev` on Ubuntu) when Conan builds Qt
 - `curl`
 - `python3`
 - Docker only if you want PlantUML rendering through `python3 build.py docs`
@@ -151,6 +152,9 @@ scripts/smoke/fullstack_gui_startup_smoke.sh
 
 ## CI / Artifact Reality
 
+- GitHub Actions runs documentation link checks, Go inspector tests, a native Ubuntu build,
+  the full CTest suite, and the API and offscreen GUI startup smoke paths on pushes and pull
+  requests to `master`.
 - Jenkins now runs `python3 build.py docs`, CMake build/test, the inventory smoke script, and an offscreen GUI startup smoke.
 - `ctest` now also includes Qt-driven client/server workflow tests for inventory CRUD, management contact creation, purchase receipt posting, sales invoice preview/export, and broad workspace loading.
 - Successful Jenkins runs archive the built client/server binaries, the bootstrap SQL file, and this deployment runbook.
