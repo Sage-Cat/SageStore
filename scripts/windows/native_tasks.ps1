@@ -124,7 +124,7 @@ function Sync-RepoToMirror([string]$RepoRoot, [string]$MirrorRoot) {
     New-Item -ItemType Directory -Force -Path $MirrorRoot | Out-Null
 
     $null = robocopy $RepoRoot $MirrorRoot /MIR /R:1 /W:1 /NFL /NDL /NJH /NJS /NP `
-        /XD ".git" "build" "build-win" "logs" ".codex"
+        /XD ".git" "build" "build-win" "logs"
 
     if ($LASTEXITCODE -gt 7) {
         throw "robocopy failed with exit code $LASTEXITCODE"
