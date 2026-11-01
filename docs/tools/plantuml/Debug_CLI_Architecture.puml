@@ -3,7 +3,7 @@
 left to right direction
 skinparam packageStyle rectangle
 
-actor Codex
+actor Caller
 actor Developer
 
 package "SageStoreDebugCli" {
@@ -35,7 +35,7 @@ package "SageStore Runtime" {
 database "SQLite Test DB" as DB
 folder "Artifacts\nJSON + PNG" as Artifacts
 
-Codex --> [CLI Parser]
+Caller --> [CLI Parser]
 Developer --> [CLI Parser]
 [CLI Parser] --> [Scenario Runner]
 [Scenario Runner] --> [HTTP Request Runner]
