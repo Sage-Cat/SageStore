@@ -1,6 +1,6 @@
 @startuml
 
-actor Codex
+actor Caller
 participant "SageStoreDebugCli" as CLI
 participant "Server Controller" as ServerCtl
 participant "SageStoreServer" as Server
@@ -9,7 +9,7 @@ participant "DialogManager / StartupController" as Startup
 participant "MainWindow" as MainWindow
 participant "Artifact Manager" as Artifacts
 
-Codex -> CLI : run --scenario flow.json --artifact-dir out/
+Caller -> CLI : run --scenario flow.json --artifact-dir out/
 CLI -> ServerCtl : spawnIfRequested()
 ServerCtl -> Server : start process
 ServerCtl -> Server : GET /api/system/health until ready
@@ -34,12 +34,12 @@ Client --> CLI : success
 CLI -> Artifacts : dump state + capture screenshot
 Artifacts --> CLI : paths
 
-CLI --> Codex : result JSON + artifact references
+CLI --> Caller : result JSON + artifact references
 
 alt step failure
   CLI -> Artifacts : capture failure screenshot/state
   Artifacts --> CLI : failure artifact paths
-  CLI --> Codex : ok=false with diagnostics
+  CLI --> Caller : ok=false with diagnostics
 end
 
 @enduml

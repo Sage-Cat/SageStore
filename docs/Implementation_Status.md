@@ -60,7 +60,7 @@
 - `python3 build.py smoke` runs the isolated inventory/API smoke path.
 - `python3 build.py smoke-gui` runs an offscreen client startup smoke against the real server.
 - `python3 build.py regression` now runs the labeled offscreen regression lane plus both smoke scripts under forced headless settings.
-- `SageStoreDebugCli` now provides a machine-readable debug surface for Codex-style runs: direct server requests, optional local server spawn, offscreen client startup/login, covered UI actions, widget-tree state dumps, screenshots, and automatic failure artifacts.
+- `SageStoreDebugCli` now provides a machine-readable debug surface for automated runs: direct server requests, optional local server spawn, offscreen client startup/login, covered UI actions, widget-tree state dumps, screenshots, and automatic failure artifacts.
 - `ctest` now includes Qt-driven client/server workflow tests that launch the real server binary and drive inventory CRUD, management contact creation, purchase receipt posting, sales invoice preview/export, and broad workspace loading through real desktop widgets.
 - Offscreen runtime validation now has hard gates for:
   - error-level log lines in smoke/debug-cli runs

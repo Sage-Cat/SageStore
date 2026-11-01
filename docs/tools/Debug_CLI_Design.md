@@ -2,13 +2,13 @@
 
 ## Purpose
 
-`SageStoreDebugCli` is a Codex-facing automation and diagnostics tool for SageStore.
+`SageStoreDebugCli` is an automation and diagnostics tool for SageStore.
 It is intended to:
 
 - trigger real server requests against the canonical SageStore HTTP API
 - run the real Qt client stack offscreen against a chosen server
 - drive covered UI events through stable object names and menu actions
-- emit machine-readable JSON results for agent consumption
+- emit machine-readable JSON results for automation clients
 - save screenshots and structured UI state when a flow succeeds or fails
 
 The tool is diagnostic infrastructure, not a replacement for the shipped client.
@@ -49,11 +49,11 @@ The tool is a single executable with two automation surfaces:
 
 The primary workflow is scenario-based:
 
-1. Codex writes a JSON scenario file.
+1. The caller writes a JSON scenario file.
 2. `SageStoreDebugCli run --scenario scenario.json --result result.json --artifact-dir out/`
 3. The tool executes steps in order.
 4. The tool emits structured results plus any artifacts.
-5. Codex inspects `result.json` and any screenshots/state dumps to diagnose or validate behavior.
+5. The caller inspects `result.json` and any screenshots/state dumps to diagnose or validate behavior.
 
 ## Command Contract
 
@@ -61,7 +61,7 @@ The first version exposes two top-level commands:
 
 1. `describe`
 - Prints the supported step types, known menu action names, and high-level result schema as JSON.
-- This keeps the contract discoverable for Codex and future wrappers.
+- This keeps the contract discoverable for automation clients and future wrappers.
 
 2. `run`
 - Executes a JSON scenario.
@@ -154,7 +154,7 @@ When a UI step fails and `--artifact-dir` is set, the tool automatically capture
 - `failure-<step-index>.png`
 - `failure-<step-index>.json`
 
-This makes failure diagnosis deterministic and Codex-friendly.
+This makes failure diagnosis deterministic and easy to automate.
 
 ## Phase Plan
 
